@@ -1,0 +1,258 @@
+'use client';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { authService } from '../../../services/auth.service';
+import { useAlert } from '../../../components/Alert/alertcontext';
+import { Loader2, Upload, Check } from 'lucide-react';
+import Alert from '../../../components/Alert/alert';
+
+const DEFAULT_AVATAR_PATH = '/assets/avatar/avatar.jpg';
+
+function SignUpAvatarContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { showError } = useAlert();
+  
+  const email = searchParams.get('email') || '';
+
+  // Recovered signup states
+  const [username, setUsername] = useState('');
+  const [gender, setGender] = useState('');
+  const [birthday, setBirthday] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Selected avatar state
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(DEFAULT_AVATAR_PATH);
+  const [customAvatarBase64, setCustomAvatarBase64] = useState<string | null>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+
+  // Retrieve values from sessionStorage on mount
+  useEffect(() => {
+    const isVerified = sessionStorage.getItem('otp_verified');
+    const storedUsername = sessionStorage.getItem('signup_username');
+    const storedGender = sessionStorage.getItem('signup_gender');
+    const storedBirthday = sessionStorage.getItem('signup_birthday');
+    const storedPassword = sessionStorage.getItem('signup_password');
+
+    if (isVerified !== 'true' || !email || !storedUsername || !storedGender || !storedBirthday || !storedPassword) {
+      showError('Thiếu dữ liệu đăng ký. Vui lòng thử lại!');
+      router.push('/signup');
+      return;
+    }
+
+    setUsername(storedUsername);
+    setGender(storedGender);
+    setBirthday(storedBirthday);
+    setPassword(storedPassword);
+  }, [email, router, showError]);
+
+  const handleCustomAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      setFormError('Kích thước ảnh đại diện tối đa là 2MB!');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Str = reader.result as string;
+      setCustomAvatarBase64(base64Str);
+      setSelectedAvatarUrl(base64Str);
+      setFormError(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    setIsLoading(true);
+
+    try {
+      // Build the registration payload
+      const registerPayload: any = {
+        email,
+        username,
+        password,
+        birthday,
+        gender
+      };
+
+      // Only pass the avatar parameter in Base64 if a custom image was uploaded.
+      // Otherwise, do not pass anything so backend falls back to its default Cloudinary avatar URL.
+      if (customAvatarBase64) {
+        registerPayload.avatar = customAvatarBase64;
+      }
+
+      const res = await authService.register(registerPayload);
+
+      if (res.success || res.code === 'REGISTER_SUCCESS') {
+        // Open the beautiful Flutter-styled dialog
+        setIsSuccessDialogOpen(true);
+        
+        // Clear temp registration states
+        sessionStorage.removeItem('signup_username');
+        sessionStorage.removeItem('signup_gender');
+        sessionStorage.removeItem('signup_birthday');
+        sessionStorage.removeItem('signup_password');
+        sessionStorage.removeItem('otp_verified');
+
+        setTimeout(() => {
+          router.push('/signin');
+        }, 2200);
+      } else {
+        setFormError('Đăng ký tài khoản thất bại. Vui lòng kiểm tra lại thông tin!');
+      }
+    } catch (err: any) {
+      console.error('Registration API error:', err);
+      const code = err.response?.data?.code || err.message;
+      if (code === 'EMAIL_REGISTERED') {
+        setFormError('Email này đã được sử dụng!');
+      } else {
+        setFormError('Lỗi hệ thống trong quá trình đăng ký. Vui lòng thử lại sau!');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 p-4 font-sans relative overflow-hidden'>
+      <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
+        
+        <div className='text-center mb-6'>
+          <h2 className='text-2xl font-extrabold text-gray-900 tracking-tight select-none'>
+            Choose your avatar
+          </h2>
+          <p className='text-gray-500 mt-2 text-sm px-4 select-none'>
+            Confirm your profile avatar or upload a new photo from your device
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className='space-y-6'>
+
+          {/* Main Avatar Preview */}
+          <div className='flex flex-col items-center justify-center'>
+            <div className='relative w-36 h-36 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-blue-500/10 ring-4 ring-blue-500/20 bg-gray-50 flex items-center justify-center'>
+              <img
+                src={selectedAvatarUrl}
+                alt='Profile Avatar'
+                className='w-full h-full object-cover select-none'
+              />
+            </div>
+            <span className='mt-2.5 text-xs text-gray-400 font-semibold uppercase tracking-wider select-none'>
+              Avatar Preview
+            </span>
+          </div>
+
+          {/* Custom Avatar Upload */}
+          <div>
+            <span className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1 select-none'>
+              Custom photo
+            </span>
+            <label className='flex items-center justify-center gap-2.5 w-full px-4 py-3 border-2 border-dashed border-gray-200 hover:border-blue-400 rounded-xl bg-gray-50 hover:bg-blue-50/10 cursor-pointer transition-all duration-200 group text-gray-500 hover:text-blue-500'>
+              <Upload className='w-5 h-5 group-hover:scale-110 transition-transform' />
+              <span className='text-sm font-bold tracking-wide'>
+                {customAvatarBase64 ? 'Change custom photo' : 'Upload photo'}
+              </span>
+              <input
+                type='file'
+                accept='image/*'
+                onChange={handleCustomAvatarUpload}
+                className='hidden'
+              />
+            </label>
+          </div>
+
+          {formError && (
+            <Alert 
+              message={formError} 
+              type="error" 
+              isInline={true} 
+              onClose={() => setFormError(null)} 
+            />
+          )}
+
+          {/* Action Buttons */}
+          <div className='flex gap-3 mt-6'>
+            <button
+              type='button'
+              onClick={() => router.back()}
+              className='flex-1 border border-gray-200 hover:bg-gray-50 active:scale-[0.98] text-gray-500 hover:text-gray-700 font-bold py-3.5 rounded-xl transition-all duration-200'
+            >
+              Back
+            </button>
+            <button
+              type='submit'
+              disabled={isLoading}
+              className='flex-1 bg-blue-500 hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2'
+            >
+              {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
+              <span>Register</span>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+      {/* Success Dialog Modal - Replicating Flutter AppAlertDialog */}
+      {isSuccessDialogOpen && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in'>
+          <div className='bg-white rounded-3xl p-8 max-w-xs w-full mx-4 shadow-2xl flex flex-col items-center text-center animate-scale-up border border-gray-50 select-none'>
+            
+            {/* Green Check Icon with Glowing Ring */}
+            <div className='w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center mb-5 ring-8 ring-green-50/50 shadow-sm'>
+              <Check className='w-8 h-8 stroke-[3]' />
+            </div>
+
+            {/* Message */}
+            <h3 className='text-lg font-bold text-gray-900 mb-1.5'>
+              Đăng ký thành công!
+            </h3>
+            <p className='text-gray-500 text-sm font-medium leading-relaxed px-1'>
+              Tài khoản của bạn đã được khởi tạo thành công. Đang chuyển hướng...
+            </p>
+
+          </div>
+        </div>
+      )}
+
+      {/* Inline styles for dialog animation */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes scaleUp {
+          from { transform: scale(0.95); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.2s ease-out forwards;
+        }
+        .animate-scale-up {
+          animation: scaleUp 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+export default function SignUpAvatar() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200">
+        <Loader2 className="animate-spin h-10 w-10 text-blue-500" />
+      </div>
+    }>
+      <SignUpAvatarContent />
+    </Suspense>
+  );
+}

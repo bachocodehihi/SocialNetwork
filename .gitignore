@@ -1,0 +1,59 @@
+# ==========================================
+# 1. Environment & API Keys (CRITICAL SECRETS)
+# ==========================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ==========================================
+# 2. Firebase & FCM Private Credentials (CRITICAL SECRETS)
+# ==========================================
+# Backend Firebase Admin SDK private keys (FCM)
+*service-account*.json
+*serviceAccountKey*.json
+firebase-service-account.json
+
+# (Optional but recommended) Flutter Firebase Client files 
+# Uncomment these if you want to hide your Firebase project credentials on public repositories:
+# Flutter/socialnetwork_app/android/app/google-services.json
+# Flutter/socialnetwork_app/ios/Runner/GoogleService-Info.plist
+
+# ==========================================
+# 3. Node.js & Next.js Dependencies & Builds
+# ==========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.next/
+out/
+build/
+
+# ==========================================
+# 4. Flutter / Dart
+# ==========================================
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+**/socialnetwork_app/build/
+**/socialnetwork_app/ios/Flutter/.last_build_id
+app.*.symbols
+app.*.map.json
+/Flutter/socialnetwork_app/android/app/debug/
+/Flutter/socialnetwork_app/android/app/profile/
+/Flutter/socialnetwork_app/android/app/release/
+
+# ==========================================
+# 5. IDEs & System files
+# ==========================================
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.DS_Store
+Thumbs.db

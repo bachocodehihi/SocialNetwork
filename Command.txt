@@ -1,0 +1,12 @@
+- Flutter:
+cd Flutter
+cd socialnetwork_app
+flutter run --profile
+- Next.js:
+cd Nextjs
+cd socialnetwork_web
+npm run dev
+- Node.js:
+cd Nodejs
+cd backend_socialnetwork
+node src/server.js

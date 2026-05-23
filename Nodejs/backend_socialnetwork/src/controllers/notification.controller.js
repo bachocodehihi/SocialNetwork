@@ -1,0 +1,74 @@
+const Notification = require('../models/notification.model');
+const Account = require('../models/account.model');
+
+const createNotification = async ({ recipient, sender, type, title, body, relatedId }) => {
+    try {
+        if (recipient.toString() === sender.toString()) return null; // Don't notify self
+
+        const newNotif = new Notification({
+            recipient,
+            sender,
+            type,
+            title,
+            body,
+            relatedId
+        });
+        await newNotif.save();
+
+        // Trigger real-time FCM Push Notification to recipient's phone (works even if app is killed!)
+        try {
+            const recipientUser = await Account.findById(recipient).lean();
+            if (recipientUser && recipientUser.fcmToken) {
+                const senderUser = await Account.findById(sender).lean();
+                const { sendPushNotification } = require('../services/fcm.service');
+                await sendPushNotification({
+                    fcmToken: recipientUser.fcmToken,
+                    title: title,
+                    body: body,
+                    type: type,
+                    relatedId: relatedId,
+                    senderName: senderUser ? senderUser.username : '',
+                    senderAvatar: senderUser ? senderUser.avatar : ''
+                });
+            }
+        } catch (fcmErr) {
+            console.error('Error triggering FCM Push Notification:', fcmErr);
+        }
+
+        return newNotif;
+    } catch (err) {
+        console.error('Error creating notification:', err);
+        return null;
+    }
+};
+
+const getNotifications = async (req, res) => {
+    try {
+        const notifications = await Notification.find({ recipient: req.userId })
+            .populate('sender', 'username avatar')
+            .sort({ createdAt: -1 })
+            .lean();
+
+        res.status(200).json(notifications);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+const markAllRead = async (req, res) => {
+    try {
+        await Notification.updateMany(
+            { recipient: req.userId, isRead: false },
+            { $set: { isRead: true } }
+        );
+        res.status(200).json({ message: "All notifications marked as read." });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+module.exports = {
+    createNotification,
+    getNotifications,
+    markAllRead
+};
