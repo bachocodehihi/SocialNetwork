@@ -1,21 +1,33 @@
 const admin = require('firebase-admin');
 const path = require('path');
+const fs = require('fs');
 
 if (!admin.apps.length) {
     let credential;
+    const firebaseEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
+    const localFilePath = path.join(__dirname, '../firebase-service-account.json');
 
-    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    console.log('🔍 FIREBASE_SERVICE_ACCOUNT env exists:', !!firebaseEnv);
+    console.log('🔍 Local file exists:', fs.existsSync(localFilePath));
+
+    if (firebaseEnv) {
         // Server: đọc từ biến môi trường
-        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        const serviceAccount = JSON.parse(firebaseEnv);
         credential = admin.credential.cert(serviceAccount);
-    } else {
+        console.log('✅ Firebase initialized from ENV');
+    } else if (fs.existsSync(localFilePath)) {
         // Local: đọc từ file JSON
-        credential = admin.credential.cert(
-            path.join(__dirname, '../firebase-service-account.json')
-        );
+        credential = admin.credential.cert(localFilePath);
+        console.log('✅ Firebase initialized from local file');
+    } else {
+        console.warn('⚠️ No Firebase credentials found! FCM will not work.');
+        // Khởi tạo không có credential để app không crash
+        admin.initializeApp();
     }
 
-    admin.initializeApp({ credential });
+    if (credential) {
+        admin.initializeApp({ credential });
+    }
 }
 
 const _removeInvalidToken = async (fcmToken) => {
