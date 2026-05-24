@@ -268,7 +268,8 @@ import 'package:socialnetwork/data/network/dio_client.dart';
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  await NotificationService.showNotificationFromMessage(message);
+  // Bỏ showNotificationFromMessage ở background/kill để tránh trùng lặp thông báo với HĐH
+  debugPrint('📬 Background message received in handler: ${message.messageId}');
 }
 
 class NotificationService {
