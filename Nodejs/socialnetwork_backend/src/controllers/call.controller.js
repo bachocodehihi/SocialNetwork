@@ -12,11 +12,15 @@ exports.getMissedCallCount = async (req, res) => {
             createdAt: since ? { $gt: since } : undefined
         });
         
-        res.json({ success: true, data: { missedCallCount: count } });
+        res.json({ 
+            success: true, 
+            code: 'GET_MISSED_CALL_COUNT_SUCCESS',
+            data: { missedCallCount: count } 
+        });
     } catch (err) { 
         res.status(500).json({ 
             success: false, 
-            message: 'Server error' 
+            code: 'SERVER_ERROR'
         }); 
     }
 };
@@ -24,8 +28,16 @@ exports.getMissedCallCount = async (req, res) => {
 exports.markMissedCallsRead = async (req, res) => {
     try {
         await Account.findByIdAndUpdate(req.user.id, { lastMissedCallCheck: new Date() });
-        res.json({ success: true, message: 'Marked as read' });
-    } catch (err) { res.status(500).json({ success: false, message: 'Server error' }); }
+        res.json({ 
+            success: true, 
+            code: 'MARK_MISSED_CALLS_READ_SUCCESS'
+        });
+    } catch (err) { 
+        res.status(500).json({ 
+            success: false, 
+            code: 'SERVER_ERROR'
+        }); 
+    }
 };
 
 exports.getCallHistory = async (req, res) => {
@@ -48,6 +60,16 @@ exports.getCallHistory = async (req, res) => {
             .skip((page - 1) * limit)
             .lean();
             
-        res.json({ success: true, data: calls, pagination: { page: Number(page), limit: Number(limit), total: await Call.countDocuments(query) } });
-    } catch (err) { res.status(500).json({ success: false, message: 'Server error' }); }
+        res.json({ 
+            success: true, 
+            code: 'GET_CALL_HISTORY_SUCCESS',
+            data: calls, 
+            pagination: { page: Number(page), limit: Number(limit), total: await Call.countDocuments(query) } 
+        });
+    } catch (err) { 
+        res.status(500).json({ 
+            success: false, 
+            code: 'SERVER_ERROR'
+        }); 
+    }
 };

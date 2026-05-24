@@ -47,7 +47,7 @@ const initSocket = (server) => {
                 const { receiverId, conversationId, callType, offer } = data;
 
                 if (activeCalls.has(userId)) {
-                    socket.emit('call_error', { message: 'Bạn đang trong cuộc gọi khác' });
+                    socket.emit('call_error', { success: false, code: 'IN_ANOTHER_CALL' });
                     return;
                 }
 
@@ -98,7 +98,7 @@ const initSocket = (server) => {
 
             } catch (err) {
                 console.error('Call initiate error:', err);
-                socket.emit('call_error', { message: 'Lỗi khởi tạo cuộc gọi' });
+                socket.emit('call_error', { success: false, code: 'CALL_INITIATE_FAILED' });
             }
         });
 

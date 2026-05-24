@@ -16,17 +16,18 @@ const createConversation = async (req, res) => {
                 }).populate('members', 'username avatar email');
                 
                 if (existingConv) {
-                    return res.status(200).json(existingConv);
+                    return res.status(200).json({ success: true, code: 'CONVERSATION_EXISTS', ...existingConv.toObject() });
                 }
 
                 const group = await Group.findById(groupId);
                 if (!group) {
-                    return res.status(404).json({ message: 'Group not found' });
+                    return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
                 }
 
                 if (!group.members.some(m => m.toString() === adminId)) {
                     return res.status(403).json({ 
-                        message: 'Bạn không phải thành viên nhóm này' 
+                        success: false, 
+                        code: 'NOT_GROUP_MEMBER'
                     });
                 }
 
@@ -43,7 +44,8 @@ const createConversation = async (req, res) => {
                 await newConv.populate('members', 'username avatar email');
                 
                 return res.status(201).json({
-                    message: 'Tạo cuộc trò chuyện thành công',
+                    success: true,
+                    code: 'CREATE_CONVERSATION_SUCCESS',
                     conversation: newConv
                 });
             }
@@ -54,7 +56,8 @@ const createConversation = async (req, res) => {
             
             if (groupMembers.length < 2) {
                 return res.status(400).json({ 
-                    message: 'Cuộc trò chuyện nhóm cần ít nhất 2 thành viên' 
+                    success: false,
+                    code: 'MIN_MEMBERS_REQUIRED'
                 });
             }
 
@@ -65,7 +68,7 @@ const createConversation = async (req, res) => {
             }).populate('members', 'username avatar email');
             
             if (existingConv) {
-                return res.status(200).json(existingConv);
+                return res.status(200).json({ success: true, code: 'CONVERSATION_EXISTS', ...existingConv.toObject() });
             }
 
             const newConv = new Conversation({
@@ -80,13 +83,14 @@ const createConversation = async (req, res) => {
             await newConv.populate('members', 'username avatar email');
             
             return res.status(201).json({
-                message: 'Tạo cuộc trò chuyện thành công',
+                success: true,
+                code: 'CREATE_CONVERSATION_SUCCESS',
                 conversation: newConv
             });
             
         } else {
             if (!receiverId) {
-                return res.status(400).json({ message: 'receiverId is required' });
+                return res.status(400).json({ success: false, code: 'RECEIVER_REQUIRED' });
             }
 
             const existingConv = await Conversation.findOne({
@@ -95,7 +99,7 @@ const createConversation = async (req, res) => {
             }).populate('members', 'username avatar email');
             
             if (existingConv) {
-                return res.status(200).json(existingConv);
+                return res.status(200).json({ success: true, code: 'CONVERSATION_EXISTS', ...existingConv.toObject() });
             }
 
             const newConv = new Conversation({ 
@@ -106,15 +110,16 @@ const createConversation = async (req, res) => {
             await newConv.populate('members', 'username avatar email');
             
             return res.status(201).json({
-                message: 'Tạo cuộc trò chuyện thành công',
+                success: true,
+                code: 'CREATE_CONVERSATION_SUCCESS',
                 conversation: newConv
             });
         }
     } catch (error) {
         console.error('Create conversation error:', error);
         res.status(500).json({ 
-            message: 'Lỗi server', 
-            error: error.message 
+            success: false, 
+            code: 'SERVER_ERROR'
         });
     }
 };
@@ -125,16 +130,16 @@ const sendMessage = async (req, res) => {
         const { content, type, attachments } = req.body;
         
         if (!content?.trim() && (!attachments || attachments.length === 0)) {
-            return res.status(400).json({ message: 'Content or attachments required' });
+            return res.status(400).json({ success: false, code: 'CONTENT_REQUIRED' });
         }
 
         const conv = await Conversation.findById(conversationId);
         if (!conv) {
-            return res.status(404).json({ message: 'Conversation not found' });
+            return res.status(404).json({ success: false, code: 'CONVERSATION_NOT_FOUND' });
         }
         
         if (!conv.members.some(m => m.toString() === req.userId)) {
-            return res.status(403).json({ message: 'Not authorized for this conversation' });
+            return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
         }
 
         const newMsg = new Message({ 
@@ -189,10 +194,10 @@ const sendMessage = async (req, res) => {
             console.error('FCM sendMessage API error:', fcmErr.message);
         }
         
-        res.status(201).json(messageData);
+        res.status(201).json({ success: true, code: 'SEND_MESSAGE_SUCCESS', ...messageData });
     } catch (error) {
         console.error('Send message error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -219,7 +224,7 @@ const getConversations = async (req, res) => {
         res.status(200).json(enriched);
     } catch (error) {
         console.error('Get conversations error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -230,11 +235,11 @@ const getMessages = async (req, res) => {
         
         const conv = await Conversation.findById(conversationId);
         if (!conv) {
-            return res.status(404).json({ message: 'Conversation not found' });
+            return res.status(404).json({ success: false, code: 'CONVERSATION_NOT_FOUND' });
         }
         
         if (!conv.members.some(m => m.toString() === req.userId)) {
-            return res.status(403).json({ message: 'Not authorized' });
+            return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
         }
 
         const query = { conversationId };
@@ -261,7 +266,7 @@ const getMessages = async (req, res) => {
         res.status(200).json(messages.reverse());
     } catch (error) {
         console.error('Get messages error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -272,7 +277,7 @@ const deleteMessage = async (req, res) => {
         
         const msg = await Message.findById(messageId);
         if (!msg) {
-            return res.status(404).json({ message: 'Message not found' });
+            return res.status(404).json({ success: false, code: 'MESSAGE_NOT_FOUND' });
         }
 
         const conv = await Conversation.findById(msg.conversationId);
@@ -280,7 +285,7 @@ const deleteMessage = async (req, res) => {
         const isAdmin = conv?.admin?.toString() === req.userId;
         
         if (!isSender && !isAdmin) {
-            return res.status(403).json({ message: 'Not authorized' });
+            return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
         }
 
         if (forEveryone && isAdmin) {
@@ -300,10 +305,10 @@ const deleteMessage = async (req, res) => {
             });
         }
         
-        res.status(200).json({ message: 'Deleted successfully' });
+        res.status(200).json({ success: true, code: 'DELETE_MESSAGE_SUCCESS' });
     } catch (error) {
         console.error('Delete message error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -313,7 +318,7 @@ const markAsRead = async (req, res) => {
         
         const conv = await Conversation.findById(conversationId);
         if (!conv || !conv.members.some(m => m.toString() === req.userId)) {
-            return res.status(403).json({ message: 'Not authorized' });
+            return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
         }
 
         await Message.updateMany(
@@ -334,10 +339,10 @@ const markAsRead = async (req, res) => {
             });
         } catch (e) { /* ignore */ }
         
-        res.status(200).json({ message: 'Marked as read' });
+        res.status(200).json({ success: true, code: 'MARK_AS_READ_SUCCESS' });
     } catch (error) {
         console.error('Mark as read error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 

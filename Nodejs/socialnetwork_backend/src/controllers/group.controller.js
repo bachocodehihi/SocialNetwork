@@ -15,11 +15,12 @@ const createGroup = async (req, res) => {
         const adminId = req.userId;
 
         if (!name?.trim()) {
-            return res.status(400).json({ message: 'Thiếu tên nhóm' });
+            return res.status(400).json({ success: false, code: 'NAME_REQUIRED' });
         }
         if (!members || !Array.isArray(members) || members.length < 2) {
             return res.status(400).json({ 
-                message: 'Nhóm cần ít nhất 3 người (bao gồm bạn)' 
+                success: false, 
+                code: 'MIN_MEMBERS_REQUIRED'
             });
         }
 
@@ -28,7 +29,8 @@ const createGroup = async (req, res) => {
             const isFriend = await checkFriendship(adminId, memberId);
             if (!isFriend) {
                 return res.status(403).json({ 
-                    message: 'Bạn chưa kết bạn với một số thành viên' 
+                    success: false, 
+                    code: 'NOT_FRIENDS_WITH_ALL'
                 });
             }
         }
@@ -78,7 +80,8 @@ const createGroup = async (req, res) => {
         await newConv.save();
 
         res.status(201).json({ 
-            message: 'Tạo nhóm thành công', 
+            success: true, 
+            code: 'CREATE_GROUP_SUCCESS',
             group: savedGroup,
             conversationId: newConv._id
         });
@@ -86,8 +89,8 @@ const createGroup = async (req, res) => {
     } catch (error) {
         console.error('Lỗi createGroup:', error);
         res.status(500).json({ 
-            message: 'Lỗi server', 
-            error: error.message 
+            success: false, 
+            code: 'SERVER_ERROR' 
         });
     }
 };
@@ -120,12 +123,13 @@ const getGroups = async (req, res) => {
             
         res.json({
             success: true,
+            code: 'GET_GROUPS_SUCCESS',
             data: enriched,
             total: await Group.countDocuments({ members: userId })
         });
     } catch (error) {
         console.error('Get groups error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -140,12 +144,12 @@ const getGroupById = async (req, res) => {
             .lean();
             
         if (!group) {
-            return res.status(404).json({ message: 'Group not found' });
+            return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
         }
         
         const validMembers = (group.members || []).filter(member => member != null);
         if (!validMembers.some(m => m._id?.toString() === userId)) {
-            return res.status(403).json({ message: 'Bạn không phải thành viên nhóm này' });
+            return res.status(403).json({ success: false, code: 'NOT_GROUP_MEMBER' });
         }
         
         const onlineUsers = require('../socket').getOnlineUsers();
@@ -159,10 +163,10 @@ const getGroupById = async (req, res) => {
         const postCount = await Post.countDocuments({ group: groupId, postType: 'group' });
         group.postCount = postCount;
         
-        res.json({ success: true, data: group });
+        res.json({ success: true, code: 'GET_GROUP_BY_ID_SUCCESS', data: group });
     } catch (error) {
         console.error('Get group error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -172,16 +176,16 @@ const joinByQR = async (req, res) => {
         const userId = req.userId;
 
         if (!inviteCode) {
-            return res.status(400).json({ message: 'Thiếu mã mời' });
+            return res.status(400).json({ success: false, code: 'INVITE_CODE_REQUIRED' });
         }
 
         const group = await Group.findOne({ inviteCode });
         if (!group) {
-            return res.status(404).json({ message: 'Mã QR không hợp lệ' });
+            return res.status(404).json({ success: false, code: 'INVALID_QR_CODE' });
         }
 
         if (group.members.some(m => m.toString() === userId)) {
-            return res.status(400).json({ message: 'Bạn đã ở trong nhóm này' });
+            return res.status(400).json({ success: false, code: 'ALREADY_IN_GROUP' });
         }
 
         group.members.push(userId);
@@ -221,13 +225,14 @@ const joinByQR = async (req, res) => {
         } catch (e) { /* ignore socket errors */ }
 
         res.json({ 
-            message: 'Tham gia thành công', 
+            success: true,
+            code: 'JOIN_GROUP_SUCCESS',
             group,
             conversationId: conv._id
         });
     } catch (error) {
         console.error('Join by QR error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -238,16 +243,16 @@ const addMember = async (req, res) => {
         const adminId = req.userId;
 
         if (!members || !Array.isArray(members) || members.length === 0) {
-            return res.status(400).json({ message: 'Thiếu danh sách thành viên' });
+            return res.status(400).json({ success: false, code: 'MEMBERS_REQUIRED' });
         }
 
         const group = await Group.findById(groupId);
         if (!group) {
-            return res.status(404).json({ message: 'Nhóm không tồn tại' });
+            return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
         }
         
         if (group.admin.toString() !== adminId) {
-            return res.status(403).json({ message: 'Chỉ admin mới được thêm người' });
+            return res.status(403).json({ success: false, code: 'NOT_ADMIN' });
         }
 
         const existingIds = group.members.map(m => m.toString());
@@ -256,7 +261,7 @@ const addMember = async (req, res) => {
             .map(id => new mongoose.Types.ObjectId(id));
 
         if (toAdd.length === 0) {
-            return res.status(400).json({ message: 'Tất cả thành viên đã có trong nhóm' });
+            return res.status(400).json({ success: false, code: 'ALL_ALREADY_IN_GROUP' });
         }
 
         group.members.push(...toAdd);
@@ -290,12 +295,13 @@ const addMember = async (req, res) => {
         } catch (e) { /* ignore */ }
 
         res.json({ 
-            message: `Đã thêm ${toAdd.length} thành viên`, 
+            success: true,
+            code: 'ADD_MEMBERS_SUCCESS',
             group 
         });
     } catch (error) {
         console.error('Add member error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -306,18 +312,18 @@ const removeMember = async (req, res) => {
 
         const group = await Group.findById(groupId);
         if (!group) {
-            return res.status(404).json({ message: 'Nhóm không tồn tại' });
+            return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
         }
         
         const isSelf = memberId === adminId;
         const isAdmin = group.admin.toString() === adminId;
         
         if (!isAdmin && !isSelf) {
-            return res.status(403).json({ message: 'Không có quyền xóa thành viên' });
+            return res.status(403).json({ success: false, code: 'FORBIDDEN' });
         }
 
         if (group.admin.toString() === memberId && !isSelf) {
-            return res.status(400).json({ message: 'Không thể xóa admin khỏi nhóm' });
+            return res.status(400).json({ success: false, code: 'CANNOT_REMOVE_ADMIN' });
         }
 
         group.members = group.members.filter(
@@ -346,10 +352,10 @@ const removeMember = async (req, res) => {
             });
         } catch (e) { /* ignore */ }
 
-        res.json({ message: 'Đã xóa thành viên khỏi nhóm', group });
+        res.json({ success: true, code: 'REMOVE_MEMBER_SUCCESS', group });
     } catch (error) {
         console.error('Remove member error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -361,11 +367,11 @@ const updateGroup = async (req, res) => {
 
         const group = await Group.findById(groupId);
         if (!group) {
-            return res.status(404).json({ message: 'Nhóm không tồn tại' });
+            return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
         }
         
         if (group.admin.toString() !== adminId) {
-            return res.status(403).json({ message: 'Chỉ admin mới được cập nhật nhóm' });
+            return res.status(403).json({ success: false, code: 'NOT_ADMIN' });
         }
 
         if (name) group.name = name.trim();
@@ -387,10 +393,10 @@ const updateGroup = async (req, res) => {
             );
         }
 
-        res.json({ message: 'Cập nhật thành công', group });
+        res.json({ success: true, code: 'UPDATE_GROUP_SUCCESS', group });
     } catch (error) {
         console.error('Update group error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -401,11 +407,11 @@ const deleteGroup = async (req, res) => {
 
         const group = await Group.findById(groupId);
         if (!group) {
-            return res.status(404).json({ message: 'Nhóm không tồn tại' });
+            return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
         }
         
         if (group.admin.toString() !== adminId) {
-            return res.status(403).json({ message: 'Chỉ admin mới được xóa nhóm' });
+            return res.status(403).json({ success: false, code: 'NOT_ADMIN' });
         }
 
         const conv = await Conversation.findOne({ 
@@ -426,10 +432,10 @@ const deleteGroup = async (req, res) => {
             io.to(groupId).emit('group_deleted', { groupId });
         } catch (e) { /* ignore */ }
 
-        res.json({ message: 'Đã xóa nhóm thành công' });
+        res.json({ success: true, code: 'DELETE_GROUP_SUCCESS' });
     } catch (error) {
         console.error('Delete group error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -440,20 +446,20 @@ const inviteToGroup = async (req, res) => {
         const inviterId = req.userId;
 
         if (!inviteeId) {
-            return res.status(400).json({ message: 'Thiếu thông tin người được mời' });
+            return res.status(400).json({ success: false, code: 'INVITEE_REQUIRED' });
         }
 
         const group = await Group.findById(groupId);
         if (!group) {
-            return res.status(404).json({ message: 'Nhóm không tồn tại' });
+            return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
         }
 
         if (!group.members.some(m => m.toString() === inviterId)) {
-            return res.status(403).json({ message: 'Bạn không ở trong nhóm này' });
+            return res.status(403).json({ success: false, code: 'NOT_GROUP_MEMBER' });
         }
 
         if (group.members.some(m => m.toString() === inviteeId)) {
-            return res.status(400).json({ message: 'Người này đã ở trong nhóm' });
+            return res.status(400).json({ success: false, code: 'ALREADY_IN_GROUP' });
         }
 
         const Account = require('../models/account.model');
@@ -469,10 +475,10 @@ const inviteToGroup = async (req, res) => {
             relatedId: group._id
         });
 
-        res.status(200).json({ success: true, message: 'Đã gửi lời mời tham gia nhóm!' });
+        res.status(200).json({ success: true, code: 'INVITE_SENT_SUCCESS' });
     } catch (error) {
         console.error('Invite to group error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 

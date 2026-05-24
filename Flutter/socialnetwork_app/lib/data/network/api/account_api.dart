@@ -57,7 +57,7 @@ class AccountApi {
         return [];
       } else {
         final message = response.data is Map 
-            ? (response.data['message'] ?? 'Search failed') 
+            ? (response.data['code'] ?? 'Search failed') 
             : 'Search failed';
         throw Exception(message);
       }

@@ -101,10 +101,10 @@ function registerTictactoeEvents(io, socket, onlineUsers) {
 
   socket.on('ttt_join_room', ({ roomId }) => {
     const room = tictactoeRooms.get(roomId);
-    if (!room) return socket.emit('ttt_error', { message: 'Phòng không tồn tại' });
-    if (room.status !== 'waiting') return socket.emit('ttt_error', { message: 'Phòng đã bắt đầu' });
-    if (room.guestId) return socket.emit('ttt_error', { message: 'Phòng đã đủ người' });
-    if (room.hostId === userId) return socket.emit('ttt_error', { message: 'Bạn đã ở trong phòng này' });
+    if (!room) return socket.emit('ttt_error', { success: false, code: 'ROOM_NOT_FOUND' });
+    if (room.status !== 'waiting') return socket.emit('ttt_error', { success: false, code: 'ROOM_ALREADY_STARTED' });
+    if (room.guestId) return socket.emit('ttt_error', { success: false, code: 'ROOM_FULL' });
+    if (room.hostId === userId) return socket.emit('ttt_error', { success: false, code: 'ALREADY_IN_ROOM' });
 
     _leave(io, socket, onlineUsers);
     room.guestId = userId; room.oPlayer = userId;
@@ -116,9 +116,9 @@ function registerTictactoeEvents(io, socket, onlineUsers) {
 
   socket.on('ttt_move', ({ roomId, index }) => {
     const room = tictactoeRooms.get(roomId);
-    if (!room || room.status !== 'playing') return socket.emit('ttt_error', { message: 'Game chưa bắt đầu' });
-    if (room.currentTurn !== userId) return socket.emit('ttt_error', { message: 'Chưa đến lượt bạn' });
-    if (index < 0 || index > 8 || room.board[index] !== '') return socket.emit('ttt_error', { message: 'Nước đi không hợp lệ' });
+    if (!room || room.status !== 'playing') return socket.emit('ttt_error', { success: false, code: 'GAME_NOT_STARTED' });
+    if (room.currentTurn !== userId) return socket.emit('ttt_error', { success: false, code: 'NOT_YOUR_TURN' });
+    if (index < 0 || index > 8 || room.board[index] !== '') return socket.emit('ttt_error', { success: false, code: 'INVALID_MOVE' });
 
     const symbol = room.xPlayer === userId ? 'X' : 'O';
     room.board[index] = symbol;

@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const getProfile = async (req, res) => {
     try {
         const user = await Account.findById(req.userId).select('-password').lean();
-        if (!user) return res.status(404).json({ message: "User not found!" });
+        if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
 
         const postCount = await Post.countDocuments({ author: req.userId });
 
@@ -17,9 +17,9 @@ const getProfile = async (req, res) => {
             postCount: postCount
         };
 
-        res.status(200).json(user);
+        res.status(200).json({ success: true, code: 'GET_PROFILE_SUCCESS', ...user });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -55,10 +55,9 @@ const updateProfile = async (req, res) => {
             postCount: postCount
         };
 
-        res.status(200).json({ message: "Update successful!", user: updatedUser });
+        res.status(200).json({ success: true, code: 'UPDATE_PROFILE_SUCCESS', user: updatedUser });
     } catch (error) {
         res.status(500).json({ 
-            error: error.message,
             success: false, 
             code: 'SERVER_ERROR'
         });
@@ -69,7 +68,7 @@ const searchUsers = async (req, res) => {
     try {
         const { q } = req.query;
         if (!q) {
-            return res.status(400).json({ message: "Search query 'q' is required!" });
+            return res.status(400).json({ success: false, code: 'QUERY_REQUIRED' });
         }
 
         const users = await Account.find({
@@ -90,9 +89,9 @@ const searchUsers = async (req, res) => {
             return { ...user, stats };
         });
 
-        res.status(200).json(usersWithStats);
+        res.status(200).json({ success: true, code: 'SEARCH_USERS_SUCCESS', data: usersWithStats });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -100,11 +99,13 @@ const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
         const user = await Account.findById(id).select('-password').lean();
-        if (!user) return res.status(404).json({ message: "User not found!" });
+        if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
 
         const postCount = await Post.countDocuments({ author: id });
 
         return res.status(200).json({
+            success: true,
+            code: 'GET_USER_BY_ID_SUCCESS',
             ...user,
             friendsCount: user.friends?.length ?? 0,
             followersCount: user.followers?.length ?? 0,
@@ -113,7 +114,6 @@ const getUserById = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ 
-            error: error.message,
             success: false, 
             code: 'SERVER_ERROR'
         });
@@ -124,24 +124,24 @@ const saveFcmToken = async (req, res) => {
     try {
         const { fcmToken } = req.body;
         if (!fcmToken) {
-            return res.status(400).json({ success: false, message: 'fcmToken is required' });
+            return res.status(400).json({ success: false, code: 'TOKEN_REQUIRED' });
         }
         
         await Account.updateMany({ fcmToken }, { fcmToken: null });
         
         await Account.findByIdAndUpdate(req.userId, { fcmToken });
-        res.json({ success: true, message: 'FCM token saved' });
+        res.json({ success: true, code: 'SAVE_FCM_TOKEN_SUCCESS' });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
 const removeFcmToken = async (req, res) => {
     try {
         await Account.findByIdAndUpdate(req.userId, { fcmToken: null });
-        res.json({ success: true, message: 'FCM token removed' });
+        res.json({ success: true, code: 'REMOVE_FCM_TOKEN_SUCCESS' });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -257,12 +257,12 @@ const getActivity = async (req, res) => {
             };
         });
 
-        res.json({ success: true, data: result });
+        res.json({ success: true, code: 'GET_ACTIVITY_SUCCESS', data: result });
     } catch (error) {
         console.error('Error in getActivity:', error);
         res.status(500).json({ 
             success: false, 
-            error: error.message 
+            code: 'SERVER_ERROR'
         });
     }
 };

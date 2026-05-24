@@ -15,16 +15,16 @@ const createPost = async (req, res) => {
 
         if (postType === 'group') {
             if (!group) {
-                return res.status(400).json({ message: "Group ID is required for group post!" });
+                return res.status(400).json({ success: false, code: 'GROUP_ID_REQUIRED' });
             }
             const Group = require('../models/group.model');
             const targetGroup = await Group.findById(group);
             if (!targetGroup) {
-                return res.status(404).json({ message: "Group not found!" });
+                return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
             }
             const isMember = targetGroup.members.includes(req.userId) || targetGroup.admin.toString() === req.userId;
             if (!isMember) {
-                return res.status(403).json({ message: "You are not a member of this group!" });
+                return res.status(403).json({ success: false, code: 'NOT_GROUP_MEMBER' });
             }
         }
 
@@ -62,9 +62,9 @@ const createPost = async (req, res) => {
             console.error('Failed to send new post notifications:', notifErr);
         }
 
-        res.status(201).json({ message: "Post created successfully!", post: populatedPost });
+        res.status(201).json({ success: true, code: 'POST_CREATED_SUCCESS', post: populatedPost });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -75,7 +75,7 @@ const getFeed = async (req, res) => {
 
         const currentUser = await Account.findById(req.userId);
         if (!currentUser) {
-            return res.status(404).json({ message: "User not found!" });
+            return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
         }
 
         const friendIds = currentUser.friends || [];
@@ -142,14 +142,14 @@ const getFeed = async (req, res) => {
 
         res.status(200).json(posts);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
 const likePost = async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json({ message: "Post not found!" });
+        if (!post) return res.status(404).json({ success: false, code: 'POST_NOT_FOUND' });
 
         if (post.likes.includes(req.userId)) {
             post.likes.pull(req.userId);
@@ -191,9 +191,9 @@ const likePost = async (req, res) => {
             })
             .populate('group', 'name avatar');
 
-        return res.status(200).json({ message: "Post liked/unliked successfully!", post: updatedPost });
+        return res.status(200).json({ success: true, code: 'POST_LIKE_SUCCESS', post: updatedPost });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -203,7 +203,7 @@ const commentPost = async (req, res) => {
         const postId = req.params.id;
 
         const post = await Post.findById(postId);
-        if (!post) return res.status(404).json({ message: "Post not found!" });
+        if (!post) return res.status(404).json({ success: false, code: 'POST_NOT_FOUND' });
 
         const newComment = new Comment({
             author: req.userId,
@@ -249,9 +249,9 @@ const commentPost = async (req, res) => {
             })
             .populate('group', 'name avatar');
 
-        res.status(201).json({ message: "Comment added successfully!", post: updatedPost });
+        res.status(201).json({ success: true, code: 'COMMENT_ADDED_SUCCESS', post: updatedPost });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -283,7 +283,7 @@ const getUserPosts = async (req, res) => {
 
         res.status(200).json(posts);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -315,7 +315,7 @@ const getGroupPosts = async (req, res) => {
 
         res.status(200).json(posts);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -323,7 +323,7 @@ const likeComment = async (req, res) => {
     try {
         const commentId = req.params.commentId;
         const comment = await Comment.findById(commentId);
-        if (!comment) return res.status(404).json({ message: "Comment not found!" });
+        if (!comment) return res.status(404).json({ success: false, code: 'COMMENT_NOT_FOUND' });
 
         if (comment.likes.includes(req.userId)) {
             comment.likes.pull(req.userId);
@@ -349,9 +349,9 @@ const likeComment = async (req, res) => {
             })
             .populate('group', 'name avatar');
 
-        return res.status(200).json({ message: "Comment liked/unliked successfully!", post: updatedPost });
+        return res.status(200).json({ success: true, code: 'COMMENT_LIKE_SUCCESS', post: updatedPost });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -359,10 +359,10 @@ const likeReply = async (req, res) => {
     try {
         const { commentId, replyId } = req.params;
         const comment = await Comment.findById(commentId);
-        if (!comment) return res.status(404).json({ message: "Comment not found!" });
+        if (!comment) return res.status(404).json({ success: false, code: 'COMMENT_NOT_FOUND' });
 
         const reply = comment.replies.id(replyId);
-        if (!reply) return res.status(404).json({ message: "Reply not found!" });
+        if (!reply) return res.status(404).json({ success: false, code: 'REPLY_NOT_FOUND' });
 
         if (reply.likes.includes(req.userId)) {
             reply.likes.pull(req.userId);
@@ -388,9 +388,9 @@ const likeReply = async (req, res) => {
             })
             .populate('group', 'name avatar');
 
-        return res.status(200).json({ message: "Reply liked/unliked successfully!", post: updatedPost });
+        return res.status(200).json({ success: true, code: 'REPLY_LIKE_SUCCESS', post: updatedPost });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -400,7 +400,7 @@ const replyComment = async (req, res) => {
         const { id: postId, commentId } = req.params;
 
         const comment = await Comment.findById(commentId);
-        if (!comment) return res.status(404).json({ message: "Comment not found!" });
+        if (!comment) return res.status(404).json({ success: false, code: 'COMMENT_NOT_FOUND' });
 
         comment.replies.push({
             author: req.userId,
@@ -425,9 +425,9 @@ const replyComment = async (req, res) => {
             })
             .populate('group', 'name avatar');
 
-        res.status(201).json({ message: "Reply added successfully!", post: updatedPost });
+        res.status(201).json({ success: true, code: 'REPLY_ADDED_SUCCESS', post: updatedPost });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 

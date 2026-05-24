@@ -51,7 +51,7 @@ const getNotifications = async (req, res) => {
 
         res.status(200).json(notifications);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
@@ -61,9 +61,9 @@ const markAllRead = async (req, res) => {
             { recipient: req.userId, isRead: false },
             { $set: { isRead: true } }
         );
-        res.status(200).json({ message: "All notifications marked as read." });
+        res.status(200).json({ success: true, code: 'MARK_ALL_READ_SUCCESS' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
 
