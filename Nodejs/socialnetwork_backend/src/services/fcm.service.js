@@ -2,11 +2,20 @@ const admin = require('firebase-admin');
 const path = require('path');
 
 if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(
+    let credential;
+
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        // Server: đọc từ biến môi trường
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        credential = admin.credential.cert(serviceAccount);
+    } else {
+        // Local: đọc từ file JSON
+        credential = admin.credential.cert(
             path.join(__dirname, '../firebase-service-account.json')
-        ),
-    });
+        );
+    }
+
+    admin.initializeApp({ credential });
 }
 
 const _removeInvalidToken = async (fcmToken) => {

@@ -8,7 +8,7 @@ Dự án được xây dựng với cấu trúc monorepo bao gồm **Mobile App 
 
 ## Tính Năng Nổi Bật
 
-### 💬 Nhắn Tin & Giao Tiếp Thời Gian Thực (Socket.io)
+### Nhắn Tin & Giao Tiếp Thời Gian Thực (Socket.io)
 *   **Chat cá nhân & Chat nhóm:** Nhắn tin tức thời, gửi kèm hình ảnh, tệp tin và emoji.
 *   **Trạng thái tin nhắn:** Hiển thị trạng thái đang soạn tin (*typing...*), đã gửi, và đã đọc.
 *   **Âm thanh thông báo:** Phát âm thanh trực quan khi nhận được tin nhắn mới.
@@ -17,7 +17,7 @@ Dự án được xây dựng với cấu trúc monorepo bao gồm **Mobile App 
 *   **Kết nối Peer-to-Peer:** Gọi video và thoại trực tiếp giữa Web và Di động với độ trễ cực thấp bằng công nghệ **WebRTC**.
 *   **Màn hình cuộc gọi thông minh:** Hiển thị giao diện cuộc gọi đến (Incoming), cuộc gọi đi (Outgoing) và trong cuộc gọi (In-call) với chất lượng HD.
 
-### 🎮 Trò Chơi Tương Tác Trực Tiếp
+### Trò Chơi Tương Tác Trực Tiếp
 *   **Tic-Tac-Toe (Cờ Caro):** Chơi game trực tuyến thời gian thực ngay trong khung chat giữa hai người dùng để tăng tính tương tác.
 
 ### Thông Báo Đẩy Thông Minh (FCM & Local Notifications)
@@ -41,11 +41,11 @@ Hệ sinh thái dự án được phân chia thành 3 phần rõ rệt:
 
 ```
 SocialNetwork/
-├── Flutter/                  # 📱 Ứng dụng di động (Android / iOS)
+├── Flutter/                   # Ứng dụng di động (Android / iOS)
 │   └── socialnetwork_app/     # Dự án Flutter (State Management: Provider)
-├── Nextjs/                   # 💻 Ứng dụng web (Responsive & Premium UI)
+├── Nextjs/                    # Ứng dụng web (Responsive & Premium UI)
 │   └── socialnetwork_web/     # Dự án Next.js (Tailwind v4, Framer Motion)
-└── Nodejs/                   # ⚙️ Hệ thống Backend Server
+└── Nodejs/                    # Hệ thống Backend Server
     └── backend_socialnetwork/ # RESTful API, Socket.io Server & Firebase Admin SDK
 ```
 
