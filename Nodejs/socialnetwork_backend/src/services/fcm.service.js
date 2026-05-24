@@ -7,21 +7,21 @@ if (!admin.apps.length) {
     const firebaseEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
     const localFilePath = path.join(__dirname, '../firebase-service-account.json');
 
-    console.log('🔍 FIREBASE_SERVICE_ACCOUNT env exists:', !!firebaseEnv);
-    console.log('🔍 Local file exists:', fs.existsSync(localFilePath));
-
     if (firebaseEnv) {
-        // Server: đọc từ biến môi trường
-        const serviceAccount = JSON.parse(firebaseEnv);
-        credential = admin.credential.cert(serviceAccount);
-        console.log('✅ Firebase initialized from ENV');
+        // Server: đọc từ biến môi trường Railway
+        try {
+            const serviceAccount = JSON.parse(firebaseEnv);
+            credential = admin.credential.cert(serviceAccount);
+            console.log('✅ Firebase initialized from ENV');
+        } catch (e) {
+            console.error('❌ Failed to parse FIREBASE_SERVICE_ACCOUNT JSON:', e.message);
+        }
     } else if (fs.existsSync(localFilePath)) {
         // Local: đọc từ file JSON
         credential = admin.credential.cert(localFilePath);
         console.log('✅ Firebase initialized from local file');
     } else {
         console.warn('⚠️ No Firebase credentials found! FCM will not work.');
-        // Khởi tạo không có credential để app không crash
         admin.initializeApp();
     }
 
@@ -44,8 +44,8 @@ const sendMessageNotification = async ({ fcmToken, senderName, senderAvatar, mes
     if (!fcmToken) return;
     try {
         const title = groupName ? groupName : senderName;
-        const body = groupName 
-            ? `${senderName}: ${message}` 
+        const body = groupName
+            ? `${senderName}: ${message}`
             : (message.length > 100 ? message.substring(0, 100) + '...' : message);
 
         await admin.messaging().send({
@@ -227,9 +227,9 @@ const sendPushNotification = async ({ fcmToken, title, body, type, relatedId, se
     }
 };
 
-module.exports = { 
-    sendMessageNotification, 
-    sendCallNotification, 
+module.exports = {
+    sendMessageNotification,
+    sendCallNotification,
     sendFriendRequestNotification,
     sendPushNotification
 };
