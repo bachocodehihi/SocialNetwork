@@ -41,7 +41,7 @@ class SocketService {
 
     try {
       _socket = IO.io(
-        'http://${IpConfig.currentIp}:${PortConfig.currentPort}',
+        IpConfig.baseUrl,
         IO.OptionBuilder()
             .setTransports(['websocket'])
             .setQuery({'token': token})

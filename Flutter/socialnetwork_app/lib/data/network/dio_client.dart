@@ -3,7 +3,7 @@ import 'package:socialnetwork/data/ip/ip.dart';
 import 'package:socialnetwork/data/port/port.dart'; 
 class DioClient {
   static Dio createDio() {
-    final baseUrl = 'http://${IpConfig.currentIp}:${PortConfig.currentPort}';
+    final baseUrl = IpConfig.baseUrl;
     final dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
