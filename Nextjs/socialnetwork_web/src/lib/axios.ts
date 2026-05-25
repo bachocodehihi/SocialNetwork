@@ -20,6 +20,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
+      if (typeof window !== 'undefined') {
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      }
       window.location.href = '/signin';
     }
     return Promise.reject(error);

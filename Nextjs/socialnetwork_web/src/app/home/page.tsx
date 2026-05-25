@@ -39,6 +39,7 @@ export default function HomePage() {
       } catch (err) {
         console.error('Lỗi lấy thông tin cá nhân:', err);
         localStorage.removeItem('token');
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         router.replace('/signin');
       }
     };
@@ -137,6 +138,7 @@ export default function HomePage() {
 
   const handleLogOut = () => {
     localStorage.removeItem('token');
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     setIsDropdownOpen(false);
     showSuccess('Đăng xuất thành công!');
     router.replace('/signin');

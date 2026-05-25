@@ -44,6 +44,7 @@ export default function SignIn() {
         
         if (res.status === 'confirmed') {
           localStorage.setItem('token', res.token);
+          document.cookie = `token=${res.token}; path=/; max-age=604800; SameSite=Lax`;
           showSuccess('Đăng nhập thành công!');
           router.replace('/home');
         }
@@ -100,6 +101,7 @@ export default function SignIn() {
       const loginRes = await authService.login({ email: trimmedEmail, password });
       if (loginRes.success || loginRes.token) {
         localStorage.setItem('token', loginRes.token);
+        document.cookie = `token=${loginRes.token}; path=/; max-age=604800; SameSite=Lax`;
         showSuccess('Đăng nhập thành công!');
         router.replace('/home');
       } else {
