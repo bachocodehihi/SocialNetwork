@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { currentIp } from './ip/ip';
-import { currentPort } from './port/port';
+import { NETWORK } from '../config/network';
 
 const api = axios.create({
-  baseURL: `http://${currentIp}:${currentPort}/api`,
+  baseURL: NETWORK.apiUrl,
   headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
 });
