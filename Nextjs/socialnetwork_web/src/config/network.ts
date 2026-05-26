@@ -1,9 +1,7 @@
 import { currentIp } from '../lib/ip/ip';
 import { currentPort } from '../lib/port/port';
 
-const isProduction = typeof window !== 'undefined' 
-  ? (window.location.hostname !== 'localhost' && !window.location.hostname.includes('192.168.') && !window.location.hostname.includes('10.'))
-  : true;
+const isProduction = process.env.NODE_ENV === 'production';
 
 const productionUrl = 'https://socialnetwork-rkjz.onrender.com';
 
