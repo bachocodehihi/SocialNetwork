@@ -2,20 +2,20 @@
 
 @theme {
     --color-blue: rgb(33, 150, 243);
-    --color-blue-hover: rgb(66, 165, 245);
+    --color-blue-hover: rgb(29, 132, 214);
 
     --color-red: rgb(244, 67, 54);
-    --color-red-hover: rgb(239, 83, 80);
+    --color-red-hover: rgb(214, 59, 47);
 
     --color-yellow: rgb(255, 235, 59);
-    --color-yellow-hover: rgb(255, 238, 88);
+    --color-yellow-hover: rgb(224, 206, 52);
 
     --color-green: rgb(76, 175, 80);
-    --color-green-hover: rgb(102, 187, 106);
+    --color-green-hover: rgb(67, 154, 70);
 
     --color-grey: rgb(158, 158, 158);
-    --color-grey-hover: rgb(189, 189, 189);
+    --color-grey-hover: rgb(139, 139, 139);
 
     --color-pink: rgb(233, 30, 99);
-    --color-pink-hover: rgb(240, 98, 146);
+    --color-pink-hover: rgb(205, 26, 87);
 }
