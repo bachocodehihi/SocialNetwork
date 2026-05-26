@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:socialnetwork/app/app.dart';
 import 'package:socialnetwork/app/pages/signup/state/signup.dart';
-import 'package:socialnetwork/data/service/notification.dart';
+//import 'package:socialnetwork/data/service/notification.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  // Bỏ showNotificationFromMessage ở background/kill để tránh trùng lặp thông báo với HĐH
   debugPrint('📬 Background message received: ${message.messageId}');
 }
 
