@@ -17,6 +17,12 @@ node src/server.js
 42:BB:5B:70:6D:3F:F7:41:2C:93:59:0B:C3:44:4B:EF:73:79:DD:36
 
 - Git:
+git status
+git add .
+git commit -m ""
+git push origin repair-backend
+
+
 git push origin main
 git add
 git clone
