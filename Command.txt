@@ -4,10 +4,12 @@ cd socialnetwork_app
 flutter run --profile
 flutter run --release
 flutter run
+
 - Next.js:
 cd Nextjs
 cd socialnetwork_web
 npm run dev
+
 - Node.js:
 cd Nodejs
 cd socialnetwork_backend

@@ -43,7 +43,6 @@ export default function SignUp() {
     setIsLoading(true);
 
     try {
-      // 1. Check if email exists
       const checkRes = await authService.checkEmail(trimmedEmail);
       if (checkRes.exists) {
         setFormError('Email đã tồn tại!');
@@ -51,7 +50,6 @@ export default function SignUp() {
         return;
       }
 
-      // 2. Email is new, send OTP
       const otpRes = await authService.sendOtp(trimmedEmail);
       if (otpRes.success) {
         showSuccess('Mã OTP đã được gửi đến email của bạn.');
@@ -84,7 +82,7 @@ export default function SignUp() {
           <div className='bg-blue w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4'>
             <UserPlus className='w-8 h-8 text-blue' />
           </div>
-          <h2 className='text-3xl font-extrabold text-gray-900 tracking-tight'>
+          <h2 className='text-xl font-extrabold text-gray-900 tracking-tight'>
             Create Account
           </h2>
           <p className='text-gray-500 mt-2'>Join our community today</p>

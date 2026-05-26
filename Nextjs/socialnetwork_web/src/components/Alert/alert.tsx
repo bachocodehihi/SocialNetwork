@@ -9,7 +9,7 @@ interface AlertProps {
   type?: "error" | "success" | "info" | "warning";
   onClose?: () => void;
   duration?: number;
-  isInline?: boolean; // Thêm prop để hiển thị tại chỗ thay vì ở trên cùng
+  isInline?: boolean;
 }
 
 export default function Alert({ 
