@@ -59,47 +59,56 @@ class SwitchAccountBottomSheet extends StatelessWidget {
             ],
           ),
           Divider(color: cs.onSurface.withValues(alpha: 0.1)),
-          ...accounts.map((account) {
-            final email = account['email'] as String;
-            final username = account['username'] as String? ?? email.split('@')[0];
-            final avatar = account['avatar'] as String?;
-            final isActive = email == currentEmail;
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...accounts.map((account) {
+                    final email = account['email'] as String;
+                    final username = account['username'] as String? ?? email.split('@')[0];
+                    final avatar = account['avatar'] as String?;
+                    final isActive = email == currentEmail;
 
-            return _AccountTile(
-              email: email,
-              username: username,
-              avatar: avatar,
-              isActive: isActive,
-              onTap: isActive
-                  ? null
-                  : () {
+                    return _AccountTile(
+                      email: email,
+                      username: username,
+                      avatar: avatar,
+                      isActive: isActive,
+                      onTap: isActive
+                          ? null
+                          : () {
+                              Navigator.pop(context);
+                              onSelectEmail(email);
+                            },
+                    );
+                  }),
+                  ListTile(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 4.w),
+                    leading: CircleAvatar(
+                      radius: 22.r,
+                      backgroundColor: cs.surfaceContainerHighest,
+                      child: Icon(
+                        Icons.add_outlined, 
+                        color: cs.onSurface,
+                        size: 20.sp
+                      ),
+                    ),
+                    title: Text(
+                      'Add account',
+                      style: TextStyle(
+                        fontSize: 15.sp, 
+                        color: cs.onSurface
+                      ),
+                    ),
+                    onTap: () {
                       Navigator.pop(context);
-                      onSelectEmail(email);
+                      onAddAccount();
                     },
-            );
-          }),
-          ListTile(
-            contentPadding: EdgeInsets.symmetric(horizontal: 4.w),
-            leading: CircleAvatar(
-              radius: 22.r,
-              backgroundColor: cs.surfaceContainerHighest,
-              child: Icon(
-                Icons.add_outlined, 
-                color: cs.onSurface,
-                size: 20.sp
+                  ),
+                ],
               ),
             ),
-            title: Text(
-              'Add account',
-              style: TextStyle(
-                fontSize: 15.sp, 
-                color: cs.onSurface
-              ),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              onAddAccount();
-            },
           ),
           SizedBox(height: 8.h),
         ],

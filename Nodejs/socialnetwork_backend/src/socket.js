@@ -421,8 +421,14 @@ const isUserOnline = (userId) => onlineUsers.has(userId);
 const getOnlineUsers = () => onlineUsers;
 const getSessionStarts = () => sessionStarts;
 const getIO = () => {
-    if (!io) throw new Error("Socket.io not initialized!");
+    if (!io) throw new Error('Socket.io not initialized!');
     return io;
 };
 
-module.exports = { initSocket, getIO, isUserOnline, getOnlineUsers, getSessionStarts };
+module.exports = { 
+    initSocket, 
+    getIO, 
+    isUserOnline, 
+    getOnlineUsers, 
+    getSessionStarts 
+};

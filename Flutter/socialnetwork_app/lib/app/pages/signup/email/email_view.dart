@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socialnetwork/app/pages/signup/email/email_controller.dart';
 import 'package:socialnetwork/domain/usecases/auth_usecase.dart';
 import 'package:socialnetwork/data/repositories/auth_repository_imp.dart';
