@@ -286,7 +286,7 @@ function SignUpInformationContent() {
             <button
               type='submit'
               disabled={isLoading}
-              className='flex-1 bg-blue hover:bg-blue active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2'
+              className='flex-1 bg-blue hover:bg-blue-hover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2'
             >
               {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
               <span>Continue</span>

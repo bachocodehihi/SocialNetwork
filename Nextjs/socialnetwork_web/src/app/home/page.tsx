@@ -205,7 +205,7 @@ export default function HomePage() {
                           {searchHistory.length > 0 && (
                             <button 
                               onClick={clearHistory}
-                              className='text-blue hover:text-blue text-xs sm:text-sm font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer'
+                              className='text-blue hover:text-blue-hover text-xs sm:text-sm font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer'
                             >
                               Clear all
                             </button>
@@ -459,7 +459,7 @@ export default function HomePage() {
                         className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 active:scale-[0.98] transition group'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue group-hover:text-blue transition duration-200'>
+                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue-hover group-hover:text-blue-hover transition duration-200'>
                             <Settings className='w-5 h-5' />
                           </div>
                           <span className='text-sm font-semibold text-gray-500 group-hover:text-gray-700 transition-colors'>
@@ -478,7 +478,7 @@ export default function HomePage() {
                         className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 active:scale-[0.98] transition group'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue group-hover:text-blue transition duration-200'>
+                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue-hover group-hover:text-blue-hover transition duration-200'>
                             <Gamepad2 className='w-5 h-5' />
                           </div>
                           <span className='text-sm font-semibold text-gray-500 group-hover:text-gray-700 transition-colors'>
@@ -491,13 +491,13 @@ export default function HomePage() {
                       {/* Đăng xuất - Chữ đỏ! */}
                       <button
                         onClick={handleLogOut}
-                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-red/50 active:scale-[0.98] transition group'
+                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-red-hover/50 active:scale-[0.98] transition group'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-red rounded-full flex items-center justify-center text-red group-hover:bg-red transition duration-200'>
+                          <div className='w-9 h-9 bg-red rounded-full flex items-center justify-center text-red group-hover:bg-red-hover transition duration-200'>
                             <LogOut className='w-5 h-5' />
                           </div>
-                          <span className='text-sm font-bold text-red group-hover:text-red transition-colors'>
+                          <span className='text-sm font-bold text-red group-hover:text-red-hover transition-colors'>
                             Log out
                           </span>
                         </div>
@@ -531,7 +531,7 @@ export default function HomePage() {
                   placeholder='What is on your mind?'
                   className='flex-1 px-4 py-2.5 bg-gray-100 rounded-xl border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-gray-900 placeholder-gray-500'
                 />
-                <button className='px-5 py-2.5 bg-blue hover:bg-blue active:scale-[0.98] text-white font-bold rounded-xl transition duration-150 shadow-md shadow-blue/20 text-sm flex-shrink-0'>
+                <button className='px-5 py-2.5 bg-blue hover:bg-blue-hover active:scale-[0.98] text-white font-bold rounded-xl transition duration-150 shadow-md shadow-blue/20 text-sm flex-shrink-0'>
                   Post
                 </button>
               </div>
@@ -555,19 +555,19 @@ export default function HomePage() {
               </p>
               <div className='w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl mb-3'></div>
               <div className='flex items-center justify-between pt-3 border-t border-gray-100'>
-                <button className='flex items-center gap-2 text-gray-600 hover:text-blue transition'>
+                <button className='flex items-center gap-2 text-gray-600 hover:text-blue-hover transition'>
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
                   </svg>
                   <span className='font-medium'>Thích</span>
                 </button>
-                <button className='flex items-center gap-2 text-gray-600 hover:text-blue transition'>
+                <button className='flex items-center gap-2 text-gray-600 hover:text-blue-hover transition'>
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' />
                   </svg>
                   <span className='font-medium'>Bình luận</span>
                 </button>
-                <button className='flex items-center gap-2 text-gray-600 hover:text-blue transition'>
+                <button className='flex items-center gap-2 text-gray-600 hover:text-blue-hover transition'>
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z' />
                   </svg>

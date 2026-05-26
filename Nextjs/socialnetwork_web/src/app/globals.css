@@ -1,10 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-blue: #2196f3;
-  --color-red: #f44336;
-  --color-yellow: #ffeb3b;
-  --color-green: #4caf50;
-  --color-grey: #9e9e9e;
-  --color-pink: #e91e63;
+    --color-blue: rgb(33, 150, 243);
+    --color-blue-hover: rgb(66, 165, 245);
+
+    --color-red: rgb(244, 67, 54);
+    --color-red-hover: rgb(239, 83, 80);
+
+    --color-yellow: rgb(255, 235, 59);
+    --color-yellow-hover: rgb(255, 238, 88);
+
+    --color-green: rgb(76, 175, 80);
+    --color-green-hover: rgb(102, 187, 106);
+
+    --color-grey: rgb(158, 158, 158);
+    --color-grey-hover: rgb(189, 189, 189);
+
+    --color-pink: rgb(233, 30, 99);
+    --color-pink-hover: rgb(240, 98, 146);
 }

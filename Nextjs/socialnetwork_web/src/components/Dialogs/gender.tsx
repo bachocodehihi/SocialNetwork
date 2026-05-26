@@ -129,7 +129,7 @@ export default function GenderDialog({
           <button
             type='button'
             onClick={handleConfirm}
-            className='flex-1 bg-blue hover:bg-blue active:scale-95 text-white font-medium py-3 rounded-full text-sm shadow-md shadow-blue/20 transition-all'
+            className='flex-1 bg-blue hover:bg-blue-hover active:scale-95 text-white font-medium py-3 rounded-full text-sm shadow-md shadow-blue/20 transition-all'
           >
             Continue
           </button>

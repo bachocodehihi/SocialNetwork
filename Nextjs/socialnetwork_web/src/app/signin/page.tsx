@@ -196,7 +196,7 @@ export default function SignIn() {
               </div>
               
               <div className='flex justify-end text-sm px-1'>
-                <a href='#' className='text-blue hover:text-blue font-bold transition-colors'>
+                <a href='#' className='text-blue hover:text-blue-hover font-bold transition-colors'>
                   Forgot password?
                 </a>
               </div>
@@ -213,7 +213,7 @@ export default function SignIn() {
               <button
                 type='submit'
                 disabled={isLoading}
-                className='w-full bg-blue hover:bg-blue active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2 mt-2'
+                className='w-full bg-blue hover:bg-blue-hover active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2 mt-2'
               >
                 {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
                 <span>Sign in</span>
@@ -287,7 +287,7 @@ export default function SignIn() {
               
               <button
                 onClick={handleRefreshQR}
-                className='text-sm text-blue hover:text-blue font-bold transition-all flex items-center gap-2 mx-auto px-4 py-2 hover:bg-blue rounded-lg'
+                className='text-sm text-blue hover:text-blue-hover font-bold transition-all flex items-center gap-2 mx-auto px-4 py-2 hover:bg-blue-hover rounded-lg'
               >
                 <RefreshCw className="w-4 h-4" />
                 Refresh QR Code
@@ -298,7 +298,7 @@ export default function SignIn() {
 
         <div className='px-8 pb-8 text-center text-sm text-gray-500 bg-gray-50/50 border-t border-gray-100 pt-6'>
           Don't have an account?{' '}
-          <a href='/signup' className='text-blue hover:text-blue font-bold transition-colors'>
+          <a href='/signup' className='text-blue hover:text-blue-hover font-bold transition-colors'>
             Sign up
           </a>
         </div>

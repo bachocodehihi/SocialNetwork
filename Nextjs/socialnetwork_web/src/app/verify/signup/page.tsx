@@ -178,7 +178,7 @@ function VerifySignUpContent() {
           <button
             type='submit'
             disabled={isLoading || otp.length !== 6}
-            className='w-full bg-blue hover:bg-blue active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2'
+            className='w-full bg-blue hover:bg-blue-hover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2'
           >
             {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
             <span>Xác nhận</span>
@@ -194,7 +194,7 @@ function VerifySignUpContent() {
             <button
               onClick={handleResend}
               disabled={isResending}
-              className='text-blue hover:text-blue font-bold transition-all disabled:opacity-50'
+              className='text-blue hover:text-blue-hover font-bold transition-all disabled:opacity-50'
             >
               {isResending ? 'Đang gửi...' : 'Gửi lại mã'}
             </button>

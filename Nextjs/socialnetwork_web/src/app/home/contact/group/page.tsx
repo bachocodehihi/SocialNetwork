@@ -10,7 +10,7 @@ export default function GroupPage() {
         </p>
         <a 
           href="/home" 
-          className="inline-block bg-blue hover:bg-blue text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
+          className="inline-block bg-blue hover:bg-blue-hover text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
         >
           Go Back Home
         </a>
