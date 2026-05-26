@@ -79,7 +79,7 @@ export default function HomePage() {
       setIsSearching(true);
       try {
         const results = await authService.searchUsers(searchQuery);
-        setSearchResults(results || []);
+        setSearchResults(Array.isArray(results.data) ? results.data : (Array.isArray(results) ? results : []));
       } catch (err) {
         console.error('Search error:', err);
       } finally {
