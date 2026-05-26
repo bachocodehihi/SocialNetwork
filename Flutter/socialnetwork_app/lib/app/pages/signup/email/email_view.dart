@@ -210,7 +210,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                           color: Colors.grey,
                           thickness: 1.w,
                           endIndent: 8.w,
-                          height: 1,
+                          height: 1.h,
                         ),
                       ),
                       Text(
@@ -226,13 +226,13 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                           color: Colors.grey,
                           thickness: 1.w,
                           indent: 8.w,
-                          height: 1,
+                          height: 1.h,
                         ),
                       ),
                     ],
                   ),
 
-                  SizedBox(height: 15.sp),
+                  SizedBox(height: 15.h),
 
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
@@ -247,18 +247,9 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                       ).copyWith(
                         overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                       ),
-                      onPressed: () async {
-                        try {
-                          final GoogleSignIn googleSignIn = GoogleSignIn();
-                          final GoogleSignInAccount? googleUser =
-                              await googleSignIn.signIn();
-                          if (googleUser != null) {
-                            //
-                          }
-                        } catch (error) {
-                          //
-                        }
-                      },
+                      onPressed: controller.isLoading
+                          ? null
+                          : () => controller.handleGoogleSignIn(context),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -273,6 +264,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                             style: TextStyle(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w500,
+                              color: cs.onSurface,
                             ),
                           ),
                         ],

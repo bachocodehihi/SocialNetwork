@@ -46,6 +46,12 @@ class AuthApi {
     });
   }
 
+  Future<Response> googleLogin(String idToken) async {
+    return await _dio.post('/api/auth/google-login', data: {
+      'idToken': idToken,
+    });
+  }
+
   Future<Response> forgotPassword({required String email, required String newPassword}) async {
     return await _dio.post('/api/auth/forgot-password', data: {
       'email': email,

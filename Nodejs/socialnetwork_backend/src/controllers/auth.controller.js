@@ -394,6 +394,117 @@ const confirmQRLogin = async (req, res) => {
   }
 };
 
+const googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({
+        success: false,
+        code: 'MISSING_ID_TOKEN'
+      });
+    }
+
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+    if (!response.ok) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_GOOGLE_TOKEN'
+      });
+    }
+
+    const payload = await response.json();
+    const { sub: googleId, email, name, picture } = payload;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        code: 'GOOGLE_EMAIL_NOT_PROVIDED'
+      });
+    }
+
+    let user = await Account.findOne({ $or: [{ googleId }, { email }] });
+
+    if (user) {
+      let needsSave = false;
+
+      if (!user.googleId) {
+        user.googleId = googleId;
+        needsSave = true;
+      }
+
+      if (!user.avatar || user.avatar === process.env.DEFAULT_AVATAR_URL) {
+        if (picture) {
+          user.avatar = picture;
+          needsSave = true;
+        }
+      }
+
+      if (needsSave) {
+        await user.save();
+      }
+    } else {
+      const defaultBirthday = new Date(2000, 0, 1);
+      const defaultGender = 'other';
+
+      user = new Account({
+        email,
+        username: name || email.split('@')[0],
+        googleId,
+        birthday: defaultBirthday,
+        gender: defaultGender,
+        avatar: picture || process.env.DEFAULT_AVATAR_URL,
+        isVerified: true
+      });
+
+      const savedUser = await user.save();
+
+      try {
+        const qrDataUrl = await QRCode.toDataURL(savedUser._id.toString());
+        const qrUploadResponse = await cloudinary.uploader.upload(qrDataUrl, {
+          folder: 'socialnetwork/qrcodes'
+        });
+        savedUser.qrCode = qrUploadResponse.secure_url;
+        await savedUser.save();
+        user = savedUser;
+      } catch (qrErr) {
+        console.error('Error generating QR for Google sign-in:', qrErr);
+      }
+    }
+
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    const postCount = await Post.countDocuments({ author: user._id });
+    const userObj = user.toObject();
+    delete userObj.password;
+
+    userObj.stats = {
+      friendsCount: userObj.friends?.length ?? 0,
+      followersCount: userObj.followers?.length ?? 0,
+      followingCount: userObj.following?.length ?? 0,
+      postCount
+    };
+
+    return res.status(200).json({
+      success: true,
+      code: 'LOGIN_SUCCESS',
+      token,
+      user: userObj
+    });
+
+  } catch (error) {
+    console.error('Error in googleLogin:', error);
+    return res.status(500).json({
+      success: false,
+      code: 'SERVER_ERROR'
+    });
+  }
+};
+
 module.exports = { 
   sendOtp, 
   checkEmail, 
@@ -403,5 +514,6 @@ module.exports = {
   forgotPassword,
   generateQRCode,
   checkQRStatus,
-  confirmQRLogin
+  confirmQRLogin,
+  googleLogin
 };

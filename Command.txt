@@ -2,11 +2,21 @@
 cd Flutter
 cd socialnetwork_app
 flutter run --profile
+flutter run --release
+flutter run
 - Next.js:
 cd Nextjs
 cd socialnetwork_web
 npm run dev
 - Node.js:
 cd Nodejs
-cd backend_socialnetwork
+cd socialnetwork_backend
 node src/server.js
+
+- sha-1:
+42:BB:5B:70:6D:3F:F7:41:2C:93:59:0B:C3:44:4B:EF:73:79:DD:36
+
+- Git:
+git push origin main
+git add
+git clone

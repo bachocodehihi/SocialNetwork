@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:socialnetwork/data/ip/ip.dart'; 
-import 'package:socialnetwork/data/port/port.dart'; 
+import 'package:socialnetwork/data/config/config.dart';
 class DioClient {
   static Dio createDio() {
-    final baseUrl = IpConfig.baseUrl;
+    final baseUrl = Config.baseUrl;
     final dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,

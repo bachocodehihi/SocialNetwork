@@ -379,7 +379,7 @@ const initSocket = (server) => {
                     await Activity.findOneAndUpdate(
                         { userId, date: today },
                         { $inc: { totalSeconds: durationSeconds } },
-                        { upsert: true, new: true }
+                        { upsert: true, returnDocument: 'after' }
                     );
                 } catch (err) {
                     console.error('Error updating activity:', err);

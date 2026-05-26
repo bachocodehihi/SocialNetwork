@@ -3,7 +3,7 @@ const Account = require('../models/account.model');
 
 const createNotification = async ({ recipient, sender, type, title, body, relatedId }) => {
     try {
-        if (recipient.toString() === sender.toString()) return null; // Don't notify self
+        if (recipient.toString() === sender.toString()) return null;
 
         const newNotif = new Notification({
             recipient,
@@ -15,7 +15,6 @@ const createNotification = async ({ recipient, sender, type, title, body, relate
         });
         await newNotif.save();
 
-        // Trigger real-time FCM Push Notification to recipient's phone (works even if app is killed!)
         try {
             const recipientUser = await Account.findById(recipient).lean();
             if (recipientUser && recipientUser.fcmToken) {

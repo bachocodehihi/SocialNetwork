@@ -44,7 +44,7 @@ const updateProfile = async (req, res) => {
             updateData.avatar = req.file.path;
         }
 
-        const updatedUser = await Account.findByIdAndUpdate(req.userId, updateData, { new: true }).select('-password').lean();
+        const updatedUser = await Account.findByIdAndUpdate(req.userId, updateData, { returnDocument: 'after' }).select('-password').lean();
         
         const postCount = await Post.countDocuments({ author: req.userId });
 

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socialnetwork/domain/usecases/auth_usecase.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
+import 'package:socialnetwork/data/service/notification.dart';
+import 'package:socialnetwork/data/service/socket.dart';
+import 'package:socialnetwork/data/config/config.dart';
+
 class SignUpEmailController extends ChangeNotifier {
   
   final AuthUsecase _authUsecase;
@@ -17,6 +22,7 @@ class SignUpEmailController extends ChangeNotifier {
   static const _messages = {
     'SERVER_ERROR': 'Server error, please try again!',
     'EMAIL_REGISTERED': 'Email already exists!',
+    'INVALID_GOOGLE_TOKEN': 'Google authentication failed!',
   };
 
   String _getErrorMessage(String code) {
@@ -67,6 +73,64 @@ class SignUpEmailController extends ChangeNotifier {
           arguments: {'email': email},
         );
       }
+    } catch (e) {
+      final code = e.toString().replaceAll('Exception: ', '');
+      _errorMessage = _getErrorMessage(code);
+      notifyListeners();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> handleGoogleSignIn(BuildContext context) async {
+    _isLoading = true;
+    _errorMessage = '';
+    notifyListeners();
+
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        serverClientId: Config.googleServerClientId,
+      );
+
+      try {
+        await googleSignIn.signOut();
+      } catch (_) {}
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        _errorMessage = 'Could not get ID Token from Google';
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      try {
+        await NotificationService().removeFcmToken();
+      } catch (_) {}
+      SocketService().disconnect();
+
+      await _authUsecase.googleLogin(idToken);
+
+      await NotificationService().init();
+      await SocketService().connect();
+
+      if (!context.mounted) return;
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.main,
+        (route) => false,
+      );
+
     } catch (e) {
       final code = e.toString().replaceAll('Exception: ', '');
       _errorMessage = _getErrorMessage(code);

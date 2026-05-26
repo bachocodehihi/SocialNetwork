@@ -79,6 +79,19 @@ class AuthRepositoryImp implements AuthRepository {
   }
 
   @override
+  Future<void> googleLogin(String idToken) async {
+    try {
+      final response = await _authApi.googleLogin(idToken);
+      final token = response.data['token']?.toString() ?? '';
+      final user = response.data['user'] as Map<String, dynamic>;
+      final email = user['email']?.toString() ?? '';
+      await AuthLocal.saveLogin(token, email, user);
+    } on DioException catch (e) {
+      throw Exception(_getCode(e.response?.data, 'SERVER_ERROR'));
+    }
+  }
+
+  @override
   Future<void> forgotPassword({
     required String email,
     required String newPassword,

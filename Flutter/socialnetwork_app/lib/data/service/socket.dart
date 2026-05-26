@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socialnetwork/data/local/auth_local.dart';
-import 'package:socialnetwork/data/ip/ip.dart';
-import 'package:socialnetwork/data/port/port.dart';
+import 'package:socialnetwork/data/config/config.dart';
 
 
 typedef MessageCallback = void Function(Map<String, dynamic> message);
@@ -41,7 +40,7 @@ class SocketService {
 
     try {
       _socket = IO.io(
-        IpConfig.baseUrl,
+        Config.baseUrl,
         IO.OptionBuilder()
             .setTransports(['websocket'])
             .setQuery({'token': token})

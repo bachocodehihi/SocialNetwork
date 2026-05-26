@@ -30,6 +30,9 @@ class AuthUsecase {
   Future<void> login({required String email, required String password}) =>
     _repository.login(email: email, password: password);
 
+  Future<void> googleLogin(String idToken) =>
+    _repository.googleLogin(idToken);
+
   Future<void> forgotPassword({
     required String email,
     required String newPassword,

@@ -166,7 +166,6 @@ const sendMessage = async (req, res) => {
             console.warn('Socket emit warning:', socketErr.message);
         }
 
-        // Send FCM push notifications to offline / background users
         try {
             const onlineUsers = require('../socket').getOnlineUsers();
             const populatedConv = await Conversation.findById(conversationId)
