@@ -138,7 +138,7 @@ function SignUpAvatarContent() {
 
           {/* Main Avatar Preview */}
           <div className='flex flex-col items-center justify-center'>
-            <div className='relative w-36 h-36 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-blue-500/10 ring-4 ring-blue-500/20 bg-gray-50 flex items-center justify-center'>
+            <div className='relative w-36 h-36 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-blue/10 ring-4 ring-blue/20 bg-gray-50 flex items-center justify-center'>
               <img
                 src={selectedAvatarUrl}
                 alt='Profile Avatar'
@@ -155,7 +155,7 @@ function SignUpAvatarContent() {
             <span className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1 select-none'>
               Custom photo
             </span>
-            <label className='flex items-center justify-center gap-2.5 w-full px-4 py-3 border-2 border-dashed border-gray-200 hover:border-blue-400 rounded-xl bg-gray-50 hover:bg-blue-50/10 cursor-pointer transition-all duration-200 group text-gray-500 hover:text-blue-500'>
+            <label className='flex items-center justify-center gap-2.5 w-full px-4 py-3 border-2 border-dashed border-gray-200 hover:border-blue rounded-xl bg-gray-50 hover:bg-blue/10 cursor-pointer transition-all duration-200 group text-gray-500 hover:text-blue'>
               <Upload className='w-5 h-5 group-hover:scale-110 transition-transform' />
               <span className='text-sm font-bold tracking-wide'>
                 {customAvatarBase64 ? 'Change custom photo' : 'Upload photo'}
@@ -190,7 +190,7 @@ function SignUpAvatarContent() {
             <button
               type='submit'
               disabled={isLoading}
-              className='flex-1 bg-blue-500 hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2'
+              className='flex-1 bg-blue hover:bg-blue active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2'
             >
               {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
               <span>Register</span>
@@ -207,7 +207,7 @@ function SignUpAvatarContent() {
           <div className='bg-white rounded-3xl p-8 max-w-xs w-full mx-4 shadow-2xl flex flex-col items-center text-center animate-scale-up border border-gray-50 select-none'>
             
             {/* Green Check Icon with Glowing Ring */}
-            <div className='w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center mb-5 ring-8 ring-green-50/50 shadow-sm'>
+            <div className='w-16 h-16 bg-green text-green rounded-full flex items-center justify-center mb-5 ring-8 ring-green/50 shadow-sm'>
               <Check className='w-8 h-8 stroke-[3]' />
             </div>
 
@@ -249,7 +249,7 @@ export default function SignUpAvatar() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200">
-        <Loader2 className="animate-spin h-10 w-10 text-blue-500" />
+        <Loader2 className="animate-spin h-10 w-10 text-blue" />
       </div>
     }>
       <SignUpAvatarContent />

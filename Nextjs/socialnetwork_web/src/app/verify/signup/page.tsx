@@ -110,9 +110,9 @@ function VerifySignUpContent() {
           onClick={() => inputRef.current?.focus()}
           className={`w-12 h-14 md:w-14 md:h-16 flex items-center justify-center text-2xl font-bold rounded-xl border-2 transition-all duration-200 cursor-pointer ${
             char
-              ? 'border-blue-500 bg-blue-50/20 text-gray-900 shadow-md'
+              ? 'border-blue bg-blue/20 text-gray-900 shadow-md'
               : isFocused
-              ? 'border-blue-500 bg-white ring-4 ring-blue-500/10 scale-105'
+              ? 'border-blue bg-white ring-4 ring-blue/10 scale-105'
               : 'border-gray-200 bg-gray-50/50 text-gray-400 hover:border-gray-300'
           }`}
         >
@@ -128,8 +128,8 @@ function VerifySignUpContent() {
       <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
         
         <div className='text-center mb-8'>
-          <div className='bg-blue-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4'>
-            <ShieldCheck className='w-8 h-8 text-blue-500' />
+          <div className='bg-blue w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4'>
+            <ShieldCheck className='w-8 h-8 text-blue' />
           </div>
           <h2 className='text-3xl font-extrabold text-gray-900 tracking-tight'>
             Xác thực tài khoản
@@ -137,7 +137,7 @@ function VerifySignUpContent() {
           <p className='text-gray-500 mt-2 text-sm px-4'>
             Mã OTP gồm 6 chữ số đã được gửi tới email:
           </p>
-          <p className='text-blue-600 font-semibold text-sm break-all mt-1'>
+          <p className='text-blue font-semibold text-sm break-all mt-1'>
             {email || 'Email của bạn'}
           </p>
         </div>
@@ -178,7 +178,7 @@ function VerifySignUpContent() {
           <button
             type='submit'
             disabled={isLoading || otp.length !== 6}
-            className='w-full bg-blue-500 hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2'
+            className='w-full bg-blue hover:bg-blue active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2'
           >
             {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
             <span>Xác nhận</span>
@@ -189,12 +189,12 @@ function VerifySignUpContent() {
         <div className='mt-8 text-center text-sm text-gray-500'>
           Không nhận được mã?{' '}
           {resendCooldown > 0 ? (
-            <span className='text-blue-500 font-semibold'>Gửi lại sau ({resendCooldown}s)</span>
+            <span className='text-blue font-semibold'>Gửi lại sau ({resendCooldown}s)</span>
           ) : (
             <button
               onClick={handleResend}
               disabled={isResending}
-              className='text-blue-500 hover:text-blue-700 font-bold transition-all disabled:opacity-50'
+              className='text-blue hover:text-blue font-bold transition-all disabled:opacity-50'
             >
               {isResending ? 'Đang gửi...' : 'Gửi lại mã'}
             </button>
@@ -216,7 +216,7 @@ export default function VerifySignUp() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200">
-        <Loader2 className="animate-spin h-10 w-10 text-blue-500" />
+        <Loader2 className="animate-spin h-10 w-10 text-blue" />
       </div>
     }>
       <VerifySignUpContent />

@@ -147,7 +147,7 @@ export default function HomePage() {
   if (checking) {
     return (
       <div className='flex h-screen items-center justify-center bg-gray-50'>
-        <div className='animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent'></div>
+        <div className='animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent'></div>
       </div>
     );
   }
@@ -168,12 +168,12 @@ export default function HomePage() {
           <div className='flex items-center justify-between h-16 relative w-full'>
             {/* Logo & Search Bar (Left) */}
             <div className='flex items-center gap-3 relative z-50'>
-              <h1 className='text-2xl font-bold text-blue-500 tracking-tight select-none cursor-pointer hover:opacity-90 transition'>
+              <h1 className='text-2xl font-bold text-blue tracking-tight select-none cursor-pointer hover:opacity-90 transition'>
                 SocialNetwork
               </h1>
               {/* Premium Facebook-style Search Input */}
               <div className='relative'>
-                <div className={`hidden sm:flex items-center bg-gray-100 hover:bg-gray-200/80 focus-within:bg-white border focus-within:border-blue-500 focus-within:shadow-sm transition-all duration-200 rounded-full pl-3 pr-4 py-2 h-10 ${isSearchFocused ? 'w-64 sm:w-72 lg:w-80 shadow-md' : 'w-40 lg:w-48'}`}>
+                <div className={`hidden sm:flex items-center bg-gray-100 hover:bg-gray-200/80 focus-within:bg-white border focus-within:border-blue focus-within:shadow-sm transition-all duration-200 rounded-full pl-3 pr-4 py-2 h-10 ${isSearchFocused ? 'w-64 sm:w-72 lg:w-80 shadow-md' : 'w-40 lg:w-48'}`}>
                   <Search className='w-4 h-4 text-gray-500 mr-2 flex-shrink-0' />
                   <input
                     type='text'
@@ -205,7 +205,7 @@ export default function HomePage() {
                           {searchHistory.length > 0 && (
                             <button 
                               onClick={clearHistory}
-                              className='text-blue-500 hover:text-blue-600 text-xs sm:text-sm font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer'
+                              className='text-blue hover:text-blue text-xs sm:text-sm font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer'
                             >
                               Clear all
                             </button>
@@ -269,7 +269,7 @@ export default function HomePage() {
 
                         {isSearching ? (
                           <div className='flex items-center justify-center py-8 text-gray-400 text-sm gap-2 select-none'>
-                            <Loader2 className='w-4 h-4 animate-spin text-blue-500' />
+                            <Loader2 className='w-4 h-4 animate-spin text-blue' />
                             <span>Searching...</span>
                           </div>
                         ) : searchResults.length === 0 ? (
@@ -322,7 +322,7 @@ export default function HomePage() {
                 onClick={() => setActiveTab('home')}
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'home'
-                    ? 'text-blue-500 border-blue-500'
+                    ? 'text-blue border-blue'
                     : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
                 }`}
               >
@@ -336,7 +336,7 @@ export default function HomePage() {
                 onClick={() => setActiveTab('video')}
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'video'
-                    ? 'text-blue-500 border-blue-500'
+                    ? 'text-blue border-blue'
                     : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
                 }`}
               >
@@ -351,7 +351,7 @@ export default function HomePage() {
                 onClick={() => setActiveTab('community')}
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'community'
-                    ? 'text-blue-500 border-blue-500'
+                    ? 'text-blue border-blue'
                     : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
                 }`}
               >
@@ -365,7 +365,7 @@ export default function HomePage() {
                 onClick={() => setActiveTab('shop')}
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'shop'
-                    ? 'text-blue-500 border-blue-500'
+                    ? 'text-blue border-blue'
                     : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
                 }`}
               >
@@ -379,7 +379,7 @@ export default function HomePage() {
                 onClick={() => setActiveTab('create')}
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'create'
-                    ? 'text-blue-500 border-blue-500'
+                    ? 'text-blue border-blue'
                     : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
                 }`}
               >
@@ -393,7 +393,7 @@ export default function HomePage() {
             <div className='flex items-center gap-3 relative'>
               <button 
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className='w-10 h-10 rounded-full overflow-hidden border border-gray-200 hover:ring-4 hover:ring-blue-100 transition duration-200 flex items-center justify-center bg-gray-50 flex-shrink-0'
+                className='w-10 h-10 rounded-full overflow-hidden border border-gray-200 hover:ring-4 hover:ring-blue transition duration-200 flex items-center justify-center bg-gray-50 flex-shrink-0'
               >
                 <img
                   src={user?.avatar || '/assets/avatar/avatar.jpg'}
@@ -459,7 +459,7 @@ export default function HomePage() {
                         className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 active:scale-[0.98] transition group'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue-50 group-hover:text-blue-500 transition duration-200'>
+                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue group-hover:text-blue transition duration-200'>
                             <Settings className='w-5 h-5' />
                           </div>
                           <span className='text-sm font-semibold text-gray-500 group-hover:text-gray-700 transition-colors'>
@@ -478,7 +478,7 @@ export default function HomePage() {
                         className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 active:scale-[0.98] transition group'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue-50 group-hover:text-blue-500 transition duration-200'>
+                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue group-hover:text-blue transition duration-200'>
                             <Gamepad2 className='w-5 h-5' />
                           </div>
                           <span className='text-sm font-semibold text-gray-500 group-hover:text-gray-700 transition-colors'>
@@ -491,13 +491,13 @@ export default function HomePage() {
                       {/* Đăng xuất - Chữ đỏ! */}
                       <button
                         onClick={handleLogOut}
-                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-red-50/50 active:scale-[0.98] transition group'
+                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-red/50 active:scale-[0.98] transition group'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-red-50 rounded-full flex items-center justify-center text-red-500 group-hover:bg-red-100 transition duration-200'>
+                          <div className='w-9 h-9 bg-red rounded-full flex items-center justify-center text-red group-hover:bg-red transition duration-200'>
                             <LogOut className='w-5 h-5' />
                           </div>
-                          <span className='text-sm font-bold text-red-500 group-hover:text-red-600 transition-colors'>
+                          <span className='text-sm font-bold text-red group-hover:text-red transition-colors'>
                             Log out
                           </span>
                         </div>
@@ -529,9 +529,9 @@ export default function HomePage() {
                 <input
                   type='text'
                   placeholder='What is on your mind?'
-                  className='flex-1 px-4 py-2.5 bg-gray-100 rounded-xl border-0 focus:ring-2 focus:ring-blue-500 focus:bg-white transition outline-none text-sm text-gray-900 placeholder-gray-500'
+                  className='flex-1 px-4 py-2.5 bg-gray-100 rounded-xl border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-gray-900 placeholder-gray-500'
                 />
-                <button className='px-5 py-2.5 bg-blue-500 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-xl transition duration-150 shadow-md shadow-blue-500/20 text-sm flex-shrink-0'>
+                <button className='px-5 py-2.5 bg-blue hover:bg-blue active:scale-[0.98] text-white font-bold rounded-xl transition duration-150 shadow-md shadow-blue/20 text-sm flex-shrink-0'>
                   Post
                 </button>
               </div>
@@ -542,7 +542,7 @@ export default function HomePage() {
           {[1, 2, 3].map((post) => (
             <div key={post} className='bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-4'>
               <div className='flex items-center gap-3 mb-3'>
-                <div className='w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center text-white font-semibold'>
+                <div className='w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink flex items-center justify-center text-white font-semibold'>
                   {String.fromCharCode(64 + post)}
                 </div>
                 <div>
@@ -555,19 +555,19 @@ export default function HomePage() {
               </p>
               <div className='w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl mb-3'></div>
               <div className='flex items-center justify-between pt-3 border-t border-gray-100'>
-                <button className='flex items-center gap-2 text-gray-600 hover:text-blue-600 transition'>
+                <button className='flex items-center gap-2 text-gray-600 hover:text-blue transition'>
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
                   </svg>
                   <span className='font-medium'>Thích</span>
                 </button>
-                <button className='flex items-center gap-2 text-gray-600 hover:text-blue-600 transition'>
+                <button className='flex items-center gap-2 text-gray-600 hover:text-blue transition'>
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' />
                   </svg>
                   <span className='font-medium'>Bình luận</span>
                 </button>
-                <button className='flex items-center gap-2 text-gray-600 hover:text-blue-600 transition'>
+                <button className='flex items-center gap-2 text-gray-600 hover:text-blue transition'>
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z' />
                   </svg>

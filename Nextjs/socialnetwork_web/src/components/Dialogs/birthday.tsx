@@ -174,16 +174,16 @@ export default function BirthdayDialog({
 
         {/* Wheel Headers */}
         <div className='w-full grid grid-cols-3 text-center mb-2 px-2'>
-          <span className='text-sm font-semibold text-blue-500'>Day</span>
-          <span className='text-sm font-semibold text-blue-500'>Month</span>
-          <span className='text-sm font-semibold text-blue-500'>Year</span>
+          <span className='text-sm font-semibold text-blue'>Day</span>
+          <span className='text-sm font-semibold text-blue'>Month</span>
+          <span className='text-sm font-semibold text-blue'>Year</span>
         </div>
 
         {/* Custom 3D Column Selectors with Center Active Highlight */}
         <div className='w-full h-40 bg-gray-50 rounded-2xl relative flex overflow-hidden border border-gray-100 mb-6 select-none'>
           
           {/* Highlight bar overlay for center selection */}
-          <div className='absolute inset-x-2 top-[60px] h-10 bg-blue-500/10 border-t border-b border-blue-500/20 rounded-xl pointer-events-none' />
+          <div className='absolute inset-x-2 top-[60px] h-10 bg-blue/10 border-t border-b border-blue/20 rounded-xl pointer-events-none' />
 
           {/* Day Scroll Column */}
           <div
@@ -199,7 +199,7 @@ export default function BirthdayDialog({
                 type='button'
                 onClick={() => selectDayClick(d, idx)}
                 className={`h-10 w-full flex items-center justify-center snap-center shrink-0 text-sm transition-all focus:outline-none ${
-                  localDay === d ? 'text-blue-600 font-bold text-[16px]' : 'text-gray-400 font-medium'
+                  localDay === d ? 'text-blue font-bold text-[16px]' : 'text-gray-400 font-medium'
                 }`}
               >
                 {String(d).padStart(2, '0')}
@@ -224,7 +224,7 @@ export default function BirthdayDialog({
                   type='button'
                   onClick={() => selectMonthClick(mNum, idx)}
                   className={`h-10 w-full flex items-center justify-center snap-center shrink-0 text-sm transition-all focus:outline-none ${
-                    localMonth === mNum ? 'text-blue-600 font-bold text-[16px]' : 'text-gray-400 font-medium'
+                    localMonth === mNum ? 'text-blue font-bold text-[16px]' : 'text-gray-400 font-medium'
                   }`}
                 >
                   {m}
@@ -248,7 +248,7 @@ export default function BirthdayDialog({
                 type='button'
                 onClick={() => selectYearClick(y, idx)}
                 className={`h-10 w-full flex items-center justify-center snap-center shrink-0 text-sm transition-all focus:outline-none ${
-                  localYear === y ? 'text-blue-600 font-bold text-[16px]' : 'text-gray-400 font-medium'
+                  localYear === y ? 'text-blue font-bold text-[16px]' : 'text-gray-400 font-medium'
                 }`}
               >
                 {y}
@@ -271,7 +271,7 @@ export default function BirthdayDialog({
           <button
             type='button'
             onClick={handleConfirm}
-            className='flex-1 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-medium py-3 rounded-full text-sm shadow-md shadow-blue-500/20 transition-all'
+            className='flex-1 bg-blue hover:bg-blue active:scale-95 text-white font-medium py-3 rounded-full text-sm shadow-md shadow-blue/20 transition-all'
           >
             Confirm
           </button>

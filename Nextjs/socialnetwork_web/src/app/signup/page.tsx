@@ -81,8 +81,8 @@ export default function SignUp() {
       <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
 
         <div className='text-center mb-8'>
-          <div className='bg-blue-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4'>
-            <UserPlus className='w-8 h-8 text-blue-500' />
+          <div className='bg-blue w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4'>
+            <UserPlus className='w-8 h-8 text-blue' />
           </div>
           <h2 className='text-3xl font-extrabold text-gray-900 tracking-tight'>
             Create Account
@@ -104,7 +104,7 @@ export default function SignUp() {
                 setEmail(e.target.value);
                 if (formError) setFormError(null);
               }}
-              className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 outline-none transition-all ${formError && !email ? 'border-red-300 focus:ring-red-500/20' : 'border-gray-200 focus:ring-blue-500/20 focus:border-blue-500'
+              className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 outline-none transition-all ${formError && !email ? 'border-red focus:ring-red/20' : 'border-gray-200 focus:ring-blue/20 focus:border-blue'
                 }`}
               placeholder='Email@example.com'
             />
@@ -121,7 +121,7 @@ export default function SignUp() {
           <button
             type='submit'
             disabled={isLoading}
-            className='w-full bg-blue-500 hover:bg-blue-700 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2'
+            className='w-full bg-blue hover:bg-blue active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2'
           >
             {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
             <span>Continue</span>
@@ -154,7 +154,7 @@ export default function SignUp() {
 
         <div className='mt-8 text-center text-sm text-gray-500'>
           Already have an account?{' '}
-          <a href='/signin' className='text-blue-500 hover:text-blue-700 font-bold transition-colors'>
+          <a href='/signin' className='text-blue hover:text-blue font-bold transition-colors'>
             Sign in
           </a>
         </div>

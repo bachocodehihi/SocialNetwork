@@ -152,7 +152,7 @@ function SignUpInformationContent() {
                 setUsername(e.target.value);
                 if (formError) setFormError(null);
               }}
-              className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-gray-700'
+              className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-gray-700'
               placeholder='Username'
               required
             />
@@ -170,7 +170,7 @@ function SignUpInformationContent() {
                 readOnly
                 value={gender}
                 onClick={() => setIsGenderOpen(true)}
-                className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all cursor-pointer text-gray-700 select-none'
+                className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-gray-700 select-none'
                 placeholder='Gender'
                 required
               />
@@ -194,7 +194,7 @@ function SignUpInformationContent() {
                 readOnly
                 value={formatDateDisplay(birthday)}
                 onClick={() => setIsBirthdayOpen(true)}
-                className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all cursor-pointer text-gray-700 select-none'
+                className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-gray-700 select-none'
                 placeholder='Birthday'
                 required
               />
@@ -220,7 +220,7 @@ function SignUpInformationContent() {
                   setPassword(e.target.value);
                   if (formError) setFormError(null);
                 }}
-                className='w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-gray-700'
+                className='w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-gray-700'
                 placeholder='Tối thiểu 6 ký tự'
                 required
               />
@@ -248,7 +248,7 @@ function SignUpInformationContent() {
                   setConfirmPassword(e.target.value);
                   if (formError) setFormError(null);
                 }}
-                className='w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-gray-700'
+                className='w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-gray-700'
                 placeholder='Tối thiểu 6 ký tự'
                 required
               />
@@ -286,7 +286,7 @@ function SignUpInformationContent() {
             <button
               type='submit'
               disabled={isLoading}
-              className='flex-1 bg-blue-500 hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2'
+              className='flex-1 bg-blue hover:bg-blue active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2'
             >
               {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
               <span>Continue</span>
@@ -355,7 +355,7 @@ export default function SignUpInformation() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200">
-        <Loader2 className="animate-spin h-10 w-10 text-blue-500" />
+        <Loader2 className="animate-spin h-10 w-10 text-blue" />
       </div>
     }>
       <SignUpInformationContent />

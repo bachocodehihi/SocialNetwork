@@ -10,7 +10,7 @@ export default function DarkmodePage() {
         </p>
         <a 
           href="/home" 
-          className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
+          className="inline-block bg-blue hover:bg-blue text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
         >
           Go Back Home
         </a>

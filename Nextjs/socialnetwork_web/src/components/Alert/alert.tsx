@@ -30,9 +30,9 @@ export default function Alert({
   }, [duration, onClose, isInline]);
 
   const styles = {
-    error: "bg-red-50 border-red-200 text-red-600",
+    error: "bg-red border-red text-red",
     success: "bg-emerald-50 border-emerald-200 text-emerald-600",
-    info: "bg-blue-50 border-blue-200 text-blue-600",
+    info: "bg-blue border-blue text-blue",
     warning: "bg-amber-50 border-amber-200 text-amber-600",
   };
 

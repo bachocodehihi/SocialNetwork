@@ -11,4 +11,4 @@ export const NETWORK = {
   devIp: currentIp,
   apiUrl: isProduction ? `${productionUrl}/api` : `http://${currentIp}:${currentPort}/api`,
   wsUrl: isProduction ? `${productionUrl.replace('https://', 'wss://')}` : `ws://${currentIp}:${currentPort}`,
-} as const;
+} as const;

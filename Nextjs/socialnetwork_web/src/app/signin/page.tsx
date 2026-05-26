@@ -135,7 +135,7 @@ export default function SignIn() {
             onClick={() => setMode('email')}
             className={`flex-1 py-4 text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
               mode === 'email'
-                ? 'text-blue-500 border-b-2 border-blue-500 bg-white'
+                ? 'text-blue border-b-2 border-blue bg-white'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'
             }`}
           >
@@ -146,7 +146,7 @@ export default function SignIn() {
             onClick={() => setMode('qr')}
             className={`flex-1 py-4 text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
               mode === 'qr'
-                ? 'text-blue-500 border-b-2 border-blue-500 bg-white'
+                ? 'text-blue border-b-2 border-blue bg-white'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'
             }`}
           >
@@ -171,7 +171,7 @@ export default function SignIn() {
                     if (formError) setFormError(null);
                   }}
                   className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 outline-none transition-all ${
-                    formError && !email ? 'border-red-300 focus:ring-red-500/20' : 'border-gray-200 focus:ring-blue-500/20 focus:border-blue-500'
+                    formError && !email ? 'border-red focus:ring-red/20' : 'border-gray-200 focus:ring-blue/20 focus:border-blue'
                   }`}
                   placeholder='Email@example.com'
                 />
@@ -189,14 +189,14 @@ export default function SignIn() {
                     if (formError && email) setFormError(null);
                   }}
                   className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 outline-none transition-all ${
-                    formError && email && !password ? 'border-red-300 focus:ring-red-500/20' : 'border-gray-200 focus:ring-blue-500/20 focus:border-blue-500'
+                    formError && email && !password ? 'border-red focus:ring-red/20' : 'border-gray-200 focus:ring-blue/20 focus:border-blue'
                   }`}
                   placeholder='Password'
                 />
               </div>
               
               <div className='flex justify-end text-sm px-1'>
-                <a href='#' className='text-blue-500 hover:text-blue-700 font-bold transition-colors'>
+                <a href='#' className='text-blue hover:text-blue font-bold transition-colors'>
                   Forgot password?
                 </a>
               </div>
@@ -213,7 +213,7 @@ export default function SignIn() {
               <button
                 type='submit'
                 disabled={isLoading}
-                className='w-full bg-blue-500 hover:bg-blue-700 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 mt-2'
+                className='w-full bg-blue hover:bg-blue active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2 mt-2'
               >
                 {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
                 <span>Sign in</span>
@@ -254,22 +254,22 @@ export default function SignIn() {
                   />
                 ) : (
                   <div className='w-48 h-48 flex items-center justify-center'>
-                    <Loader2 className='animate-spin h-10 w-10 text-blue-500 opacity-20' />
+                    <Loader2 className='animate-spin h-10 w-10 text-blue opacity-20' />
                   </div>
                 )}
                 
                 {qrStatus === 'scanned' && (
                   <div className='absolute inset-0 bg-white/90 flex flex-col items-center justify-center rounded-3xl backdrop-blur-[2px]'>
-                    <div className='bg-green-100 p-3 rounded-full mb-2'>
-                      <div className='w-6 h-6 text-green-600 font-bold'>✓</div>
+                    <div className='bg-green p-3 rounded-full mb-2'>
+                      <div className='w-6 h-6 text-green font-bold'>✓</div>
                     </div>
-                    <span className='text-green-600 font-bold text-sm'>Scanned!</span>
+                    <span className='text-green font-bold text-sm'>Scanned!</span>
                   </div>
                 )}
                 {qrStatus === 'success' && (
                   <div className='absolute inset-0 bg-white/90 flex flex-col items-center justify-center rounded-3xl backdrop-blur-[2px]'>
-                     <Loader2 className='animate-spin h-8 w-8 text-blue-600 mb-2' />
-                    <span className='text-blue-600 font-bold text-sm'>Logging in...</span>
+                     <Loader2 className='animate-spin h-8 w-8 text-blue mb-2' />
+                    <span className='text-blue font-bold text-sm'>Logging in...</span>
                   </div>
                 )}
               </div>
@@ -287,7 +287,7 @@ export default function SignIn() {
               
               <button
                 onClick={handleRefreshQR}
-                className='text-sm text-blue-500 hover:text-blue-700 font-bold transition-all flex items-center gap-2 mx-auto px-4 py-2 hover:bg-blue-50 rounded-lg'
+                className='text-sm text-blue hover:text-blue font-bold transition-all flex items-center gap-2 mx-auto px-4 py-2 hover:bg-blue rounded-lg'
               >
                 <RefreshCw className="w-4 h-4" />
                 Refresh QR Code
@@ -298,7 +298,7 @@ export default function SignIn() {
 
         <div className='px-8 pb-8 text-center text-sm text-gray-500 bg-gray-50/50 border-t border-gray-100 pt-6'>
           Don't have an account?{' '}
-          <a href='/signup' className='text-blue-500 hover:text-blue-700 font-bold transition-colors'>
+          <a href='/signup' className='text-blue hover:text-blue font-bold transition-colors'>
             Sign up
           </a>
         </div>
