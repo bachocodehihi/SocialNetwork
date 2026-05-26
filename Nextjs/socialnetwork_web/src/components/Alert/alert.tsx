@@ -30,10 +30,10 @@ export default function Alert({
   }, [duration, onClose, isInline]);
 
   const styles = {
-    error: "bg-red border-red text-red",
-    success: "bg-emerald-50 border-emerald-200 text-emerald-600",
-    info: "bg-blue border-blue text-blue",
-    warning: "bg-amber-50 border-amber-200 text-amber-600",
+    error: "bg-red/10 border-red/20 text-red",
+    success: "bg-green/10 border-green/20 text-green",
+    info: "bg-blue/10 border-blue/20 text-blue",
+    warning: "bg-yellow/10 border-yellow/20 text-yellow",
   };
 
   const Icons = {
