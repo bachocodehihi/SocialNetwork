@@ -31,9 +31,9 @@ export default function GenderDialog({
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[1px] p-4 animate-fade-in'>
-      <div className='bg-white w-full max-w-sm rounded-[24px] shadow-2xl p-6 border border-gray-100 flex flex-col items-center animate-scale-up'>
+      <div className='bg-white w-full max-w-sm rounded-[24px] shadow-2xl p-6 border border-grey/10 flex flex-col items-center animate-scale-up'>
         
-        <h3 className='text-lg font-bold text-gray-800 text-center mb-6'>
+        <h3 className='text-lg font-bold text-grey-hover text-center mb-6'>
           Select gender
         </h3>
 
@@ -47,12 +47,12 @@ export default function GenderDialog({
             className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
               tempGender === 'Male'
                 ? 'border-blue bg-blue/20 text-blue font-semibold shadow-sm'
-                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                : 'border-grey/20 text-grey-hover hover:border-gray-300'
             }`}
           >
             <div className='flex items-center gap-3.5'>
               <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
-                tempGender === 'Male' ? 'bg-blue/80 text-blue' : 'bg-gray-100 text-gray-400'
+                tempGender === 'Male' ? 'bg-blue/80 text-blue' : 'bg-grey/10 text-grey/60'
               }`}>
                 ♂
               </div>
@@ -72,12 +72,12 @@ export default function GenderDialog({
             className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
               tempGender === 'Female'
                 ? 'border-pink bg-pink/20 text-pink font-semibold shadow-sm'
-                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                : 'border-grey/20 text-grey-hover hover:border-gray-300'
             }`}
           >
             <div className='flex items-center gap-3.5'>
               <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
-                tempGender === 'Female' ? 'bg-pink/80 text-pink' : 'bg-gray-100 text-gray-400'
+                tempGender === 'Female' ? 'bg-pink/80 text-pink' : 'bg-grey/10 text-grey/60'
               }`}>
                 ♀
               </div>
@@ -97,12 +97,12 @@ export default function GenderDialog({
             className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
               tempGender === 'Other'
                 ? 'border-purple-500 bg-purple-50/20 text-purple-600 font-semibold shadow-sm'
-                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                : 'border-grey/20 text-grey-hover hover:border-gray-300'
             }`}
           >
             <div className='flex items-center gap-3.5'>
               <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
-                tempGender === 'Other' ? 'bg-purple-100/80 text-purple-600' : 'bg-gray-100 text-gray-400'
+                tempGender === 'Other' ? 'bg-purple-100/80 text-purple-600' : 'bg-grey/10 text-grey/60'
               }`}>
                 ⚨
               </div>
@@ -122,7 +122,7 @@ export default function GenderDialog({
           <button
             type='button'
             onClick={onClose}
-            className='flex-1 border border-gray-200 hover:bg-gray-50 active:scale-95 text-gray-600 font-medium py-3 rounded-full text-sm transition-all'
+            className='flex-1 border border-grey/20 hover:bg-grey/5 active:scale-95 text-grey-hover font-medium py-3 rounded-full text-sm transition-all'
           >
             Cancel
           </button>

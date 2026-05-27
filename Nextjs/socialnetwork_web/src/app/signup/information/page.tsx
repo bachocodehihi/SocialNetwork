@@ -132,7 +132,7 @@ function SignUpInformationContent() {
       <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
         
         <div className='text-center mb-8'>
-          <h2 className='text-2xl font-extrabold text-gray-900 tracking-tight'>
+          <h2 className='text-2xl font-extrabold text-grey-hover tracking-tight'>
             Personal information
           </h2>
         </div>
@@ -141,7 +141,7 @@ function SignUpInformationContent() {
 
           {/* Username */}
           <div>
-            <label htmlFor='username' className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1'>
+            <label htmlFor='username' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
               Username
             </label>
             <input
@@ -152,7 +152,7 @@ function SignUpInformationContent() {
                 setUsername(e.target.value);
                 if (formError) setFormError(null);
               }}
-              className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-gray-700'
+              className='w-full px-4 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-grey-hover'
               placeholder='Username'
               required
             />
@@ -160,7 +160,7 @@ function SignUpInformationContent() {
 
           {/* Gender Trigger Input */}
           <div>
-            <label htmlFor='gender' className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1'>
+            <label htmlFor='gender' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
               Gender
             </label>
             <div className='relative'>
@@ -170,11 +170,11 @@ function SignUpInformationContent() {
                 readOnly
                 value={gender}
                 onClick={() => setIsGenderOpen(true)}
-                className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-gray-700 select-none'
+                className='w-full px-4 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-grey-hover select-none'
                 placeholder='Gender'
                 required
               />
-              <div className='absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400'>
+              <div className='absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-grey/60'>
                 <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                   <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M19 9l-7 7-7-7' />
                 </svg>
@@ -184,7 +184,7 @@ function SignUpInformationContent() {
 
           {/* Birthday Trigger Input */}
           <div>
-            <label htmlFor='birthday' className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1'>
+            <label htmlFor='birthday' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
               Birthday
             </label>
             <div className='relative'>
@@ -194,11 +194,11 @@ function SignUpInformationContent() {
                 readOnly
                 value={formatDateDisplay(birthday)}
                 onClick={() => setIsBirthdayOpen(true)}
-                className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-gray-700 select-none'
+                className='w-full px-4 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-grey-hover select-none'
                 placeholder='Birthday'
                 required
               />
-              <div className='absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400'>
+              <div className='absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-grey/60'>
                 <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                   <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M19 9l-7 7-7-7' />
                 </svg>
@@ -208,7 +208,7 @@ function SignUpInformationContent() {
 
           {/* Password */}
           <div>
-            <label htmlFor='password' className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1'>
+            <label htmlFor='password' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
               Password
             </label>
             <div className='relative'>
@@ -220,14 +220,14 @@ function SignUpInformationContent() {
                   setPassword(e.target.value);
                   if (formError) setFormError(null);
                 }}
-                className='w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-gray-700'
+                className='w-full pl-4 pr-12 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-grey-hover'
                 placeholder='Tối thiểu 6 ký tự'
                 required
               />
               <button
                 type='button'
                 onClick={() => setShowPassword(!showPassword)}
-                className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors'
+                className='absolute inset-y-0 right-0 pr-3 flex items-center text-grey/60 hover:text-grey-hover transition-colors'
               >
                 {showPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
               </button>
@@ -236,7 +236,7 @@ function SignUpInformationContent() {
 
           {/* Confirm Password */}
           <div>
-            <label htmlFor='confirmPassword' className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1'>
+            <label htmlFor='confirmPassword' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
               Confirm password
             </label>
             <div className='relative'>
@@ -248,14 +248,14 @@ function SignUpInformationContent() {
                   setConfirmPassword(e.target.value);
                   if (formError) setFormError(null);
                 }}
-                className='w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-gray-700'
+                className='w-full pl-4 pr-12 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-grey-hover'
                 placeholder='Tối thiểu 6 ký tự'
                 required
               />
               <button
                 type='button'
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors'
+                className='absolute inset-y-0 right-0 pr-3 flex items-center text-grey/60 hover:text-grey-hover transition-colors'
               >
                 {showConfirmPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
               </button>
@@ -279,7 +279,7 @@ function SignUpInformationContent() {
                 sessionStorage.removeItem('otp_verified');
                 router.replace('/signup');
               }}
-              className='flex-1 border border-gray-200 hover:bg-gray-50 active:scale-[0.98] text-gray-500 hover:text-gray-700 font-bold py-3.5 rounded-xl transition-all duration-200'
+              className='flex-1 border border-grey/20 hover:bg-grey/5 active:scale-[0.98] text-grey hover:text-grey-hover font-bold py-3.5 rounded-xl transition-all duration-200'
             >
               Back
             </button>

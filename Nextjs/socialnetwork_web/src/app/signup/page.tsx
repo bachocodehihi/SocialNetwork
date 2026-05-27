@@ -14,7 +14,6 @@ export default function SignUp() {
   const { showSuccess, showWarning } = useAlert();
   const router = useRouter();
 
-  // Clear all temporary registration data on mount
   useEffect(() => {
     sessionStorage.removeItem('otp_verified');
     sessionStorage.removeItem('signup_email');
@@ -79,19 +78,23 @@ export default function SignUp() {
       <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
 
         <div className='text-center mb-8'>
-          <div className='bg-blue w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4'>
-            <UserPlus className='w-8 h-8 text-blue' />
+          <div className='w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mx-auto mb-4 border border-grey/10 shadow-sm'>
+            <img
+              src='/assets/logo/logo.png'
+              alt='SocialNetwork Logo'
+              className='w-full h-full object-cover'
+            />
           </div>
-          <h2 className='text-xl font-extrabold text-gray-900 tracking-tight'>
-            Create Account
+          <h2 className='text-xl font-bold text-black tracking-tight'>
+            Create account
           </h2>
-          <p className='text-gray-500 mt-2'>Join our community today</p>
+          <p className='text-grey mt-2'>Join our community today</p>
         </div>
 
         <form onSubmit={handleSubmit} className='space-y-6' noValidate>
 
           <div>
-            <label htmlFor='email' className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1'>
+            <label htmlFor='email' className='block text-sm font-bold text-black tracking-wider mb-2 ml-1'>
               Email
             </label>
             <input
@@ -102,7 +105,7 @@ export default function SignUp() {
                 setEmail(e.target.value);
                 if (formError) setFormError(null);
               }}
-              className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 outline-none transition-all ${formError && !email ? 'border-red focus:ring-red/20' : 'border-gray-200 focus:ring-blue/20 focus:border-blue'
+              className={`w-full px-4 py-3 bg-grey/5 border rounded-xl focus:ring-2 outline-none transition-all ${formError && !email ? 'border-red focus:ring-red/20' : 'border-grey/20 focus:ring-blue/20 focus:border-blue'
                 }`}
               placeholder='Email@example.com'
             />
@@ -127,17 +130,17 @@ export default function SignUp() {
 
           <div className='relative py-4'>
             <div className='absolute inset-0 flex items-center'>
-              <div className='w-full border-t border-gray-100'></div>
+              <div className='w-full border-t border-grey'></div>
             </div>
             <div className='relative flex justify-center text-sm tracking-widest'>
-              <span className='px-4 bg-white text-gray-500 font-medium'>Or continue with</span>
+              <span className='px-4 bg-white text-grey font-medium'>Or continue with</span>
             </div>
           </div>
 
           <button
             type='button'
             onClick={handleGoogleSignup}
-            className='w-full bg-white border border-gray-200 hover:bg-gray-50 active:scale-[0.98] text-gray-700 font-bold py-3 rounded-xl transition-all duration-200 shadow-sm flex items-center justify-center gap-3'
+            className='w-full bg-white border border-grey/20 hover:bg-black/5 hover:border-black/20 active:scale-[0.98] text-black font-bold py-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center gap-3'
           >
             <svg className='w-5 h-5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
               <path d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z' fill='#4285F4' />
@@ -150,7 +153,7 @@ export default function SignUp() {
 
         </form>
 
-        <div className='mt-8 text-center text-sm text-gray-500'>
+        <div className='mt-8 text-center text-sm text-grey'>
           Already have an account?{' '}
           <a href='/signin' className='text-blue hover:text-blue-hover font-bold transition-colors'>
             Sign in

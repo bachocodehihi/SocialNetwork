@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { NETWORK } from '../config/network';
+import { NETWORK } from '../config/config';
 
 const api = axios.create({
   baseURL: NETWORK.apiUrl,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 10000,
+  timeout: 30000,
 });
 
 api.interceptors.request.use((config) => {

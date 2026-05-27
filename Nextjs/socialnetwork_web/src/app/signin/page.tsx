@@ -130,13 +130,13 @@ export default function SignIn() {
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 p-4 font-sans'>
       <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/20 backdrop-blur-sm'>
 
-        <div className='flex border-b border-gray-100 bg-gray-50/50'>
+        <div className='flex border-b border-grey/10 bg-grey/5'>
           <button
             onClick={() => setMode('email')}
             className={`flex-1 py-4 text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
               mode === 'email'
                 ? 'text-blue border-b-2 border-blue bg-white'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'
+                : 'text-grey hover:text-grey-hover hover:bg-grey/5'
             }`}
           >
             <Mail className="w-4 h-4" />
@@ -147,7 +147,7 @@ export default function SignIn() {
             className={`flex-1 py-4 text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
               mode === 'qr'
                 ? 'text-blue border-b-2 border-blue bg-white'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'
+                : 'text-grey hover:text-grey-hover hover:bg-grey/5'
             }`}
           >
             <QrCode className="w-4 h-4" />
@@ -159,7 +159,12 @@ export default function SignIn() {
           {mode === 'email' ? (
             <form onSubmit={handleEmailLogin} className='space-y-5' noValidate>
               <div>
-                <label htmlFor='email' className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1'>
+                <div className='text-center mb-2'>
+                  <h2 className='text-xl font-bold text-black tracking-tight'>
+                    Sign in
+                  </h2>
+                </div>
+                <label htmlFor='email' className='block text-sm font-bold text-black tracking-wider mb-2 ml-1'>
                   Email
                 </label>
                 <input
@@ -170,14 +175,14 @@ export default function SignIn() {
                     setEmail(e.target.value);
                     if (formError) setFormError(null);
                   }}
-                  className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 outline-none transition-all ${
-                    formError && !email ? 'border-red focus:ring-red/20' : 'border-gray-200 focus:ring-blue/20 focus:border-blue'
+                  className={`w-full px-4 py-3 bg-grey/5 border rounded-xl focus:ring-2 outline-none transition-all ${
+                    formError && !email ? 'border-red focus:ring-red/20' : 'border-grey/20 focus:ring-blue/20 focus:border-blue'
                   }`}
                   placeholder='Email@example.com'
                 />
               </div>
               <div>
-                <label htmlFor='password' className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1'>
+                <label htmlFor='password' className='block text-sm font-bold text-black tracking-wider mb-2 ml-1'>
                   Password
                 </label>
                 <input
@@ -188,15 +193,15 @@ export default function SignIn() {
                     setPassword(e.target.value);
                     if (formError && email) setFormError(null);
                   }}
-                  className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 outline-none transition-all ${
-                    formError && email && !password ? 'border-red focus:ring-red/20' : 'border-gray-200 focus:ring-blue/20 focus:border-blue'
+                  className={`w-full px-4 py-3 bg-grey/5 border rounded-xl focus:ring-2 outline-none transition-all ${
+                    formError && email && !password ? 'border-red focus:ring-red/20' : 'border-grey/20 focus:ring-blue/20 focus:border-blue'
                   }`}
                   placeholder='Password'
                 />
               </div>
               
               <div className='flex justify-end text-sm px-1'>
-                <a href='#' className='text-blue hover:text-blue-hover font-bold transition-colors'>
+                <a href='/forgot' className='text-blue hover:text-blue-hover font-bold transition-colors'>
                   Forgot password?
                 </a>
               </div>
@@ -213,7 +218,7 @@ export default function SignIn() {
               <button
                 type='submit'
                 disabled={isLoading}
-                className='w-full bg-blue hover:bg-blue-hover active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2 mt-2'
+                className='w-full bg-blue hover:bg-blue-hover active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue/25 flex items-center justify-center gap-2'
               >
                 {isLoading && <Loader2 className='animate-spin h-5 w-5' />}
                 <span>Sign in</span>
@@ -221,17 +226,17 @@ export default function SignIn() {
 
               <div className='relative py-4'>
                 <div className='absolute inset-0 flex items-center'>
-                  <div className='w-full border-t border-gray-100'></div>
+                  <div className='w-full border-t border-grey'></div>
                 </div>
                 <div className='relative flex justify-center text-sm tracking-widest'>
-                  <span className='px-4 bg-white text-gray-500 font-medium'>Or continue with</span>
+                  <span className='px-4 bg-white text-grey font-medium'>Or continue with</span>
                 </div>
               </div>
 
               <button
                 type='button'
                 onClick={handleGoogleLogin}
-                className='w-full bg-white border border-gray-200 hover:bg-gray-50 active:scale-[0.98] text-gray-700 font-bold py-3 rounded-xl transition-all duration-200 shadow-sm flex items-center justify-center gap-3'
+                className='w-full bg-white border border-grey/20 hover:bg-black/5 hover:border-black/20 active:scale-[0.98] text-black font-bold py-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center gap-3'
               >
                 <svg className='w-5 h-5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
                   <path d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z' fill='#4285F4'/>
@@ -244,7 +249,7 @@ export default function SignIn() {
             </form>
           ) : (
             <div className='text-center space-y-6'>
-              <div className='bg-gray-50 p-6 rounded-3xl inline-block border border-gray-100 relative shadow-inner'>
+              <div className='bg-grey/5 p-6 rounded-3xl inline-block border border-grey/10 relative shadow-inner'>
 
                 {qrCodeImage ? (
                   <img
@@ -275,19 +280,19 @@ export default function SignIn() {
               </div>
               
               <div className='space-y-2'>
-                <p className='text-gray-900 font-bold text-xl'>
+                <p className='text-black font-bold text-xl'>
                   {qrStatus === 'waiting' && 'Scan QR Code'}
                   {qrStatus === 'scanned' && 'Wait for confirmation'}
                   {qrStatus === 'success' && 'Redirecting...'}
                 </p>
-                <p className='text-sm text-gray-500 px-8'>
+                <p className='text-sm text-grey px-8'>
                   Open your mobile app and scan this code to sign in instantly.
                 </p>
               </div>
               
               <button
                 onClick={handleRefreshQR}
-                className='text-sm text-blue hover:text-blue-hover font-bold transition-all flex items-center gap-2 mx-auto px-4 py-2 hover:bg-blue-hover rounded-lg'
+                className='text-sm text-blue hover:text-blue-hover font-bold transition-all flex items-center gap-2 mx-auto px-4 py-2 hover:bg-blue/10 rounded-lg'
               >
                 <RefreshCw className="w-4 h-4" />
                 Refresh QR Code
@@ -296,7 +301,7 @@ export default function SignIn() {
           )}
         </div>
 
-        <div className='px-8 pb-8 text-center text-sm text-gray-500 bg-gray-50/50 border-t border-gray-100 pt-6'>
+        <div className='px-8 pb-8 text-center text-sm text-grey bg-grey/5 border-t border-grey/10 pt-6'>
           Don't have an account?{' '}
           <a href='/signup' className='text-blue hover:text-blue-hover font-bold transition-colors'>
             Sign up

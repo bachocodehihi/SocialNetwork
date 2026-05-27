@@ -146,14 +146,14 @@ export default function HomePage() {
 
   if (checking) {
     return (
-      <div className='flex h-screen items-center justify-center bg-gray-50'>
+      <div className='flex h-screen items-center justify-center bg-grey/5'>
         <div className='animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent'></div>
       </div>
     );
   }
 
   return (
-    <div className='min-h-screen bg-gray-50 font-sans'>
+    <div className='min-h-screen bg-grey/5 font-sans'>
       {/* Top Navigation Bar */}
       {/* Search overlay backdrop */}
       {isSearchFocused && (
@@ -163,7 +163,7 @@ export default function HomePage() {
         />
       )}
 
-      <nav className='fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 shadow-sm'>
+      <nav className='fixed top-0 left-0 right-0 bg-white border-b border-grey/20 z-50 shadow-sm'>
         <div className='w-full px-4 sm:px-6 md:px-8'>
           <div className='flex items-center justify-between h-16 relative w-full'>
             {/* Logo & Search Bar (Left) */}
@@ -173,8 +173,8 @@ export default function HomePage() {
               </h1>
               {/* Premium Facebook-style Search Input */}
               <div className='relative'>
-                <div className={`hidden sm:flex items-center bg-gray-100 hover:bg-gray-200/80 focus-within:bg-white border focus-within:border-blue focus-within:shadow-sm transition-all duration-200 rounded-full pl-3 pr-4 py-2 h-10 ${isSearchFocused ? 'w-64 sm:w-72 lg:w-80 shadow-md' : 'w-40 lg:w-48'}`}>
-                  <Search className='w-4 h-4 text-gray-500 mr-2 flex-shrink-0' />
+                <div className={`hidden sm:flex items-center bg-grey/10 hover:bg-grey/20 focus-within:bg-white border focus-within:border-blue focus-within:shadow-sm transition-all duration-200 rounded-full pl-3 pr-4 py-2 h-10 ${isSearchFocused ? 'w-64 sm:w-72 lg:w-80 shadow-md' : 'w-40 lg:w-48'}`}>
+                  <Search className='w-4 h-4 text-grey mr-2 flex-shrink-0' />
                   <input
                     type='text'
                     placeholder='Search...'
@@ -182,26 +182,26 @@ export default function HomePage() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearchFocused(true)}
                     onKeyDown={handleKeyDown}
-                    className='bg-transparent border-none outline-none text-sm placeholder-gray-500 text-gray-900 w-full'
+                    className='bg-transparent border-none outline-none text-sm placeholder-gray-500 text-grey-hover w-full'
                   />
                 </div>
                 {/* Circular Search Icon for Mobile */}
                 <button 
                   onClick={() => setIsSearchFocused(true)}
-                  className='flex sm:hidden w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 items-center justify-center text-gray-600 transition duration-150'
+                  className='flex sm:hidden w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/20 items-center justify-center text-grey-hover transition duration-150'
                 >
                   <Search className='w-5 h-5' />
                 </button>
 
                 {/* Dropdown Menu Overlay */}
                 {isSearchFocused && (
-                  <div className='absolute top-12 left-0 w-80 sm:w-96 bg-white border border-gray-200/60 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200'>
+                  <div className='absolute top-12 left-0 w-80 sm:w-96 bg-white border border-grey/10 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200'>
                     
                     {/* Recent searches history mode */}
                     {!searchQuery.trim() ? (
                       <>
                         <div className='flex items-center justify-between mb-3 px-1.5'>
-                          <span className='font-bold text-gray-900 text-sm sm:text-base'>Recent</span>
+                          <span className='font-bold text-grey-hover text-sm sm:text-base'>Recent</span>
                           {searchHistory.length > 0 && (
                             <button 
                               onClick={clearHistory}
@@ -213,7 +213,7 @@ export default function HomePage() {
                         </div>
 
                         {searchHistory.length === 0 ? (
-                          <div className='text-center py-6 text-gray-400 text-xs sm:text-sm select-none'>
+                          <div className='text-center py-6 text-grey/60 text-xs sm:text-sm select-none'>
                             No recent searches
                           </div>
                         ) : (
@@ -229,29 +229,29 @@ export default function HomePage() {
                                     handleSelectQuery(item.text);
                                   }
                                 }}
-                                className='flex items-center justify-between p-2 hover:bg-gray-50 active:bg-gray-100 rounded-xl cursor-pointer transition group'
+                                className='flex items-center justify-between p-2 hover:bg-grey/5 active:bg-grey/10 rounded-xl cursor-pointer transition group'
                               >
                                 <div className='flex items-center gap-3'>
                                   {item.type === 'user' ? (
-                                    <div className='w-9 h-9 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0'>
+                                    <div className='w-9 h-9 rounded-full bg-grey/10 border border-grey/20 overflow-hidden flex items-center justify-center flex-shrink-0'>
                                       {item.avatar ? (
                                         <img src={item.avatar} alt={item.username} className='w-full h-full object-cover' />
                                       ) : (
-                                        <User className='w-5 h-5 text-gray-500' />
+                                        <User className='w-5 h-5 text-grey' />
                                       )}
                                     </div>
                                   ) : (
-                                    <div className='w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 text-gray-500 group-hover:bg-gray-200 transition'>
+                                    <div className='w-9 h-9 rounded-full bg-grey/10 flex items-center justify-center flex-shrink-0 text-grey group-hover:bg-grey/20 transition'>
                                       <Clock className='w-4.5 h-4.5' />
                                     </div>
                                   )}
-                                  <span className='text-sm font-medium text-gray-800 truncate max-w-[180px] sm:max-w-[240px]'>
+                                  <span className='text-sm font-medium text-grey-hover truncate max-w-[180px] sm:max-w-[240px]'>
                                     {item.type === 'user' ? item.username : item.text}
                                   </span>
                                 </div>
                                 <button 
                                   onClick={(e) => removeFromHistory(e, index)}
-                                  className='w-7 h-7 rounded-full hover:bg-gray-200/70 flex items-center justify-center text-gray-400 hover:text-gray-600 transition bg-transparent border-none'
+                                  className='w-7 h-7 rounded-full hover:bg-grey/20 flex items-center justify-center text-grey/60 hover:text-grey-hover transition bg-transparent border-none'
                                 >
                                   <X className='w-4 h-4' />
                                 </button>
@@ -264,16 +264,16 @@ export default function HomePage() {
                       <>
                         {/* Dynamic search results mode */}
                         <div className='mb-2 px-1.5'>
-                          <span className='font-bold text-gray-900 text-sm sm:text-base'>Search results</span>
+                          <span className='font-bold text-grey-hover text-sm sm:text-base'>Search results</span>
                         </div>
 
                         {isSearching ? (
-                          <div className='flex items-center justify-center py-8 text-gray-400 text-sm gap-2 select-none'>
+                          <div className='flex items-center justify-center py-8 text-grey/60 text-sm gap-2 select-none'>
                             <Loader2 className='w-4 h-4 animate-spin text-blue' />
                             <span>Searching...</span>
                           </div>
                         ) : searchResults.length === 0 ? (
-                          <div className='text-center py-8 text-gray-400 text-xs sm:text-sm select-none'>
+                          <div className='text-center py-8 text-grey/60 text-xs sm:text-sm select-none'>
                             No users found
                           </div>
                         ) : (
@@ -282,28 +282,28 @@ export default function HomePage() {
                               <div 
                                 key={item._id}
                                 onClick={() => handleSelectUser(item)}
-                                className='flex items-center justify-between p-2 hover:bg-gray-50 active:bg-gray-100 rounded-xl cursor-pointer transition'
+                                className='flex items-center justify-between p-2 hover:bg-grey/5 active:bg-grey/10 rounded-xl cursor-pointer transition'
                               >
                                 <div className='flex items-center gap-3'>
-                                  <div className='w-9 h-9 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0'>
+                                  <div className='w-9 h-9 rounded-full bg-grey/10 border border-grey/20 overflow-hidden flex items-center justify-center flex-shrink-0'>
                                     {item.avatar ? (
                                       <img src={item.avatar} alt={item.username} className='w-full h-full object-cover' />
                                     ) : (
-                                      <User className='w-5 h-5 text-gray-500' />
+                                      <User className='w-5 h-5 text-grey' />
                                     )}
                                   </div>
                                   <div className='flex flex-col text-left'>
-                                    <span className='text-sm font-semibold text-gray-800 truncate max-w-[200px] sm:max-w-[260px]'>
+                                    <span className='text-sm font-semibold text-grey-hover truncate max-w-[200px] sm:max-w-[260px]'>
                                       {item.username}
                                     </span>
                                     {item.email && (
-                                      <span className='text-xs text-gray-400 truncate max-w-[200px]'>
+                                      <span className='text-xs text-grey/60 truncate max-w-[200px]'>
                                         {item.email}
                                       </span>
                                     )}
                                   </div>
                                 </div>
-                                <ChevronRight className='w-4 h-4 text-gray-400' />
+                                <ChevronRight className='w-4 h-4 text-grey/60' />
                               </div>
                             ))}
                           </div>
@@ -323,7 +323,7 @@ export default function HomePage() {
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'home'
                     ? 'text-blue border-blue'
-                    : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
+                    : 'text-grey hover:text-grey-hover border-transparent hover:bg-grey/5'
                 }`}
               >
                 <svg className='w-7 h-7' fill={activeTab === 'home' ? 'currentColor' : 'none'} stroke='currentColor' viewBox='0 0 24 24'>
@@ -337,7 +337,7 @@ export default function HomePage() {
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'video'
                     ? 'text-blue border-blue'
-                    : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
+                    : 'text-grey hover:text-grey-hover border-transparent hover:bg-grey/5'
                 }`}
               >
                 <svg className='w-7 h-7' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -352,7 +352,7 @@ export default function HomePage() {
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'community'
                     ? 'text-blue border-blue'
-                    : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
+                    : 'text-grey hover:text-grey-hover border-transparent hover:bg-grey/5'
                 }`}
               >
                 <svg className='w-7 h-7' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -366,7 +366,7 @@ export default function HomePage() {
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'shop'
                     ? 'text-blue border-blue'
-                    : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
+                    : 'text-grey hover:text-grey-hover border-transparent hover:bg-grey/5'
                 }`}
               >
                 <svg className='w-7 h-7' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -380,7 +380,7 @@ export default function HomePage() {
                 className={`h-16 px-6 flex items-center justify-center border-b-4 transition-all duration-150 ${
                   activeTab === 'create'
                     ? 'text-blue border-blue'
-                    : 'text-gray-500 hover:text-gray-800 border-transparent hover:bg-gray-50'
+                    : 'text-grey hover:text-grey-hover border-transparent hover:bg-grey/5'
                 }`}
               >
                 <svg className='w-7 h-7' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -393,7 +393,7 @@ export default function HomePage() {
             <div className='flex items-center gap-3 relative'>
               <button 
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className='w-10 h-10 rounded-full overflow-hidden border border-gray-200 hover:ring-4 hover:ring-blue transition duration-200 flex items-center justify-center bg-gray-50 flex-shrink-0'
+                className='w-10 h-10 rounded-full overflow-hidden border border-grey/20 hover:ring-4 hover:ring-blue transition duration-200 flex items-center justify-center bg-grey/5 flex-shrink-0'
               >
                 <img
                   src={user?.avatar || '/assets/avatar/avatar.jpg'}
@@ -409,7 +409,7 @@ export default function HomePage() {
                     className="fixed inset-0 z-40 cursor-default" 
                     onClick={() => setIsDropdownOpen(false)} 
                   />
-                  <div className='absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 z-50 animate-scale-up origin-top-right select-none'>
+                  <div className='absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-black/5 p-4 z-50 animate-scale-up origin-top-right select-none'>
                     
                     {/* User Card */}
                     <div 
@@ -417,7 +417,7 @@ export default function HomePage() {
                         setIsDropdownOpen(false);
                         router.push('/profile');
                       }}
-                      className='bg-gray-50 hover:bg-gray-100/70 p-3.5 rounded-2xl border border-gray-100 transition duration-200 cursor-pointer mb-3 flex items-center gap-3'
+                      className='bg-black/5 hover:bg-black/10 p-3.5 rounded-2xl border border-black/5 transition duration-200 cursor-pointer mb-3 flex items-center gap-3'
                     >
                       <div className='w-11 h-11 rounded-full overflow-hidden border border-white shadow-sm bg-white flex-shrink-0'>
                         <img
@@ -427,7 +427,7 @@ export default function HomePage() {
                         />
                       </div>
                       <div className='flex-1 min-w-0'>
-                        <h4 className='font-bold text-gray-900 truncate text-[15px]'>
+                        <h4 className='font-bold text-black truncate text-[15px]'>
                           {user?.username || 'User Profile'}
                         </h4>
                       </div>
@@ -439,14 +439,14 @@ export default function HomePage() {
                         setIsDropdownOpen(false);
                         router.push('/profile');
                       }}
-                      className='w-full py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition duration-200 flex items-center justify-center gap-2 text-sm shadow-sm'
+                      className='w-full py-2.5 px-4 bg-black/5 hover:bg-black/10 text-black font-bold rounded-xl transition duration-200 flex items-center justify-center gap-2 text-sm shadow-sm'
                     >
-                      <User className='w-4 h-4 text-gray-500' />
+                      <User className='w-4 h-4 text-black/60' />
                       <span>Xem tất cả trang cá nhân</span>
                     </button>
 
                     {/* Separator */}
-                    <div className='border-t border-gray-100 my-3' />
+                    <div className='border-t border-black/5 my-3' />
 
                     {/* Options List */}
                     <div className='space-y-1'>
@@ -456,17 +456,17 @@ export default function HomePage() {
                           setIsDropdownOpen(false);
                           router.push('/setting');
                         }}
-                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 active:scale-[0.98] transition group'
+                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-black/5 active:scale-[0.98] transition group'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue-hover group-hover:text-blue-hover transition duration-200'>
+                          <div className='w-9 h-9 bg-black/5 rounded-full flex items-center justify-center text-black/80 group-hover:bg-blue/10 group-hover:text-blue transition duration-200'>
                             <Settings className='w-5 h-5' />
                           </div>
-                          <span className='text-sm font-semibold text-gray-500 group-hover:text-gray-700 transition-colors'>
+                          <span className='text-sm font-semibold text-black/80 group-hover:text-black transition-colors'>
                             Setting
                           </span>
                         </div>
-                        <ChevronRight className='w-5 h-5 text-gray-500 group-hover:text-gray-700 transition-colors' />
+                        <ChevronRight className='w-5 h-5 text-black/40 group-hover:text-black transition-colors' />
                       </button>
 
                       {/* Game */}
@@ -475,26 +475,26 @@ export default function HomePage() {
                           setIsDropdownOpen(false);
                           router.push('/game');
                         }}
-                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 active:scale-[0.98] transition group'
+                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-black/5 active:scale-[0.98] transition group'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-blue-hover group-hover:text-blue-hover transition duration-200'>
+                          <div className='w-9 h-9 bg-black/5 rounded-full flex items-center justify-center text-black/80 group-hover:bg-blue/10 group-hover:text-blue transition duration-200'>
                             <Gamepad2 className='w-5 h-5' />
                           </div>
-                          <span className='text-sm font-semibold text-gray-500 group-hover:text-gray-700 transition-colors'>
+                          <span className='text-sm font-semibold text-black/80 group-hover:text-black transition-colors'>
                             Game
                           </span>
                         </div>
-                        <ChevronRight className='w-5 h-5 text-gray-500 group-hover:text-gray-700 transition-colors' />
+                        <ChevronRight className='w-5 h-5 text-black/40 group-hover:text-black transition-colors' />
                       </button>
 
                       {/* Đăng xuất - Chữ đỏ! */}
                       <button
                         onClick={handleLogOut}
-                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-red-hover/50 active:scale-[0.98] transition group'
+                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-red/10 active:scale-[0.98] transition group'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-red rounded-full flex items-center justify-center text-red group-hover:bg-red-hover transition duration-200'>
+                          <div className='w-9 h-9 bg-red/10 rounded-full flex items-center justify-center text-red group-hover:bg-red/20 transition duration-200'>
                             <LogOut className='w-5 h-5' />
                           </div>
                           <span className='text-sm font-bold text-red group-hover:text-red-hover transition-colors'>
@@ -516,9 +516,9 @@ export default function HomePage() {
       <main className='pt-20 pb-8 px-4'>
         <div className='max-w-2xl mx-auto'>
           {/* Create Post Box */}
-          <div className='bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6'>
+          <div className='bg-white rounded-2xl shadow-sm border border-grey/20 p-4 mb-6'>
             <div className='flex gap-3 items-center'>
-              <div className='w-10 h-10 rounded-full overflow-hidden border border-gray-100 bg-gray-50 flex-shrink-0 flex items-center justify-center'>
+              <div className='w-10 h-10 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center'>
                 <img
                   src={user?.avatar || '/assets/avatar/avatar.jpg'}
                   alt='Avatar'
@@ -529,7 +529,7 @@ export default function HomePage() {
                 <input
                   type='text'
                   placeholder='What is on your mind?'
-                  className='flex-1 px-4 py-2.5 bg-gray-100 rounded-xl border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-gray-900 placeholder-gray-500'
+                  className='flex-1 px-4 py-2.5 bg-grey/10 rounded-xl border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-grey-hover placeholder-gray-500'
                 />
                 <button className='px-5 py-2.5 bg-blue hover:bg-blue-hover active:scale-[0.98] text-white font-bold rounded-xl transition duration-150 shadow-md shadow-blue/20 text-sm flex-shrink-0'>
                   Post
@@ -540,34 +540,34 @@ export default function HomePage() {
 
           {/* Sample Posts */}
           {[1, 2, 3].map((post) => (
-            <div key={post} className='bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-4'>
+            <div key={post} className='bg-white rounded-2xl shadow-sm border border-grey/20 p-4 mb-4'>
               <div className='flex items-center gap-3 mb-3'>
                 <div className='w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink flex items-center justify-center text-white font-semibold'>
                   {String.fromCharCode(64 + post)}
                 </div>
                 <div>
-                  <h3 className='font-semibold text-gray-900'>User {post}</h3>
-                  <p className='text-sm text-gray-500'>2 giờ trước</p>
+                  <h3 className='font-semibold text-grey-hover'>User {post}</h3>
+                  <p className='text-sm text-grey'>2 giờ trước</p>
                 </div>
               </div>
-              <p className='text-gray-800 mb-3'>
+              <p className='text-grey-hover mb-3'>
                 Đây là bài viết mẫu số {post}. Nội dung bài đăng sẽ hiển thị ở đây...
               </p>
               <div className='w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl mb-3'></div>
-              <div className='flex items-center justify-between pt-3 border-t border-gray-100'>
-                <button className='flex items-center gap-2 text-gray-600 hover:text-blue-hover transition'>
+              <div className='flex items-center justify-between pt-3 border-t border-grey/10'>
+                <button className='flex items-center gap-2 text-grey-hover hover:text-blue-hover transition'>
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
                   </svg>
                   <span className='font-medium'>Thích</span>
                 </button>
-                <button className='flex items-center gap-2 text-gray-600 hover:text-blue-hover transition'>
+                <button className='flex items-center gap-2 text-grey-hover hover:text-blue-hover transition'>
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' />
                   </svg>
                   <span className='font-medium'>Bình luận</span>
                 </button>
-                <button className='flex items-center gap-2 text-gray-600 hover:text-blue-hover transition'>
+                <button className='flex items-center gap-2 text-grey-hover hover:text-blue-hover transition'>
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z' />
                   </svg>

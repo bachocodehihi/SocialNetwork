@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+    --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+
     --color-blue: rgb(33, 150, 243);
     --color-blue-hover: rgb(29, 132, 214);
 
@@ -14,7 +16,7 @@
     --color-green-hover: rgb(67, 154, 70);
 
     --color-grey: rgb(158, 158, 158);
-    --color-grey-hover: rgb(139, 139, 139);
+    --color-grey-hover: rgb(147, 147, 147);
 
     --color-pink: rgb(233, 30, 99);
     --color-pink-hover: rgb(205, 26, 87);

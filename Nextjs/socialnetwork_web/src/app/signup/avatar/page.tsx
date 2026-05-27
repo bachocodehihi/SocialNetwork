@@ -126,10 +126,10 @@ function SignUpAvatarContent() {
       <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
         
         <div className='text-center mb-6'>
-          <h2 className='text-2xl font-extrabold text-gray-900 tracking-tight select-none'>
+          <h2 className='text-2xl font-extrabold text-grey-hover tracking-tight select-none'>
             Choose your avatar
           </h2>
-          <p className='text-gray-500 mt-2 text-sm px-4 select-none'>
+          <p className='text-grey mt-2 text-sm px-4 select-none'>
             Confirm your profile avatar or upload a new photo from your device
           </p>
         </div>
@@ -138,24 +138,24 @@ function SignUpAvatarContent() {
 
           {/* Main Avatar Preview */}
           <div className='flex flex-col items-center justify-center'>
-            <div className='relative w-36 h-36 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-blue/10 ring-4 ring-blue/20 bg-gray-50 flex items-center justify-center'>
+            <div className='relative w-36 h-36 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-blue/10 ring-4 ring-blue/20 bg-grey/5 flex items-center justify-center'>
               <img
                 src={selectedAvatarUrl}
                 alt='Profile Avatar'
                 className='w-full h-full object-cover select-none'
               />
             </div>
-            <span className='mt-2.5 text-xs text-gray-400 font-semibold uppercase tracking-wider select-none'>
+            <span className='mt-2.5 text-xs text-grey/60 font-semibold uppercase tracking-wider select-none'>
               Avatar Preview
             </span>
           </div>
 
           {/* Custom Avatar Upload */}
           <div>
-            <span className='block text-sm font-bold text-gray-500 tracking-wider mb-2 ml-1 select-none'>
+            <span className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1 select-none'>
               Custom photo
             </span>
-            <label className='flex items-center justify-center gap-2.5 w-full px-4 py-3 border-2 border-dashed border-gray-200 hover:border-blue rounded-xl bg-gray-50 hover:bg-blue-hover/10 cursor-pointer transition-all duration-200 group text-gray-500 hover:text-blue-hover'>
+            <label className='flex items-center justify-center gap-2.5 w-full px-4 py-3 border-2 border-dashed border-grey/20 hover:border-blue rounded-xl bg-grey/5 hover:bg-blue-hover/10 cursor-pointer transition-all duration-200 group text-grey hover:text-blue-hover'>
               <Upload className='w-5 h-5 group-hover:scale-110 transition-transform' />
               <span className='text-sm font-bold tracking-wide'>
                 {customAvatarBase64 ? 'Change custom photo' : 'Upload photo'}
@@ -183,7 +183,7 @@ function SignUpAvatarContent() {
             <button
               type='button'
               onClick={() => router.back()}
-              className='flex-1 border border-gray-200 hover:bg-gray-50 active:scale-[0.98] text-gray-500 hover:text-gray-700 font-bold py-3.5 rounded-xl transition-all duration-200'
+              className='flex-1 border border-grey/20 hover:bg-grey/5 active:scale-[0.98] text-grey hover:text-grey-hover font-bold py-3.5 rounded-xl transition-all duration-200'
             >
               Back
             </button>
@@ -212,10 +212,10 @@ function SignUpAvatarContent() {
             </div>
 
             {/* Message */}
-            <h3 className='text-lg font-bold text-gray-900 mb-1.5'>
+            <h3 className='text-lg font-bold text-grey-hover mb-1.5'>
               Đăng ký thành công!
             </h3>
-            <p className='text-gray-500 text-sm font-medium leading-relaxed px-1'>
+            <p className='text-grey text-sm font-medium leading-relaxed px-1'>
               Tài khoản của bạn đã được khởi tạo thành công. Đang chuyển hướng...
             </p>
 

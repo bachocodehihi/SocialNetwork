@@ -74,7 +74,6 @@ function VerifySignUpContent() {
     try {
       const res = await authService.verifyOtp(email, otp);
       if (res.success) {
-        // Set the verification flag in sessionStorage
         sessionStorage.setItem('otp_verified', 'true');
         
         showSuccess('Xác thực email thành công! Đang chuyển hướng nhập thông tin cá nhân...');
@@ -110,10 +109,10 @@ function VerifySignUpContent() {
           onClick={() => inputRef.current?.focus()}
           className={`w-12 h-14 md:w-14 md:h-16 flex items-center justify-center text-2xl font-bold rounded-xl border-2 transition-all duration-200 cursor-pointer ${
             char
-              ? 'border-blue bg-blue/20 text-gray-900 shadow-md'
+              ? 'border-blue bg-blue/20 text-grey-hover shadow-md'
               : isFocused
               ? 'border-blue bg-white ring-4 ring-blue/10 scale-105'
-              : 'border-gray-200 bg-gray-50/50 text-gray-400 hover:border-gray-300'
+              : 'border-grey/20 bg-grey/5 text-grey/60 hover:border-gray-300'
           }`}
         >
           {char}
@@ -128,13 +127,17 @@ function VerifySignUpContent() {
       <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
         
         <div className='text-center mb-8'>
-          <div className='bg-blue w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4'>
-            <ShieldCheck className='w-8 h-8 text-blue' />
+          <div className='w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mx-auto mb-4 border border-grey/10 shadow-sm'>
+            <img
+              src='/assets/logo/logo.png'
+              alt='SocialNetwork Logo'
+              className='w-full h-full object-cover'
+            />
           </div>
-          <h2 className='text-3xl font-extrabold text-gray-900 tracking-tight'>
+          <h2 className='text-3xl font-extrabold text-grey-hover tracking-tight'>
             Xác thực tài khoản
           </h2>
-          <p className='text-gray-500 mt-2 text-sm px-4'>
+          <p className='text-grey mt-2 text-sm px-4'>
             Mã OTP gồm 6 chữ số đã được gửi tới email:
           </p>
           <p className='text-blue font-semibold text-sm break-all mt-1'>
@@ -186,7 +189,7 @@ function VerifySignUpContent() {
 
         </form>
 
-        <div className='mt-8 text-center text-sm text-gray-500'>
+        <div className='mt-8 text-center text-sm text-grey'>
           Không nhận được mã?{' '}
           {resendCooldown > 0 ? (
             <span className='text-blue font-semibold'>Gửi lại sau ({resendCooldown}s)</span>
@@ -202,7 +205,7 @@ function VerifySignUpContent() {
         </div>
 
         <div className='mt-6 text-center text-xs'>
-          <a href='/signup' className='text-gray-500 hover:text-gray-700 hover:underline transition-colors'>
+          <a href='/signup' className='text-grey hover:text-grey-hover hover:underline transition-colors'>
             Quay lại trang Đăng ký
           </a>
         </div>
