@@ -55,7 +55,7 @@ class _VerifyPasswordViewState extends State<VerifyPasswordView> {
             vertical: 16.h,
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -162,6 +162,8 @@ class _VerifyPasswordViewState extends State<VerifyPasswordView> {
                   ),
                 ),
               ),
+
+              const Spacer(),
 
               GestureDetector(
                 onTap: () {

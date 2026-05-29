@@ -79,7 +79,7 @@ class SwitchAccountController extends ChangeNotifier {
       if (!context.mounted) return; 
       Navigator.pushNamedAndRemoveUntil(
         context,
-        Routes.main,
+        Routes.mainUser,
         (route) => false,
       );
 

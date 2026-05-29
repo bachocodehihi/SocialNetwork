@@ -52,7 +52,7 @@ class _PostContentViewState extends State<PostContentView> {
           'Tạo bài viết',
           style: TextStyle(
             fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             color: cs.onSurface,
           ),
         ),

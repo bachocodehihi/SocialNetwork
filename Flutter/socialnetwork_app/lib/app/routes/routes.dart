@@ -65,7 +65,7 @@ import 'package:socialnetwork/app/pages/qrcode/qrcode_page.dart';
 import 'package:socialnetwork/app/pages/create/group/group_page.dart';
 
 //main
-import 'package:socialnetwork/app/pages/main/main_page.dart';
+import 'package:socialnetwork/app/pages/main/user/user_page.dart';
 
 //search
 import 'package:socialnetwork/app/pages/search/account/account_page.dart';
@@ -82,12 +82,12 @@ import 'package:socialnetwork/app/pages/game/tictactoe/play/user/user_page.dart'
 
 //delete
 import 'package:socialnetwork/app/pages/setting/account/delete/delete_page.dart';
-import 'package:socialnetwork/app/pages/setting/account/delete/account/acount_page.dart';
+import 'package:socialnetwork/app/pages/setting/account/delete/account/account_page.dart';
 
 //call
-import 'package:socialnetwork/app/pages/main/tabs/message/call/user/incoming/incoming_page.dart';
-import 'package:socialnetwork/app/pages/main/tabs/message/call/user/outgoing/outgoing_page.dart';
-import 'package:socialnetwork/app/pages/main/tabs/message/call/user/in/in_page.dart';
+import 'package:socialnetwork/app/pages/main/user/tabs/message/call/user/incoming/incoming_page.dart';
+import 'package:socialnetwork/app/pages/main/user/tabs/message/call/user/outgoing/outgoing_page.dart';
+import 'package:socialnetwork/app/pages/main/user/tabs/message/call/user/in/in_page.dart';
 
 //friiend
 import 'package:socialnetwork/app/pages/list/friends/friends_page.dart';
@@ -170,7 +170,7 @@ class Routes {
   static String createGroup = '/create/group';
 
   //main
-  static String main = '/main';
+  static String mainUser = '/main/user';
 
   //search
   static String search = '/search';
@@ -270,7 +270,7 @@ class Routes {
     createGroup: (_) => CreateGroupPage(),
 
     //main
-    main: (_) => MainPage(),
+    mainUser: (_) => MainUserPage(),
 
     //search
     search: (_) => SearchAccountPage(),

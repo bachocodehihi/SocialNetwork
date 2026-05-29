@@ -3,10 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/user/user_controller.dart';
-//import 'package:socialnetwork/data/local/auth_local.dart';
 import 'package:socialnetwork/app/widgets/avatar/fullscreen.dart';
 import 'package:socialnetwork/data/enums/friend_status.dart';
-import 'package:socialnetwork/app/pages/main/tabs/message/chat/user/user_page.dart';
+import 'package:socialnetwork/app/pages/main/user/tabs/message/chat/user/user_page.dart';
 import 'package:socialnetwork/app/widgets/item/information.dart';
 
 class UserView extends StatefulWidget {

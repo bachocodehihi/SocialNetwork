@@ -126,7 +126,7 @@ class _PlayMachineTictactoeViewState extends State<PlayMachineTictactoeView> {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: cs.surfaceVariant.withOpacity(0.3),
+        color: cs.surfaceVariant.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(color: cs.outlineVariant, width: 1.5),
       ),
@@ -163,13 +163,13 @@ class _PlayMachineTictactoeViewState extends State<PlayMachineTictactoeView> {
           color: cs.surface,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: canPlay ? cs.outlineVariant : cs.outline.withOpacity(0.5),
+            color: canPlay ? cs.outlineVariant : cs.outline.withValues(alpha: 0.5),
             width: 1.5,
           ),
           boxShadow: canPlay
               ? [
                   BoxShadow(
-                    color: cs.shadow.withOpacity(0.1),
+                    color: cs.shadow.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: Offset(0, 2),
                   )
@@ -197,7 +197,7 @@ class _PlayMachineTictactoeViewState extends State<PlayMachineTictactoeView> {
           color: value == 'X' ? xColor : oColor,
           shadows: [
             Shadow(
-              color: (value == 'X' ? xColor : oColor).withOpacity(0.3),
+              color: (value == 'X' ? xColor : oColor).withValues(alpha: 0.3),
               blurRadius: 8,
               offset: Offset(0, 2),
             ),

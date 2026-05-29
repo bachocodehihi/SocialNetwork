@@ -49,8 +49,12 @@ class ContactApi {
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
 
-    if (res.data is List) {
-      return List<Map<String, dynamic>>.from(res.data);
+    final responseData = res.data;
+    if (responseData is Map && responseData['data'] is List) {
+      return List<Map<String, dynamic>>.from(responseData['data']);
+    }
+    if (responseData is List) {
+      return List<Map<String, dynamic>>.from(responseData);
     }
     return [];
   }
@@ -80,8 +84,12 @@ class ContactApi {
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
 
-    if (res.data is List) {
-      return List<Map<String, dynamic>>.from(res.data);
+    final responseData = res.data;
+    if (responseData is Map && responseData['data'] is List) {
+      return List<Map<String, dynamic>>.from(responseData['data']);
+    }
+    if (responseData is List) {
+      return List<Map<String, dynamic>>.from(responseData);
     }
     return [];
   }

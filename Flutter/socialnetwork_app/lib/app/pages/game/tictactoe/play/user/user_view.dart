@@ -201,12 +201,12 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
           height: 60.w,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isTurn ? color.withOpacity(0.2) : cs.surfaceVariant,
+            color: isTurn ? color.withValues(alpha: 0.2) : cs.surfaceVariant.withValues(alpha: 0.2),
             border: Border.all(
               color: isTurn ? color : cs.outlineVariant,
               width: 2,
             ),
-            boxShadow: isTurn ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 10, spreadRadius: 2)] : [],
+            boxShadow: isTurn ? [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 10, spreadRadius: 2)] : [],
           ),
           child: Center(
             child: Text(
@@ -262,7 +262,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
         duration: const Duration(milliseconds: 300),
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: textColor.withOpacity(0.1),
+          color: textColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(15.r),
         ),
         child: Text(
@@ -282,9 +282,9 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
       padding: EdgeInsets.all(12.w),
       constraints: BoxConstraints(maxWidth: 350.w),
       decoration: BoxDecoration(
-        color: cs.surfaceVariant.withOpacity(0.2),
+        color: cs.surfaceVariant.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: cs.outlineVariant.withOpacity(0.5)),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
       ),
       child: AspectRatio(
         aspectRatio: 1,
@@ -314,12 +314,12 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
           color: cs.surface,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: canPlay ? cs.primary.withOpacity(0.5) : cs.outlineVariant,
+            color: canPlay ? cs.primary.withValues(alpha: 0.5) : cs.outlineVariant,
             width: canPlay ? 2 : 1,
           ),
           boxShadow: [
             if (canPlay)
-              BoxShadow(color: cs.primary.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))
+              BoxShadow(color: cs.primary.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 4))
           ],
         ),
         child: Center(
@@ -347,7 +347,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
               color: value == 'X' ? xColor : oColor,
               shadows: [
                 Shadow(
-                  color: (value == 'X' ? xColor : oColor).withOpacity(0.2),
+                  color: (value == 'X' ? xColor : oColor).withValues(alpha: 0.2),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),

@@ -200,16 +200,16 @@ class _GameTictactoeViewState extends State<GameTictactoeView> {
       child: Container(
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          color: cs.surfaceVariant.withOpacity(0.3),
+          color: cs.surfaceVariant.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(24.r),
-          border: Border.all(color: cs.outlineVariant.withOpacity(0.5)),
+          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
         ),
         child: Row(
           children: [
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 28.sp),
@@ -241,7 +241,7 @@ class _GameTictactoeViewState extends State<GameTictactoeView> {
             Icon(
               Icons.arrow_forward_ios,
               size: 16.sp,
-              color: cs.onSurfaceVariant.withOpacity(0.5),
+              color: cs.onSurfaceVariant.withValues(alpha: 0.5),
             ),
           ],
         ),
@@ -327,7 +327,7 @@ class _SearchingDialogState extends State<_SearchingDialog> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
               decoration: BoxDecoration(
-                color: Colors.blueAccent.withOpacity(0.1),
+                color: Colors.blueAccent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Text(

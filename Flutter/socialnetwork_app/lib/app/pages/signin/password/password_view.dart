@@ -77,7 +77,9 @@ class _SignInPasswordViewState extends State<SignInPasswordView> {
                   ),
                 ],
               ),
+              
               SizedBox(height: 20.h),
+
               Text(
                 'Enter your password',
                 style: TextStyle(

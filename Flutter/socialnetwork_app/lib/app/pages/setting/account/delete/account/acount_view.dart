@@ -109,7 +109,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                 cursor: SystemMouseCursors.click,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.red,
                     foregroundColor: Colors.black,
                     minimumSize: Size(double.infinity, 48.h),
                     shape: RoundedRectangleBorder(

@@ -49,6 +49,7 @@ class S {
     //sign in
     //email
     'sign_in_by_email': 'Sign in by email',
+    'don_t_have_an_account': 'Don\'t have an account? ',
     'sign_in_with_google': 'Sign in with Google',
 
     //password
@@ -141,6 +142,8 @@ class S {
     'welcome_to_social_network_app': 'Chào mừng đến với ứng dụng Mạng Xã Hội',
     'sign_in': 'Đăng nhập',
     'create_new_account': 'Tạo tài khoản mới',
+
+
 
     //setting
     'setting': 'Cài đặt',

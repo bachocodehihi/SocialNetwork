@@ -15,7 +15,7 @@ class _SplashViewState extends State<SplashView> {
     controller.init((isLoggedIn) {
       if (!mounted) return;
       if (isLoggedIn) {
-        Navigator.pushReplacementNamed(context, Routes.main);
+        Navigator.pushReplacementNamed(context, Routes.mainUser);
       } else {
         Navigator.pushReplacementNamed(context, Routes.wellcome);
       }

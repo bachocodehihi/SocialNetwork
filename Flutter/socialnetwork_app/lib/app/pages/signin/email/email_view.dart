@@ -78,7 +78,9 @@ class _SignInEmailViewState extends State<SignInEmailView> {
                   ),
                 ],
               ),
+
               SizedBox(height: 20.h),
+              
               Text(
                 'Enter your email',
                 style: TextStyle(
@@ -87,7 +89,9 @@ class _SignInEmailViewState extends State<SignInEmailView> {
                   color: cs.onSurface,
                 ),
               ),
+
               SizedBox(height: 40.h),
+
               TextFormField(
                 controller: controller.emailController,
                 style: TextStyle(

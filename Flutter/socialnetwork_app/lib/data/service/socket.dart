@@ -45,6 +45,7 @@ class SocketService {
             .setTransports(['websocket'])
             .setQuery({'token': token})
             .enableAutoConnect()
+            .enableForceNew()
             .build(),
       );
 
@@ -80,6 +81,7 @@ class SocketService {
   void disconnect() {
     _socket?.disconnect();
     _socket?.dispose();
+    _socket = null;
     _isConnected = false;
     _listeners.clear();
   }

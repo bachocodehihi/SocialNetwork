@@ -56,7 +56,7 @@ class _SwitchAccountViewState extends State<SwitchAccountView> {
               vertical: 16.h,
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   children: [
@@ -94,6 +94,10 @@ class _SwitchAccountViewState extends State<SwitchAccountView> {
                   obscureText: controller.obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Password',
+                    labelStyle: TextStyle(
+                      fontSize: 15.sp, 
+                      color: Colors.grey
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
                       borderSide: const BorderSide(color: Colors.grey),
@@ -106,7 +110,6 @@ class _SwitchAccountViewState extends State<SwitchAccountView> {
                       borderRadius: BorderRadius.circular(8.r),
                       borderSide: const BorderSide(color: Colors.blue, width: 2),
                     ),
-                    labelStyle: const TextStyle(color: Colors.grey),
                     floatingLabelStyle: WidgetStateTextStyle.resolveWith(
                       (states) {
                         if (states.contains(WidgetState.focused)) {
@@ -165,6 +168,8 @@ class _SwitchAccountViewState extends State<SwitchAccountView> {
                     ),
                   ),
                 ),
+
+                const Spacer(),
 
                 GestureDetector(
                   onTap: () {
