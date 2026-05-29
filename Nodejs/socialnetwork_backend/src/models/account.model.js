@@ -8,7 +8,6 @@ const accountSchema = new mongoose.Schema({
     gender: { type: String, required: true },
     avatar: { type: String, default: process.env.DEFAULT_AVATAR_URL },
     googleId: { type: String, default: null },
-    code: { type: String },
     isVerified: { type: Boolean, default: false },
     address: { type: String, default: '' },
     phone: { type: String, default: '' },
@@ -19,6 +18,15 @@ const accountSchema = new mongoose.Schema({
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],
     lastSeen: { type: Date, default: Date.now },
     fcmToken: { type: String, default: null },
+    isDeleted: { type: Boolean, default: false },
+    deleteAt: { type: Date, default: null },
+    isBanned: { type: Boolean, default: false },
+    banReason: { type: String, default: '' },
+    banAppealed: { type: Boolean, default: false },
+    appealContent: { type: String, default: '' },
+    reportsCount: { type: Number, default: 0 },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    qrCode: { type: String, default: '' },
 }, { timestamps: true });
 
 const Account = mongoose.model('Account', accountSchema);

@@ -267,6 +267,130 @@ const getActivity = async (req, res) => {
     }
 };
 
+const requestDeleteAccount = async (req, res) => {
+    try {
+        const deleteDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day from now
+        const updatedUser = await Account.findByIdAndUpdate(
+            req.userId,
+            { isDeleted: true, deleteAt: deleteDate },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            code: 'DELETE_ACCOUNT_REQUESTED_SUCCESS',
+            deleteAt: deleteDate
+        });
+    } catch (error) {
+        console.error('Error requesting account deletion:', error);
+        return res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const cancelDeleteAccount = async (req, res) => {
+    try {
+        const updatedUser = await Account.findByIdAndUpdate(
+            req.userId,
+            { isDeleted: false, deleteAt: null },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            code: 'DELETE_ACCOUNT_CANCELLED_SUCCESS'
+        });
+    } catch (error) {
+        console.error('Error cancelling account deletion:', error);
+        return res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const reportUser = async (req, res) => {
+    try {
+        const { targetId, reason } = req.body;
+        const reporterId = req.userId;
+
+        if (targetId === reporterId.toString()) {
+            return res.status(400).json({ success: false, code: 'CANNOT_REPORT_SELF' });
+        }
+
+        const Report = require('../models/report.model');
+
+        const existingReport = await Report.findOne({ reporter: reporterId, target: targetId });
+        if (existingReport) {
+            return res.status(400).json({ success: false, code: 'REPORT_ALREADY_SUBMITTED' });
+        }
+
+        const newReport = new Report({
+            reporter: reporterId,
+            target: targetId,
+            reason: reason || 'Báo cáo vi phạm tiêu chuẩn cộng đồng'
+        });
+        await newReport.save();
+
+        const targetUser = await Account.findById(targetId);
+        if (!targetUser) {
+            return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+        }
+
+        targetUser.reportsCount = (targetUser.reportsCount || 0) + 1;
+
+        const BAN_THRESHOLD = 3;
+        if (targetUser.reportsCount >= BAN_THRESHOLD) {
+            targetUser.isBanned = true;
+            targetUser.banReason = 'Tài khoản của bạn đã bị khóa tự động do nhận quá nhiều báo cáo vi phạm từ cộng đồng.';
+        }
+
+        await targetUser.save();
+
+        return res.status(200).json({
+            success: true,
+            code: 'REPORT_SUBMITTED_SUCCESS',
+            reportsCount: targetUser.reportsCount,
+            isBanned: targetUser.isBanned
+        });
+    } catch (error) {
+        console.error('Error reporting user:', error);
+        return res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const appealBan = async (req, res) => {
+    try {
+        const { appealContent } = req.body;
+        const userId = req.userId;
+
+        const user = await Account.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+        }
+
+        if (!user.isBanned) {
+            return res.status(400).json({ success: false, code: 'ACCOUNT_NOT_BANNED' });
+        }
+
+        user.banAppealed = true;
+        user.appealContent = appealContent || 'Yêu cầu xem xét mở khóa tài khoản';
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            code: 'APPEAL_SUBMITTED_SUCCESS'
+        });
+    } catch (error) {
+        console.error('Error submitting ban appeal:', error);
+        return res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     getProfile, 
     updateProfile, 
@@ -277,6 +401,10 @@ module.exports = {
     addPhone,
     addAddress,
     addJob,
-    addNationality,
-    getActivity
+    addNationality,        
+    getActivity,             
+    requestDeleteAccount,      
+    cancelDeleteAccount,
+    reportUser,
+    appealBan
 };

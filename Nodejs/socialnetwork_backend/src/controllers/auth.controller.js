@@ -132,6 +132,19 @@ const login = async (req, res) => {
 
         const user = await Account.findOne({ email });
 
+        if (user && user.isDeleted) {
+            const now = new Date();
+            if (now > user.deleteAt) {
+                return res.status(400).json({ 
+                    success: false, 
+                    code: 'EMAIL_NOT_EXIST' 
+                });
+            }
+            user.isDeleted = false;
+            user.deleteAt = null;
+            await user.save();
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -146,6 +159,16 @@ const login = async (req, res) => {
             process.env.JWT_SECRET, 
             { expiresIn: '7d' }
         );
+
+        if (user.isBanned) {
+            return res.status(200).json({
+                success: false,
+                code: 'ACCOUNT_BANNED',
+                message: user.banReason,
+                banAppealed: user.banAppealed,
+                token
+            });
+        }
 
         const postCount = await Post.countDocuments({ author: user._id });
         const userObj = user.toObject();
@@ -179,7 +202,7 @@ const checkEmail = async (req, res) => {
 
         const user = await Account.findOne({ email });
 
-        if (!user) {
+        if (!user || (user.isDeleted && new Date() > user.deleteAt)) {
             return res.status(200).json({ 
                 success: false, 
                 code: 'EMAIL_NOT_EXIST',
