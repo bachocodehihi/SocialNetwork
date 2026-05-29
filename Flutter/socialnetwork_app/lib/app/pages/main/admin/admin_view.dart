@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:socialnetwork/app/pages/main/user/tabs/home/home_page.dart';
-import 'package:socialnetwork/app/pages/main/user/tabs/message/message_page.dart';
-import 'package:socialnetwork/app/pages/main/user/tabs/contact/contact_page.dart';
-import 'package:socialnetwork/app/pages/main/user/tabs/notification/notification_page.dart';
-import 'package:socialnetwork/app/pages/main/user/tabs/profile/profile_page.dart';
-import 'package:socialnetwork/app/pages/main/user/user_controller.dart';
-import 'package:socialnetwork/app/widgets/drawer/menu/user/user_view.dart';
+import 'package:socialnetwork/app/pages/main/admin/tabs/home/home_page.dart';
+import 'package:socialnetwork/app/pages/main/admin/tabs/notification/notification_page.dart';
+import 'package:socialnetwork/app/pages/main/admin/tabs/profile/profile_page.dart';
+import 'package:socialnetwork/app/pages/main/admin/admin_controller.dart';
+import 'package:socialnetwork/app/widgets/drawer/menu/admin/admin_view.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
 
 class MainAdminView extends StatelessWidget {
@@ -17,7 +15,7 @@ class MainAdminView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => MainUserController(initialIndex: initialIndex),
+      create: (_) => MainAdminController(initialIndex: initialIndex),
       child: const _MainAdminViewState(),
     );
   }
@@ -29,18 +27,16 @@ class _MainAdminViewState extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     final pages = [
-      const HomePage(),
-      const MessagePage(),
-      const ContactPage(),
-      const NotificationPage(),
-      const ProfilePage(),
+      const HomeAdminPage(),
+      const NotificationAdminPage(),
+      const ProfileAdminPage(),
     ];
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: cs.surface,
-      drawer: const MenuDrawerUserView(),
-      body: Consumer<MainUserController>(
+      drawer: const MenuDrawerAdminView(),
+      body: Consumer<MainAdminController>(
         builder: (context, controller, _) => IndexedStack(
           index: controller.currentIndex,
           children: pages,
@@ -60,15 +56,13 @@ class _MainAdminViewState extends StatelessWidget {
             ),
           ],
         ),
-        child: Consumer<MainUserController>(
+        child: Consumer<MainAdminController>(
           builder: (context, controller, _) => Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(child: _buildNavItem(context, Icons.home_outlined, S.of(context, 'home'), 0)),
-              Expanded(child: _buildNavItem(context, Icons.message_outlined, S.of(context, 'message'), 1)),
-              Expanded(child: _buildNavItem(context, Icons.people_outline_outlined, S.of(context, 'contact'), 2)),
-              Expanded(child: _buildNavItem(context, Icons.notifications_outlined, S.of(context, 'notification'), 3)),
-              Expanded(child: _buildNavItem(context, Icons.person_outlined, S.of(context, 'profile'), 4)),
+              Expanded(child: _buildNavItem(context, Icons.notifications_outlined, S.of(context, 'notification'), 1)),
+              Expanded(child: _buildNavItem(context, Icons.person_outlined, S.of(context, 'profile'), 2)),
             ],
           ),
         ),
@@ -76,8 +70,8 @@ class _MainAdminViewState extends StatelessWidget {
     );
   }
   Widget _buildNavItem(BuildContext context, IconData icon, String label, int index) {
-    final controller = context.read<MainUserController>();
-    final isActive = context.watch<MainUserController>().currentIndex == index;
+    final controller = context.read<MainAdminController>();
+    final isActive = context.watch<MainAdminController>().currentIndex == index;
     return GestureDetector(
       onTap: () => controller.changeTab(index),
       child: Container(

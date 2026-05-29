@@ -8,7 +8,7 @@ import 'package:socialnetwork/data/repositories/content_repository_imp.dart';
 import 'package:socialnetwork/domain/usecases/content_usecase.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
 
-class HomeController extends ChangeNotifier {
+class HomeUserController extends ChangeNotifier {
   final ContentUsecase _contentUsecase = ContentUsecase(
     ContentRepositoryImp(
       ContentApi(DioClient.createDio()),
@@ -24,7 +24,7 @@ class HomeController extends ChangeNotifier {
 
   bool get isOffline => _isOffline;
 
-  HomeController() {
+  HomeUserController() {
     loadUser();
     initConnectivity();
     loadFeed();

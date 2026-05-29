@@ -7,20 +7,20 @@ import 'package:socialnetwork/app/theme/app_translation.dart';
 import 'package:socialnetwork/app/widgets/banner/network.dart';
 import 'package:socialnetwork/app/pages/user/user_page.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class HomeUserView extends StatefulWidget {
+  const HomeUserView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<HomeUserView> createState() => _HomeUserViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
-  late HomeController controller;
+class _HomeUserViewState extends State<HomeUserView> {
+  late HomeUserController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = HomeController();
+    controller = HomeUserController();
     controller.addListener(() => setState(() {}));
   }
 

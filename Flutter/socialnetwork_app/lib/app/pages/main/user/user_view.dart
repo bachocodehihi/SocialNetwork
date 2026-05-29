@@ -29,11 +29,11 @@ class _MainUserViewState extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     final pages = [
-      const HomePage(),
-      const MessagePage(),
-      const ContactPage(),
-      const NotificationPage(),
-      const ProfilePage(),
+      const HomeUserPage(),
+      const MessageUserPage(),
+      const ContactUserPage(),
+      const NotificationUserPage(),
+      const ProfileUserPage(),
     ];
     final cs = Theme.of(context).colorScheme;
     return Scaffold(

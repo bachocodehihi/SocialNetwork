@@ -6,13 +6,13 @@ import 'package:socialnetwork/app/pages/main/user/tabs/message/message_controlle
 import 'package:socialnetwork/app/pages/main/user/tabs/message/chat/user/user_page.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/message/chat/group/group_page.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
-class MessageView extends StatefulWidget {
-  const MessageView({super.key});
+class MessageUserView extends StatefulWidget {
+  const MessageUserView({super.key});
   @override
-  State<MessageView> createState() => _MessageViewState();
+  State<MessageUserView> createState() => _MessageUserViewState();
 }
 
-class _MessageViewState extends State<MessageView> {
+class _MessageUserViewState extends State<MessageUserView> {
   late MessageController controller;
 
   @override

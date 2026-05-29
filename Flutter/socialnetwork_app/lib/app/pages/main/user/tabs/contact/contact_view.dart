@@ -7,12 +7,12 @@ import 'package:socialnetwork/app/pages/main/user/tabs/contact/request/request_p
 import 'package:socialnetwork/app/pages/main/user/tabs/contact/group/group_page.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
 
-class ContactView extends StatefulWidget {
-  const ContactView({super.key});
+class ContactUserView extends StatefulWidget {
+  const ContactUserView({super.key});
   @override
-  State<ContactView> createState() => _ContactViewState();
+  State<ContactUserView> createState() => _ContactUserViewState();
 }
-class _ContactViewState extends State<ContactView> {
+class _ContactUserViewState extends State<ContactUserView> {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;

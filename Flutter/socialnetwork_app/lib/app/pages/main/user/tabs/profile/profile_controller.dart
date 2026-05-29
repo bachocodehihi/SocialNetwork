@@ -9,7 +9,7 @@ import 'package:socialnetwork/domain/usecases/content_usecase.dart';
 import 'package:socialnetwork/data/repositories/content_repository_imp.dart';
 import 'package:socialnetwork/data/network/api/content_api.dart';
 
-class ProfileController extends ChangeNotifier {
+class ProfileUserController extends ChangeNotifier {
   Map<String, dynamic>? user;
   List<Map<String, dynamic>> posts = [];
   bool loadingPosts = false;
@@ -17,7 +17,7 @@ class ProfileController extends ChangeNotifier {
   late AccountUsecase _accountUsecase;
   late ContentUsecase _contentUsecase;
 
-  ProfileController() {
+  ProfileUserController() {
     final dio = DioClient.createDio();
     _accountUsecase = AccountUsecase(
       AccountRepositoryImp(

@@ -7,20 +7,20 @@ import 'package:socialnetwork/app/pages/main/user/tabs/notification/notification
 import 'package:socialnetwork/app/pages/user/user_page.dart';
 import 'package:socialnetwork/app/pages/group/group_page.dart';
 
-class NotificationView extends StatefulWidget {
-  const NotificationView({super.key});
+class NotificationUserView extends StatefulWidget {
+  const NotificationUserView({super.key});
 
   @override
-  State<NotificationView> createState() => _NotificationViewState();
+  State<NotificationUserView> createState() => _NotificationUserViewState();
 }
 
-class _NotificationViewState extends State<NotificationView> {
-  late final NotificationController _controller;
+class _NotificationUserViewState extends State<NotificationUserView> {
+  late final NotificationUserController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = NotificationController();
+    _controller = NotificationUserController();
     _controller.addListener(_onControllerChanged);
   }
 

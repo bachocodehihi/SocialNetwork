@@ -4,12 +4,12 @@ import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:socialnetwork/data/repositories/notification_repository_imp.dart';
 import 'package:socialnetwork/domain/usecases/notification_usecase.dart';
 
-class NotificationController extends ChangeNotifier {
+class NotificationUserController extends ChangeNotifier {
   late final NotificationUsecase _usecase;
   List<Map<String, dynamic>> _notifications = [];
   bool _loading = false;
 
-  NotificationController({NotificationUsecase? usecase}) {
+  NotificationUserController({NotificationUsecase? usecase}) {
     _usecase = usecase ??
         NotificationUsecase(
           NotificationRepositoryImp(

@@ -8,20 +8,20 @@ import 'package:socialnetwork/app/widgets/avatar/fullscreen.dart';
 import 'package:socialnetwork/app/widgets/item/information.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
 
-class ProfileView extends StatefulWidget {
-  const ProfileView({super.key});
+class ProfileUserView extends StatefulWidget {
+  const ProfileUserView({super.key});
 
   @override
-  State<ProfileView> createState() => _ProfileViewState();
+  State<ProfileUserView> createState() => _ProfileUserViewState();
 }
 
-class _ProfileViewState extends State<ProfileView> {
-  late ProfileController controller;
+class _ProfileUserViewState extends State<ProfileUserView> {
+  late ProfileUserController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = ProfileController();
+    controller = ProfileUserController();
     controller.addListener(() => setState(() {}));
   }
 
