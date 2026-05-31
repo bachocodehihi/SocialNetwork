@@ -125,10 +125,12 @@ class SignInEmailController extends ChangeNotifier {
       await NotificationService().init();
       await SocketService().connect();
 
+      final targetRoute = await Routes.getDashboardRoute();
+
       if (!context.mounted) return;
       Navigator.pushNamedAndRemoveUntil(
         context,
-        Routes.mainUser,
+        targetRoute,
         (route) => false,
       );
 

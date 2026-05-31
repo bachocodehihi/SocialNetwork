@@ -66,6 +66,8 @@ import 'package:socialnetwork/app/pages/create/group/group_page.dart';
 
 //main
 import 'package:socialnetwork/app/pages/main/user/user_page.dart';
+import 'package:socialnetwork/app/pages/main/admin/admin_page.dart';
+import 'package:socialnetwork/data/local/auth_local.dart';
 
 //search
 import 'package:socialnetwork/app/pages/search/account/account_page.dart';
@@ -171,6 +173,16 @@ class Routes {
 
   //main
   static String mainUser = '/main/user';
+  static String mainAdmin = '/main/admin';
+
+  static Future<String> getDashboardRoute() async {
+    final user = await AuthLocal.getCurrentUser();
+    final role = user?['role']?.toString();
+    if (role == 'admin') {
+      return Routes.mainAdmin;
+    }
+    return Routes.mainUser;
+  }
 
   //search
   static String search = '/search';
@@ -271,6 +283,7 @@ class Routes {
 
     //main
     mainUser: (_) => MainUserPage(),
+    mainAdmin: (_) => const MainAdminPage(),
 
     //search
     search: (_) => SearchAccountPage(),

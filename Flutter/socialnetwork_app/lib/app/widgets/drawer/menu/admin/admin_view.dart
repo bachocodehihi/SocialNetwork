@@ -72,16 +72,17 @@ class _MenuDrawerAdminViewState extends State<MenuDrawerAdminView> {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.sports_esports_outlined),
+            leading: const Icon(Icons.dashboard_outlined),
             title: Text(
-              S.of(context, 'game'),
+              S.of(context, 'dashboard'),
               style: TextStyle(
                 color: cs.onSurface,
                 fontSize: 15.sp,
               ),
             ),
             onTap: () {
-              controller.goToGame(context);
+              Navigator.pop(context);
+              controller.goToSetting(context);
             },
           ),
           ListTile(

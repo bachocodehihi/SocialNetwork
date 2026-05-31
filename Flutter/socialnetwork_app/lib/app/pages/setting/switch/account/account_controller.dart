@@ -76,10 +76,12 @@ class SwitchAccountController extends ChangeNotifier {
       await NotificationService().init();
       await SocketService().reconnect();
 
+      final targetRoute = await Routes.getDashboardRoute();
+
       if (!context.mounted) return; 
       Navigator.pushNamedAndRemoveUntil(
         context,
-        Routes.mainUser,
+        targetRoute,
         (route) => false,
       );
 

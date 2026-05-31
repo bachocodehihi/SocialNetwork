@@ -12,13 +12,9 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    controller.init((isLoggedIn) {
+    controller.init((targetRoute) {
       if (!mounted) return;
-      if (isLoggedIn) {
-        Navigator.pushReplacementNamed(context, Routes.mainUser);
-      } else {
-        Navigator.pushReplacementNamed(context, Routes.wellcome);
-      }
+      Navigator.pushReplacementNamed(context, targetRoute);
     });
   }
   @override
