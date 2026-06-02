@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:socialnetwork/app/pages/splash/splash_controller.dart';
-import 'package:socialnetwork/app/routes/routes.dart';
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
   @override

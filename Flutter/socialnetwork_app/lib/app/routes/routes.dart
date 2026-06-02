@@ -85,6 +85,7 @@ import 'package:socialnetwork/app/pages/game/tictactoe/play/user/user_page.dart'
 //delete
 import 'package:socialnetwork/app/pages/setting/account/delete/delete_page.dart';
 import 'package:socialnetwork/app/pages/setting/account/delete/account/account_page.dart';
+import 'package:socialnetwork/app/pages/warming/warming_page.dart';
 
 //call
 import 'package:socialnetwork/app/pages/main/user/tabs/message/call/user/incoming/incoming_page.dart';
@@ -200,6 +201,7 @@ class Routes {
   //delete
   static String delete = '/delete';
   static String deleteAccount = '/delete/account';
+  static String warming = '/warming';
 
   //call
   static String callIncoming = '/message/call/incoming';
@@ -301,6 +303,7 @@ class Routes {
     //delete
     delete: (_) => DeletePage(),
     deleteAccount: (_) => DeleteAccountPage(),
+    warming: (_) => const WarmingPage(),
 
     //call
     callIncoming: (_) => const CallIncomingPage(),

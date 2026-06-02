@@ -3,13 +3,30 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/widgets/banner/error.dart';
-import 'package:socialnetwork/app/theme/app_translation.dart';
+import 'package:socialnetwork/app/pages/setting/account/delete/account/account_controller.dart';
+
 class DeleteAccountView extends StatefulWidget {
   const DeleteAccountView({super.key});
   @override
   State<DeleteAccountView> createState() => _DeleteAccountViewState();
 }
+
 class _DeleteAccountViewState extends State<DeleteAccountView> {
+  late DeleteAccountController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = DeleteAccountController();
+    controller.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
@@ -70,6 +87,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
               SizedBox(height: 40.h),
 
               TextFormField(
+                controller: controller.reasonController,
                 style: TextStyle(
                   fontSize: 15.sp,
                   color: cs.onSurface,
@@ -111,7 +129,16 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
 
               SizedBox(height: 20.h),
 
-              
+              SizedBox(
+                height: 50.h,
+                child: Visibility(
+                  visible: controller.errorMessage.isNotEmpty,
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  child: BannerError(message: controller.errorMessage),
+                ),
+              ),
 
               SizedBox(height: 20.h),
 
@@ -128,16 +155,25 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                   ).copyWith(
                     overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                   ),
-                  onPressed: () {
-                    //controller.verifyPassword(context);
-                  },
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15.sp,
-                    ),
-                  ),
+                  onPressed: controller.isLoading
+                      ? null
+                      : () => controller.submitDeleteAccount(context),
+                  child: controller.isLoading
+                      ? SizedBox(
+                          width: 20.w,
+                          height: 20.h,
+                          child: const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          'Continue',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.sp,
+                          ),
+                        ),
                 ),
               ),
               

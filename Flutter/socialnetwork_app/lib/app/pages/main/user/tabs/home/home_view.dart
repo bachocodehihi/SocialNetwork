@@ -6,6 +6,9 @@ import 'package:socialnetwork/app/pages/main/user/tabs/home/home_controller.dart
 import 'package:socialnetwork/app/theme/app_translation.dart';
 import 'package:socialnetwork/app/widgets/banner/network.dart';
 import 'package:socialnetwork/app/pages/user/user_page.dart';
+import 'package:provider/provider.dart';
+import 'package:socialnetwork/app/pages/main/user/user_controller.dart';
+import 'package:socialnetwork/app/widgets/banner/delete.dart';
 
 class HomeUserView extends StatefulWidget {
   const HomeUserView({super.key});
@@ -865,6 +868,18 @@ class _HomeUserViewState extends State<HomeUserView> {
                 Visibility(
                   visible: controller.isOffline,
                   child: BannerNetwork(message: S.of(context, 'no_internet')),
+                ),
+
+                Consumer<MainUserController>(
+                  builder: (context, mainController, _) {
+                    if (mainController.isDeleted && mainController.deleteAt != null) {
+                      return BannerDelete(
+                        deleteAt: mainController.deleteAt!,
+                        onCancel: () => mainController.cancelDeletion(context),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
 
                 SizedBox(height: 20.h),

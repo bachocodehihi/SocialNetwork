@@ -112,16 +112,13 @@ class SignInEmailController extends ChangeNotifier {
         return;
       }
 
-      // 1. Clear any old session
       try {
         await NotificationService().removeFcmToken();
       } catch (_) {}
       SocketService().disconnect();
 
-      // 2. Perform backend login/register
       await _authUsecase.googleLogin(idToken);
 
-      // 3. Init services for new user
       await NotificationService().init();
       await SocketService().connect();
 

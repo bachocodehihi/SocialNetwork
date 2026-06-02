@@ -17,16 +17,16 @@ class BannerNetwork extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: Colors.yellow.withValues(alpha: 0.1),
+          color: Colors.red.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: Colors.yellow),
+          border: Border.all(color: Colors.red),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(
               Icons.wifi_off_outlined,
-              color: Colors.yellow,
+              color: Colors.red,
               size: 20.sp,
             ),
 
@@ -36,7 +36,7 @@ class BannerNetwork extends StatelessWidget {
               child: Text(
                 message,
                 style: TextStyle(
-                  color: Colors.yellow,
+                  color: Colors.red,
                   fontSize: 15.sp,
                 ),
               ),

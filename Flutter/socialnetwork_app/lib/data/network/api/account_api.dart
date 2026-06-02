@@ -147,4 +147,18 @@ class AccountApi {
       throw Exception(e.toString());
     }
   }
+
+  Future<Response> requestDeleteAccount() async {
+    return await _dio.post(
+      '/api/account/delete',
+      options: await _authOptions(),
+    );
+  }
+
+  Future<Response> cancelDeleteAccount() async {
+    return await _dio.post(
+      '/api/account/cancel-delete',
+      options: await _authOptions(),
+    );
+  }
 }
