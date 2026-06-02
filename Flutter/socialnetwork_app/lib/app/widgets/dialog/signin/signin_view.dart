@@ -68,7 +68,7 @@ class _SignInWebsiteDialogState extends State<SignInWebsiteDialog> {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Icons.computer_rounded,
+                    Icons.computer_outlined,
                     size: 32.sp,
                     color: Colors.blue,
                   ),
@@ -77,8 +77,8 @@ class _SignInWebsiteDialogState extends State<SignInWebsiteDialog> {
                 Text(
                   'Xác nhận đăng nhập',
                   style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
                     color: cs.onSurface,
                   ),
                 ),
@@ -87,9 +87,8 @@ class _SignInWebsiteDialogState extends State<SignInWebsiteDialog> {
                   'Bạn có muốn đăng nhập tài khoản của mình trên thiết bị Web này không?',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 14.sp,
-                    color: cs.onSurface.withValues(alpha: 0.7),
-                    height: 1.4,
+                    fontSize: 15.sp,
+                    color: cs.onSurface,
                   ),
                 ),
                 if (controller.errorMessage != null) ...[
@@ -114,32 +113,66 @@ class _SignInWebsiteDialogState extends State<SignInWebsiteDialog> {
                 SizedBox(height: 28.h),
                 Row(
                   children: [
+                    // Expanded(
+                    //   child: MouseRegion(
+                    //     cursor: SystemMouseCursors.click,
+                    //     child: OutlinedButton(
+                    //       style: OutlinedButton.styleFrom(
+                    //         padding: EdgeInsets.symmetric(vertical: 14.h),
+                    //         shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(30.r),
+                    //         ),
+                    //         side: BorderSide(color: cs.onSurface.withValues(alpha: 0.15)),
+                    //       ),
+                    //       onPressed: controller.isLoading
+                    //           ? null
+                    //           : () => controller.cancelSignIn(context),
+                    //       child: Text(
+                    //         'Hủy',
+                    //         style: TextStyle(
+                    //           fontSize: 15.sp,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Expanded(
                       child: MouseRegion(
                         cursor: SystemMouseCursors.click,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(vertical: 14.h),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.r),
                             ),
-                            side: BorderSide(color: cs.onSurface.withValues(alpha: 0.15)),
+                            elevation: 0,
                           ),
                           onPressed: controller.isLoading
                               ? null
                               : () => controller.cancelSignIn(context),
-                          child: Text(
-                            'Hủy',
-                            style: TextStyle(
-                              color: cs.onSurface.withValues(alpha: 0.8),
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          child: controller.isLoading
+                              ? SizedBox(
+                                  width: 18.w,
+                                  height: 18.w,
+                                  child: const CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 12.w),
+                    SizedBox(width: 10.w),
                     Expanded(
                       child: MouseRegion(
                         cursor: SystemMouseCursors.click,
@@ -166,10 +199,10 @@ class _SignInWebsiteDialogState extends State<SignInWebsiteDialog> {
                                   ),
                                 )
                               : Text(
-                                  'Đăng nhập',
+                                  'Sign in',
                                   style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15.sp,
+                                    color: Colors.white,
                                   ),
                                 ),
                         ),

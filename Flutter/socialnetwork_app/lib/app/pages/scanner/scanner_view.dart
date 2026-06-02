@@ -44,7 +44,6 @@ class _ScannerViewState extends State<ScannerView> {
     controller.pauseScanning();
     _scannerController.stop();
 
-    // Check if it's a QR code sign-in session
     try {
       final decodedJson = jsonDecode(qrValue);
       if (decodedJson is Map &&
@@ -60,7 +59,6 @@ class _ScannerViewState extends State<ScannerView> {
           builder: (context) => SignInWebsiteDialog(
             sessionId: sessionId,
             onCancel: () {
-              // Dialog closed, scanning will resume
             },
             onSuccess: () {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -78,7 +76,7 @@ class _ScannerViewState extends State<ScannerView> {
         return;
       }
     } catch (_) {
-      // Not a QR Login JSON, proceed to original flow
+      
     }
 
     final userData = await controller.fetchUserByQrCode(qrValue);

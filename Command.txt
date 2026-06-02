@@ -22,9 +22,7 @@ node src/server.js
 git status
 git add .
 git commit -m ""
-git push origin repair-backend
-
+git push origin repair-website:repair-app --force
 
 git push origin main
-git add
-git clone
+git clone 

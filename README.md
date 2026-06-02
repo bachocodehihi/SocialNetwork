@@ -161,5 +161,3 @@ Dự án đã được cấu hình chặt chẽ bằng hệ thống `.gitignore`
 *   Các thư mục thư viện tải về (`node_modules/`, `.dart_tool/`, `build/`).
 
 ---
-
-*Chúc bạn có những trải nghiệm phát triển tuyệt vời cùng **SocialNetwork**!* 🚀
