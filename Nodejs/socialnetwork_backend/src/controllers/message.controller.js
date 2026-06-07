@@ -241,7 +241,10 @@ const getMessages = async (req, res) => {
             return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
         }
 
-        const query = { conversationId };
+        const query = { 
+            conversationId,
+            deletedBy: { $ne: req.userId }
+        };
         if (before) {
             query.createdAt = { $lt: new Date(before) };
         }
@@ -287,20 +290,23 @@ const deleteMessage = async (req, res) => {
             return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
         }
 
-        if (forEveryone && isAdmin) {
-            await Message.findByIdAndDelete(messageId);
+        if (forEveryone) {
+            await Message.findByIdAndUpdate(messageId, {
+                isRecalled: true,
+                content: 'Tin nhắn đã bị thu hồi'
+            });
 
             try {
                 const io = require('../socket').getIO();
-                io.to(msg.conversationId.toString()).emit('message_deleted', {
+                io.to(msg.conversationId.toString()).emit('message_recalled', {
                     messageId,
                     conversationId: msg.conversationId,
-                    deletedBy: req.userId
+                    senderId: msg.sender
                 });
             } catch (e) { /* ignore socket errors */ }
         } else {
             await Message.findByIdAndUpdate(messageId, {
-                $pull: { readBy: req.userId }
+                $addToSet: { deletedBy: req.userId }
             });
         }
         
