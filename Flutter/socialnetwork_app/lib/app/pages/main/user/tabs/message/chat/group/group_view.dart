@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/message/chat/group/group_controller.dart';
 import 'package:socialnetwork/data/service/call.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
@@ -27,14 +30,125 @@ class _ChatGroupViewState extends State<ChatGroupView> {
   late final ChatGroupController _controller;
   final ScrollController _scrollController = ScrollController();
   bool _showScrollButton = false;
+  String? _customBgPath;
 
   @override
   void initState() {
     super.initState();
+    _loadBackgroundImage();
     _controller = ChatGroupController();
     _controller.init(widget.conversationId);
     _controller.addListener(_onControllerChanged);
     _scrollController.addListener(_onScroll);
+  }
+
+  Future<void> _loadBackgroundImage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final bgKey = 'chat_bg_${widget.conversationId}';
+      final path = prefs.getString(bgKey);
+      if (path != null) {
+        setState(() {
+          _customBgPath = path;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading background image: $e');
+    }
+  }
+
+  Future<void> _pickBackgroundImage() async {
+    try {
+      final picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      
+      final prefs = await SharedPreferences.getInstance();
+      final bgKey = 'chat_bg_${widget.conversationId}';
+      await prefs.setString(bgKey, image.path);
+      
+      setState(() {
+        _customBgPath = image.path;
+      });
+    } catch (e) {
+      debugPrint('Error picking background image: $e');
+    }
+  }
+
+  Future<void> _clearBackgroundImage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final bgKey = 'chat_bg_${widget.conversationId}';
+      await prefs.remove(bgKey);
+      
+      setState(() {
+        _customBgPath = null;
+      });
+    } catch (e) {
+      debugPrint('Error clearing background image: $e');
+    }
+  }
+
+  void _showThemeSettings() {
+    final cs = Theme.of(context).colorScheme;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: cs.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 8.h, bottom: 16.h),
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: cs.onSurfaceVariant.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+              Text(
+                'Tùy chỉnh giao diện',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: cs.onSurface,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              ListTile(
+                leading: Icon(Icons.image_outlined, color: cs.primary),
+                title: Text(
+                  'Chọn ảnh nền từ album',
+                  style: TextStyle(color: cs.onSurface),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickBackgroundImage();
+                },
+              ),
+              if (_customBgPath != null)
+                ListTile(
+                  leading: Icon(Icons.delete_outline, color: cs.error),
+                  title: Text(
+                    'Xóa ảnh nền hiện tại',
+                    style: TextStyle(color: cs.error),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _clearBackgroundImage();
+                  },
+                ),
+              SizedBox(height: 8.h),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _onControllerChanged() {
@@ -178,9 +292,22 @@ class _ChatGroupViewState extends State<ChatGroupView> {
       body: Column(
         children: [
           Expanded(
-            child: ListenableBuilder(
-              listenable: _controller,
-              builder: (context, _) {
+            child: GestureDetector(
+              onLongPress: _showThemeSettings,
+              behavior: HitTestBehavior.translucent,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainerLow,
+                  image: _customBgPath != null && File(_customBgPath!).existsSync()
+                      ? DecorationImage(
+                          image: FileImage(File(_customBgPath!)),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
+                child: ListenableBuilder(
+                  listenable: _controller,
+                  builder: (context, _) {
                 if (_controller.isLoading && _controller.messages.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -292,6 +419,8 @@ class _ChatGroupViewState extends State<ChatGroupView> {
               },
             ),
           ),
+        ),
+      ),
 
           Container(
             padding: EdgeInsets.symmetric(
@@ -356,13 +485,15 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                       final hasText = _controller.messageController.text.trim().isNotEmpty;
                       return GestureDetector(
                         onTap: hasText ? _handleSend : null,
-                        child: CircleAvatar(
-                          radius: 22.r,
-                          backgroundColor: hasText ? cs.primary : cs.surfaceContainerHighest,
-                          child: Icon(
-                            Icons.send_rounded,
-                            color: hasText ? cs.onPrimary : cs.onSurfaceVariant,
-                            size: 20.sp,
+                        child: SizedBox(
+                          width: 48,
+                          height: 48,
+                          child: Center(
+                            child: Icon(
+                              Icons.send_rounded,
+                              color: hasText ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.5),
+                              size: 24.0,
+                            ),
                           ),
                         ),
                       );

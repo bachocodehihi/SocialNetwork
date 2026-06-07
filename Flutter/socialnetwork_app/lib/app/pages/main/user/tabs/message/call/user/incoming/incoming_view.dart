@@ -24,6 +24,14 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
       duration: const Duration(seconds: 2),
     )..repeat();
 
+    // Safety check: if call is already ended/idle or null, close screen instantly
+    if (_callService.currentCall == null || _callService.callState == CallState.idle) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.of(context).pop();
+      });
+      return;
+    }
+
     _callService.addListener(_onCallStateChanged);
   }
 

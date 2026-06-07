@@ -7,14 +7,15 @@ class AppTheme {
 
   static ThemeData _buildTheme(Brightness brightness) {
     final isLight = brightness == Brightness.light;
-    final background = isLight ? Colors.white : const Color(0xFF0F0F0F);
+    //final background = isLight ? Colors.white : const Color(0xFF0F0F0F);
 
     final scheme = ColorScheme.fromSeed(
       seedColor: _seed,
       brightness: brightness,
     ).copyWith(
       primary: Colors.blue,
-      surface: background,
+      surface: isLight ? Colors.white : const Color(0xFF0F0F0F),
+      surfaceDim: isLight ? const Color(0xFFFAFAFA) : const Color(0xFF1B1B1B),
       onSurface: isLight ? Colors.black : Colors.white,
       onSurfaceVariant: isLight ? Colors.grey : Colors.white,
 
@@ -29,7 +30,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      scaffoldBackgroundColor: background,
+      scaffoldBackgroundColor: scheme.surface,
       appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
       cardTheme: CardThemeData(
         elevation: 0,

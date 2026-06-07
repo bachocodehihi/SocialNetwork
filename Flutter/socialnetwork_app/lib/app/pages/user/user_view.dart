@@ -997,7 +997,8 @@ class _UserViewState extends State<UserView> {
                         },
                         icon: Icon(
                           Icons.message_outlined, 
-                          size: 20.sp
+                          size: 20.sp,
+                          color: Colors.white,
                         ),
                         label: Text(
                           'Message',

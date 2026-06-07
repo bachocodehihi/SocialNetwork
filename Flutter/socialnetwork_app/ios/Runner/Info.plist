@@ -68,5 +68,7 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Ứng dụng cần camera để quét mã QR.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Ứng dụng cần quyền truy cập Microphone để thực hiện cuộc gọi thoại.</string>
 </dict>
 </plist>

@@ -192,6 +192,32 @@ class ChatUserController extends ChangeNotifier {
     super.dispose();
   }
  
+  Future<void> deleteMessage(String messageId) async {
+    try {
+      await _messageUsecase.deleteMessage(messageId, forEveryone: false);
+      _messages.removeWhere((m) {
+        final mid = m['_id']?.toString() ?? m['id']?.toString();
+        return mid == messageId;
+      });
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting message: $e');
+    }
+  }
+
+  Future<void> recallMessage(String messageId) async {
+    try {
+      await _messageUsecase.deleteMessage(messageId, forEveryone: true);
+      _messages.removeWhere((m) {
+        final mid = m['_id']?.toString() ?? m['id']?.toString();
+        return mid == messageId;
+      });
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error recalling message: $e');
+    }
+  }
+
   Future<void> retryLoad() async => _init();
   Future<void> refresh() async {
     await _loadMessages();

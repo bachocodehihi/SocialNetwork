@@ -85,7 +85,7 @@ class _SignInWebsiteDialogState extends State<SignInWebsiteDialog> {
                 SizedBox(height: 12.h),
                 Text(
                   'Bạn có muốn đăng nhập tài khoản của mình trên thiết bị Web này không?',
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.justify,
                   style: TextStyle(
                     fontSize: 15.sp,
                     color: cs.onSurface,

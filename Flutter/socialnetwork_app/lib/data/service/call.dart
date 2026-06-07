@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:socialnetwork/data/service/socket.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 enum CallState { idle, ringing, calling, connected, ended }
 
@@ -48,6 +48,7 @@ class CallService extends ChangeNotifier {
   CallService._internal();
 
   final _socket = SocketService();
+  bool _isInitialized = false;
 
   CallState _callState = CallState.idle;
   CallInfo? _currentCall;
@@ -84,11 +85,33 @@ class CallService extends ChangeNotifier {
   Map<String, Map<String, dynamic>> get groupParticipants => _groupParticipants;
 
   Future<void> init() async {
+    if (_isInitialized) return;
     _registerListeners();
+    _isInitialized = true;
     debugPrint('✅ CallService initialized');
   }
 
   void _registerListeners() {
+    // Clear any previous listeners to prevent duplicates
+    final events = [
+      'call_incoming',
+      'call_accepted',
+      'call_rejected',
+      'call_cancelled',
+      'call_ended',
+      'call_busy',
+      'call_error',
+      'signal',
+      'group_call_incoming',
+      'group_call_user_joined',
+      'group_call_user_left',
+      'group_signal',
+      'disconnect'
+    ];
+    for (final event in events) {
+      _socket.off(event);
+    }
+
     _socket.on('call_incoming', _onCallIncoming);
     _socket.on('call_accepted', _onCallAccepted);
     _socket.on('call_rejected', _onCallRejected);
@@ -98,11 +121,33 @@ class CallService extends ChangeNotifier {
     _socket.on('call_error', _onCallError);
     _socket.on('signal', _onSignal);
 
-    // Group calling listeners
     _socket.on('group_call_incoming', _onGroupCallIncoming);
     _socket.on('group_call_user_joined', _onGroupCallUserJoined);
     _socket.on('group_call_user_left', _onGroupCallUserLeft);
     _socket.on('group_signal', _onGroupSignal);
+
+    // Socket status listener to clean up active calls on disconnection
+    _socket.on('disconnect', (_) {
+      debugPrint('🔌 CallService: Socket disconnected. Resetting call state.');
+      _resetCall();
+    });
+  }
+
+  // Helper to request microphone permission
+  Future<bool> _requestMicrophonePermission() async {
+    if (kIsWeb) return true;
+    try {
+      final status = await Permission.microphone.request();
+      if (!status.isGranted) {
+        debugPrint('❌ Microphone permission denied');
+        onCallError?.call('Bạn cần cấp quyền truy cập Micro để thực hiện cuộc gọi');
+        return false;
+      }
+      return true;
+    } catch (e) {
+      debugPrint('⚠️ Microphone permission check skipped or failed on this platform: $e');
+      return true; // Fallback to let WebRTC handle it directly
+    }
   }
 
   // ─────────────── 1-ON-1 VOICE CALLS ───────────────
@@ -111,7 +156,10 @@ class CallService extends ChangeNotifier {
     required String conversationId,
     required Map<String, dynamic> receiverInfo,
   }) async {
-    if (_callState != CallState.idle) return;
+    if (_callState != CallState.idle) {
+      debugPrint('⚠️ CallService state was not idle ($_callState). Force resetting before starting a new call.');
+      _resetCall();
+    }
 
     try {
       _currentCall = CallInfo(
@@ -304,6 +352,9 @@ class CallService extends ChangeNotifier {
     if (_callState != CallState.idle) return;
 
     try {
+      final hasPermission = await _requestMicrophonePermission();
+      if (!hasPermission) return;
+
       _currentCall = CallInfo(
         callId: '',
         conversationId: conversationId,
@@ -368,6 +419,11 @@ class CallService extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final hasPermission = await _requestMicrophonePermission();
+      if (!hasPermission) {
+        _resetCall();
+        return;
+      }
       _localStream?.dispose();
       _localStream = await navigator.mediaDevices.getUserMedia({'audio': true, 'video': false});
 
@@ -496,6 +552,11 @@ class CallService extends ChangeNotifier {
 
   // ─────────────── COMMON WEBRTC & TIMERS ───────────────
   Future<void> _setupPeerConnection(String targetUserId) async {
+    final hasPermission = await _requestMicrophonePermission();
+    if (!hasPermission) {
+      throw Exception('Microphone permission not granted');
+    }
+
     await _pc?.close();
     _pc = null;
 

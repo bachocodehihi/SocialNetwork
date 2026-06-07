@@ -119,14 +119,14 @@ class _PostContentViewState extends State<PostContentView> {
                         color: cs.onSurfaceVariant,
                       ),
                     ),
-                    SizedBox(height: 6.h),
+                    SizedBox(height: 5.h),
                     Row(
                       children: [
                         ChoiceChip(
                           label: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.public_rounded, size: 14.sp),
+                              Icon(Icons.public_outlined, size: 14.sp),
                               SizedBox(width: 4.w),
                               const Text('Công khai'),
                             ],
@@ -166,7 +166,7 @@ class _PostContentViewState extends State<PostContentView> {
                           label: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.lock_outline_rounded, size: 14.sp),
+                              Icon(Icons.lock_outlined, size: 14.sp),
                               SizedBox(width: 4.w),
                               const Text('Riêng tư'),
                             ],
@@ -183,9 +183,8 @@ class _PostContentViewState extends State<PostContentView> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 15.h),
 
-                    // Text Input
                     TextField(
                       controller: controller.contentController,
                       maxLines: null,
@@ -204,9 +203,8 @@ class _PostContentViewState extends State<PostContentView> {
                         border: InputBorder.none,
                       ),
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 15.h),
 
-                    // Selected image preview grid/list
                     if (controller.pickedImages.isNotEmpty) ...[
                       Text(
                         'Đã chọn ${controller.pickedImages.length} ảnh',
@@ -281,7 +279,7 @@ class _PostContentViewState extends State<PostContentView> {
                   Text(
                     'Thêm vào bài viết của bạn',
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
                       color: cs.onSurfaceVariant,
                     ),
@@ -292,7 +290,7 @@ class _PostContentViewState extends State<PostContentView> {
                     icon: Icon(
                       Icons.image_outlined,
                       color: Colors.green,
-                      size: 28.sp,
+                      size: 25.sp,
                     ),
                     tooltip: 'Chọn ảnh từ thư viện',
                   ),
