@@ -9,6 +9,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   flutter_webrtc
   permission_handler_windows
+  record_windows
   speech_to_text_windows
 )
 

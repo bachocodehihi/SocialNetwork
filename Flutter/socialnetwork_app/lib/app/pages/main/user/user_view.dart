@@ -64,11 +64,11 @@ class _MainUserViewState extends StatelessWidget {
           builder: (context, controller, _) => Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Expanded(child: _buildNavItem(context, Icons.home_outlined, S.of(context, 'home'), 0)),
-              Expanded(child: _buildNavItem(context, Icons.message_outlined, S.of(context, 'message'), 1)),
-              Expanded(child: _buildNavItem(context, Icons.people_outline_outlined, S.of(context, 'contact'), 2)),
-              Expanded(child: _buildNavItem(context, Icons.notifications_outlined, S.of(context, 'notification'), 3)),
-              Expanded(child: _buildNavItem(context, Icons.person_outlined, S.of(context, 'profile'), 4)),
+              Expanded(child: _buildNavItem(context, Icons.home_outlined, Language.of(context, 'home'), 0)),
+              Expanded(child: _buildNavItem(context, Icons.message_outlined, Language.of(context, 'message'), 1)),
+              Expanded(child: _buildNavItem(context, Icons.people_outline_outlined, Language.of(context, 'contact'), 2)),
+              Expanded(child: _buildNavItem(context, Icons.notifications_outlined, Language.of(context, 'notification'), 3)),
+              Expanded(child: _buildNavItem(context, Icons.person_outlined, Language.of(context, 'profile'), 4)),
             ],
           ),
         ),

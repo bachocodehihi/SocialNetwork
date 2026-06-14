@@ -70,7 +70,7 @@ class _SwitchAccountViewState extends State<SwitchAccountView> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      S.of(context, 'switch_account'),
+                      Language.of(context, 'switch_account'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,

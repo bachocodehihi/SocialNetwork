@@ -674,7 +674,7 @@ class _GroupViewState extends State<GroupView> {
                           child: AbsorbPointer(
                             child: TextField(
                               decoration: InputDecoration(
-                                hintText: S.of(context, 'what_s_on_your_mind'),
+                                hintText: Language.of(context, 'what_s_on_your_mind'),
                                 hintStyle: TextStyle(
                                   fontSize: 15.sp,
                                   color: Colors.grey,

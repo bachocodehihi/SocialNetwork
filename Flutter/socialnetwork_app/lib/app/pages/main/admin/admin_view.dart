@@ -60,9 +60,9 @@ class _MainAdminViewState extends StatelessWidget {
           builder: (context, controller, _) => Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Expanded(child: _buildNavItem(context, Icons.home_outlined, S.of(context, 'home'), 0)),
-              Expanded(child: _buildNavItem(context, Icons.notifications_outlined, S.of(context, 'notification'), 1)),
-              Expanded(child: _buildNavItem(context, Icons.person_outlined, S.of(context, 'profile'), 2)),
+              Expanded(child: _buildNavItem(context, Icons.home_outlined, Language.of(context, 'home'), 0)),
+              Expanded(child: _buildNavItem(context, Icons.notifications_outlined, Language.of(context, 'notification'), 1)),
+              Expanded(child: _buildNavItem(context, Icons.person_outlined, Language.of(context, 'profile'), 2)),
             ],
           ),
         ),

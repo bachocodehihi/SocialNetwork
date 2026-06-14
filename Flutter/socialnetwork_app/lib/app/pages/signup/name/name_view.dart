@@ -64,7 +64,7 @@ class _SignUpNameViewState extends State<SignUpNameView> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      S.of(context, 'enter_username'),
+                      Language.of(context, 'enter_username'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
@@ -75,7 +75,7 @@ class _SignUpNameViewState extends State<SignUpNameView> {
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  S.of(context, 'enter_your_username'),
+                  Language.of(context, 'enter_your_username'),
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
@@ -90,7 +90,7 @@ class _SignUpNameViewState extends State<SignUpNameView> {
                     color: cs.onSurface,
                   ),
                   decoration: InputDecoration(
-                    labelText: S.of(context, 'username'),
+                    labelText: Language.of(context, 'username'),
                     labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -149,7 +149,7 @@ class _SignUpNameViewState extends State<SignUpNameView> {
                     child: controller.isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
-                            S.of(context, 'continue'),
+                            Language.of(context, 'continue'),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 15.sp,

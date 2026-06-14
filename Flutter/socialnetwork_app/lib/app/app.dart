@@ -22,6 +22,7 @@ class App extends StatelessWidget {
             splitScreenMode: true,
             builder: (context, child) => SocketLifecycleHandler(
               child: MaterialApp(
+                navigatorKey: Routes.navigatorKey,
                 debugShowCheckedModeBanner: false,
                 theme: AppTheme.light,
                 darkTheme: AppTheme.dark,

@@ -9,7 +9,7 @@ import 'package:socialnetwork/data/service/socket.dart';
 class SettingController extends ChangeNotifier {
   final _accountApi = AccountApi(DioClient.createDio());
 
-  Future<void> goToAccount(BuildContext context)async {
+  Future<void> goToAccount(BuildContext context) async {
     Navigator.pushNamed(context, Routes.account);
   }
 

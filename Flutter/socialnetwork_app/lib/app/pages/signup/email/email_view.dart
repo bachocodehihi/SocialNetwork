@@ -71,7 +71,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    S.of(context, 'sign_up_by_email'),
+                    Language.of(context, 'sign_up_by_email'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -84,7 +84,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
               SizedBox(height: 20.h),
 
               Text(
-                S.of(context, 'enter_your_email'),
+                Language.of(context, 'enter_your_email'),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
@@ -160,7 +160,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                   child: controller.isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          S.of(context, 'continue'),
+                          Language.of(context, 'continue'),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15.sp,
@@ -177,7 +177,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        S.of(context, 'already_have_an_account'),
+                        Language.of(context, 'already_have_an_account'),
                         style: TextStyle(
                           fontSize: 15.sp, 
                           color: cs.onSurface
@@ -188,7 +188,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                           controller.goToSignInEmail(context);
                         },
                         child: Text(
-                          S.of(context, 'sign_in'),
+                          Language.of(context, 'sign_in'),
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 15.sp,
@@ -259,7 +259,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                           ),
                           SizedBox(width: 8.w),
                           Text(
-                            S.of(context, 'sign_up_with_google'),
+                            Language.of(context, 'sign_up_with_google'),
                             style: TextStyle(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w500,

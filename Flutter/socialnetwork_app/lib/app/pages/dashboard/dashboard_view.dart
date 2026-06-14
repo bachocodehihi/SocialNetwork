@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:socialnetwork/app/widgets/item/total.dart';
+//import 'package:socialnetwork/app/widgets/item/total.dart';
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
 

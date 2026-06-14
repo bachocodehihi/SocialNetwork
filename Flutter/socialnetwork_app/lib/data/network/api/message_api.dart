@@ -102,4 +102,48 @@ class MessageApi {
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
   }
+
+  Future<String?> uploadImage(String filePath) async {
+    final token = await AuthLocal.getToken();
+    final formData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(filePath),
+    });
+    final res = await _dio.post(
+      '/api/message/upload-image',
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+    final data = res.data;
+    if (data is Map && data['success'] == true) {
+      return data['url']?.toString();
+    }
+    return null;
+  }
+
+  Future<String?> uploadAudio(String filePath) async {
+    final token = await AuthLocal.getToken();
+    final formData = FormData.fromMap({
+      'audio': await MultipartFile.fromFile(filePath),
+    });
+    final res = await _dio.post(
+      '/api/message/upload-audio',
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+    final data = res.data;
+    if (data is Map && data['success'] == true) {
+      return data['url']?.toString();
+    }
+    return null;
+  }
 }

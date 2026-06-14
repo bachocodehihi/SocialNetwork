@@ -66,7 +66,7 @@ class _SearchAViewState extends State<SearchAccountView> {
                       ),
                       SizedBox(width: 10.w),
                       Text(
-                        S.of(context, 'search'),
+                        Language.of(context, 'search'),
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w500,

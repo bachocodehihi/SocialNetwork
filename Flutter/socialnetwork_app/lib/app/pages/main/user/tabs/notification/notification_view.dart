@@ -6,6 +6,7 @@ import 'package:socialnetwork/app/theme/app_translation.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/notification/notification_controller.dart';
 import 'package:socialnetwork/app/pages/user/user_page.dart';
 import 'package:socialnetwork/app/pages/group/group_page.dart';
+import 'package:socialnetwork/data/config/config.dart';
 
 class NotificationUserView extends StatefulWidget {
   const NotificationUserView({super.key});
@@ -120,7 +121,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      S.of(context, 'notification'),
+                      Language.of(context, 'notification'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
@@ -135,7 +136,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                           size: 26.sp,
                           color: cs.primary,
                         ),
-                        tooltip: 'Đánh dấu tất cả đã đọc',
+                        tooltip: Language.of(context, 'mark_all_as_read'),
                       ),
                   ],
                 ),
@@ -197,7 +198,10 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                       final isRead = item['isRead'] ?? false;
                       final sender = item['sender'] as Map? ?? {};
                       final senderName = sender['username'] ?? 'Một người dùng';
-                      final senderAvatar = sender['avatar'] ?? '';
+                      final rawAvatar = sender['avatar'] ?? '';
+                      final senderAvatar = (rawAvatar.isNotEmpty && !rawAvatar.startsWith('http'))
+                          ? '${Config.baseUrl}$rawAvatar'
+                          : rawAvatar;
                       final timeStr = _formatTimeAgo(item['createdAt']);
                       final type = item['type'] ?? '';
 
@@ -323,6 +327,10 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                                         ),
                                       ],
                                     ),
+                                    if (type == 'friend_request') ...[
+                                      SizedBox(height: 8.h),
+                                      _buildFriendRequestActions(context, item, cs),
+                                    ],
                                   ],
                                 ),
                               ),
@@ -346,6 +354,138 @@ class _NotificationUserViewState extends State<NotificationUserView> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildFriendRequestActions(BuildContext context, Map<String, dynamic> item, ColorScheme cs) {
+    final requestId = item['relatedId']?.toString() ?? '';
+    if (requestId.isEmpty) return const SizedBox.shrink();
+
+    final isProcessedLocally = _controller.isProcessed(requestId);
+    final localAction = _controller.getProcessedAction(requestId);
+    final serverStatus = item['requestStatus']?.toString() ?? 'pending';
+
+    final String status;
+    if (isProcessedLocally) {
+      status = localAction == 'accepted' ? 'accepted' : 'rejected';
+    } else {
+      status = serverStatus;
+    }
+
+    if (status == 'accepted') {
+      return Padding(
+        padding: EdgeInsets.only(top: 4.h),
+        child: Row(
+          children: [
+            Icon(
+              Icons.check_circle_outline_rounded,
+              size: 14.sp,
+              color: Colors.green,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              'Đã đồng ý lời mời kết bạn',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (status == 'rejected') {
+      return Padding(
+        padding: EdgeInsets.only(top: 4.h),
+        child: Row(
+          children: [
+            Icon(
+              Icons.cancel_outlined,
+              size: 14.sp,
+              color: cs.error,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              'Đã từ chối lời mời kết bạn',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w500,
+                color: cs.error,
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (status == 'cancelled' || status == 'deleted') {
+      return Padding(
+        padding: EdgeInsets.only(top: 4.h),
+        child: Row(
+          children: [
+            Icon(
+              Icons.info_outline_rounded,
+              size: 14.sp,
+              color: cs.outline,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              'Lời mời đã bị thu hồi',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w500,
+                color: cs.outline,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(top: 6.h),
+      child: Row(
+        children: [
+          ElevatedButton(
+            onPressed: () => _controller.acceptFriend(requestId),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: cs.primary,
+              foregroundColor: cs.onPrimary,
+              elevation: 0,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              minimumSize: Size(0, 32.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              'Đồng ý',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          SizedBox(width: 8.w),
+          OutlinedButton(
+            onPressed: () => _controller.rejectFriend(requestId),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: cs.outline,
+              side: BorderSide(color: cs.outlineVariant),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              minimumSize: Size(0, 32.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              'Từ chối',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -26,6 +26,7 @@ class ChatUserController extends ChangeNotifier {
   
   void Function(dynamic)? _statusListener;
   void Function(dynamic)? _messageListener;
+  void Function(dynamic)? _recallListener;
  
   ChatUserController({
     required this.receiverId,
@@ -86,6 +87,9 @@ class ChatUserController extends ChangeNotifier {
       _messageListener = _onReceiveMessage;
       _socketService.on('receive_message', _messageListener!);
       
+      _recallListener = _onMessageRecalled;
+      _socketService.on('message_recalled', _recallListener!);
+      
       await _loadMessages();
       
       if (isFriend) {
@@ -113,6 +117,23 @@ class ChatUserController extends ChangeNotifier {
     }
   }
  
+  void _onMessageRecalled(dynamic data) {
+    final msgId = data['messageId']?.toString();
+    if (msgId == null) return;
+    final index = _messages.indexWhere((m) {
+      final mid = m['_id']?.toString() ?? m['id']?.toString();
+      return mid == msgId;
+    });
+    if (index != -1) {
+      _messages[index] = {
+        ..._messages[index],
+        'isRecalled': true,
+        'content': 'Tin nhắn đã bị thu hồi',
+      };
+      notifyListeners();
+    }
+  }
+
   void _onReceiveMessage(dynamic data) {
     final msgConvId = data['conversationId']?.toString();
     if (msgConvId != _conversationId) return;
@@ -180,11 +201,73 @@ class ChatUserController extends ChangeNotifier {
     _isSending = false;
     notifyListeners();
   }
+
+  Future<void> sendImageMessages(List<String> filePaths) async {
+    if (filePaths.isEmpty || _conversationId == null) return;
+    
+    _isSending = true;
+    notifyListeners();
+ 
+    try {
+      final List<String> imageUrls = [];
+      for (final path in filePaths) {
+        final imageUrl = await _messageUsecase.uploadImage(path);
+        if (imageUrl != null) {
+          imageUrls.add(imageUrl);
+        }
+      }
+
+      if (imageUrls.isNotEmpty) {
+        _socketService.emit('send_message', {
+          'conversationId': _conversationId,
+          'content': '[Hình ảnh]',
+          'type': 'image',
+          'attachments': imageUrls,
+        });
+      } else {
+        _error = 'Tải ảnh lên thất bại';
+      }
+    } catch (e) {
+      _error = 'Gửi hình ảnh thất bại: ${e.toString()}';
+    }
+ 
+    _isSending = false;
+    notifyListeners();
+  }
+
+  Future<void> sendVoiceMessage(String filePath) async {
+    if (_conversationId == null) return;
+    
+    _isSending = true;
+    notifyListeners();
+ 
+    try {
+      final audioUrl = await _messageUsecase.uploadAudio(filePath);
+      if (audioUrl != null) {
+        _socketService.emit('send_message', {
+          'conversationId': _conversationId,
+          'content': '[Tin nhắn thoại]',
+          'type': 'audio',
+          'attachments': [audioUrl],
+        });
+      } else {
+        _error = 'Tải tin nhắn thoại lên thất bại';
+      }
+    } catch (e) {
+      _error = 'Gửi tin nhắn thoại thất bại: ${e.toString()}';
+    }
+ 
+    _isSending = false;
+    notifyListeners();
+  }
  
   @override
   void dispose() {
     if (_messageListener != null) {
       _socketService.off('receive_message', _messageListener);
+    }
+    if (_recallListener != null) {
+      _socketService.off('message_recalled', _recallListener);
     }
     if (isFriend && _statusListener != null) {
       _socketService.off('friend_status_changed', _statusListener);
@@ -208,11 +291,18 @@ class ChatUserController extends ChangeNotifier {
   Future<void> recallMessage(String messageId) async {
     try {
       await _messageUsecase.deleteMessage(messageId, forEveryone: true);
-      _messages.removeWhere((m) {
+      final index = _messages.indexWhere((m) {
         final mid = m['_id']?.toString() ?? m['id']?.toString();
         return mid == messageId;
       });
-      notifyListeners();
+      if (index != -1) {
+        _messages[index] = {
+          ..._messages[index],
+          'isRecalled': true,
+          'content': 'Tin nhắn đã bị thu hồi',
+        };
+        notifyListeners();
+      }
     } catch (e) {
       debugPrint('Error recalling message: $e');
     }

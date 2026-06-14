@@ -58,12 +58,17 @@ class CallService extends ChangeNotifier {
   Timer? _durationTimer;
   Timer? _autoCancelTimer;
 
+  String? pendingNotificationAction;
+
   Map<String, dynamic>? _pendingOffer;
 
   // 1-on-1 WebRTC
   RTCPeerConnection? _pc;
   MediaStream? _localStream;
   MediaStream? _remoteStream;
+  RTCVideoRenderer? _remoteRenderer;
+
+  RTCVideoRenderer? get remoteRenderer => _remoteRenderer;
 
   // Group WebRTC mesh: map of peerId -> PeerConnection
   final Map<String, RTCPeerConnection> _groupPcs = {};
@@ -86,6 +91,8 @@ class CallService extends ChangeNotifier {
 
   Future<void> init() async {
     if (_isInitialized) return;
+    _remoteRenderer = RTCVideoRenderer();
+    await _remoteRenderer!.initialize();
     _registerListeners();
     _isInitialized = true;
     debugPrint('✅ CallService initialized');
@@ -177,7 +184,13 @@ class CallService extends ChangeNotifier {
       await _setupPeerConnection(receiverId);
 
       // Create and set local SDP offer
-      final offer = await _pc!.createOffer();
+      final offer = await _pc!.createOffer({
+        'mandatory': {
+          'OfferToReceiveAudio': true,
+          'OfferToReceiveVideo': false,
+        },
+        'optional': [],
+      });
       await _pc!.setLocalDescription(offer);
 
       _socket.emit('call_initiate', {
@@ -225,6 +238,16 @@ class CallService extends ChangeNotifier {
     _callState = CallState.ringing;
     notifyListeners();
 
+    if (pendingNotificationAction == 'accept_call') {
+      pendingNotificationAction = null;
+      acceptCall();
+      return;
+    } else if (pendingNotificationAction == 'reject_call') {
+      pendingNotificationAction = null;
+      rejectCall();
+      return;
+    }
+
     onIncomingCall?.call(_currentCall!);
   }
 
@@ -244,7 +267,13 @@ class CallService extends ChangeNotifier {
         _pendingOffer = null;
       }
 
-      final answer = await _pc!.createAnswer();
+      final answer = await _pc!.createAnswer({
+        'mandatory': {
+          'OfferToReceiveAudio': true,
+          'OfferToReceiveVideo': false,
+        },
+        'optional': [],
+      });
       await _pc!.setLocalDescription(answer);
 
       _socket.emit('call_accept', {
@@ -334,12 +363,23 @@ class CallService extends ChangeNotifier {
 
     if (signal['type'] == 'candidate') {
       try {
-        await _pc!.addCandidate(RTCIceCandidate(
-          signal['candidate'],
-          signal['sdpMid'],
-          signal['sdpMLineIndex'],
-        ));
-      } catch (_) {}
+        final candidateVal = signal['candidate'];
+        if (candidateVal is Map) {
+          await _pc!.addCandidate(RTCIceCandidate(
+            candidateVal['candidate']?.toString(),
+            candidateVal['sdpMid']?.toString(),
+            candidateVal['sdpMLineIndex'] as int?,
+          ));
+        } else if (candidateVal is String) {
+          await _pc!.addCandidate(RTCIceCandidate(
+            candidateVal,
+            signal['sdpMid']?.toString(),
+            signal['sdpMLineIndex'] as int?,
+          ));
+        }
+      } catch (e) {
+        debugPrint('❌ Error adding ICE candidate: $e');
+      }
     }
   }
 
@@ -501,11 +541,20 @@ class CallService extends ChangeNotifier {
       } else if (type == 'answer') {
         await pc.setRemoteDescription(RTCSessionDescription(signal['sdp'], signal['type']));
       } else if (type == 'candidate') {
-        await pc.addCandidate(RTCIceCandidate(
-          signal['candidate'],
-          signal['sdpMid'],
-          signal['sdpMLineIndex'],
-        ));
+        final candidateVal = signal['candidate'];
+        if (candidateVal is Map) {
+          await pc.addCandidate(RTCIceCandidate(
+            candidateVal['candidate']?.toString(),
+            candidateVal['sdpMid']?.toString(),
+            candidateVal['sdpMLineIndex'] as int?,
+          ));
+        } else if (candidateVal is String) {
+          await pc.addCandidate(RTCIceCandidate(
+            candidateVal,
+            signal['sdpMid']?.toString(),
+            signal['sdpMLineIndex'] as int?,
+          ));
+        }
       }
     } catch (e) {
       debugPrint('Error handling group signal from $fromUserId: $e');
@@ -577,14 +626,32 @@ class CallService extends ChangeNotifier {
       await _pc!.addTrack(track, _localStream!);
     }
 
-    _pc!.onTrack = (RTCTrackEvent event) {
+    _pc!.onConnectionState = (state) {
+      debugPrint('⚡ PeerConnection state: $state');
+    };
+
+    _pc!.onIceConnectionState = (state) {
+      debugPrint('⚡ ICE connection state: $state');
+    };
+
+    _pc!.onTrack = (RTCTrackEvent event) async {
+      debugPrint('🔊 WebRTC onTrack: track kind = ${event.track.kind}, streams count = ${event.streams.length}');
       if (event.streams.isNotEmpty) {
         _remoteStream = event.streams[0];
-        _callState = CallState.connected;
-        _startDurationTimer();
-        notifyListeners();
-        onCallConnected?.call();
+      } else {
+        _remoteStream ??= await createLocalMediaStream('remote_stream');
+        await _remoteStream!.addTrack(event.track);
       }
+      _remoteRenderer?.srcObject = _remoteStream;
+      
+      // Bật loa ngoài mặc định khi kết nối thành công
+      _isSpeakerOn = true;
+      Helper.setSpeakerphoneOn(true);
+      
+      _callState = CallState.connected;
+      _startDurationTimer();
+      notifyListeners();
+      onCallConnected?.call();
     };
 
     _pc!.onIceCandidate = (RTCIceCandidate candidate) {
@@ -637,6 +704,7 @@ class CallService extends ChangeNotifier {
     _localStream = null;
     _remoteStream?.dispose();
     _remoteStream = null;
+    _remoteRenderer?.srcObject = null;
 
     _callState = CallState.idle;
     _currentCall = null;
@@ -656,6 +724,7 @@ class CallService extends ChangeNotifier {
   @override
   void dispose() {
     _resetCall();
+    _remoteRenderer?.dispose();
     super.dispose();
   }
 }

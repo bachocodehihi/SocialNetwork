@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:socialnetwork/app/providers/app_provider.dart';
 
-class S {
+class Language {
   static String of(BuildContext context, String key) {
     try {
       final provider = Provider.of<AppProvider>(context, listen: false);
@@ -142,8 +142,6 @@ class S {
     'welcome_to_social_network_app': 'Chào mừng đến với ứng dụng Mạng Xã Hội',
     'sign_in': 'Đăng nhập',
     'create_new_account': 'Tạo tài khoản mới',
-
-
 
     //setting
     'setting': 'Cài đặt',

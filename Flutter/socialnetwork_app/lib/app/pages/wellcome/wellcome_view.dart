@@ -37,7 +37,7 @@ class _WellcomeViewState extends State<WellcomeView> {
               Column(
                 children: [
                   Text(
-                    S.of(context, 'hello'),
+                    Language.of(context, 'hello'),
                     style: TextStyle(
                       color: Colors.blue,
                       fontSize: 25.sp,
@@ -46,7 +46,7 @@ class _WellcomeViewState extends State<WellcomeView> {
                   ),
                   SizedBox(height: 10.h),
                   Text(
-                    S.of(context, 'welcome_to_social_network_app'),
+                    Language.of(context, 'welcome_to_social_network_app'),
                     style: TextStyle(
                       color: Colors.blue,
                       fontSize: 15.sp,
@@ -73,7 +73,7 @@ class _WellcomeViewState extends State<WellcomeView> {
                         controller.goToSignInEmail(context);
                       },
                       child: Text(
-                        S.of(context, 'sign_in'),
+                        Language.of(context, 'sign_in'),
                         style: TextStyle(
                           color: Colors.white, 
                           fontSize: 15.sp,
@@ -100,7 +100,7 @@ class _WellcomeViewState extends State<WellcomeView> {
                         controller.goToSignUpEmail(context);
                       },
                       child: Text(
-                        S.of(context, 'create_new_account'),
+                        Language.of(context, 'create_new_account'),
                         style: TextStyle(
                           color: Colors.white, 
                           fontSize: 15.sp,

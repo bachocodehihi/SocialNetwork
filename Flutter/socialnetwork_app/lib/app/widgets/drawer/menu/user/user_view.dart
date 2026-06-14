@@ -74,7 +74,7 @@ class _MenuDrawerUserViewState extends State<MenuDrawerUserView> {
           ListTile(
             leading: const Icon(Icons.sports_esports_outlined),
             title: Text(
-              S.of(context, 'game'),
+              Language.of(context, 'game'),
               style: TextStyle(
                 color: cs.onSurface,
                 fontSize: 15.sp,
@@ -87,7 +87,7 @@ class _MenuDrawerUserViewState extends State<MenuDrawerUserView> {
           ListTile(
             leading: const Icon(Icons.settings_outlined),
             title: Text(
-              S.of(context, 'setting'),
+              Language.of(context, 'setting'),
               style: TextStyle(
                 color: cs.onSurface,
                 fontSize: 15.sp,
@@ -102,7 +102,7 @@ class _MenuDrawerUserViewState extends State<MenuDrawerUserView> {
           ListTile(
             leading: const Icon(Icons.logout_outlined, color: Colors.red),
             title: Text(
-              S.of(context, 'log_out'), 
+              Language.of(context, 'log_out'), 
               style: TextStyle(
                 color: Colors.red,
                 fontSize: 15.sp,

@@ -38,7 +38,7 @@ class _ContactUserViewState extends State<ContactUserView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    S.of(context, 'contact'),
+                    Language.of(context, 'contact'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -68,9 +68,9 @@ class _ContactUserViewState extends State<ContactUserView> {
                   fontWeight: FontWeight.normal,
                 ),
                 tabs: [
-                  Tab(text: S.of(context, 'requests')),
-                  Tab(text: S.of(context, 'friends')),
-                  Tab(text: S.of(context, 'groups')),
+                  Tab(text: Language.of(context, 'requests')),
+                  Tab(text: Language.of(context, 'friends')),
+                  Tab(text: Language.of(context, 'groups')),
                 ],
               ),
             ),

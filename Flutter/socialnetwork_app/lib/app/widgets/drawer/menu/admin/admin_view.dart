@@ -74,7 +74,7 @@ class _MenuDrawerAdminViewState extends State<MenuDrawerAdminView> {
           ListTile(
             leading: const Icon(Icons.dashboard_outlined),
             title: Text(
-              S.of(context, 'dashboard'),
+              Language.of(context, 'dashboard'),
               style: TextStyle(
                 color: cs.onSurface,
                 fontSize: 15.sp,
@@ -88,7 +88,7 @@ class _MenuDrawerAdminViewState extends State<MenuDrawerAdminView> {
           ListTile(
             leading: const Icon(Icons.settings_outlined),
             title: Text(
-              S.of(context, 'setting'),
+              Language.of(context, 'setting'),
               style: TextStyle(
                 color: cs.onSurface,
                 fontSize: 15.sp,
@@ -103,7 +103,7 @@ class _MenuDrawerAdminViewState extends State<MenuDrawerAdminView> {
           ListTile(
             leading: const Icon(Icons.logout_outlined, color: Colors.red),
             title: Text(
-              S.of(context, 'log_out'), 
+              Language.of(context, 'log_out'), 
               style: TextStyle(
                 color: Colors.red,
                 fontSize: 15.sp,

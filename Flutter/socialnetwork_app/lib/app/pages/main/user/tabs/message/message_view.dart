@@ -64,10 +64,10 @@ class _MessageUserViewState extends State<MessageUserView> {
                   _buildHeader(cs),
                   SizedBox(height: 20.h),
                   _buildSearchBar(cs),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 20.h),
                   if (controller.onlineFriends.isNotEmpty) ...[
                     _buildOnlineFriendsList(cs),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 20.h),
                   ],
                   _buildConversationsList(cs),
                 ],
@@ -84,7 +84,7 @@ class _MessageUserViewState extends State<MessageUserView> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          S.of(context, 'message'),
+          Language.of(context, 'message'),
           style: TextStyle(
             fontSize: 20.sp,
             fontWeight: FontWeight.w500,

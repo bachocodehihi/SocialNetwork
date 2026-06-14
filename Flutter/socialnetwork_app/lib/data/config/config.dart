@@ -1,7 +1,7 @@
 class Config {
-  static const bool isProduction = true;
+  static const bool isProduction = false;
 
-  static const String currentIp = '192.168.1.6';
+  static const String currentIp = '192.168.1.4';
   static const int currentPort = 5000;
 
   static const String productionUrl = 'https://socialnetwork-rkjz.onrender.com';

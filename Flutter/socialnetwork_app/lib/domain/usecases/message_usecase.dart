@@ -56,4 +56,12 @@ class MessageUsecase {
   Future<void> markAsRead(String conversationId) async {
     await _repository.markAsRead(conversationId);
   }
+
+  Future<String?> uploadImage(String filePath) async {
+    return await _repository.uploadImage(filePath);
+  }
+
+  Future<String?> uploadAudio(String filePath) async {
+    return await _repository.uploadAudio(filePath);
+  }
 }

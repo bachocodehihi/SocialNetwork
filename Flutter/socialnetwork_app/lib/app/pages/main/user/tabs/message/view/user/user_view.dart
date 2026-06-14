@@ -102,7 +102,7 @@ class _ViewUserViewState extends State<ViewUserView> {
                   Expanded(
                     child: _buildFunctionItem(
                       Icons.person_outlined,
-                      S.of(context, 'personal_page'),
+                      Language.of(context, 'personal_page'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -123,7 +123,7 @@ class _ViewUserViewState extends State<ViewUserView> {
                   Expanded(
                     child: _buildFunctionItem(
                       Icons.edit_outlined,
-                      S.of(context, 'edit_name'),
+                      Language.of(context, 'edit_name'),
                       onTap: () {
                         
                       },
@@ -133,7 +133,7 @@ class _ViewUserViewState extends State<ViewUserView> {
                   Expanded(
                     child: _buildFunctionItem(
                       Icons.notifications_outlined,
-                      S.of(context, 'notification'),
+                      Language.of(context, 'notification'),
                       onTap: () {
                         
                       },
@@ -145,7 +145,7 @@ class _ViewUserViewState extends State<ViewUserView> {
               SizedBox(height: 20.h),
 
               SettingItem(
-                title: S.of(context, 'image'),
+                title: Language.of(context, 'image'),
                 icon: Icons.image_outlined,
                 color: cs.onSurface,
                 onTap: () {
@@ -155,7 +155,7 @@ class _ViewUserViewState extends State<ViewUserView> {
               SizedBox(height: 15.h),
 
               SettingItem(
-                title: S.of(context, 'call'),
+                title: Language.of(context, 'call'),
                 icon: Icons.call_outlined,
                 color: cs.onSurface,
                 onTap: () {
@@ -165,7 +165,7 @@ class _ViewUserViewState extends State<ViewUserView> {
               SizedBox(height: 15.h),
 
               SettingItem(
-                title: S.of(context, 'report'),
+                title: Language.of(context, 'report'),
                 icon: Icons.warning_amber_outlined,
                 color: cs.onSurface,
                 onTap: () {
@@ -175,7 +175,7 @@ class _ViewUserViewState extends State<ViewUserView> {
               SizedBox(height: 15.h),
 
               SettingItem(
-                title: S.of(context, 'block'),
+                title: Language.of(context, 'block'),
                 icon: Icons.block_outlined,
                 color: cs.onSurface,
                 onTap: () {
@@ -185,7 +185,7 @@ class _ViewUserViewState extends State<ViewUserView> {
               SizedBox(height: 15.h),
 
               SettingItem(
-                title: S.of(context, 'delete_chat_history'),
+                title: Language.of(context, 'delete_chat_history'),
                 icon: Icons.delete_outlined,
                 color: Colors.red,
                 onTap: () {

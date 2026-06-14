@@ -53,7 +53,7 @@ class _SettingDarkmodeViewState extends State<SettingDarkmodeView> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      S.of(context, 'dark_mode'),
+                      Language.of(context, 'dark_mode'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
@@ -91,7 +91,7 @@ class _SettingDarkmodeViewState extends State<SettingDarkmodeView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    S.of(context, 'dark_mode'),
+                                    Language.of(context, 'dark_mode'),
                                     style: TextStyle(
                                       fontSize: 15.sp,
                                       color: cs.onSurface,

@@ -26,4 +26,8 @@ abstract class MessageRepository {
   Future<void> deleteMessage(String messageId, {bool forEveryone = false});
   
   Future<void> markAsRead(String conversationId);
+
+  Future<String?> uploadImage(String filePath);
+
+  Future<String?> uploadAudio(String filePath);
 }

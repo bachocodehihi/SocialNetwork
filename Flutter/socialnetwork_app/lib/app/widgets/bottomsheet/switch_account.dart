@@ -41,7 +41,7 @@ class SwitchAccountBottomSheet extends StatelessWidget {
             children: [
               SizedBox(width: 24.w),
               Text(
-                S.of(context, 'switch_account'),
+                Language.of(context, 'switch_account'),
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
@@ -95,7 +95,7 @@ class SwitchAccountBottomSheet extends StatelessWidget {
                       ),
                     ),
                     title: Text(
-                      'Add account',
+                      Language.of(context, 'add_account'),
                       style: TextStyle(
                         fontSize: 15.sp, 
                         color: cs.onSurface

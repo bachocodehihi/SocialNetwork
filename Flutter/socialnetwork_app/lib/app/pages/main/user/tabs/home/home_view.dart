@@ -809,7 +809,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                     Row(
                       children: [
                         Text(
-                          S.of(context, 'home'),
+                          Language.of(context, 'home'),
                           style: TextStyle(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w500,
@@ -867,7 +867,7 @@ class _HomeUserViewState extends State<HomeUserView> {
 
                 Visibility(
                   visible: controller.isOffline,
-                  child: BannerNetwork(message: S.of(context, 'no_internet')),
+                  child: BannerNetwork(message: Language.of(context, 'no_internet')),
                 ),
 
                 Consumer<MainUserController>(
@@ -907,7 +907,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                         child: AbsorbPointer(
                           child: TextField(
                             decoration: InputDecoration(
-                              hintText: S.of(context, 'what_s_on_your_mind'),
+                              hintText: Language.of(context, 'what_s_on_your_mind'),
                               hintStyle: TextStyle(
                                 fontSize: 15.sp,
                                 color: Colors.grey,

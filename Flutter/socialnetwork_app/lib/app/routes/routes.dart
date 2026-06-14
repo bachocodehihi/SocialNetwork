@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 //splash
 import 'package:socialnetwork/app/pages/splash/splash_page.dart';
 
@@ -98,6 +100,8 @@ import 'package:socialnetwork/app/pages/list/followers/followers_page.dart';
 import 'package:socialnetwork/app/pages/list/following/following_page.dart';
 
 class Routes {
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   //splash
   static String splash = '/';
 

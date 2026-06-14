@@ -75,7 +75,7 @@ class _ViewGroupViewState extends State<ViewGroupView> {
               SizedBox(height: 20.h),
 
               SettingItem(
-                title: S.of(context, 'image'),
+                title: Language.of(context, 'image'),
                 icon: Icons.image_outlined,
                 color: cs.onSurface,
                 onTap: () {
@@ -85,7 +85,7 @@ class _ViewGroupViewState extends State<ViewGroupView> {
               SizedBox(height: 15.h),
 
               SettingItem(
-                title: S.of(context, 'member'),
+                title: Language.of(context, 'member'),
                 icon: Icons.group_outlined,
                 color: cs.onSurface,
                 onTap: () {
@@ -95,7 +95,7 @@ class _ViewGroupViewState extends State<ViewGroupView> {
               SizedBox(height: 15.h),
 
               SettingItem(
-                title: S.of(context, 'call'),
+                title: Language.of(context, 'call'),
                 icon: Icons.call_outlined,
                 color: cs.onSurface,
                 onTap: () {
@@ -105,7 +105,7 @@ class _ViewGroupViewState extends State<ViewGroupView> {
               SizedBox(height: 15.h),
 
               SettingItem(
-                title: S.of(context, 'report'),
+                title: Language.of(context, 'report'),
                 icon: Icons.warning_amber_outlined,
                 color: cs.onSurface,
                 onTap: () {
@@ -115,7 +115,7 @@ class _ViewGroupViewState extends State<ViewGroupView> {
               SizedBox(height: 15.h),
 
               SettingItem(
-                title: S.of(context, 'block'),
+                title: Language.of(context, 'block'),
                 icon: Icons.block_outlined,
                 color: cs.onSurface,
                 onTap: () {
@@ -125,7 +125,7 @@ class _ViewGroupViewState extends State<ViewGroupView> {
               SizedBox(height: 15.h),
 
               SettingItem(
-                title: S.of(context, 'delete_chat_history'),
+                title: Language.of(context, 'delete_chat_history'),
                 icon: Icons.delete_outlined,
                 color: Colors.red,
                 onTap: () {

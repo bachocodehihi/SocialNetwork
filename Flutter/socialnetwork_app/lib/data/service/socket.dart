@@ -18,7 +18,7 @@ class SocketService {
   bool _isConnected = false;
   String? _currentUserId;
   
-  final Map<String, List<Function>> _listeners = {};
+  final Map<String, List<Function(dynamic)>> _listeners = {};
 
   IO.Socket? get socket => _socket;
   bool get isConnected => _isConnected;
@@ -48,6 +48,13 @@ class SocketService {
             .enableForceNew()
             .build(),
       );
+
+      // Re-register all listeners in _listeners to the new socket instance
+      _listeners.forEach((event, callbacks) {
+        for (final cb in callbacks) {
+          _socket!.on(event, cb);
+        }
+      });
 
       _socket!.onConnect((_) {
         debugPrint('✅ Socket connected');
@@ -154,6 +161,10 @@ class SocketService {
   void off(String event, [Function(dynamic)? callback]) {
     if (callback != null) {
       _socket?.off(event, callback);
+      _listeners[event]?.remove(callback);
+      if (_listeners[event]?.isEmpty ?? false) {
+        _listeners.remove(event);
+      }
     } else {
       _socket?.off(event);
       _listeners.remove(event);

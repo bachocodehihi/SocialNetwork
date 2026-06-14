@@ -58,7 +58,7 @@ class _SettingLanguageViewState extends State<SettingLanguageView> {
                         ),
                         SizedBox(width: 10.w),
                         Text(
-                          S.of(context, 'language'),
+                          Language.of(context, 'language'),
                           style: TextStyle(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w500,
@@ -70,7 +70,7 @@ class _SettingLanguageViewState extends State<SettingLanguageView> {
                     SizedBox(height: 20.h),
 
                     Text(
-                      S.of(context, 'select_your_preferred_language'),
+                      Language.of(context, 'select_your_preferred_language'),
                       style: TextStyle(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w500,

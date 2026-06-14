@@ -206,7 +206,7 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      S.of(context, 'verify_email'),
+                      Language.of(context, 'verify_email'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
@@ -217,7 +217,7 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  S.of(context, 'verify_your_email'),
+                  Language.of(context, 'verify_your_email'),
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
@@ -226,7 +226,7 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  S.of(context, 'otp_has_been_sent_to_your_email'),
+                  Language.of(context, 'otp_has_been_sent_to_your_email'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     color: cs.onSurfaceVariant,
@@ -302,7 +302,7 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
                       ? const CircularProgressIndicator(
                         color: Colors.white
                       ) : Text(
-                          S.of(context, 'continue'),
+                          Language.of(context, 'continue'),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15.sp,
@@ -316,7 +316,7 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        S.of(context, 'didn_t_receive_a_code? '),
+                        Language.of(context, 'didn_t_receive_a_code? '),
                         style: TextStyle(
                           fontSize: 15.sp,
                           color: cs.onSurface,
@@ -351,7 +351,7 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
                                 ),
                               )
                             : Text(
-                                S.of(context, 'resend'),
+                                Language.of(context, 'resend'),
                                 style: TextStyle(
                                   fontSize: 15.sp,
                                   color: Colors.blue,

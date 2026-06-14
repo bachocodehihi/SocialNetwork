@@ -79,7 +79,7 @@ class _SignUpAvatarViewState extends State<SignUpAvatarView> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      S.of(context, 'select_avatar'),
+                      Language.of(context, 'select_avatar'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
@@ -92,7 +92,7 @@ class _SignUpAvatarViewState extends State<SignUpAvatarView> {
                 SizedBox(height: 20.h),
 
                 Text(
-                  S.of(context, 'select_your_avatar'),
+                  Language.of(context, 'select_your_avatar'),
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
@@ -200,7 +200,7 @@ class _SignUpAvatarViewState extends State<SignUpAvatarView> {
                         ? const CircularProgressIndicator(
                             color: Colors.white)
                         : Text(
-                            S.of(context, 'continue'),
+                            Language.of(context, 'continue'),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 15.sp,

@@ -120,7 +120,7 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      S.of(context, 'notification'),
+                      Language.of(context, 'notification'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,

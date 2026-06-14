@@ -58,7 +58,7 @@ class _SettingViewState extends State<SettingView> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      S.of(context, 'setting'),
+                      Language.of(context, 'setting'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
@@ -71,7 +71,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 20.h),
 
                 Text(
-                  S.of(context, 'interface'),
+                  Language.of(context, 'interface'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w500,
@@ -82,7 +82,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 20.h),
 
                 SettingItem(
-                  title: S.of(context, 'dark_mode'),
+                  title: Language.of(context, 'dark_mode'),
                   icon: Icons.dark_mode_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -93,7 +93,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: S.of(context, 'language'),
+                  title: Language.of(context, 'language'),
                   icon: Icons.language_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -104,7 +104,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: S.of(context, 'font'),
+                  title: Language.of(context, 'font'),
                   icon: Icons.format_size_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -115,7 +115,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 20.h),
 
                 Text(
-                  S.of(context, 'account'),
+                  Language.of(context, 'account'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w500,
@@ -126,7 +126,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 20.h),
 
                 SettingItem(
-                  title: S.of(context, 'account'),
+                  title: Language.of(context, 'account'),
                   icon: Icons.person_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -137,7 +137,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: S.of(context, 'privacy'),
+                  title: Language.of(context, 'privacy'),
                   icon: Icons.lock_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -148,7 +148,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: S.of(context, 'activity'),
+                  title: Language.of(context, 'activity'),
                   icon: Icons.access_time_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -159,7 +159,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: S.of(context, 'activity'),
+                  title: Language.of(context, 'activity'),
                   icon: Icons.thumb_up_alt_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -170,7 +170,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: S.of(context, 'activity'),
+                  title: Language.of(context, 'activity'),
                   icon: Icons.chat_bubble_outline_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -181,7 +181,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 20.h),
 
                 Text(
-                  S.of(context, 'notification'),
+                  Language.of(context, 'notification'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w500,
@@ -192,7 +192,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 20.h),
 
                 SettingItem(
-                  title: S.of(context, 'notification'),
+                  title: Language.of(context, 'notification'),
                   icon: Icons.notifications_outlined,
                   color: cs.onSurface,
                   onTap: () {},
@@ -201,7 +201,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 20.h),
 
                 Text(
-                  S.of(context, 'sign_in'),
+                  Language.of(context, 'sign_in'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w500,
@@ -212,7 +212,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 20.h),
 
                 SettingItem(
-                  title: S.of(context, 'switch_account'),
+                  title: Language.of(context, 'switch_account'),
                   icon: Icons.swap_horiz_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -223,7 +223,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: S.of(context, 'log_out'),
+                  title: Language.of(context, 'log_out'),
                   icon: Icons.logout_outlined,
                   color: Colors.red,
                   onTap: () {

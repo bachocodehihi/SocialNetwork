@@ -40,7 +40,7 @@ class _SocketLifecycleHandlerState extends State<SocketLifecycleHandler>
     final callService = CallService();
     await callService.init();
     callService.onIncomingCall = (callInfo) {
-      Navigator.pushNamed(context, Routes.callIncoming);
+      Routes.navigatorKey.currentState?.pushNamed(Routes.callIncoming);
     };
 
     await _socketService.connect();

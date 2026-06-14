@@ -55,4 +55,12 @@ class MessageRepositoryImp implements MessageRepository {
   @override
   Future<void> markAsRead(String conversationId) =>
       _api.markAsRead(conversationId);
+
+  @override
+  Future<String?> uploadImage(String filePath) =>
+      _api.uploadImage(filePath);
+
+  @override
+  Future<String?> uploadAudio(String filePath) =>
+      _api.uploadAudio(filePath);
 }

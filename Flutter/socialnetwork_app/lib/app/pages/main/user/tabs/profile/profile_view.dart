@@ -767,7 +767,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    S.of(context, 'profile'),
+                    Language.of(context, 'profile'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -934,14 +934,14 @@ class _ProfileUserViewState extends State<ProfileUserView> {
               if (controller.birthday.isNotEmpty)
                 InformationItem(
                   value: controller.birthday,
-                  title: S.of(context, 'birthday'), 
+                  title: Language.of(context, 'birthday'), 
                   icon: Icons.cake_outlined,
                 ),
 
               if (controller.gender.isNotEmpty)
                 InformationItem(
                   value: controller.gender, 
-                  title: S.of(context, 'gender'), 
+                  title: Language.of(context, 'gender'), 
                   icon: Icons.wc_outlined,
                 ),
 
@@ -955,28 +955,28 @@ class _ProfileUserViewState extends State<ProfileUserView> {
               if (controller.address.isNotEmpty) 
                 InformationItem(
                   value: controller.address, 
-                  title: S.of(context, 'address'),
+                  title: Language.of(context, 'address'),
                   icon: Icons.location_on_outlined,
                 ),
 
               if (controller.phone.isNotEmpty) 
                 InformationItem(
                   value: controller.phone, 
-                  title: S.of(context, 'phone'), 
+                  title: Language.of(context, 'phone'), 
                   icon: Icons.phone_outlined,
                 ),
                 
               if (controller.job.isNotEmpty) 
                 InformationItem(
                   value: controller.job, 
-                  title: S.of(context, 'job'), 
+                  title: Language.of(context, 'job'), 
                   icon: Icons.work_outline_outlined,
                 ),
 
               if (controller.nationality.isNotEmpty)
                 InformationItem(
                   value: controller.nationality, 
-                  title: S.of(context, 'nationality'), 
+                  title: Language.of(context, 'nationality'), 
                   icon: Icons.public_outlined,
                 ),
 

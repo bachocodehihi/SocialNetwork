@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/main/admin/tabs/home/home_controller.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
-import 'package:socialnetwork/app/widgets/banner/network.dart';
-import 'package:socialnetwork/app/pages/user/user_page.dart';
+// import 'package:socialnetwork/app/widgets/banner/network.dart';
+// import 'package:socialnetwork/app/pages/user/user_page.dart';
 
 class HomeAdminView extends StatefulWidget {
   const HomeAdminView({super.key});
@@ -45,7 +45,7 @@ class _HomeAdminViewState extends State<HomeAdminView> {
                   Row(
                     children: [
                       Text(
-                        S.of(context, 'home'),
+                        Language.of(context, 'home'),
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w500,
