@@ -133,6 +133,12 @@ const cancelRequest = async (req, res) => {
             ]
         });
 
+        const Notification = require('../models/notification.model');
+        await Notification.updateMany(
+            { type: 'friend_request', relatedId: requestId },
+            { $set: { status: 'cancelled' } }
+        );
+
         res.json({ success: true, code: 'CANCEL_REQUEST_SUCCESS' });
     } catch (err) {
         res.status(500).json({ success: false, code: 'SERVER_ERROR' });
@@ -169,6 +175,12 @@ const acceptRequest = async (req, res) => {
             body: `${receiverUser.username} đã chấp nhận lời mời kết bạn của bạn.`,
             relatedId: request._id
         });
+
+        const Notification = require('../models/notification.model');
+        await Notification.updateMany(
+            { recipient: req.userId, type: 'friend_request', relatedId: request._id },
+            { $set: { status: 'accepted' } }
+        );
 
         res.json({ success: true, code: 'ACCEPT_REQUEST_SUCCESS' });
     } catch (err) {
@@ -289,6 +301,22 @@ const rejectRequest = async (req, res) => {
 
         request.status = 'rejected';
         await request.save();
+
+        const receiverUser = await Account.findById(req.userId);
+        await createNotification({
+            recipient: request.sender,
+            sender: req.userId,
+            type: 'friend_reject',
+            title: 'Từ chối lời mời kết bạn',
+            body: `${receiverUser.username} đã từ chối lời mời kết bạn của bạn.`,
+            relatedId: request._id
+        });
+
+        const Notification = require('../models/notification.model');
+        await Notification.updateMany(
+            { recipient: req.userId, type: 'friend_request', relatedId: request._id },
+            { $set: { status: 'rejected' } }
+        );
 
         res.json({ success: true, code: 'REJECT_REQUEST_SUCCESS' });
     } catch (err) {

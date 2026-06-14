@@ -124,7 +124,17 @@ const initSocket = (server) => {
 
         socket.on('call_reject', async (data) => {
             try {
-                const { callId } = data;
+                let { callId } = data;
+
+                if (!callId) {
+                    const active = activeCalls.get(userId);
+                    if (active) {
+                        callId = active.callId;
+                    }
+                }
+
+                if (!callId) return;
+
                 const call = await Call.findById(callId);
                 if (!call) return;
 
@@ -132,6 +142,18 @@ const initSocket = (server) => {
                 call.endedAt = new Date();
                 await call.save();
                 _cleanupCall(callId);
+
+                const receiverInfo = await Account.findById(call.receiver).select('username').lean();
+                const receiverName = receiverInfo ? receiverInfo.username : 'Ai đó';
+                const { createNotification } = require('./controllers/notification.controller');
+                await createNotification({
+                    recipient: call.caller,
+                    sender: call.receiver,
+                    type: 'general',
+                    title: 'Cuộc gọi bị từ chối',
+                    body: `${receiverName} đã từ chối cuộc gọi.`,
+                    relatedId: call._id
+                });
 
                 const callerSocketId = onlineUsers.get(call.caller.toString());
                 if (callerSocketId) {
@@ -144,14 +166,39 @@ const initSocket = (server) => {
 
         socket.on('call_cancel', async (data) => {
             try {
-                const { callId } = data;
+                let { callId } = data;
+
+                if (!callId) {
+                    const active = activeCalls.get(userId);
+                    if (active) {
+                        callId = active.callId;
+                    }
+                }
+
+                if (!callId) return;
+
                 const call = await Call.findById(callId);
                 if (!call) return;
 
-                call.status = call.status === 'accepted' ? 'ended' : 'cancelled';
+                const wasAccepted = call.status === 'accepted';
+                call.status = wasAccepted ? 'ended' : 'cancelled';
                 call.endedAt = new Date();
                 await call.save();
                 _cleanupCall(callId);
+
+                if (!wasAccepted) {
+                    const callerInfo = await Account.findById(call.caller).select('username').lean();
+                    const callerName = callerInfo ? callerInfo.username : 'Ai đó';
+                    const { createNotification } = require('./controllers/notification.controller');
+                    await createNotification({
+                        recipient: call.receiver,
+                        sender: call.caller,
+                        type: 'general',
+                        title: 'Cuộc gọi nhỡ',
+                        body: `Cuộc gọi nhỡ từ ${callerName}`,
+                        relatedId: call._id
+                    });
+                }
 
                 const receiverSocketId = onlineUsers.get(call.receiver.toString());
                 if (receiverSocketId) {
@@ -164,7 +211,17 @@ const initSocket = (server) => {
 
         socket.on('call_end', async (data) => {
             try {
-                const { callId, endedBy } = data;
+                let { callId, endedBy } = data;
+
+                if (!callId) {
+                    const active = activeCalls.get(userId);
+                    if (active) {
+                        callId = active.callId;
+                    }
+                }
+
+                if (!callId) return;
+
                 const call = await Call.findById(callId);
                 if (!call) return;
 
@@ -281,13 +338,20 @@ const initSocket = (server) => {
 
         socket.on('send_message', async (data) => {
             try {
-                const { conversationId, content, type } = data;
+                const { conversationId, content, type, attachments } = data;
+
+                const msgContent = content || (type === 'image' ? '[Hình ảnh]' : type === 'audio' ? '[Tin nhắn thoại]' : '');
+
+                const parsedAttachments = Array.isArray(attachments)
+                    ? attachments.map(att => (typeof att === 'object' && att) ? (att.url || att.path || JSON.stringify(att)) : att)
+                    : [];
 
                 const newMessage = new Message({
                     conversationId,
                     sender: userId,
-                    content,
-                    type: type || 'text'
+                    content: msgContent,
+                    type: type || 'text',
+                    attachments: parsedAttachments
                 });
                 const saved = await newMessage.save();
                 await Conversation.findByIdAndUpdate(conversationId, { lastMessage: saved._id });
@@ -318,7 +382,7 @@ const initSocket = (server) => {
                             fcmToken: member.fcmToken,
                             senderName: populated.sender.username,
                             senderAvatar: populated.sender.avatar || '',
-                            message: content,
+                            message: msgContent,
                             conversationId: conversationId.toString(),
                             groupName: conversation.isGroup ? conversation.name : null
                         });

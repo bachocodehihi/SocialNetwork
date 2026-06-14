@@ -105,13 +105,23 @@ const sendCallNotification = async ({ fcmToken, callerName, callerAvatar, callTy
             },
             android: {
                 priority: 'high',
+                notification: {
+                    channelId: 'call_channel',
+                    sound: 'default',
+                    priority: 'max',
+                }
             },
             apns: {
                 headers: { 'apns-priority': '10' },
                 payload: {
                     aps: {
+                        alert: {
+                            title: title,
+                            body: body,
+                        },
                         sound: 'default',
                         badge: 1,
+                        category: 'call_category',
                         'content-available': 1,
                     },
                 },
@@ -154,11 +164,24 @@ const sendFriendRequestNotification = async ({ fcmToken, senderName, senderAvata
             },
             android: {
                 priority: 'high',
+                notification: {
+                    channelId: 'chat_channel',
+                    sound: 'default',
+                    priority: 'high',
+                }
             },
             apns: {
                 headers: { 'apns-priority': '10' },
                 payload: {
-                    aps: { sound: 'default', badge: 1 },
+                    aps: {
+                        alert: {
+                            title: title,
+                            body: body,
+                        },
+                        sound: 'default',
+                        badge: 1,
+                        category: 'friend_request_category',
+                    },
                 },
             },
             data: {

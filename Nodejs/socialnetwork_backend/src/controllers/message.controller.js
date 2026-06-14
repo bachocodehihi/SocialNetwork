@@ -142,12 +142,16 @@ const sendMessage = async (req, res) => {
             return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
         }
 
+        const parsedAttachments = Array.isArray(attachments)
+            ? attachments.map(att => (typeof att === 'object' && att) ? (att.url || att.path || JSON.stringify(att)) : att)
+            : [];
+
         const newMsg = new Message({ 
             conversationId, 
             sender: req.userId, 
             content: content?.trim() || '',
             type: type || 'text',
-            attachments: attachments || []
+            attachments: parsedAttachments
         });
         
         await newMsg.save();
@@ -363,11 +367,61 @@ const markAsRead = async (req, res) => {
     }
 };
 
+const uploadMessageImage = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, code: 'FILE_REQUIRED' });
+        }
+        res.status(200).json({ success: true, url: req.file.path });
+    } catch (error) {
+        console.error('Upload message image error:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const uploadMessageAudio = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, code: 'FILE_REQUIRED' });
+        }
+        
+        const fs = require('fs');
+        const path = require('path');
+        const { cloudinary } = require('../config/cloudinary');
+
+        const tempDir = path.join(__dirname, '../../temp');
+        if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+        }
+        
+        const tempFilePath = path.join(tempDir, `${Date.now()}_temp_audio.m4a`);
+        fs.writeFileSync(tempFilePath, req.file.buffer);
+
+        const result = await cloudinary.uploader.upload(tempFilePath, {
+            folder: 'socialnetwork_audio',
+            resource_type: 'video'
+        });
+
+        try {
+            fs.unlinkSync(tempFilePath);
+        } catch (unlinkErr) {
+            console.error('Error deleting temp file:', unlinkErr);
+        }
+
+        res.status(200).json({ success: true, url: result.secure_url });
+    } catch (error) {
+        console.error('Upload message audio error:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     createConversation, 
     getConversations, 
     getMessages, 
     sendMessage,
     deleteMessage,
-    markAsRead
+    markAsRead,
+    uploadMessageImage,
+    uploadMessageAudio
 };

@@ -48,7 +48,25 @@ const getNotifications = async (req, res) => {
             .sort({ createdAt: -1 })
             .lean();
 
-        res.status(200).json(notifications);
+        const FriendRequest = require('../models/contact.model');
+        const updatedNotifications = await Promise.all(notifications.map(async (notif) => {
+            if (notif.type === 'friend_request' && notif.relatedId) {
+                if (notif.status && notif.status !== 'pending') {
+                    return {
+                        ...notif,
+                        requestStatus: notif.status
+                    };
+                }
+                const request = await FriendRequest.findById(notif.relatedId).lean();
+                return {
+                    ...notif,
+                    requestStatus: request ? request.status : 'deleted'
+                };
+            }
+            return notif;
+        }));
+
+        res.status(200).json(updatedNotifications);
     } catch (err) {
         res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
