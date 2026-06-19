@@ -27,6 +27,15 @@ const accountSchema = new mongoose.Schema({
     reportsCount: { type: Number, default: 0 },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     qrCode: { type: String, default: '' },
+    privacy: {
+        email: { type: Boolean, default: true },
+        phone: { type: Boolean, default: true },
+        address: { type: Boolean, default: true },
+        birthday: { type: Boolean, default: true },
+        gender: { type: Boolean, default: true },
+        job: { type: Boolean, default: true },
+        nationality: { type: Boolean, default: true },
+    },
 }, { timestamps: true });
 
 const Account = mongoose.model('Account', accountSchema);

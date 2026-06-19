@@ -15,6 +15,8 @@ const {
     cancelDeleteAccount,
     reportUser,
     appealBan,
+    getPrivacy,
+    updatePrivacy,
 } = require('../controllers/account.controller');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { upload } = require('../config/cloudinary');
@@ -25,6 +27,9 @@ router.get('/search', verifyToken, searchUsers);
 router.get('/user/:id', verifyToken, getUserById);
 router.post('/fcm-token', verifyToken, saveFcmToken);
 router.post('/remove-fcm-token', verifyToken, removeFcmToken);
+
+router.get('/privacy', verifyToken, getPrivacy);
+router.put('/privacy', verifyToken, updatePrivacy);
 
 router.post('/add-address', verifyToken, addAddress);
 router.post('/add-phone', verifyToken, addPhone);

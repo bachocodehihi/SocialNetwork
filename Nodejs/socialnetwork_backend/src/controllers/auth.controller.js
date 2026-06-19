@@ -128,7 +128,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, isVerifying } = req.body;
 
         const user = await Account.findOne({ email });
 
@@ -140,9 +140,6 @@ const login = async (req, res) => {
                     code: 'EMAIL_NOT_EXIST' 
                 });
             }
-            user.isDeleted = false;
-            user.deleteAt = null;
-            await user.save();
         }
 
         const isMatch = await bcrypt.compare(password, user.password);

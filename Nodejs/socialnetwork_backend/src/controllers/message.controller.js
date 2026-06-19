@@ -291,7 +291,6 @@ const deleteMessage = async (req, res) => {
             return res.status(404).json({ success: false, code: 'CONVERSATION_NOT_FOUND' });
         }
 
-        // Check if current user is a member of this conversation
         const isMember = conv.members.some(m => m.toString() === req.userId);
         if (!isMember) {
             return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
@@ -301,7 +300,7 @@ const deleteMessage = async (req, res) => {
         const isAdmin = conv.admin?.toString() === req.userId;
 
         if (forEveryone) {
-            // For recall (forEveryone), only sender or admin can do it
+
             if (!isSender && !isAdmin) {
                 return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
             }
@@ -320,7 +319,7 @@ const deleteMessage = async (req, res) => {
                 });
             } catch (e) { /* ignore socket errors */ }
         } else {
-            // Delete for me: any conversation member can do this
+
             await Message.findByIdAndUpdate(messageId, {
                 $addToSet: { deletedBy: req.userId }
             });

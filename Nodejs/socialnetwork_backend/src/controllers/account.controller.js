@@ -73,7 +73,7 @@ const searchUsers = async (req, res) => {
 
         const users = await Account.find({
             username: { $regex: q, $options: 'i' }
-        }).select('avatar username email birthday gender address phone job nationality friends followers following').lean();
+        }).select('avatar username email birthday gender address phone job nationality friends followers following privacy').lean();
 
         const usersWithStats = users.map(user => {
             const stats = {
@@ -85,6 +85,18 @@ const searchUsers = async (req, res) => {
             delete user.friends;
             delete user.followers;
             delete user.following;
+
+            if (user._id.toString() !== req.userId.toString()) {
+                const privacy = user.privacy || {};
+                if (privacy.email === false) delete user.email;
+                if (privacy.phone === false) delete user.phone;
+                if (privacy.address === false) delete user.address;
+                if (privacy.birthday === false) delete user.birthday;
+                if (privacy.gender === false) delete user.gender;
+                if (privacy.job === false) delete user.job;
+                if (privacy.nationality === false) delete user.nationality;
+            }
+            delete user.privacy;
 
             return { ...user, stats };
         });
@@ -102,6 +114,17 @@ const getUserById = async (req, res) => {
         if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
 
         const postCount = await Post.countDocuments({ author: id });
+
+        if (req.userId.toString() !== id.toString()) {
+            const privacy = user.privacy || {};
+            if (privacy.email === false) delete user.email;
+            if (privacy.phone === false) delete user.phone;
+            if (privacy.address === false) delete user.address;
+            if (privacy.birthday === false) delete user.birthday;
+            if (privacy.gender === false) delete user.gender;
+            if (privacy.job === false) delete user.job;
+            if (privacy.nationality === false) delete user.nationality;
+        }
 
         return res.status(200).json({
             success: true,
@@ -269,15 +292,17 @@ const getActivity = async (req, res) => {
 
 const requestDeleteAccount = async (req, res) => {
     try {
-        const deleteDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day from now
-        const updatedUser = await Account.findByIdAndUpdate(
-            req.userId,
-            { isDeleted: true, deleteAt: deleteDate },
-            { new: true }
-        );
-
-        if (!updatedUser) {
+        const user = await Account.findById(req.userId);
+        if (!user) {
             return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+        }
+
+        let deleteDate = user.deleteAt;
+        if (!user.isDeleted || !deleteDate) {
+            deleteDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+            user.isDeleted = true;
+            user.deleteAt = deleteDate;
+            await user.save();
         }
 
         return res.status(200).json({
@@ -391,6 +416,61 @@ const appealBan = async (req, res) => {
     }
 };
 
+const getPrivacy = async (req, res) => {
+    try {
+        const user = await Account.findById(req.userId);
+        if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+
+        return res.status(200).json({
+            success: true,
+            privacy: user.privacy || {
+                email: true,
+                phone: true,
+                address: true,
+                birthday: true,
+                gender: true,
+                job: true,
+                nationality: true,
+            }
+        });
+    } catch (error) {
+        console.error('Error getting privacy settings:', error);
+        return res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const updatePrivacy = async (req, res) => {
+    try {
+        const { email, phone, address, birthday, gender, job, nationality } = req.body;
+        
+        const user = await Account.findById(req.userId);
+        if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+
+        if (!user.privacy) {
+            user.privacy = {};
+        }
+
+        if (email !== undefined) user.privacy.email = email;
+        if (phone !== undefined) user.privacy.phone = phone;
+        if (address !== undefined) user.privacy.address = address;
+        if (birthday !== undefined) user.privacy.birthday = birthday;
+        if (gender !== undefined) user.privacy.gender = gender;
+        if (job !== undefined) user.privacy.job = job;
+        if (nationality !== undefined) user.privacy.nationality = nationality;
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            code: 'PRIVACY_UPDATED_SUCCESS',
+            privacy: user.privacy
+        });
+    } catch (error) {
+        console.error('Error updating privacy settings:', error);
+        return res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     getProfile, 
     updateProfile, 
@@ -406,5 +486,7 @@ module.exports = {
     requestDeleteAccount,      
     cancelDeleteAccount,
     reportUser,
-    appealBan
+    appealBan,
+    getPrivacy,
+    updatePrivacy
 };
