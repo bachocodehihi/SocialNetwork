@@ -46,7 +46,7 @@ class _WellcomeViewState extends State<WellcomeView> {
                   ),
                   SizedBox(height: 10.h),
                   Text(
-                    Language.of(context, 'welcome_to_social_network_app'),
+                    Language.of(context, 'wellcome_to_social_network_app'),
                     style: TextStyle(
                       color: Colors.blue,
                       fontSize: 15.sp,
@@ -57,57 +57,56 @@ class _WellcomeViewState extends State<WellcomeView> {
               const Spacer(),
               Column(
                 children: [
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        minimumSize: Size(double.infinity, 48.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                      ).copyWith(
-                        overlayColor: WidgetStateProperty.all(Colors.grey[300]),
-                      ),
-                      onPressed: () {
-                        controller.goToSignInEmail(context);
-                      },
-                      child: Text(
-                        Language.of(context, 'sign_in'),
-                        style: TextStyle(
-                          color: Colors.white, 
-                          fontSize: 15.sp,
-                        ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      minimumSize: Size(double.infinity, 48.h),
+                      // shape: RoundedRectangleBorder(
+                      //   borderRadius: BorderRadius.circular(30.r),
+                      // ),
+                      shape: const StadiumBorder(),
+                    ).copyWith(
+                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                    ),
+                    onPressed: () {
+                      controller.goToSignInEmail(context);
+                    },
+                    child: Text(
+                      Language.of(context, 'sign_in'),
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 15.sp,
                       ),
                     ),
                   ),
 
-                  SizedBox(height: 15.h),
+                  SizedBox(height: 24.h),
                   
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        minimumSize: Size(double.infinity, 48.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                      ).copyWith(
-                        overlayColor: WidgetStateProperty.all(Colors.grey[300]),
-                      ),
-                      onPressed: () {
-                        controller.goToSignUpEmail(context);
-                      },
-                      child: Text(
-                        Language.of(context, 'create_new_account'),
-                        style: TextStyle(
-                          color: Colors.white, 
-                          fontSize: 15.sp,
-                        ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      minimumSize: Size(double.infinity, 48.h),
+                      // shape: RoundedRectangleBorder(
+                      //   borderRadius: BorderRadius.circular(30.r),
+                      // ),
+                      shape: const StadiumBorder(),
+                    ).copyWith(
+                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                    ),
+                    onPressed: () {
+                      controller.goToSignUpEmail(context);
+                    },
+                    child: Text(
+                      Language.of(context, 'create_new_account'),
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 15.sp,
                       ),
                     ),
                   ),
+
+                  SizedBox(height: 8.h),
+                  
                 ],
               ),
             ],

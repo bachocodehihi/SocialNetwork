@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/setting/account/delete/delete_controller.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class DeleteView extends StatefulWidget {
   const DeleteView({super.key});
   @override
@@ -53,7 +54,7 @@ class _DeleteViewState extends State<DeleteView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Delete account',
+                    Language.of(context, 'delete_account'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -65,28 +66,26 @@ class _DeleteViewState extends State<DeleteView> {
 
               SizedBox(height: 20.h),
 
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.black,
-                    minimumSize: Size(double.infinity, 48.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                  ).copyWith(
-                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
-                  ),
-                  onPressed: () {
-                    controller.verifyPassword(context);
-                  },
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15.sp,
-                    ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.black,
+                  minimumSize: Size(double.infinity, 48.h),
+                  // shape: RoundedRectangleBorder(
+                  //   borderRadius: BorderRadius.circular(30.r),
+                  // ),
+                  shape: const StadiumBorder(),
+                ).copyWith(
+                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                ),
+                onPressed: () {
+                  controller.verifyPassword(context);
+                },
+                child: Text(
+                  Language.of(context, 'continue'),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15.sp,
                   ),
                 ),
               ),

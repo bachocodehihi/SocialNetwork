@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
 class WellcomeController extends ChangeNotifier {
-  void goToSignInEmail(BuildContext context) {
+  Future<void> goToSignInEmail(BuildContext context) async {
     Navigator.pushNamed(context, Routes.signinEmail);
   }
-  void goToSignUpEmail(BuildContext context) {
+  Future<void> goToSignUpEmail(BuildContext context) async {
     Navigator.pushNamed(context, Routes.signupEmail);
   }
 }

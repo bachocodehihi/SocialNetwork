@@ -68,7 +68,6 @@ class HomeUserController extends ChangeNotifier {
 
   Future<void> likePost(String postId) async {
     try {
-      // Optimitic UI update
       final index = posts.indexWhere((p) => p['_id'] == postId);
       if (index != -1) {
         final currentUserId = user?['_id'] ?? '';
@@ -94,7 +93,6 @@ class HomeUserController extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Error liking post: $e');
-      // Reload feed in case of failure to sync UI
       loadFeed();
     }
   }
@@ -117,7 +115,6 @@ class HomeUserController extends ChangeNotifier {
 
   Future<void> likeComment(String postId, String commentId) async {
     try {
-      // Optimistic UI update
       final postIndex = posts.indexWhere((p) => p['_id'] == postId);
       if (postIndex != -1) {
         final post = posts[postIndex];
@@ -157,7 +154,6 @@ class HomeUserController extends ChangeNotifier {
 
   Future<void> likeReply(String postId, String commentId, String replyId) async {
     try {
-      // Optimistic UI update
       final postIndex = posts.indexWhere((p) => p['_id'] == postId);
       if (postIndex != -1) {
         final post = posts[postIndex];
@@ -221,11 +217,11 @@ class HomeUserController extends ChangeNotifier {
   String get avatar => user?['avatar'] ?? '';
   String get userId => user?['_id'] ?? '';
 
-  void goToSearch(BuildContext context) {
+  Future<void> goToSearch(BuildContext context) async {
     Navigator.pushNamed(context, Routes.search);
   }
 
-  void goToScanner(BuildContext context) {
+  Future<void> goToScanner(BuildContext context) async {
     Navigator.pushNamed(context, Routes.scanner);
   }
 

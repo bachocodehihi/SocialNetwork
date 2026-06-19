@@ -121,7 +121,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
               ),
               SizedBox(height: 16.h),
               ListTile(
-                leading: Icon(Icons.image_outlined, color: cs.primary),
+                leading: Icon(Icons.image_outlined, color: Colors.blue),
                 title: Text(
                   'Chọn ảnh nền từ album',
                   style: TextStyle(color: cs.onSurface),
@@ -252,7 +252,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                                 : '$typingCount people are typing...',
                             style: TextStyle(
                               fontSize: 12.sp,
-                              color: cs.primary,
+                              color: Colors.blue,
                               fontStyle: FontStyle.italic,
                             ),
                           );
@@ -491,7 +491,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                           child: Center(
                             child: Icon(
                               Icons.send_rounded,
-                              color: hasText ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.5),
+                              color: hasText ? Colors.blue : cs.onSurfaceVariant.withValues(alpha: 0.5),
                               size: 24.0,
                             ),
                           ),
@@ -740,7 +740,7 @@ class _MessageBubble extends StatelessWidget {
                       username!,
                       style: TextStyle(
                         fontSize: 11.sp,
-                        color: cs.primary,
+                        color: Colors.blue,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -755,7 +755,7 @@ class _MessageBubble extends StatelessWidget {
                     vertical: 10.h,
                   ),
                   decoration: BoxDecoration(
-                    color: isMe ? cs.primary : cs.surfaceContainerHighest,
+                    color: isMe ? Colors.blue : cs.surfaceContainerHighest,
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(16),
                       topRight: const Radius.circular(16),
@@ -770,7 +770,7 @@ class _MessageBubble extends StatelessWidget {
                         content,
                         style: TextStyle(
                           fontSize: 14.sp,
-                          color: isMe ? cs.onPrimary : cs.onSurface,
+                          color: isMe ? Colors.white : cs.onSurface,
                           height: 1.3,
                         ),
                       ),
@@ -786,7 +786,7 @@ class _MessageBubble extends StatelessWidget {
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   color: isMe 
-                                      ? cs.onPrimary.withValues(alpha: 0.7) 
+                                      ? Colors.white.withValues(alpha: 0.7) 
                                       : cs.onSurfaceVariant,
                                 ),
                               ),
@@ -796,7 +796,7 @@ class _MessageBubble extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 10.sp,
                                   color: isMe 
-                                      ? cs.onPrimary.withValues(alpha: 0.7) 
+                                      ? Colors.white.withValues(alpha: 0.7) 
                                       : cs.onSurfaceVariant,
                                 ),
                               ),
@@ -848,7 +848,7 @@ class _InfoOption extends StatelessWidget {
     
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: cs.primary, size: 24.sp),
+      leading: Icon(icon, color: Colors.blue, size: 24.sp),
       title: Text(
         title,
         style: titleStyle ?? TextStyle(

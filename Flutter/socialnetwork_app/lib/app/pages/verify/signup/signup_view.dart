@@ -204,15 +204,15 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
                         color: cs.onSurface,
                       ),
                     ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      Language.of(context, 'verify_email'),
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                        color: cs.onSurface,
-                      ),
-                    ),
+                    // SizedBox(width: 10.w),
+                    // Text(
+                    //   Language.of(context, 'verify_email'),
+                    //   style: TextStyle(
+                    //     fontSize: 20.sp,
+                    //     fontWeight: FontWeight.w500,
+                    //     color: cs.onSurface,
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: 20.h),
@@ -226,10 +226,10 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  Language.of(context, 'otp_has_been_sent_to_your_email'),
+                  Language.of(context, 'otp_has_been_sent_to'),
                   style: TextStyle(
                     fontSize: 15.sp,
-                    color: cs.onSurfaceVariant,
+                    color: cs.onSurface
                   ),
                 ),
                 SizedBox(height: 40.h),
@@ -248,6 +248,7 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
                     ),
                   ),
                 ),
+                
                 SizedBox(
                   height: 0,
                   width: 0,
@@ -282,35 +283,34 @@ class _VerifySignUpViewState extends State<VerifySignUpView> {
 
                 SizedBox(height: 20.h),
 
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.black,
-                      minimumSize: Size(double.infinity, 48.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                      ),
-                    ).copyWith(
-                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.black,
+                    minimumSize: Size(double.infinity, 48.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
                     ),
-                    onPressed: controller.isLoading
-                      ? null
-                      : _onVerify,
-                    child: controller.isLoading
-                      ? const CircularProgressIndicator(
-                        color: Colors.white
-                      ) : Text(
-                          Language.of(context, 'continue'),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.sp,
-                          ),
-                        ),
+                  ).copyWith(
+                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                   ),
+                  onPressed: controller.isLoading
+                    ? null
+                    : _onVerify,
+                  child: controller.isLoading
+                    ? const CircularProgressIndicator(
+                      color: Colors.white
+                    ) : Text(
+                        Language.of(context, 'continue'),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                        ),
+                      ),
                 ),
+
                 SizedBox(height: 20.h),
+
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

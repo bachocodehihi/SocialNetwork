@@ -81,7 +81,7 @@ class _ContactGroupViewState extends State<ContactGroupView> {
                       Icon(
                         Icons.add_circle_outline_outlined,
                         size: 25.sp, 
-                        color: cs.primary
+                        color: Colors.blue
                       ),
                       SizedBox(width: 5.w),
                       Text(

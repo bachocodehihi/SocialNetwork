@@ -98,6 +98,9 @@ class _SettingDarkmodeViewState extends State<SettingDarkmodeView> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
+
+                                  SizedBox(height: 5.h),
+                                  
                                   Text(
                                     'Reduce eye strain, save battery, and improve visibility.',
                                     textAlign: TextAlign.justify, 
@@ -113,9 +116,31 @@ class _SettingDarkmodeViewState extends State<SettingDarkmodeView> {
                         ),
                       ),
                       SizedBox(width: 8.w),
+                      // Switch(
+                      //   value: darkmode.isDarkMode,
+                      //   onChanged: (value) => controller.toggleDarkMode(context, value),
+                      // ),
                       Switch(
                         value: darkmode.isDarkMode,
                         onChanged: (value) => controller.toggleDarkMode(context, value),
+                        thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return cs.onSurface;
+                          }
+                          return cs.onSurface;
+                        }),
+                        trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return Colors.blue;
+                          }
+                          return Colors.transparent;
+                        }),
+                        trackOutlineColor: WidgetStateProperty.resolveWith<Color>((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return Colors.blue;
+                          }
+                          return cs.onSurface;
+                        }),
                       ),
                     ],
                   ),

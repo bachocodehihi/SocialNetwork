@@ -98,7 +98,7 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                   height: 300.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: cs.primary.withValues(alpha: 0.15),
+                    color: Colors.blue.withValues(alpha: 0.15),
                   ),
                 ),
               ),
@@ -169,7 +169,7 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                                   height: (130 + value * 110).r,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: cs.primary.withValues(alpha: (1.0 - value) * 0.15),
+                                    color: Colors.blue.withValues(alpha: (1.0 - value) * 0.15),
                                   ),
                                 );
                               }),
@@ -178,13 +178,13 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                                 height: 130.r,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: cs.primary.withValues(alpha: 0.6), width: 3.r),
+                                  border: Border.all(color: Colors.blue.withValues(alpha: 0.6), width: 3.r),
                                   image: avatar.isNotEmpty
                                       ? DecorationImage(image: NetworkImage(avatar), fit: BoxFit.cover)
                                       : null,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: cs.primary.withValues(alpha: 0.3),
+                                      color: Colors.blue.withValues(alpha: 0.3),
                                       blurRadius: 30,
                                       spreadRadius: 5,
                                     ),
@@ -222,7 +222,7 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                       Text(
                         durationText,
                         style: TextStyle(
-                          color: cs.primary,
+                          color: Colors.blue,
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
@@ -265,7 +265,7 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                               icon: _callService.isSpeakerOn ? Icons.volume_up_outlined : Icons.volume_down_outlined,
                               isActive: _callService.isSpeakerOn,
                               onTap: () => _callService.toggleSpeaker(),
-                              activeColor: cs.primary,
+                              activeColor: Colors.blue,
                             ),
                           ],
                         ),

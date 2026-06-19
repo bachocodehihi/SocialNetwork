@@ -7,6 +7,7 @@ import 'package:socialnetwork/app/widgets/avatar/fullscreen.dart';
 import 'package:socialnetwork/data/enums/friend_status.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/message/chat/user/user_page.dart';
 import 'package:socialnetwork/app/widgets/item/information.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 
 class UserView extends StatefulWidget {
   final Map<String, dynamic>? userData;
@@ -341,7 +342,7 @@ class _UserViewState extends State<UserView> {
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w500,
-                                color: cs.primary,
+                                color: Colors.blue,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -424,7 +425,11 @@ class _UserViewState extends State<UserView> {
                 ),
               ),
               const Spacer(),
-              Icon(Icons.share_rounded, size: 20.sp, color: cs.onSurfaceVariant),
+              Icon(
+                Icons.share_outlined, 
+                size: 20.sp, 
+                color: cs.onSurfaceVariant
+              ),
             ],
           ),
         ],
@@ -472,8 +477,8 @@ class _UserViewState extends State<UserView> {
                   Text(
                     'Bình luận',
                     style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
                       color: cs.onSurface,
                     ),
                   ),
@@ -597,7 +602,7 @@ class _UserViewState extends State<UserView> {
                                                       Icon(
                                                         hasLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
                                                         size: 13.sp,
-                                                        color: hasLiked ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.7),
+                                                        color: hasLiked ? Colors.blue : cs.onSurfaceVariant.withValues(alpha: 0.7),
                                                       ),
                                                       if (likesCount > 0) ...[
                                                         SizedBox(width: 4.w),
@@ -714,7 +719,7 @@ class _UserViewState extends State<UserView> {
                                                               Icon(
                                                                 rHasLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
                                                                 size: 12.sp,
-                                                                color: rHasLiked ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.7),
+                                                                color: rHasLiked ? Colors.blue : cs.onSurfaceVariant.withValues(alpha: 0.7),
                                                               ),
                                                               if (rLikesCount > 0) ...[
                                                                 SizedBox(width: 4.w),
@@ -750,7 +755,11 @@ class _UserViewState extends State<UserView> {
                       color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
                       child: Row(
                         children: [
-                          Icon(Icons.reply, size: 16.sp, color: cs.primary),
+                          Icon(
+                            Icons.reply_outlined, 
+                            size: 16.sp, 
+                            color: Colors.blue
+                          ),
                           SizedBox(width: 8.w),
                           Expanded(
                             child: Text(
@@ -768,7 +777,11 @@ class _UserViewState extends State<UserView> {
                                 replyingToUsername = null;
                               });
                             },
-                            child: Icon(Icons.close, size: 16.sp, color: cs.onSurfaceVariant),
+                            child: Icon(
+                              Icons.close_outlined, 
+                              size: 16.sp, 
+                              color: cs.onSurfaceVariant
+                            ),
                           ),
                         ],
                       ),
@@ -812,7 +825,7 @@ class _UserViewState extends State<UserView> {
                               }
                             }
                           },
-                          icon: Icon(Icons.send_rounded, color: cs.primary),
+                          icon: Icon(Icons.send_outlined, color: Colors.blue),
                         ),
                       ],
                     ),
@@ -908,72 +921,181 @@ class _UserViewState extends State<UserView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: _buildStatItem(
-                        controller.friendsCount.toString(),
-                        'Friends',
-                        onTap: () {
-                        },
-                      ),
+                    _buildStatItem(
+                      controller.friendsCount.toString(),
+                      'Friends',
+                      onTap: () {
+                      },
                     ),
-                    Expanded(
-                      child: _buildStatItem(
-                        controller.followersCount.toString(), 
-                        'Followers', 
-                        onTap: () {
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildStatItem(
-                        controller.followingCount.toString(), 
-                        'Following', 
-                        onTap: () {
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildStatItem(
-                        controller.postCount.toString(),
-                        'Posts', 
-                        onTap: () {
 
-                        },
-                      ),
+                    _buildStatItem(
+                      controller.followersCount.toString(), 
+                      'Followers', 
+                      onTap: () {
+                      },
+                    ),
+
+                    _buildStatItem(
+                      controller.followingCount.toString(), 
+                      'Following', 
+                      onTap: () {
+                      },
+                    ),
+
+                    _buildStatItem(
+                      controller.postCount.toString(),
+                      'Posts', 
+                      onTap: () {
+
+                      },
                     ),
                   ],
                 ),
+
                 SizedBox(height: 20.h),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Expanded(
+                    //   child: ListenableBuilder(
+                    //     listenable: controller,
+                    //     builder: (context, _) {
+                    //       switch (controller.status) {
+                    //         case FriendStatus.none:
+                    //           return ElevatedButton(
+                    //             onPressed: controller.sendFriendRequest,
+                    //             child: const Text('Add friend'),
+                    //           );
+
+                    //         case FriendStatus.requested:
+                    //           return ElevatedButton(
+                    //             onPressed: () => _showRequestedOptions(),
+                    //             child: const Text('Requested'),
+                    //           );
+
+                    //         case FriendStatus.received:
+                    //           return ElevatedButton(
+                    //             onPressed: () => _showRespondDialog(),
+                    //             child: const Text('Respond'),
+                    //           );
+
+                    //         case FriendStatus.friend:
+                    //           return ElevatedButton(
+                    //             onPressed: () => _showFriendOptions(),
+                    //             child: const Text('Friend'),
+                    //           );
+                    //       }
+                    //     },
+                    //   ),
+                    // ),
                     Expanded(
                       child: ListenableBuilder(
                         listenable: controller,
                         builder: (context, _) {
                           switch (controller.status) {
                             case FriendStatus.none:
-                              return ElevatedButton(
+                              return ElevatedButton.icon(
                                 onPressed: controller.sendFriendRequest,
-                                child: const Text('Add friend'),
+                                icon: Icon(
+                                  Icons.person_add_outlined, 
+                                  size: 20.sp
+                                ),
+                                label: Text(
+                                  Language.of(context, 'add_friend'),
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                ).copyWith(
+                                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                                ),
                               );
 
                             case FriendStatus.requested:
-                              return ElevatedButton(
+                              return ElevatedButton.icon(
                                 onPressed: () => _showRequestedOptions(),
-                                child: const Text('Requested'),
+                                icon: Icon(
+                                  Icons.pending_outlined, 
+                                  size: 20.sp
+                                ),
+                                label: Text(
+                                  Language.of(context, 'requested'),
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                ).copyWith(
+                                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                                ),
                               );
 
                             case FriendStatus.received:
-                              return ElevatedButton(
+                              return ElevatedButton.icon(
                                 onPressed: () => _showRespondDialog(),
-                                child: const Text('Respond'),
+                                icon: Icon(
+                                  Icons.person_add_alt_outlined, 
+                                  size: 20.sp
+                                ),
+                                label: Text(
+                                  Language.of(context, 'respond'),
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                ).copyWith(
+                                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                                ),
                               );
 
                             case FriendStatus.friend:
-                              return ElevatedButton(
+                              return ElevatedButton.icon(
                                 onPressed: () => _showFriendOptions(),
-                                child: const Text('Friend'),
+                                icon: Icon(
+                                  Icons.people, 
+                                  size: 20.sp
+                                ),
+                                label: Text(
+                                  Language.of(context, 'friend'),
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                ).copyWith(
+                                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                                ),
                               );
                           }
                         },
@@ -1001,7 +1123,7 @@ class _UserViewState extends State<UserView> {
                           color: Colors.white,
                         ),
                         label: Text(
-                          'Message',
+                          Language.of(context, 'message'),
                           style: TextStyle(
                             fontSize: 15.sp,
                             color: Colors.white,
@@ -1023,7 +1145,7 @@ class _UserViewState extends State<UserView> {
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  'Information',
+                  Language.of(context, 'information'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w500,
@@ -1034,14 +1156,14 @@ class _UserViewState extends State<UserView> {
                 if (controller.birthday.isNotEmpty)
                   InformationItem(
                     value: controller.birthday, 
-                    title: 'Birthday', 
+                    title: Language.of(context, 'birthday'), 
                     icon: Icons.cake_outlined,
                   ),
 
                 if (controller.gender.isNotEmpty)
                   InformationItem(
                     value: controller.gender,
-                    title: 'Gender',
+                    title: Language.of(context, 'gender'), 
                     icon: Icons.wc_outlined,
                   ),
 
@@ -1055,27 +1177,27 @@ class _UserViewState extends State<UserView> {
                 if (controller.address.isNotEmpty)
                   InformationItem(
                     value: controller.address,
-                    title: 'Address',
+                    title: Language.of(context, 'address'),
                     icon: Icons.location_on_outlined,
                   ),
 
                 if (controller.phone.isNotEmpty)
                   InformationItem(
                     value: controller.phone,
-                    title: 'Phone',
+                    title: Language.of(context, 'phone'),
                     icon: Icons.phone_outlined,
                   ),
 
                 if (controller.job.isNotEmpty)
                   InformationItem(
                     value: controller.job,
-                    title: 'Job',
+                    title: Language.of(context, 'job'),
                     icon: Icons.work_outline_outlined,
                   ),
 
                 SizedBox(height: 20.h),
                 Text(
-                  'All posts',
+                  Language.of(context, 'all_posts'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w500,

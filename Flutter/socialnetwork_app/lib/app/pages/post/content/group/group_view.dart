@@ -81,8 +81,8 @@ class _GroupPostContentViewState extends State<GroupPostContentView> {
             child: ElevatedButton(
               onPressed: controller.isSubmitting ? null : () => controller.submitPost(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: cs.primary,
-                foregroundColor: cs.onPrimary,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
                 elevation: 0,
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 shape: RoundedRectangleBorder(
@@ -95,7 +95,7 @@ class _GroupPostContentViewState extends State<GroupPostContentView> {
                       height: 16.h,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(cs.onPrimary),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
                   : Text(

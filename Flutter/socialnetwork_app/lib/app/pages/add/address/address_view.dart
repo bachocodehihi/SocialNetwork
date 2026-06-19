@@ -8,6 +8,7 @@ import 'package:socialnetwork/domain/usecases/account_usecase.dart';
 import 'package:socialnetwork/data/repositories/account_repository_imp.dart';
 import 'package:socialnetwork/data/network/api/account_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class AddAddressView extends StatefulWidget {
   const AddAddressView({super.key});
   @override
@@ -71,7 +72,7 @@ class _AddAddressViewState extends State<AddAddressView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Add address',
+                    Language.of(context, 'add_address'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -84,7 +85,7 @@ class _AddAddressViewState extends State<AddAddressView> {
               SizedBox(height: 20.h),
 
               Text(
-                'Enter your address',
+                Language.of(context, 'enter_your_address'),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
@@ -101,7 +102,7 @@ class _AddAddressViewState extends State<AddAddressView> {
                   color: cs.onSurface,
                 ),
                 decoration: InputDecoration(
-                  labelText: 'Address',
+                  labelText: Language.of(context, 'address'),
                   labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.r),
@@ -166,7 +167,7 @@ class _AddAddressViewState extends State<AddAddressView> {
                   child: controller.isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          'Add',
+                          Language.of(context, 'add'),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15.sp,

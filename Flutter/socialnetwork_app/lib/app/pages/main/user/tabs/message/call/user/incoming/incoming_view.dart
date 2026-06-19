@@ -81,7 +81,7 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
               height: 300.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: cs.primary.withValues(alpha: 0.15),
+                color: Colors.blue.withValues(alpha: 0.15),
               ),
             ),
           ),
@@ -152,7 +152,7 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
                               height: (130 + value * 110).r,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: cs.primary.withValues(alpha: (1.0 - value) * 0.15),
+                                color: Colors.blue.withValues(alpha: (1.0 - value) * 0.15),
                               ),
                             );
                           }),
@@ -161,13 +161,13 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
                             height: 130.r,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: cs.primary.withValues(alpha: 0.6), width: 3.r),
+                              border: Border.all(color: Colors.blue.withValues(alpha: 0.6), width: 3.r),
                               image: avatar.isNotEmpty
                                   ? DecorationImage(image: NetworkImage(avatar), fit: BoxFit.cover)
                                   : null,
                               boxShadow: [
                                 BoxShadow(
-                                  color: cs.primary.withValues(alpha: 0.3),
+                                  color: Colors.blue.withValues(alpha: 0.3),
                                   blurRadius: 30,
                                   spreadRadius: 5,
                                 ),

@@ -86,7 +86,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                   height: 300.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: cs.primary.withValues(alpha: 0.15),
+                    color: Colors.blue.withValues(alpha: 0.15),
                   ),
                 ),
               ),
@@ -166,7 +166,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                                   height: (130 + value * 110).r,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: cs.primary.withValues(alpha: (1.0 - value) * 0.15),
+                                    color: Colors.blue.withValues(alpha: (1.0 - value) * 0.15),
                                   ),
                                 );
                               }),
@@ -177,7 +177,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: cs.primary.withValues(alpha: 0.6),
+                                    color: Colors.blue.withValues(alpha: 0.6),
                                     width: 3.r,
                                   ),
                                   image: avatar.isNotEmpty
@@ -188,7 +188,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                                       : null,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: cs.primary.withValues(alpha: 0.3),
+                                      color: Colors.blue.withValues(alpha: 0.3),
                                       blurRadius: 30,
                                       spreadRadius: 5,
                                     ),
@@ -228,7 +228,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                       Text(
                         statusText,
                         style: TextStyle(
-                          color: state == CallState.connected ? cs.primary : Colors.white60,
+                          color: state == CallState.connected ? Colors.blue : Colors.white60,
                           fontSize: 16.sp,
                           fontWeight: state == CallState.connected ? FontWeight.bold : FontWeight.normal,
                           letterSpacing: 0.5,
@@ -299,7 +299,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                               icon: _callService.isSpeakerOn ? Icons.volume_up_outlined : Icons.volume_down_outlined,
                               isActive: _callService.isSpeakerOn,
                               onTap: () => _callService.toggleSpeaker(),
-                              activeColor: cs.primary,
+                              activeColor: Colors.blue,
                             ),
                           ],
                         ),

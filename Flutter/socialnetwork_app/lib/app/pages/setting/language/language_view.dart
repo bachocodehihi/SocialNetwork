@@ -128,18 +128,18 @@ class _SettingLanguageViewState extends State<SettingLanguageView> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
           color: isSelected
-              ? cs.primary.withValues(alpha: isDark ? 0.15 : 0.08)
+              ? Colors.blue.withValues(alpha: isDark ? 0.15 : 0.08)
               : (isDark ? Colors.white.withValues(alpha: 0.04) : Colors.white),
           border: Border.all(
             color: isSelected
-                ? cs.primary
+                ? Colors.blue
                 : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade200),
             width: isSelected ? 1.8 : 1.0,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: cs.primary.withValues(alpha: 0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   )
@@ -180,7 +180,7 @@ class _SettingLanguageViewState extends State<SettingLanguageView> {
                     style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: isSelected ? FontWeight.w500 : FontWeight.w500,
-                      color: isSelected ? cs.primary : cs.onSurface,
+                      color: isSelected ? Colors.blue : cs.onSurface,
                     ),
                   ),
                   SizedBox(height: 2.h),
@@ -203,7 +203,7 @@ class _SettingLanguageViewState extends State<SettingLanguageView> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? cs.primary : cs.onSurface.withValues(alpha: 0.2),
+                  color: isSelected ? Colors.blue : cs.onSurface.withValues(alpha: 0.2),
                   width: isSelected ? 6.5 : 2.0,
                 ),
                 color: Colors.transparent,

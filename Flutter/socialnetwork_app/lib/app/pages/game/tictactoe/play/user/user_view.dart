@@ -124,8 +124,8 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
                           icon: Icon(Icons.refresh, size: 18.sp),
                           label: Text('Tái đấu', style: TextStyle(fontSize: 14.sp)),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: cs.primary,
-                            foregroundColor: cs.onPrimary,
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
@@ -314,12 +314,12 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
           color: cs.surface,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: canPlay ? cs.primary.withValues(alpha: 0.5) : cs.outlineVariant,
+            color: canPlay ? Colors.blue.withValues(alpha: 0.5) : cs.outlineVariant,
             width: canPlay ? 2 : 1,
           ),
           boxShadow: [
             if (canPlay)
-              BoxShadow(color: cs.primary.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 4))
+              BoxShadow(color: Colors.blue.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 4))
           ],
         ),
         child: Center(

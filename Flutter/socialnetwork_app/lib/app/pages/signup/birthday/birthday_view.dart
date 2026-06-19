@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/signup/birthday/birthday_controller.dart';
 import 'package:socialnetwork/app/widgets/dialog/birthday.dart';
 import 'package:socialnetwork/app/widgets/banner/error.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SignUpBirthdayView extends StatefulWidget {
   const SignUpBirthdayView({super.key});
 
@@ -87,21 +87,21 @@ class _SignUpBirthdayViewState extends State<SignUpBirthdayView> {
                         color: cs.onSurface,
                       ),
                     ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      'Select birthday',
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                        color: cs.onSurface,
-                      ),
-                    ),
+                    // SizedBox(width: 10.w),
+                    // Text(
+                    //   'Select birthday',
+                    //   style: TextStyle(
+                    //     fontSize: 20.sp,
+                    //     fontWeight: FontWeight.w500,
+                    //     color: cs.onSurface,
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: 20.h),
 
                 Text(
-                  'Select your birthday',
+                  Language.of(context, 'select_your_birthday'),
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
@@ -119,7 +119,7 @@ class _SignUpBirthdayViewState extends State<SignUpBirthdayView> {
                     color: cs.onSurface,
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Birthday',
+                    labelText: Language.of(context, 'birthday'),
                     labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -180,7 +180,7 @@ class _SignUpBirthdayViewState extends State<SignUpBirthdayView> {
                       ? const CircularProgressIndicator(
                         color: Colors.white
                       ) : Text(
-                          'Continue',
+                          Language.of(context, 'continue'),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15.sp,

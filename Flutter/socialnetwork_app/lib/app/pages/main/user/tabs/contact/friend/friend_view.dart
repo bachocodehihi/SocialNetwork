@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/contact/friend/friend_controller.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 import 'package:socialnetwork/data/repositories/contact_repository_imp.dart';
 import 'package:socialnetwork/data/network/api/contact_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
@@ -92,7 +93,7 @@ class _ContactFriendViewState extends State<ContactFriendView> {
                             friend['name']!,
                             style: TextStyle(
                               fontSize: 15.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
@@ -123,13 +124,16 @@ class _ContactFriendViewState extends State<ContactFriendView> {
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
+                        // shape: RoundedRectangleBorder(
+                        //   borderRadius: BorderRadius.circular(12.r),
+                        // ),
+                        shape: const StadiumBorder(),
                       ).copyWith(
                         overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                       ),
-                      child: const Text('Message'),
+                      child: Text(
+                        Language.of(context, 'message'),
+                      ),
                     ),
                   ],
                 ),

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/widgets/item/setting.dart';
 import 'package:socialnetwork/app/pages/add/add_controller.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class AddView extends StatefulWidget {
   const AddView({super.key});
   @override
@@ -55,7 +56,7 @@ class _AddViewState extends State<AddView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Add profile',
+                    Language.of(context, 'add_profile'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -68,47 +69,46 @@ class _AddViewState extends State<AddView> {
               SizedBox(height: 20.h),
 
               SettingItem(
-                  title: 'Address',
-                  icon: Icons.location_on_outlined,
-                  color: cs.onSurface,
-                  onTap: () {
-                    controller.goToAddAddress(context);
-                  },
-                ),
+                title: Language.of(context, 'address'),
+                icon: Icons.location_on_outlined,
+                color: cs.onSurface,
+                onTap: () {
+                  controller.goToAddAddress(context);
+                },
+              ),
 
-                SizedBox(height: 15.h),
+              SizedBox(height: 15.h),
 
-                SettingItem(
-                  title: 'Phone',
-                  icon: Icons.phone_outlined,
-                  color: cs.onSurface,
-                  onTap: () {
-                    controller.goToAddPhone(context);
-                  },
-                ),
+              SettingItem(
+                title: Language.of(context, 'phone'),
+                icon: Icons.phone_outlined,
+                color: cs.onSurface,
+                onTap: () {
+                  controller.goToAddPhone(context);
+                },
+              ),
 
-                SizedBox(height: 15.h),
+              SizedBox(height: 15.h),
 
-                SettingItem(
-                  title: 'Job',
-                  icon: Icons.work_outline_outlined,
-                  color: cs.onSurface,
-                  onTap: () {
-                    controller.goToAddJob(context);
-                  },
-                ),
+              SettingItem(
+                title: Language.of(context, 'job'),
+                icon: Icons.work_outline_outlined,
+                color: cs.onSurface,
+                onTap: () {
+                  controller.goToAddJob(context);
+                },
+              ),
 
-                SizedBox(height: 15.h),
+              SizedBox(height: 15.h),
 
-                SettingItem(
-                  title: 'Nationality',
-                  icon: Icons.public_outlined,
-                  color: cs.onSurface,
-                  onTap: () {
-                    controller.goToAddNationality(context);
-                  },
-                ),
-
+              SettingItem(
+                title: Language.of(context, 'nationality'),
+                icon: Icons.public_outlined,
+                color: cs.onSurface,
+                onTap: () {
+                  controller.goToAddNationality(context);
+                },
+              ),
             ],    
           ),
         ),

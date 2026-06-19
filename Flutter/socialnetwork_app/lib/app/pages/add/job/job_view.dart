@@ -2,12 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:socialnetwork/app/pages/add/job/job_controller.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
+import 'package:socialnetwork/app/widgets/banner/error.dart';
+import 'package:socialnetwork/domain/usecases/account_usecase.dart';
+import 'package:socialnetwork/data/repositories/account_repository_imp.dart';
+import 'package:socialnetwork/data/network/api/account_api.dart';
+import 'package:socialnetwork/data/network/dio_client.dart';
 class AddJobView extends StatefulWidget {
   const AddJobView({super.key});
   @override
   State<AddJobView> createState() => _AddJobViewState();
 }
 class _AddJobViewState extends State<AddJobView> {
+
+  late AddJobController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AddJobController(
+      AccountUsecase(
+        AccountRepositoryImp(
+          AccountApi(DioClient.createDio()),
+        ),
+      ),
+    );
+    controller.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
@@ -28,7 +57,7 @@ class _AddJobViewState extends State<AddJobView> {
             vertical: 16.h,
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -44,7 +73,7 @@ class _AddJobViewState extends State<AddJobView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Add job',
+                    Language.of(context, 'add_job'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -55,6 +84,98 @@ class _AddJobViewState extends State<AddJobView> {
               ),
 
               SizedBox(height: 20.h),
+
+              Text(
+                Language.of(context, 'enter_your_job'),
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w500,
+                  color: cs.onSurface,
+                ),
+              ),
+
+              SizedBox(height: 40.h),
+
+              TextFormField(
+                controller: controller.jobController,
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  color: cs.onSurface,
+                ),
+                decoration: InputDecoration(
+                  labelText: Language.of(context, 'job'),
+                  labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: const BorderSide(color: Colors.blue, width: 2),
+                  ),
+                  floatingLabelStyle: WidgetStateTextStyle.resolveWith(
+                    (states) {
+                      if (states.contains(WidgetState.focused)) {
+                        return TextStyle(
+                          color: Colors.blue,
+                          fontSize: 15.sp,
+                        );
+                      }
+                      return TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15.sp,
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 20.h),
+
+              SizedBox(
+                height: 50.h,
+                child: Visibility(
+                  visible: controller.errorMessage.isNotEmpty,
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  child: BannerError(message: controller.errorMessage),
+                ),
+              ),
+
+              SizedBox(height: 20.h),
+
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.black,
+                    minimumSize: Size(double.infinity, 48.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                  ).copyWith(
+                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                  ),
+                  onPressed: controller.isLoading
+                      ? null
+                      : () => controller.addJob(context),
+                  child: controller.isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          Language.of(context, 'add'),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.sp,
+                          ),
+                        ),
+                ),
+              ),
               
             ],    
           ),

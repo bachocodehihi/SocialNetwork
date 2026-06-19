@@ -27,8 +27,8 @@ class AuthUsecase {
 
   Future<bool> checkEmail(String email) => _repository.checkEmail(email);
 
-  Future<void> login({required String email, required String password}) =>
-    _repository.login(email: email, password: password);
+  Future<void> login({required String email, required String password, bool isVerifying = false}) =>
+    _repository.login(email: email, password: password, isVerifying: isVerifying);
 
   Future<void> googleLogin(String idToken) =>
     _repository.googleLogin(idToken);

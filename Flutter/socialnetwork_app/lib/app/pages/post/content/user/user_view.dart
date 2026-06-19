@@ -45,7 +45,11 @@ class _PostContentViewState extends State<PostContentView> {
         backgroundColor: cs.surface,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.close_rounded, color: cs.onSurface, size: 24.sp),
+          icon: Icon(
+            Icons.close_outlined, 
+            color: cs.onSurface, 
+            size: 24.sp
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -63,8 +67,8 @@ class _PostContentViewState extends State<PostContentView> {
             child: ElevatedButton(
               onPressed: controller.isSubmitting ? null : () => controller.submitPost(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: cs.primary,
-                foregroundColor: cs.onPrimary,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
                 elevation: 0,
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 shape: RoundedRectangleBorder(
@@ -77,7 +81,7 @@ class _PostContentViewState extends State<PostContentView> {
                       height: 16.h,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(cs.onPrimary),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
                   : Text(

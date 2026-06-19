@@ -78,8 +78,8 @@ class _PlayMachineTictactoeViewState extends State<PlayMachineTictactoeView> {
                   icon: Icon(Icons.refresh, size: 18.sp),
                   label: Text('New Game', style: TextStyle(fontSize: 14.sp)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: cs.primary,
-                    foregroundColor: cs.onPrimary,
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),

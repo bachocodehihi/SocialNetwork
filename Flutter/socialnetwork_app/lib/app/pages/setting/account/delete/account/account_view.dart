@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/widgets/banner/error.dart';
 import 'package:socialnetwork/app/pages/setting/account/delete/account/account_controller.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class DeleteAccountView extends StatefulWidget {
   const DeleteAccountView({super.key});
   @override
@@ -61,22 +61,22 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                       color: cs.onSurface,
                     ),
                   ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    'Delete account',
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w500,
-                      color: cs.onSurface,
-                    ),
-                  ),
+                  // SizedBox(width: 10.w),
+                  // Text(
+                  //   Language.of(context, 'reason_delete_account'),
+                  //   style: TextStyle(
+                  //     fontSize: 20.sp,
+                  //     fontWeight: FontWeight.w500,
+                  //     color: cs.onSurface,
+                  //   ),
+                  // ),
                 ],
               ),
 
               SizedBox(height: 20.h),
 
               Text(
-                'Enter your reason',
+                Language.of(context, 'enter_your_reason'),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
@@ -93,7 +93,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                   color: cs.onSurface,
                 ),
                 decoration: InputDecoration(
-                  labelText: 'Reason',
+                  labelText: Language.of(context, 'reason'),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.r),
                     borderSide: const BorderSide(color: Colors.grey),
@@ -149,9 +149,10 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.black,
                     minimumSize: Size(double.infinity, 48.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
+                    // shape: RoundedRectangleBorder(
+                    //   borderRadius: BorderRadius.circular(30.r),
+                    // ),
+                    shape: const StadiumBorder(),
                   ).copyWith(
                     overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                   ),
@@ -168,7 +169,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                           ),
                         )
                       : Text(
-                          'Continue',
+                          Language.of(context, 'continue'),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15.sp,

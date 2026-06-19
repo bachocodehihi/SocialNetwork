@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class BannerDelete extends StatefulWidget {
   final DateTime deleteAt;
   final VoidCallback onCancel;
@@ -86,15 +86,31 @@ class _BannerDeleteState extends State<BannerDelete> {
             ),
             SizedBox(width: 10.w),
             Expanded(
-              child: Text(
-                'Tài khoản sẽ bị xóa sau: ${_formatDuration(_timeLeft)}',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 15.sp,
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: Language.of(context, 'account_will_be deleted_in'),
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 15.sp,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' ${_formatDuration(_timeLeft)}',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
+
             SizedBox(width: 10.w),
+            
             GestureDetector(
               onTap: widget.onCancel,
               behavior: HitTestBehavior.opaque,

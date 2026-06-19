@@ -49,7 +49,6 @@ class SocketService {
             .build(),
       );
 
-      // Re-register all listeners in _listeners to the new socket instance
       _listeners.forEach((event, callbacks) {
         for (final cb in callbacks) {
           _socket!.on(event, cb);
@@ -84,7 +83,6 @@ class SocketService {
     }
   }
 
-  /// 🔌 Disconnect from server
   void disconnect() {
     _socket?.disconnect();
     _socket?.dispose();
@@ -93,7 +91,6 @@ class SocketService {
     _listeners.clear();
   }
 
-  /// 🚪 Join conversation room
   void joinRoom(String conversationId) {
     if (!_isConnected) {
       debugPrint('⚠️ Cannot join room: Socket not connected');
@@ -103,13 +100,11 @@ class SocketService {
     debugPrint('🔊 Joined room: $conversationId');
   }
 
-  /// 🚶 Leave conversation room
   void leaveRoom(String conversationId) {
     _socket?.emit('leave_room', conversationId);
     debugPrint('🔇 Left room: $conversationId');
   }
 
-  /// 📤 Send message via socket
   void sendMessage({
     required String conversationId,
     required String content,
@@ -129,21 +124,18 @@ class SocketService {
     });
   }
 
-  /// ⌨️ Typing indicator
   void sendTyping(String conversationId) {
     if (_isConnected) {
       _socket?.emit('typing', {'conversationId': conversationId});
     }
   }
 
-  /// ⌨️ Stop typing indicator
   void sendStopTyping(String conversationId) {
     if (_isConnected) {
       _socket?.emit('stop_typing', {'conversationId': conversationId});
     }
   }
 
-  /// 👂 Listen for incoming messages
   void onReceiveMessage(MessageCallback callback) {
     _addListener('receive_message', (data) {
       if (data is Map<String, dynamic>) {
@@ -152,12 +144,10 @@ class SocketService {
     });
   }
 
-  /// 👂 Generic event listener
   void on(String event, Function(dynamic) callback) {
     _addListener(event, callback);
   }
 
-  /// 🔕 Remove listener
   void off(String event, [Function(dynamic)? callback]) {
     if (callback != null) {
       _socket?.off(event, callback);
@@ -209,7 +199,4 @@ class SocketService {
     _pendingMessages.clear();
   }
   
-  // void _queueMessage(Map<String, dynamic> message) {
-  //   _pendingMessages.add(message);
-  // }
 }

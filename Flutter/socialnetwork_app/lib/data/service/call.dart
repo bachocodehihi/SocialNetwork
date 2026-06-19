@@ -9,8 +9,8 @@ enum CallState { idle, ringing, calling, connected, ended }
 class CallInfo {
   final String callId;
   final String conversationId;
-  final String callType; // 'voice' | 'video' | 'audio'
-  final Map<String, dynamic> remoteUser; // { _id, username, avatar }
+  final String callType;
+  final Map<String, dynamic> remoteUser;
   final bool isIncoming;
   final bool isGroup;
 
@@ -62,7 +62,6 @@ class CallService extends ChangeNotifier {
 
   Map<String, dynamic>? _pendingOffer;
 
-  // 1-on-1 WebRTC
   RTCPeerConnection? _pc;
   MediaStream? _localStream;
   MediaStream? _remoteStream;
@@ -70,12 +69,9 @@ class CallService extends ChangeNotifier {
 
   RTCVideoRenderer? get remoteRenderer => _remoteRenderer;
 
-  // Group WebRTC mesh: map of peerId -> PeerConnection
   final Map<String, RTCPeerConnection> _groupPcs = {};
-  // Track of other active user details in the group call
   final Map<String, Map<String, dynamic>> _groupParticipants = {};
 
-  // UI callbacks to invoke
   void Function(CallInfo)? onIncomingCall;
   void Function()? onCallEnded;
   void Function()? onCallConnected;
@@ -99,7 +95,6 @@ class CallService extends ChangeNotifier {
   }
 
   void _registerListeners() {
-    // Clear any previous listeners to prevent duplicates
     final events = [
       'call_incoming',
       'call_accepted',
@@ -133,14 +128,12 @@ class CallService extends ChangeNotifier {
     _socket.on('group_call_user_left', _onGroupCallUserLeft);
     _socket.on('group_signal', _onGroupSignal);
 
-    // Socket status listener to clean up active calls on disconnection
     _socket.on('disconnect', (_) {
       debugPrint('🔌 CallService: Socket disconnected. Resetting call state.');
       _resetCall();
     });
   }
 
-  // Helper to request microphone permission
   Future<bool> _requestMicrophonePermission() async {
     if (kIsWeb) return true;
     try {
@@ -153,11 +146,10 @@ class CallService extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('⚠️ Microphone permission check skipped or failed on this platform: $e');
-      return true; // Fallback to let WebRTC handle it directly
+      return true;
     }
   }
 
-  // ─────────────── 1-ON-1 VOICE CALLS ───────────────
   Future<void> startCall({
     required String receiverId,
     required String conversationId,
@@ -180,10 +172,8 @@ class CallService extends ChangeNotifier {
       _callState = CallState.ringing;
       notifyListeners();
 
-      // Initialize peer connection and local audio stream
       await _setupPeerConnection(receiverId);
 
-      // Create and set local SDP offer
       final offer = await _pc!.createOffer({
         'mandatory': {
           'OfferToReceiveAudio': true,
@@ -383,7 +373,6 @@ class CallService extends ChangeNotifier {
     }
   }
 
-  // ─────────────── GROUP VOICE CALLS ───────────────
   Future<void> startGroupCall({
     required String conversationId,
     required String groupName,
@@ -599,7 +588,6 @@ class CallService extends ChangeNotifier {
     return pc;
   }
 
-  // ─────────────── COMMON WEBRTC & TIMERS ───────────────
   Future<void> _setupPeerConnection(String targetUserId) async {
     final hasPermission = await _requestMicrophonePermission();
     if (!hasPermission) {
@@ -644,7 +632,6 @@ class CallService extends ChangeNotifier {
       }
       _remoteRenderer?.srcObject = _remoteStream;
       
-      // Bật loa ngoài mặc định khi kết nối thành công
       _isSpeakerOn = true;
       Helper.setSpeakerphoneOn(true);
       

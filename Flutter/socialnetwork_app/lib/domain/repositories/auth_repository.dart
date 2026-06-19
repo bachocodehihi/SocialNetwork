@@ -14,7 +14,7 @@ abstract class AuthRepository {
   });
   Future<bool> checkEmail(String email);
 
-  Future<void> login({required String email, required String password});
+  Future<void> login({required String email, required String password, bool isVerifying = false});
 
   Future<void> googleLogin(String idToken);
 

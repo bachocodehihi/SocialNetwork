@@ -241,8 +241,8 @@ class _HomeUserViewState extends State<HomeUserView> {
                   Text(
                     'Bình luận',
                     style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
                       color: cs.onSurface,
                     ),
                   ),
@@ -366,7 +366,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                                                       Icon(
                                                         hasLiked ? Icons.thumb_up_alt_outlined : Icons.thumb_up_alt_outlined,
                                                         size: 15.sp,
-                                                        color: hasLiked ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.7),
+                                                        color: hasLiked ? Colors.blue : cs.onSurfaceVariant.withValues(alpha: 0.7),
                                                       ),
                                                       if (likesCount > 0) ...[
                                                         SizedBox(width: 4.w),
@@ -483,7 +483,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                                                               Icon(
                                                                 rHasLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
                                                                 size: 12.sp,
-                                                                color: rHasLiked ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.7),
+                                                                color: rHasLiked ? Colors.blue : cs.onSurfaceVariant.withValues(alpha: 0.7),
                                                               ),
                                                               if (rLikesCount > 0) ...[
                                                                 SizedBox(width: 4.w),
@@ -519,7 +519,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                       color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
                       child: Row(
                         children: [
-                          Icon(Icons.reply_outlined, size: 16.sp, color: cs.primary),
+                          Icon(Icons.reply_outlined, size: 16.sp, color: Colors.blue),
                           SizedBox(width: 8.w),
                           Expanded(
                             child: Text(
@@ -688,7 +688,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w500,
-                                color: cs.primary,
+                                color: Colors.blue,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -846,16 +846,27 @@ class _HomeUserViewState extends State<HomeUserView> {
 
                         SizedBox(width: 10.w),
 
-                        Builder(
-                          builder: (context) => GestureDetector(
-                            onTap: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            child: Icon(
-                              Icons.menu_outlined, 
-                              size: 30.sp,
-                              color: cs.onSurface,
-                            ),
+                        // Builder(
+                        //   builder: (context) => GestureDetector(
+                        //     onTap: () {
+                        //       Scaffold.of(context).openDrawer();
+                        //     },
+                        //     child: Icon(
+                        //       Icons.menu_outlined, 
+                        //       size: 30.sp,
+                        //       color: cs.onSurface,
+                        //     ),
+                        //   ),
+                        // ),
+
+                        GestureDetector(
+                          onTap: () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                          child: Icon(
+                            Icons.menu_outlined, 
+                            size: 30.sp,
+                            color: cs.onSurface,
                           ),
                         ),
                       ],
@@ -865,24 +876,51 @@ class _HomeUserViewState extends State<HomeUserView> {
 
                 SizedBox(height: 20.h),
 
+                // Visibility(
+                //   visible: controller.isOffline,
+                //   child: BannerNetwork(),
+                // ),
+
                 Visibility(
                   visible: controller.isOffline,
-                  child: BannerNetwork(message: Language.of(context, 'no_internet')),
+                  child: Column(
+                    children: [
+                      BannerNetwork(),
+                      SizedBox(height: 20.h),
+                    ],
+                  ),
                 ),
 
                 Consumer<MainUserController>(
                   builder: (context, mainController, _) {
                     if (mainController.isDeleted && mainController.deleteAt != null) {
-                      return BannerDelete(
-                        deleteAt: mainController.deleteAt!,
-                        onCancel: () => mainController.cancelDeletion(context),
+                      return Column(
+                        children: [
+                          BannerDelete(
+                            deleteAt: mainController.deleteAt!,
+                            onCancel: () => mainController.cancelDeletion(context),
+                          ),
+                          SizedBox(height: 20.h),
+                        ],
                       );
                     }
                     return const SizedBox.shrink();
                   },
                 ),
 
-                SizedBox(height: 20.h),
+                // Consumer<MainUserController>(
+                //   builder: (context, mainController, _) {
+                //     if (mainController.isDeleted && mainController.deleteAt != null) {
+                //       return BannerDelete(
+                //         deleteAt: mainController.deleteAt!,
+                //         onCancel: () => mainController.cancelDeletion(context),
+                //       );
+                //     }
+                //     return const SizedBox.shrink();
+                //   },
+                // ),
+
+                // SizedBox(height: 20.h),
 
                 GestureDetector(
                   onTap: () {
@@ -891,7 +929,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                   child: Row(
                     children: [
                       CircleAvatar(
-                        radius: 28.r,
+                        radius: 25.r,
                         backgroundImage: controller.avatar.isNotEmpty
                             ? NetworkImage(controller.avatar)
                             : null,
@@ -902,34 +940,33 @@ class _HomeUserViewState extends State<HomeUserView> {
                             )
                             : null,
                       ),
+                      
                       SizedBox(width: 10.w),
+
                       Expanded(
-                        child: AbsorbPointer(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: cs.onSurface, 
+                              width: 1.w
+                            ),
+                            borderRadius: BorderRadius.circular(50.r),
+                            color: Colors.transparent,
+                          ),
                           child: TextField(
+                            enabled: false,
                             decoration: InputDecoration(
                               hintText: Language.of(context, 'what_s_on_your_mind'),
                               hintStyle: TextStyle(
-                                fontSize: 15.sp,
-                                color: Colors.grey,
+                                fontSize: 15.sp, 
+                                color: cs.onSurface
                               ),
-                              filled: false,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.r),
-                                borderSide: BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.r),
-                                borderSide: BorderSide(color: Colors.grey, width: 1),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.r),
-                                borderSide: BorderSide(color: Colors.grey, width: 1),
-                              ),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(
-                                vertical: 14.h,
-                                horizontal: 12.w,
+                                vertical: 10.h,
+                                horizontal: 15.w,
                               ),
                             ),
                           ),

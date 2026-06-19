@@ -52,7 +52,7 @@ class MainUserController extends ChangeNotifier {
       builder: (BuildContext dialogContext) {
         final cs = Theme.of(dialogContext).colorScheme;
         return AlertDialog(
-          backgroundColor: cs.surface,
+          backgroundColor: cs.surfaceContainerHigh,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),

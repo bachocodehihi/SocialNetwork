@@ -71,4 +71,22 @@ class AccountRepositoryImp implements AccountRepository {
       throw Exception(_getCode(e.response?.data, 'SERVER_ERROR'));
     }
   }
+
+  @override
+  Future<Map<String, dynamic>> getPrivacy() async {
+    try {
+      return await _accountApi.getPrivacy();
+    } on DioException catch (e) {
+      throw Exception(_getCode(e.response?.data, 'SERVER_ERROR'));
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> updatePrivacy(Map<String, bool> settings) async {
+    try {
+      return await _accountApi.updatePrivacy(settings);
+    } on DioException catch (e) {
+      throw Exception(_getCode(e.response?.data, 'SERVER_ERROR'));
+    }
+  }
 }

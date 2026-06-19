@@ -21,7 +21,7 @@ class AppTheme {
 
       onPrimary: isLight ? Colors.white : Colors.white,
       surfaceContainerHighest: isLight ? Colors.grey[100] : const Color(0xFF1E1E1E),
-      surfaceContainerHigh: isLight ? const Color(0xFFF6F6F6) : const Color(0xFF242424),
+      surfaceContainerHigh: isLight ? Colors.white : const Color(0xFF1E1E1E),
       surfaceContainer: isLight ? Colors.white : const Color(0xFF181818),
       surfaceContainerLow: isLight ? const Color(0xFFE9E9E9) : const Color(0xFF141414),
       surfaceContainerLowest: isLight ? const Color(0xFFE2E2E2) : const Color(0xFF0F0F0F),

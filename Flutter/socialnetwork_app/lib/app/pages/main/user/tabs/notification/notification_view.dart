@@ -82,11 +82,11 @@ class _NotificationUserViewState extends State<NotificationUserView> {
       case 'post_comment':
         return Colors.teal;
       case 'new_post':
-        return cs.primary;
+        return Colors.blue;
       case 'group_invite':
         return Colors.indigo;
       default:
-        return cs.primary;
+        return Colors.blue;
     }
   }
 
@@ -106,7 +106,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: () => _controller.loadNotifications(),
-        color: cs.primary,
+        color: Colors.blue,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
@@ -132,9 +132,9 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                       IconButton(
                         onPressed: () => _controller.markAllRead(),
                         icon: Icon(
-                          Icons.done_all_rounded,
+                          Icons.done_all_outlined,
                           size: 26.sp,
-                          color: cs.primary,
+                          color: Colors.blue,
                         ),
                         tooltip: Language.of(context, 'mark_all_as_read'),
                       ),
@@ -164,7 +164,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                             child: Icon(
                               Icons.notifications_none_rounded,
                               size: 64.sp,
-                              color: cs.primary.withValues(alpha: 0.7),
+                              color: Colors.blue.withValues(alpha: 0.7),
                             ),
                           ),
                           SizedBox(height: 16.h),
@@ -207,7 +207,6 @@ class _NotificationUserViewState extends State<NotificationUserView> {
 
                       return GestureDetector(
                         onTap: () {
-                          // Mark notification as read
                           if (!isRead) {
                             item['isRead'] = true;
                             setState(() {});
@@ -239,7 +238,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                             color: isRead ? cs.surfaceContainerLowest : cs.primaryContainer.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(14.r),
                             border: Border.all(
-                              color: isRead ? cs.outlineVariant.withValues(alpha: 0.4) : cs.primary.withValues(alpha: 0.15),
+                              color: isRead ? cs.outlineVariant.withValues(alpha: 0.4) : Colors.blue.withValues(alpha: 0.15),
                               width: 1,
                             ),
                             boxShadow: [
@@ -340,7 +339,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                                   height: 8.r,
                                   margin: EdgeInsets.only(left: 8.w),
                                   decoration: BoxDecoration(
-                                    color: cs.primary,
+                                    color: Colors.blue,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
@@ -448,8 +447,8 @@ class _NotificationUserViewState extends State<NotificationUserView> {
           ElevatedButton(
             onPressed: () => _controller.acceptFriend(requestId),
             style: ElevatedButton.styleFrom(
-              backgroundColor: cs.primary,
-              foregroundColor: cs.onPrimary,
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
               elevation: 0,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               minimumSize: Size(0, 32.h),
@@ -481,7 +480,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
               'Từ chối',
               style: TextStyle(
                 fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

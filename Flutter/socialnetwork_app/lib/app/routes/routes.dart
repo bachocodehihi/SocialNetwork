@@ -16,7 +16,7 @@ import 'package:socialnetwork/app/pages/forgot/password/password_page.dart';
 
 //sign up
 import 'package:socialnetwork/app/pages/signup/email/email_page.dart';
-import 'package:socialnetwork/app/pages/signup/name/name_page.dart';
+import 'package:socialnetwork/app/pages/signup/username/username_page.dart';
 import 'package:socialnetwork/app/pages/signup/avatar/avatar_page.dart';
 import 'package:socialnetwork/app/pages/signup/birthday/birthday_page.dart';
 import 'package:socialnetwork/app/pages/signup/gender/gender_page.dart';
@@ -42,6 +42,7 @@ import 'package:socialnetwork/app/pages/setting/darkmode/darkmode_page.dart';
 import 'package:socialnetwork/app/pages/setting/font/font_page.dart';
 import 'package:socialnetwork/app/pages/setting/language/language_page.dart';
 import 'package:socialnetwork/app/pages/setting/account/change/change_page.dart';
+import 'package:socialnetwork/app/pages/setting/privacy/privacy_page.dart';
 
 //switch
 import 'package:socialnetwork/app/pages/setting/switch/account/account_page.dart';
@@ -52,7 +53,7 @@ import 'package:socialnetwork/app/pages/setting/account/change/avatar/avatar_pag
 import 'package:socialnetwork/app/pages/setting/account/change/job/job_page.dart';
 import 'package:socialnetwork/app/pages/setting/account/change/phone/phone_page.dart';
 import 'package:socialnetwork/app/pages/setting/account/change/email/email_page.dart';
-import 'package:socialnetwork/app/pages/setting/account/change/name/name_page.dart';
+import 'package:socialnetwork/app/pages/setting/account/change/username/username_page.dart';
 import 'package:socialnetwork/app/pages/setting/account/change/birthday/birthday_page.dart';
 import 'package:socialnetwork/app/pages/setting/account/change/gender/gender_page.dart';
 import 'package:socialnetwork/app/pages/setting/account/change/nationality/nationality_page.dart';
@@ -145,6 +146,7 @@ class Routes {
   static String language = '/setting/language';
   static String font = '/setting/font';
   static String notification = '/setting/notification';
+  static String privacy = '/setting/privacy';
 
   //switch
   static String switchAccount = 'setting/switch/account';
@@ -229,7 +231,7 @@ class Routes {
 
     //sign up
     signupEmail: (_) => SignUpEmailPage(),
-    signupName: (_) => SignUpNamePage(),
+    signupName: (_) => SignUpUserNamePage(),
     signupBirthday: (_) => SignUpBirthdayPage(),
     signupGender: (_) => SignUpGenderPage(),
     signupAvatar: (_) => SignUpAvatarPage(),
@@ -256,6 +258,7 @@ class Routes {
     language: (_) => SettingLanguagePage(),
     font: (_) => SettingFontPage(),
     notification: (_) => SignUpEmailPage(),
+    privacy: (_) => SettingPrivacyPage(),
 
     //switch
     switchAccount: (_) => SwitchAccountPage(),

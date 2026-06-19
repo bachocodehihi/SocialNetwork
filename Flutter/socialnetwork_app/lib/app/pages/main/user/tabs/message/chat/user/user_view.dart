@@ -619,7 +619,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                   child: Icon(
                                     Icons.image_outlined, 
                                     size: 25.sp,
-                                    color: _controller.isSending ? cs.onSurface.withOpacity(0.3) : cs.onSurface,
+                                    color: _controller.isSending ? cs.onSurface.withValues(alpha: 0.3) : cs.onSurface,
                                   ),
                                 ),
 

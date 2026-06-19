@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/contact/request/request_controller.dart';
 import 'package:socialnetwork/app/pages/user/user_page.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 
 class ContactRequestView extends StatefulWidget {
   const ContactRequestView({super.key});
@@ -42,12 +42,19 @@ class _ContactRequestViewState extends State<ContactRequestView> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.person_off_outlined,
-                    size: 48.sp, color: cs.onSurfaceVariant),
+                Icon(
+                  Icons.person_off_outlined,
+                  size: 48.sp, 
+                  color: cs.onSurfaceVariant
+                ),
                 SizedBox(height: 12.h),
-                Text('No friend requests',
-                    style: TextStyle(
-                        color: cs.onSurfaceVariant, fontSize: 14.sp)),
+                Text(
+                  Language.of(context, 'no_friend_requests'),
+                  style: TextStyle(
+                    color: cs.onSurfaceVariant,
+                    fontSize: 14.sp
+                  )
+                ),
               ],
             ),
           );
@@ -111,7 +118,7 @@ class _ContactRequestViewState extends State<ContactRequestView> {
                                 name,
                                 style: TextStyle(
                                   fontSize: 15.sp,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   color: cs.onSurface,
                                 ),
                               ),
@@ -126,7 +133,11 @@ class _ContactRequestViewState extends State<ContactRequestView> {
                             ],
                           ),
                         ),
-                        Icon(Icons.arrow_forward_ios_rounded, size: 14.sp, color: cs.onSurfaceVariant.withValues(alpha: 0.5)),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded, 
+                          size: 14.sp, 
+                          color: cs.onSurfaceVariant.withValues(alpha: 0.5)
+                        ),
                       ],
                     ),
                   ),
@@ -142,7 +153,9 @@ class _ContactRequestViewState extends State<ContactRequestView> {
                           ).copyWith(
                             overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                           ),
-                          child: const Text('Confirm'),
+                          child: Text(
+                            Language.of(context, 'confirm'),
+                          ), 
                         ),
                       ),
                       SizedBox(width: 8.w),
@@ -155,7 +168,9 @@ class _ContactRequestViewState extends State<ContactRequestView> {
                           ).copyWith(
                             overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                           ),
-                          child: const Text('Reject'),
+                          child: Text(
+                            Language.of(context, 'reject')
+                          ),
                         ),
                       ),
                     ],

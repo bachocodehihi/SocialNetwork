@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
 import 'package:socialnetwork/data/network/api/account_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class DeleteAccountController extends ChangeNotifier {
   final reasonController = TextEditingController();
   final _accountApi = AccountApi(DioClient.createDio());
@@ -39,12 +39,12 @@ class DeleteAccountController extends ChangeNotifier {
       builder: (BuildContext dialogContext) {
         final cs = Theme.of(dialogContext).colorScheme;
         return AlertDialog(
-          backgroundColor: cs.surface,
+          backgroundColor: cs.surfaceContainerHigh,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
           title: Text(
-            'Xóa tài khoản',
+            Language.of(context, 'delete_account'),
             style: TextStyle(
               fontSize: 15.sp,
               fontWeight: FontWeight.w500,
@@ -52,7 +52,7 @@ class DeleteAccountController extends ChangeNotifier {
             ),
           ),
           content: Text(
-            'Bạn có chắc chắn muốn lên lịch xóa tài khoản này không? Tài khoản sẽ được lên lịch xóa vĩnh viễn sau 24 giờ.',
+            Language.of(context, 'are_you_sure_you_want_to_schedule_the_deletion_of_this_account_The_account_will_be_permanently_deleted_in_24_hours'),
             textAlign: TextAlign.justify,
             style: TextStyle(
               fontSize: 15.sp,
@@ -63,26 +63,24 @@ class DeleteAccountController extends ChangeNotifier {
             Row(
               children: [
                 Expanded(
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(double.infinity, 48.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                      ).copyWith(
-                        overlayColor: WidgetStateProperty.all(Colors.grey[300]),
-                      ),
-                      onPressed: () => Navigator.of(dialogContext).pop(false),
-                      child: Text(
-                        'Hủy',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.sp,
-                        ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(double.infinity, 48.h),
+                      // shape: RoundedRectangleBorder(
+                      //   borderRadius: BorderRadius.circular(30.r),
+                      // ),
+                      shape: const StadiumBorder(),
+                    ).copyWith(
+                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                    ),
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    child: Text(
+                      Language.of(context, 'cancel'),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.sp,
                       ),
                     ),
                   ),
@@ -91,26 +89,24 @@ class DeleteAccountController extends ChangeNotifier {
                 SizedBox(width: 10.w),
 
                 Expanded(
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(double.infinity, 48.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                      ).copyWith(
-                        overlayColor: WidgetStateProperty.all(Colors.grey[300]),
-                      ),
-                      onPressed: () => Navigator.of(dialogContext).pop(true),
-                      child: Text(
-                        'Xác nhận',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.sp,
-                        ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(double.infinity, 48.h),
+                      // shape: RoundedRectangleBorder(
+                      //   borderRadius: BorderRadius.circular(30.r),
+                      // ),
+                      shape: const StadiumBorder(),
+                    ).copyWith(
+                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                    ),
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    child: Text(
+                      Language.of(context, 'confirm'),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.sp,
                       ),
                     ),
                   ),

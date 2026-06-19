@@ -8,6 +8,7 @@ import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:socialnetwork/domain/usecases/auth_usecase.dart';
 import 'package:socialnetwork/data/repositories/auth_repository_imp.dart';
 import 'package:socialnetwork/data/network/api/auth_api.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class ForgotView extends StatefulWidget {
   const ForgotView({super.key});
   @override
@@ -68,21 +69,21 @@ class _ForgotViewState extends State<ForgotView> {
                       color: cs.onSurface,
                     ),
                   ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    'Forgot password',
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w500,
-                      color: cs.onSurface,
-                    ),
-                  ),
+                  // SizedBox(width: 10.w),
+                  // Text(
+                  //   Language.of(context, 'forgot_password'),
+                  //   style: TextStyle(
+                  //     fontSize: 20.sp,
+                  //     fontWeight: FontWeight.w500,
+                  //     color: cs.onSurface,
+                  //   ),
+                  // ),
                 ],
               ),
               SizedBox(height: 20.h),
 
               Text(
-                'Enter your email to change your password.',
+                Language.of(context, 'enter_your_email_to_change_your_password'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20.sp,
@@ -140,32 +141,29 @@ class _ForgotViewState extends State<ForgotView> {
 
               SizedBox(height: 20.h),
 
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.black,
-                    minimumSize: Size(double.infinity, 48.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                  ).copyWith(
-                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.black,
+                  minimumSize: Size(double.infinity, 48.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.r),
                   ),
-                  onPressed: controller.isLoading
-                      ? null
-                      : () => controller.submitEmail(context),
-                  child: controller.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          'Continue',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.sp,
-                          ),
-                        ),
+                ).copyWith(
+                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                 ),
+                onPressed: controller.isLoading
+                    ? null
+                    : () => controller.submitEmail(context),
+                child: controller.isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        Language.of(context, 'continue'),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                        ),
+                      ),
               ),
 
             ],

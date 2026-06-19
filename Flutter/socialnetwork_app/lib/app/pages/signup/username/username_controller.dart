@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
 import 'package:socialnetwork/app/pages/signup/state/signup.dart';
 import 'package:provider/provider.dart';
-class SignUpNameController extends ChangeNotifier {
+class SignUpUserNameController extends ChangeNotifier {
   final TextEditingController usernameController = TextEditingController();
 
   String _errorMessage = '';

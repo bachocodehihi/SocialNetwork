@@ -5,7 +5,7 @@ import 'package:socialnetwork/domain/usecases/auth_usecase.dart';
 import 'package:socialnetwork/data/service/notification.dart';
 import 'package:socialnetwork/data/service/socket.dart';
 import 'package:socialnetwork/data/config/config.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SignInEmailController extends ChangeNotifier {
 
   final emailController = TextEditingController();
@@ -30,17 +30,17 @@ class SignInEmailController extends ChangeNotifier {
     return _messages[code] ?? code;
   }
   
-  bool validateEmail() {
+  bool validateEmail(BuildContext context) {
     final email = emailController.text.trim();
 
     if (email.isEmpty) {
-      _errorMessage = 'Please enter email!';
+      _errorMessage = Language.of(context, 'please_enter_email');
       notifyListeners();
       return false;
     }
 
     if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
-      _errorMessage = 'Invalid email!';
+      _errorMessage = Language.of(context, 'invalid_email');
       notifyListeners();
       return false;
     }
@@ -51,7 +51,7 @@ class SignInEmailController extends ChangeNotifier {
   }
 
   Future<void> submitEmail(BuildContext context) async {
-    if (!validateEmail()) return;
+    if (!validateEmail(context)) return;
 
     final email = emailController.text.trim();
     _isLoading = true;
@@ -141,7 +141,7 @@ class SignInEmailController extends ChangeNotifier {
     }
   }
 
-  void goToSignUpEmail(BuildContext context) {
+  Future<void> goToSignUpEmail(BuildContext context) async {
     Navigator.pushReplacementNamed(context, Routes.signupEmail);
   }
 

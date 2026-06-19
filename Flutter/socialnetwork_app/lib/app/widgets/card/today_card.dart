@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class TodayCard extends StatelessWidget {
   const TodayCard({super.key, required this.dayLabel, required this.minutes});
 
@@ -26,25 +26,40 @@ class TodayCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.today_outlined, size: 35.sp, color: cs.onPrimary),
-          SizedBox(width: 16.w),
+          Icon(
+            Icons.today_outlined, 
+            size: 35.sp, 
+            color: Colors.white
+          ),
+          SizedBox(width: 15.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Today ($dayLabel)',
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  color: cs.onPrimary.withValues(alpha: 0.8),
-                ),
+              Row(
+                children: [
+                  Text(
+                    Language.of(context, 'today'),
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    ' ($dayLabel)',
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 4.h),
+              SizedBox(height: 5.h),
               Text(
                 _fmt(minutes),
                 style: TextStyle(
                   fontSize: 32.sp,
                   fontWeight: FontWeight.w500,
-                  color: cs.onPrimary,
+                  color: Colors.white,
                   letterSpacing: -0.5,
                 ),
               ),

@@ -10,6 +10,7 @@ import 'package:socialnetwork/data/repositories/contact_repository_imp.dart';
 import 'package:socialnetwork/data/repositories/group_repository_imp.dart';
 import 'package:socialnetwork/domain/usecases/contact_usecase.dart';
 import 'package:socialnetwork/domain/usecases/group_usecase.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 
 class CreateGroupView extends StatefulWidget {
   const CreateGroupView({super.key});
@@ -20,7 +21,6 @@ class CreateGroupView extends StatefulWidget {
 
 class _CreateGroupViewState extends State<CreateGroupView> {
   late CreateGroupController controller;
-  final TextEditingController _groupNameController = TextEditingController();
 
   @override
   void initState() {
@@ -34,12 +34,12 @@ class _CreateGroupViewState extends State<CreateGroupView> {
 
   @override
   void dispose() {
-    _groupNameController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   Future<void> _handleCreateGroup(BuildContext context) async {
-    final result = await controller.createGroup(_groupNameController.text);
+    final result = await controller.createGroup();
     if (!mounted) return;
 
     if (result != null) {
@@ -89,7 +89,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Create group',
+                    Language.of(context, 'create_group'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -102,11 +102,11 @@ class _CreateGroupViewState extends State<CreateGroupView> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 0 : 24.w),
               child: TextField(
-                controller: _groupNameController,
+                controller: controller.groupNameController,
                 //onChanged: (_) => _controller.notifyListeners(),
                 decoration: InputDecoration(
-                  labelText: 'Group name',
-                  hintText: 'Enter group name...',
+                  labelText: Language.of(context, 'group_name'),
+                  hintText: Language.of(context, 'enter_group_name'),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
                   ),
@@ -127,12 +127,12 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                   padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 0 : 24.w),
                   child: Text(
                     count == 0
-                        ? 'Select members'
+                        ? Language.of(context, 'select_members')
                         : '$count member${count > 1 ? 's' : ''} selected',
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
-                      color: count == 0 ? cs.onSurfaceVariant : cs.primary,
+                      color: count == 0 ? cs.onSurfaceVariant : Colors.blue,
                     ),
                   ),
                 );
@@ -206,12 +206,12 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? cs.primary.withValues(alpha: 0.08)
+                                ? Colors.blue.withValues(alpha: 0.08)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
                               color: isSelected
-                                  ? cs.primary.withValues(alpha: 0.4)
+                                  ? Colors.blue.withValues(alpha: 0.4)
                                   : Colors.transparent,
                             ),
                           ),
@@ -252,10 +252,10 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: isSelected ? cs.primary : cs.onSurfaceVariant,
+                                    color: isSelected ? Colors.blue : cs.onSurfaceVariant,
                                     width: 1.5,
                                   ),
-                                  color: isSelected ? cs.primary : Colors.transparent,
+                                  color: isSelected ? Colors.blue : Colors.transparent,
                                 ),
                               ),
                             ],
@@ -273,7 +273,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
               builder: (context, _) {
                 final count = controller.selectedIds.length;
                 final canCreate =
-                    count >= 2 && _groupNameController.text.trim().isNotEmpty;
+                    count >= 2 && controller.groupNameController.text.trim().isNotEmpty;
 
                 return Container(
                   padding: EdgeInsets.all(kIsWeb ? 16 : 24.w),
@@ -294,8 +294,8 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                           ? () => _handleCreateGroup(context)
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: cs.primary,
-                        foregroundColor: cs.onPrimary,
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
                         disabledBackgroundColor:
                             cs.onSurface.withValues(alpha: 0.12),
                         padding: EdgeInsets.symmetric(vertical: 14.h),
@@ -309,7 +309,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                               width: 20.w,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: cs.onPrimary,
+                                color: Colors.white,
                               ),
                             )
                           : Text(

@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:socialnetwork/app/pages/signup/name/name_controller.dart';
+import 'package:socialnetwork/app/pages/signup/username/username_controller.dart';
 import 'package:socialnetwork/app/widgets/banner/error.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
 
-class SignUpNameView extends StatefulWidget {
-  const SignUpNameView({super.key});
+class SignUpUserNameView extends StatefulWidget {
+  const SignUpUserNameView({super.key});
   @override
-  State<SignUpNameView> createState() => _SignUpNameViewState();
+  State<SignUpUserNameView> createState() => _SignUpUserNameViewState();
 }
 
-class _SignUpNameViewState extends State<SignUpNameView> {
+class _SignUpUserNameViewState extends State<SignUpUserNameView> {
 
-  late SignUpNameController controller;
+  late SignUpUserNameController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = SignUpNameController();
+    controller = SignUpUserNameController();
     controller.addListener(() => setState(() {}));
   }
 
@@ -62,15 +62,15 @@ class _SignUpNameViewState extends State<SignUpNameView> {
                         color: cs.onSurface,
                       ),
                     ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      Language.of(context, 'enter_username'),
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                        color: cs.onSurface,
-                      ),
-                    ),
+                    // SizedBox(width: 10.w),
+                    // Text(
+                    //   Language.of(context, 'enter_username'),
+                    //   style: TextStyle(
+                    //     fontSize: 20.sp,
+                    //     fontWeight: FontWeight.w500,
+                    //     color: cs.onSurface,
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: 20.h),

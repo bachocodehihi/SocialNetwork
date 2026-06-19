@@ -42,8 +42,8 @@ class WeekChart extends StatelessWidget {
           final barColor = isFuture
               ? cs.onSurface.withValues(alpha: 0.1)
               : isToday
-                  ? cs.primary
-                  : cs.primary.withValues(alpha: 0.45);
+                  ? Colors.blue
+                  : Colors.blue.withValues(alpha: 0.45);
 
           return Expanded(
             child: Padding(
@@ -65,7 +65,7 @@ class WeekChart extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
-                      color: isToday ? cs.primary : cs.onSurfaceVariant,
+                      color: isToday ? Colors.blue : cs.onSurfaceVariant,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -73,7 +73,7 @@ class WeekChart extends StatelessWidget {
                     width: 5.w,
                     height: 5.h,
                     decoration: BoxDecoration(
-                      color: isToday ? cs.primary : Colors.transparent,
+                      color: isToday ? Colors.blue : Colors.transparent,
                       shape: BoxShape.circle,
                     ),
                   ),

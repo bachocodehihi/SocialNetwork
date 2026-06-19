@@ -6,4 +6,6 @@ abstract class AccountRepository {
   Future<void> addNationality(String nationality);
   Future<Map<String, dynamic>> getProfile();
   Future<Map<String, dynamic>> getUserById(String id);
+  Future<Map<String, dynamic>> getPrivacy();
+  Future<Map<String, dynamic>> updatePrivacy(Map<String, bool> settings);
 }

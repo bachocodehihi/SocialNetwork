@@ -63,16 +63,13 @@ class SignInPasswordController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 1. Clear any old session
       try {
         await NotificationService().removeFcmToken();
       } catch (_) {}
       SocketService().disconnect();
 
-      // 2. Perform login
       await _authUsecase.login(email: email, password: password);
 
-      // 3. Init services for new user
       await NotificationService().init();
       await SocketService().connect();
 
@@ -95,7 +92,7 @@ class SignInPasswordController extends ChangeNotifier {
     }
   }
 
-  void goToForget(BuildContext context) {
+  Future<void> goToForget(BuildContext context) async {
     Navigator.pushNamed(context, Routes.forgot);
   }
 

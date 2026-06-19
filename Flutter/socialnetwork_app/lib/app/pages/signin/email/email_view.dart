@@ -8,6 +8,7 @@ import 'package:socialnetwork/domain/usecases/auth_usecase.dart';
 import 'package:socialnetwork/data/repositories/auth_repository_imp.dart';
 import 'package:socialnetwork/data/network/api/auth_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SignInEmailView extends StatefulWidget {
   const SignInEmailView({super.key});
   @override
@@ -67,22 +68,22 @@ class _SignInEmailViewState extends State<SignInEmailView> {
                       color: cs.onSurface,
                     ),
                   ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    'Sign in by email',
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w500,
-                      color: cs.onSurface,
-                    ),
-                  ),
+                  // SizedBox(width: 10.w),
+                  // Text(
+                  //   'Sign in by email',
+                  //   style: TextStyle(
+                  //     fontSize: 20.sp,
+                  //     fontWeight: FontWeight.w500,
+                  //     color: cs.onSurface,
+                  //   ),
+                  // ),
                 ],
               ),
 
               SizedBox(height: 20.h),
               
               Text(
-                'Enter your email',
+                Language.of(context, 'enter_your_email'),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
@@ -139,30 +140,29 @@ class _SignInEmailViewState extends State<SignInEmailView> {
 
               SizedBox(height: 20.h),
 
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.black,
-                    minimumSize: Size(double.infinity, 48.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                  ).copyWith(
-                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.black,
+                  minimumSize: Size(double.infinity, 48.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.r),
                   ),
-                  onPressed: controller.isLoading
-                      ? null
-                      : () => controller.submitEmail(context),
-                  child: controller.isLoading ? const CircularProgressIndicator(color: Colors.white) : Text(
-                    'Continue',
+                ).copyWith(
+                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                ),
+                onPressed: controller.isLoading
+                    ? null
+                    : () => controller.submitEmail(context),
+                child: controller.isLoading ? const CircularProgressIndicator(
+                  color: Colors.white
+                  ) : Text(
+                    Language.of(context, 'continue'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15.sp,
                     ),
                   ),
-                ),
               ),
 
               const Spacer(),
@@ -173,7 +173,7 @@ class _SignInEmailViewState extends State<SignInEmailView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Don\'t have an account? ',
+                        Language.of(context, 'don_t_have_account'),
                         style: TextStyle(
                           fontSize: 15.sp,
                           color: cs.onSurface,
@@ -184,7 +184,7 @@ class _SignInEmailViewState extends State<SignInEmailView> {
                           controller.goToSignUpEmail(context);
                         },
                         child: Text(
-                          'Sign up',
+                          Language.of(context, 'sign_up'),
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 15.sp,
@@ -195,7 +195,7 @@ class _SignInEmailViewState extends State<SignInEmailView> {
                     ],
                   ),
 
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 20.h),
 
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -204,12 +204,12 @@ class _SignInEmailViewState extends State<SignInEmailView> {
                         child: Divider(
                           color: Colors.grey,
                           thickness: 1.w,
-                          indent: 8.w,
+                          endIndent: 8.w,
                           height: 1.h,
                         ),
                       ),
                       Text(
-                        'Or',
+                        Language.of(context, 'or'),
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 15.sp,
@@ -227,45 +227,44 @@ class _SignInEmailViewState extends State<SignInEmailView> {
                     ],
                   ),
 
-                  SizedBox(height: 15.h),
+                  SizedBox(height: 25.h),
 
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        side: const BorderSide(color: Color(0xFFE0E0E0)),
-                        minimumSize: Size(double.infinity, 48.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      side: const BorderSide(color: Color(0xFFE0E0E0)),
+                      minimumSize: Size(double.infinity, 48.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.r),
+                      ),
+                    ).copyWith(
+                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                    ),
+                    onPressed: controller.isLoading
+                        ? null
+                        : () => controller.handleGoogleSignIn(context),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/icons/google.png',
+                          width: 24.w,
+                          height: 24.h,
                         ),
-                      ).copyWith(
-                        overlayColor: WidgetStateProperty.all(Colors.grey[300]),
-                      ),
-                      onPressed: controller.isLoading
-                          ? null
-                          : () => controller.handleGoogleSignIn(context),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/icons/google.png',
-                            width: 24.w,
-                            height: 24.h,
+                        SizedBox(width: 8.w),
+                        Text(
+                          Language.of(context, 'sign_in_with_google'),
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: cs.onSurface,
                           ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            'Sign in with Google',
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w500,
-                              color: cs.onSurface,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
+
+                  SizedBox(height: 8.h),
                 ],
               ),
             ],

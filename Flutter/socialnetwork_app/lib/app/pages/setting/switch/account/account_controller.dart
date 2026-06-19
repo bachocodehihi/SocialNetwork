@@ -63,16 +63,13 @@ class SwitchAccountController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 1. Clean up old session
       try {
          await NotificationService().removeFcmToken();
       } catch (_) {}
       SocketService().disconnect();
 
-      // 2. Perform new login
       await _authUsecase.login(email: email, password: password);
 
-      // 3. Initialize services for new user
       await NotificationService().init();
       await SocketService().reconnect();
 

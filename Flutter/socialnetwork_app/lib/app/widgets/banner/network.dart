@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class BannerNetwork extends StatelessWidget {
-
-  final String message;
   
   const BannerNetwork({
     super.key,
-    required this.message,
   });
 
   @override
@@ -34,13 +32,22 @@ class BannerNetwork extends StatelessWidget {
             
             Expanded(
               child: Text(
-                message,
+                Language.of(context, 'no_network_connection'),
                 style: TextStyle(
                   color: Colors.red,
                   fontSize: 15.sp,
                 ),
               ),
             ),
+
+            SizedBox(
+              width: 20.sp,
+              height: 20.sp,
+              child: CircularProgressIndicator(
+                color: Colors.red,
+                strokeWidth: 2.w,
+              ),
+            )
           ],
         ),
       ),

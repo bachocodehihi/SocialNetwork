@@ -141,7 +141,7 @@ class _SettingViewState extends State<SettingView> {
                   icon: Icons.lock_outlined,
                   color: cs.onSurface,
                   onTap: () {
-                    //controller.goToAccount(context);
+                    controller.goToPrivacy(context);
                   },
                 ),
 
@@ -159,7 +159,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: Language.of(context, 'activity'),
+                  title: Language.of(context, 'like_history'),
                   icon: Icons.thumb_up_alt_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -170,7 +170,7 @@ class _SettingViewState extends State<SettingView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: Language.of(context, 'activity'),
+                  title: Language.of(context, 'comment_history'),
                   icon: Icons.chat_bubble_outline_outlined,
                   color: cs.onSurface,
                   onTap: () {

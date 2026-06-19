@@ -6,13 +6,21 @@ class CreateGroupController extends ChangeNotifier {
   final ContactUsecase _contactUsecase;
   final GroupUsecase _groupUsecase;
 
+  final groupNameController = TextEditingController();
+
   List<Map<String, dynamic>> _friends = [];
   bool _isLoading = false;
   bool _isCreating = false;
   String? _error;
   final Set<String> _selectedIds = {};
 
-  CreateGroupController(this._contactUsecase, this._groupUsecase);
+  CreateGroupController(this._contactUsecase, this._groupUsecase) {
+    groupNameController.addListener(_onNameChanged);
+  }
+
+  void _onNameChanged() {
+    notifyListeners();
+  }
 
   List<Map<String, dynamic>> get friends => _friends;
   bool get isLoading => _isLoading;
@@ -54,14 +62,14 @@ class CreateGroupController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>?> createGroup(String name) async {
+  Future<Map<String, dynamic>?> createGroup() async {
     _isCreating = true;
     _error = null;
     notifyListeners();
 
     try {
       final result = await _groupUsecase.createGroup(
-        name: name.trim(),
+        name: groupNameController.text.trim(),
         members: _selectedIds.toList(),
       );
       return result;
@@ -72,5 +80,12 @@ class CreateGroupController extends ChangeNotifier {
       _isCreating = false;
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    groupNameController.removeListener(_onNameChanged);
+    groupNameController.dispose();
+    super.dispose();
   }
 }

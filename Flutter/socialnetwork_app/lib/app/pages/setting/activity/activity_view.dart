@@ -6,7 +6,7 @@ import 'package:socialnetwork/app/widgets/card/today_card.dart';
 import 'package:socialnetwork/app/widgets/chart/week_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:socialnetwork/app/pages/setting/activity/activity_controller.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SettingActivityView extends StatefulWidget {
   const SettingActivityView({super.key});
 
@@ -15,7 +15,6 @@ class SettingActivityView extends StatefulWidget {
 }
 
 class _SettingActivityViewState extends State<SettingActivityView> {
-  //static const List<int> _weekDayMinutes = [1440, 1440, 1440, 1440, 1440, 1440, 1440];
   static const List<String> _weekDayLabels = [
     'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
   ];
@@ -81,38 +80,57 @@ class _SettingActivityViewState extends State<SettingActivityView> {
                       ),
                       SizedBox(width: 10.w),
                       Text(
-                        'Time activity',
+                        Language.of(context, 'activity'),
                         style: TextStyle(
                           fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           color: cs.onSurface,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 24.h),
+
+                  SizedBox(height: 20.h),
+
                   TodayCard(
                     dayLabel: _dynamicLabels[_todayIndex],
                     minutes: todayMinutes,
                   ),
+
                   SizedBox(height: 20.h),
+
                   Text(
-                    'This week',
+                    Language.of(context, 'this_week'),
                     style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
                       color: cs.onSurface,
                     ),
                   ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    'Total: ${_formatDuration(totalWeekMinutes)}',
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      color: cs.onSurfaceVariant,
-                    ),
+
+                  SizedBox(height: 5.h),
+
+                  Row(
+                    children: [
+                      Text(
+                        Language.of(context, 'total'),
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                      Text(
+                        ' ${_formatDuration(totalWeekMinutes)}',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 12.h),
+
+                  SizedBox(height: 20.h),
+
                   WeekChart(
                     values: controller.weekDayMinutes,
                     labels: _dynamicLabels,

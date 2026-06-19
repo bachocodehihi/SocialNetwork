@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:socialnetwork/app/routes/routes.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/profile/profile_controller.dart';
 import 'package:socialnetwork/app/widgets/avatar/fullscreen.dart';
 import 'package:socialnetwork/app/widgets/item/information.dart';
@@ -258,7 +257,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w500,
-                                color: cs.primary,
+                                color: Colors.blue,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -513,7 +512,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                                       Icon(
                                                         hasLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
                                                         size: 13.sp,
-                                                        color: hasLiked ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.7),
+                                                        color: hasLiked ? Colors.blue : cs.onSurfaceVariant.withValues(alpha: 0.7),
                                                       ),
                                                       if (likesCount > 0) ...[
                                                         SizedBox(width: 4.w),
@@ -630,7 +629,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                                               Icon(
                                                                 rHasLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
                                                                 size: 12.sp,
-                                                                color: rHasLiked ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.7),
+                                                                color: rHasLiked ? Colors.blue : cs.onSurfaceVariant.withValues(alpha: 0.7),
                                                               ),
                                                               if (rLikesCount > 0) ...[
                                                                 SizedBox(width: 4.w),
@@ -666,7 +665,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                       color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
                       child: Row(
                         children: [
-                          Icon(Icons.reply, size: 16.sp, color: cs.primary),
+                          Icon(Icons.reply, size: 16.sp, color: Colors.blue),
                           SizedBox(width: 8.w),
                           Expanded(
                             child: Text(
@@ -728,7 +727,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                               }
                             }
                           },
-                          icon: Icon(Icons.send_rounded, color: cs.primary),
+                          icon: Icon(Icons.send_rounded, color: Colors.blue),
                         ),
                       ],
                     ),
@@ -757,7 +756,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
       child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: kIsWeb ? 0 : 24.w,
+            horizontal: kIsWeb ? 0 : 16.w,
             vertical: 16.h,
           ),
           child: Column(
@@ -774,10 +773,20 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                       color: cs.onSurface,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () => Navigator.pushNamed(context, Routes.setting),
-                    icon: Icon(
-                      Icons.settings_outlined, 
+                  // IconButton(
+                  //   onPressed: () => Navigator.pushNamed(context, Routes.setting),
+                  //   icon: Icon(
+                  //     Icons.settings_outlined, 
+                  //     size: 30.sp,
+                  //     color: cs.onSurface,
+                  //   ),
+                  // ),
+                  GestureDetector(
+                    onTap: () {
+                      controller.goToSetting(context);
+                    },
+                    child: Icon(
+                      Icons.settings_outlined,
                       size: 30.sp,
                       color: cs.onSurface,
                     ),
@@ -835,41 +844,37 @@ class _ProfileUserViewState extends State<ProfileUserView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: _buildStatItem(
-                      controller.friendsCount.toString(),
-                      'Friends',
-                      onTap: () {
-                        controller.goToFriends(context);
-                      },
-                    ),
+                  _buildStatItem(
+                    controller.friendsCount.toString(),
+                    Language.of(context, 'friends'), 
+                    onTap: () {
+                      controller.goToFriends(context);
+                    },
                   ),
-                  Expanded(
-                    child: _buildStatItem(
-                      controller.followersCount.toString(), 
-                      'Followers', 
-                      onTap: () {
-                        controller.goToFollowers(context);
-                      },
-                    ),
+                  
+                  
+                  _buildStatItem(
+                    controller.followersCount.toString(),
+                    Language.of(context, 'followers'), 
+                    onTap: () {
+                      controller.goToFollowers(context);
+                    },
                   ),
-                  Expanded(
-                    child: _buildStatItem(
-                      controller.followingCount.toString(), 
-                      'Following', 
-                      onTap: () {
-                        controller.goToFollowing(context);
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildStatItem(
-                      controller.postCount.toString(),
-                      'Posts', 
-                      onTap: () {
 
-                      },
-                    ),
+                  _buildStatItem(
+                    controller.followingCount.toString(),
+                    Language.of(context, 'following'), 
+                    onTap: () {
+                      controller.goToFollowing(context);
+                    },
+                  ),
+
+                  _buildStatItem(
+                    controller.postCount.toString(),
+                    Language.of(context, 'posts'), 
+                    onTap: () {
+
+                    },
                   ),
                 ],
               ),
@@ -881,8 +886,17 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                       onPressed: () {
                         controller.goToAdd(context);
                       },
-                      icon: const Icon(Icons.edit_outlined, size: 18),
-                      label: const Text('Add profile'),
+                      icon: Icon(
+                        Icons.edit_outlined, 
+                        size: 18.sp
+                      ),
+                      label: Text(
+                        Language.of(context, 'add_profile'),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.sp
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
@@ -901,11 +915,17 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                       onPressed: () {
                         controller.goToQRCode(context);
                       },
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.qr_code_outlined, 
-                        size: 18
+                        size: 18.sp
                       ),
-                      label: const Text('QR code'),
+                      label: Text(
+                        'QR code',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.sp
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey,
                         foregroundColor: Colors.white,
@@ -922,7 +942,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
               ),
               SizedBox(height: 20.h),
               Text(
-                'Personal Information',
+                Language.of(context, 'personal_information'), 
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
@@ -983,13 +1003,14 @@ class _ProfileUserViewState extends State<ProfileUserView> {
               SizedBox(height: 20.h),
 
               Text(
-                'All posts',
+                Language.of(context, 'all_posts'),
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
                   color: cs.onSurface,
                 ),
               ),
+
               SizedBox(height: 12.h),
 
               if (controller.loadingPosts)

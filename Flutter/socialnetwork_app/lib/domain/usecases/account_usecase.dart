@@ -24,4 +24,6 @@ class AccountUsecase {
   
   Future<Map<String, dynamic>> getProfile() => _repository.getProfile();
   Future<Map<String, dynamic>> getUserById(String id) => _repository.getUserById(id);
+  Future<Map<String, dynamic>> getPrivacy() => _repository.getPrivacy();
+  Future<Map<String, dynamic>> updatePrivacy(Map<String, bool> settings) => _repository.updatePrivacy(settings);
 }

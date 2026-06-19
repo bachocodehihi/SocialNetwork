@@ -149,7 +149,7 @@ class SignUpEmailController extends ChangeNotifier {
     super.dispose();
   }
 
-  void goToSignInEmail(BuildContext context) {
+  Future<void> goToSignInEmail(BuildContext context) async {
     Navigator.pushReplacementNamed(context, Routes.signinEmail);
   }
 

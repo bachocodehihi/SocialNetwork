@@ -45,7 +45,7 @@ class InformationItem extends StatelessWidget {
         subtitle: Text(
           value,
           style: TextStyle(
-            fontSize: 15.sp,
+            fontSize: 13.sp,
             fontWeight: FontWeight.w500,
             color: cs.onSurface,
           ),

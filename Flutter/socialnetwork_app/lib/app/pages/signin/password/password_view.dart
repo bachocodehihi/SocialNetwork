@@ -8,6 +8,7 @@ import 'package:socialnetwork/domain/usecases/auth_usecase.dart';
 import 'package:socialnetwork/data/repositories/auth_repository_imp.dart';
 import 'package:socialnetwork/data/network/api/auth_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SignInPasswordView extends StatefulWidget {
   const SignInPasswordView({super.key});
   @override
@@ -66,22 +67,22 @@ class _SignInPasswordViewState extends State<SignInPasswordView> {
                       color: cs.onSurface,
                     ),
                   ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    'Enter password',
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w500,
-                      color: cs.onSurface,
-                    ),
-                  ),
+                  // SizedBox(width: 10.w),
+                  // Text(
+                  //   'Enter password',
+                  //   style: TextStyle(
+                  //     fontSize: 20.sp,
+                  //     fontWeight: FontWeight.w500,
+                  //     color: cs.onSurface,
+                  //   ),
+                  // ),
                 ],
               ),
               
               SizedBox(height: 20.h),
 
               Text(
-                'Enter your password',
+                Language.of(context, 'enter_your_password'),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
@@ -99,7 +100,7 @@ class _SignInPasswordViewState extends State<SignInPasswordView> {
                   color: cs.onSurface,
                 ),
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: Language.of(context, 'password'),
                   labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.r),
@@ -146,28 +147,25 @@ class _SignInPasswordViewState extends State<SignInPasswordView> {
 
               SizedBox(height: 20.h),
 
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.black,
-                    minimumSize: Size(double.infinity, 48.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                  ).copyWith(
-                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.black,
+                  minimumSize: Size(double.infinity, 48.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.r),
                   ),
-                  onPressed: controller.isLoading
-                      ? null
-                      : () => controller.submitPassword(context),
-                  child: controller.isLoading ? const CircularProgressIndicator(color: Colors.white) : Text(
-                    'Continue',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15.sp,
-                    ),
+                ).copyWith(
+                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                ),
+                onPressed: controller.isLoading
+                    ? null
+                    : () => controller.submitPassword(context),
+                child: controller.isLoading ? const CircularProgressIndicator(color: Colors.white) : Text(
+                  Language.of(context, 'continue'),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15.sp,
                   ),
                 ),
               ),
@@ -179,7 +177,7 @@ class _SignInPasswordViewState extends State<SignInPasswordView> {
                   controller.goToForget(context);
                 },
                 child: Text(
-                  'Forgot password?',
+                  Language.of(context, 'forgot_password'),
                   style: TextStyle(
                     color: Colors.blue,
                     fontSize: 15.sp,
@@ -187,8 +185,9 @@ class _SignInPasswordViewState extends State<SignInPasswordView> {
                   ),
                 ),
               ),
+
+              SizedBox(height: 8.h),
             ],
-            
           ),
         ),
       ),

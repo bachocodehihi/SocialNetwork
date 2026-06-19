@@ -16,213 +16,262 @@ class Language {
   static const _en = {
     //welcome
     'hello': 'Hello!',
-    'welcome_to_social_network_app': 'Welcome to Social Network App',
+    'wellcome_to_social_network_app': 'Wellcome to Social Network App',
     'sign_in': 'Sign in',
     'create_new_account': 'Create new account',
 
-    //sign up
-    //email
-    'sign_up_by_email': 'Sign up by email',
-    'enter_your_email': 'Enter your email',
-    'already_have_account': 'Already have an account? ',
-    'sign_up_with_google': 'Sign up with Google',
-    'or': 'Or',
+    //signup
+      //email
+      'sign_up_by_email': 'Sign up by email',
+      'enter_your_email': 'Enter your email',
+      'please_enter_email': 'Please enter email!',
+      'invalid_email': 'Invalid email!',
+      'server_error_please_try_again': 'Server error, please try again!',
+      'continue': 'Continue',
+      'already_have_an_account': 'Already have an account? ',
+      'or': 'Or',
+      'sign_up_with_google': 'Sign up with Google',
+      //username
+      'username': 'Username',
+      'enter_your_username': 'Enter your username',
+      //birthday
+      'birthday': 'Birthday',
+      'select_your_birthday': 'Select your birthday',
+      //gender
+      'gender': 'Gender',
+      'select_your_gender': 'Select your gender',
+      //avatar
+      'avatar': 'Avatar',
+      'select_your_avatar': 'Select your avatar',
+      //password
+      'enter_your_password': 'Enter your password',
+      'password': 'Password',
 
-    //name
-    'enter_username': 'Enter username',
-    'enter_your_username': 'Enter your username',
-    'username': 'Username',
-
-    //birthday
-    'select_your_birthday': 'Select your birthday',
-
-    //gender
-    'select_your_gender': 'Select your gender',
-
-    //avatar
-    'select_avatar': 'Select avatar',
-    'select_your_avatar': 'Select your avatar',
-
-    //password
-    'enter_your_password': 'Enter your password',
+    //verify
+      //sign up
+      'verify_your_email': 'Verify your email',
+      'otp_has_been_sent_to': 'Otp has been sent to ',
 
     //sign in
-    //email
-    'sign_in_by_email': 'Sign in by email',
-    'don_t_have_an_account': 'Don\'t have an account? ',
-    'sign_in_with_google': 'Sign in with Google',
-
-    //password
-    'password': 'Password',
-    'confirm_password': 'Confirm Password',
-    'forgot_password': 'Forgot password?',
-    
-    //verify
-    //sign up
-    'verify_email': 'Verify email',
-    'verify_your_email': 'Verify your email',
-    'otp_has_been_sent_to_your_email': 'OTP has been sent to your email.',
-    'didn_t_receive_a_code? ': 'Didn\'t receive a code? ',
-    'resend': 'Resend',
+      //email
+      'sign_in_by_email': 'Sign in by email',
+      'don_t_have_account': 'Don\'t have an account? ',
+      'sign_up': 'Sign up',
+      'sign_in_with_google': 'Sign in with Google',
+      //password
+      'forgot_password': 'Forgot password',
 
     //main
     'home': 'Home',
     'message': 'Message',
     'contact': 'Contact',
-    'notification': 'Notification',
+    'notification' :'Notification',
     'profile': 'Profile',
-
-    //home
-    'what_s_on_your_mind': 'What\'s on your mind?',
-    'like': 'Like',
-    'comment': 'Comment',
-    'share': 'Share',
-
-    //contact
-    'requests': 'Requests',
-    'friends': 'Friends',
-    'groups': 'Groups',
-
-    //message
-
-    //notification
-
-    //profile
-    'add_profile': 'Add Profile',
-    'personal_information': 'Personal Information',
-    'birthday': 'Birthday',
-    'gender': 'Gender',
-    'job': 'Job',
-    'address': 'Address',
-    'phone': 'Phone',
-    'nationality': 'Nationality',
-    'all_posts': 'All posts',
-
-    //create group
-    'create_group': 'Create group',
+      //home
+      'what_s_on_your_mind': 'What\'s on your mind?',
+      'comment': 'Comment',
+      //message
+      //contact
+      'requests' : 'Requests',
+      'friends': 'Friends',
+      'groups': 'Groups',
+      //notification
+      //profile
+      'followers': 'Followers',
+      'following': 'Following',
+      'posts': 'Posts',
+      'add_profile': 'Add profile',
+      'personal_information': 'personal_information',
+      'all_posts': 'All posts',
 
     //setting
     'setting': 'Setting',
     'interface': 'Interface',
-    'dark_mode': 'Dark mode',
+    'dark_mode': 'Dark Mode',
     'language': 'Language',
     'font': 'Font',
     'account': 'Account',
-    'privacy': 'Privacy',
     'activity': 'Activity',
+    'privacy': 'Privacy',
+    'like_history': 'Like history',
+    'comment_history': 'Comment history',
     'switch_account': 'Switch account',
     'log_out': 'Log out',
+      //dark mode
+      'reduce_eye_strain_save_battery_and_improve_visibility': 'Reduce eye strain, save battery, and improve visibility.',
+      //account
+        //change
+        'change_information': 'Change information',
+          //address
+          //avatar
+          //birthday
+          //email
+          //gender
+          //job
+          //nationality
+          //phone
+          //username
 
-    //dark mode
-    'reduce_eye_strain_save_battery_and_improve_visibility': 'Reduce eye strain, save battery, and improve visibility.',
     
-    //language
-    'select_your_preferred_language': 'Select your preferred language',
-
-    //drawer
-    'game': 'Game',
-    
-    //commons
-    'confirm': 'Confirm',
-    'cancel': 'Cancel',
-    'save': 'Save',
-    'success': 'Success',
-    'vietnamese': 'Vietnamese',
-    'english': 'English',
-    'continue': 'Continue',
-    'no_internet': 'No internet connection',
-
-    //search
-    'search': 'Search',
+    //banner
+      //network
+      'no_network_connection': 'No network connection!',
+      //delete
+      'account_will_be deleted_in': 'Account will be deleted in:',
   };
 
   static const _vi = {
     //welcome
     'hello': 'Xin chào!',
-    'welcome_to_social_network_app': 'Chào mừng đến với ứng dụng Mạng Xã Hội',
+    'wellcome_to_social_network_app': 'Chào mừng đến với ứng dụng Mạng xã hội',
     'sign_in': 'Đăng nhập',
     'create_new_account': 'Tạo tài khoản mới',
+
+    //signup
+      //email
+      'sign_up_by_email': 'Đăng ký bằng email',
+      'enter_your_email': 'Nhập email của bạn',
+      'please_enter_email': 'Vui lòng nhập email!',
+      'invalid_email': 'Email không hợp lệ!',
+      'server_error_please_try_again': 'Lỗi máy chủ, vui lòng thử lại!',
+      'continue': 'Tiếp tục',
+      'already_have_an_account': 'Bạn đã có tài khoản? ',
+      'or': 'Hoặc',
+      'sign_up_with_google': 'Đăng ký với Google',
+      //username
+      'username': 'Tên tài khoản',
+      'enter_your_username': 'Nhập tên tài khoản của bạn',
+      //birthday
+      'birthday': 'Ngày sinh',
+      'select_your_birthday': 'Chọn ngày sinh của bạn',
+      //gender
+      'gender': 'Giới tính',
+      'select_your_gender': 'Chọn giới tính của bạn',
+      //avatar
+      'avatar': 'Ảnh đại diện',
+      'select_your_avatar': 'Chọn ảnh đại diện của bạn',
+      //password
+      'enter_your_password': 'Nhập mật khẩu của bạn',
+      'password': 'Mật khẩu',
+
+    //verify
+      //sign up
+      'verify_your_email': 'Xác thực email của bạn',
+      'otp_has_been_sent_to': 'Mã Otp đã được gửi đến ',
+
+    //sign in
+      //email
+      'sign_in_by_email': 'Đăng nhập bằng email',
+      'don_t_have_account': 'Bạn chưa có tài khoản? ',
+      'sign_up': 'Đăng ký',
+      'sign_in_with_google': 'Đăng nhập với Google',
+      //password
+      'forgot_password': 'Quên mật khẩu',
+
+    //main
+    'home': 'Trang chủ',
+    'message': 'Nhắn tin',
+    'contact': 'Danh bạ',
+    'notification' :'Thông báo',
+    'profile': 'Cá nhân',
+      //home
+      'what_s_on_your_mind': 'Bạn đang nghĩ gì?',
+      'comment': 'Bình luận',
+      //message
+      'search_message': 'Tìm kiếm tin nhắn...',
+      //contact
+      'requests' : 'Lời mời ',
+      'friends': 'Bạn bè',
+      'groups': 'Nhóm',
+      //notification
+      //profile
+      'followers': 'Người theo dõi',
+      'following': 'Đang theo dõi',
+      'posts': 'Bài đăng',
+      'add_profile': 'Thêm thông tin',
+      'personal_information': 'Thông tin cá nhân',
+      'all_posts': 'Tất cả bài đăng',
+    
+    //add
+    'address': 'Địa chỉ',
+    'job': 'Công việc',
+    'nationality': 'Quốc tịch',
+    'phone': 'Số điện thoại',
+      //address
+      'add_address': 'Thêm địa chỉ',
+      'enter_your_address': 'Thêm địa chỉ của bạn',
+      'add': 'Thêm',
+      //job
+      'add_job': 'Thêm công việc',
+      'enter_your_job': 'Thêm công việc của bạn',
+      //nationality
+      'add_nationality': 'Thêm quốc tịch',
+      'enter_your_nationality': 'Thêm quốc tịch của bạn',
+      //phone
+      'add_phone': 'Thêm số điện thoại',
+      'enter_your_phone': 'Thêm số điện thoại của bạn',
 
     //setting
     'setting': 'Cài đặt',
     'interface': 'Giao diện',
     'dark_mode': 'Chế độ tối',
     'language': 'Ngôn ngữ',
-    'font': 'Cỡ chữ',
+    'font': 'Phông chữ',
     'account': 'Tài khoản',
     'activity': 'Hoạt động',
-    'notification': 'Thông báo',
-    'switch_account': 'Chuyển tài khoản',
+    'privacy': 'Quyền riêng tư ',
+    'like_history': 'Lịch sử thích',
+    'comment_history': 'Lịch sử bình luận',
+    'switch_account': 'Đổi tài khoản',
     'log_out': 'Đăng xuất',
+      //dark mode
+      'reduce_eye_strain_save_battery_and_improve_visibility': 'Giảm mỏi mắt, tiết kiệm pin và cải thiện khả năng nhìn.',
+      //language
 
-    //dark mode
-    'reduce_eye_strain_save_battery_and improve_visibility': 'Reduce eye strain, save battery, and improve visibility.',
+      //privacy
 
-    //language
-    'select_your_preferred_language': 'Chọn ngôn ngữ ưu tiên của bạn',
-    
-    //main
-    'home': 'Trang chủ',
-    'message': 'Tin nhắn',
-    'contact': 'Danh bạ',
-    'profile': 'Cá nhân',
+      //activity
 
-    //home
-    'like': 'Thích',
-    'comment': 'Comment',
-    'share': 'Share',
-    
-    //contact
-    'requests': 'Lời mời',
-    'friends': 'Bạn bè',
-    'groups': 'Nhóm',
-    
-    //drawer
-    'game': 'Trò chơi',
-    
-    //commons
-    'confirm': 'Xác nhận',
-    'cancel': 'Hủy',
-    'save': 'Lưu',
-    'success': 'Thành công',
-    'vietnamese': 'Tiếng Việt',
-    'english': 'Tiếng Anh',
-    'continue': 'Tiếp tục',
-    'no_internet': 'Không có kết nối mạng',
+      //history
+        //like
 
-    //home
-    'birthday': 'Ngày sinh',
-    'gender': 'Giới tính',
-    'job': 'Công việc',
-    'address': 'Địa chỉ',
-    'phone': 'Số điện thoại',
-    'nationality': 'Quốc tịch',
+        //comment
 
-    //search
-    'search': 'Tìm kiếm',
+      //account
+      'delete_account': 'Xóa tài khoản',
+        //change
+        'change_information': 'Đổi thông tin',
+          //address
+          'change_address': 'Đổi địa chỉ',
+          //avatar
+          'change_avatar': 'Đổi ảnh đại diện',
+          //birthday
+          'change_birthday': 'Đổi ngày sinh',
+          //email
+          'change_email': 'Đổi email',
+          //gender
+          'change_gender': 'Đổi giới tính',
+          //job
+          'change_job': 'Đổi công việc',
+          //nationality
+          'change_nationality': 'Đổi quốc tịch',
+          //phone
+          'change_phone': 'Đổi số điện thoại',
+          //username
+          'change_username': 'Đổi tên tài khoản',
+        //delete
+          //account
+          'enter_your_reason': 'Nhập lý do của bạn',
+          'reason': 'Lý do',
+          'are_you_sure_you_want_to_schedule_the_deletion_of_this_account_The_account_will_be_permanently_deleted_in_24_hours': 'Bạn có chắc chắn muốn lên lịch xóa tài khoản này không? Tài khoản sẽ được lên lịch xóa vĩnh viễn sau 24 giờ.',
+      //switch
+        //account
+        'add_account': 'Thêm tài khoản',
 
-    //sign up
-    //email
-    'enter_your_email': 'Nhập email của bạn',
-    'sign_up_by_email': 'Đăng ký bằng email',
-    'already_have_account': 'Đã có tài khoản? ',
-    'sign_up_with_google': 'Đăng ký với Google',
-    'or': 'Hoặc',
-
-    //name
-    'enter_your_name': 'Nhập tên của bạn',
-
-    //birthday
-    'select_your_birthday': 'Chọn ngày sinh của bạn',
-
-    //gender
-    'select_your_gender': 'Chọn giới tính của bạn',
-
-    //avatar
-    'select_your_avatar': 'Chọn ảnh đại diện của bạn',
-
-    //password
-    'enter_your_password': 'Nhập mật khẩu của bạn',
-
+    //banner
+      //network
+      'no_network_connection': 'Không có kết nối mạng!',
+      //delete
+      'account_will_be deleted_in': 'Tài khoản sẽ xóa trong vòng:',
   };
-}
+} 

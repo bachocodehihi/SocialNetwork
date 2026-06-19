@@ -10,7 +10,6 @@ import 'package:socialnetwork/data/local/auth_local.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:socialnetwork/data/service/call.dart';
 
-// ✅ Top-level — xử lý khi app bị KILL
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +36,6 @@ class NotificationService {
 
   void Function(Map<String, dynamic> data)? onNotificationTap;
 
-  // ─── INIT ─────────────────────────────────────────────────────────────────
   Future<void> init() async {
     await _fcm.requestPermission(
       alert: true,
@@ -45,14 +43,12 @@ class NotificationService {
       sound: true,
     );
 
-    // Request Android 13+ Notification Permission at runtime
     if (defaultTargetPlatform == TargetPlatform.android) {
       final androidImplementation = _localNotif.resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>();
       await androidImplementation?.requestNotificationsPermission();
     }
 
-    // Enable foreground notification display on iOS
     await _fcm.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
@@ -63,7 +59,6 @@ class NotificationService {
 
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-    // ✅ App đang foreground — show local notification
     FirebaseMessaging.onMessage.listen((message) {
       debugPrint('📬 Foreground message: ${message.data}');
       final type = message.data['type'] ?? '';
@@ -74,13 +69,11 @@ class NotificationService {
       showNotificationFromMessage(message);
     });
 
-    // ✅ User tap khi app background
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       debugPrint('👆 Tapped (background): ${message.data}');
       onNotificationTap?.call(message.data);
     });
 
-    // ✅ User tap khi app bị kill (cold start)
     final initial = await _fcm.getInitialMessage();
     if (initial != null) {
       debugPrint('👆 Tapped (killed): ${initial.data}');
@@ -98,7 +91,6 @@ class NotificationService {
     debugPrint('✅ NotificationService initialized');
   }
 
-  // ─── LOCAL NOTIFICATIONS SETUP ────────────────────────────────────────────
   Future<void> setupLocalNotifications() async {
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     final iosInit = DarwinInitializationSettings(
@@ -178,14 +170,12 @@ class NotificationService {
     ));
   }
 
-  // ─── SHOW NOTIFICATION ────────────────────────────────────────────────────
   static Future<void> showNotificationFromMessage(RemoteMessage message) async {
     final localNotif = NotificationService()._localNotif;
 
     final data = message.data;
     final type = data['type'] ?? 'general';
 
-    // ✅ Lấy title/body từ data (backend gửi trong data field)
     final title = data['title'] ?? data['senderName'] ?? _defaultTitle(type);
     final body = data['body'] ?? '';
 
@@ -284,7 +274,6 @@ class NotificationService {
           : (type == 'call' ? 'call_category' : null),
     );
 
-    // ✅ ID unique theo thời gian — tránh duplicate
     final notifId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final Map<String, dynamic> payloadData = Map<String, dynamic>.from(data);
     payloadData['notificationId'] = notifId;
@@ -314,7 +303,6 @@ class NotificationService {
     }
   }
 
-  // ─── FCM TOKEN ────────────────────────────────────────────────────────────
   Future<void> _saveFcmToken() async {
     final token = await _fcm.getToken();
     if (token != null) {

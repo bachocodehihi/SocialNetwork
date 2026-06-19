@@ -161,4 +161,39 @@ class AccountApi {
       options: await _authOptions(),
     );
   }
+
+  Future<Map<String, dynamic>> getPrivacy() async {
+    try {
+      final response = await _dio.get(
+        '/api/account/privacy',
+        options: await _authOptions(),
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        return Map<String, dynamic>.from(response.data['privacy']);
+      }
+      throw Exception('Failed to load privacy settings');
+    } on DioException catch (e) {
+      throw Exception(e.message ?? 'Network error occurred');
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> updatePrivacy(Map<String, bool> settings) async {
+    try {
+      final response = await _dio.put(
+        '/api/account/privacy',
+        data: settings,
+        options: await _authOptions(),
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        return Map<String, dynamic>.from(response.data['privacy']);
+      }
+      throw Exception('Failed to update privacy settings');
+    } on DioException catch (e) {
+      throw Exception(e.message ?? 'Network error occurred');
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

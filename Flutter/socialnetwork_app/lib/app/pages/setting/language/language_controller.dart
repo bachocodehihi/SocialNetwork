@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:socialnetwork/app/providers/app_provider.dart';
 
 class SettingLanguageController {
-  void selectLanguage(BuildContext context, String langCode) {
+  Future<void> selectLanguage(BuildContext context, String langCode) async {
     context.read<AppProvider>().setLocale(Locale(langCode));
     
     final isEn = langCode == 'en';

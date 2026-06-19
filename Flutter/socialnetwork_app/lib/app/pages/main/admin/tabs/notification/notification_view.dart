@@ -81,11 +81,11 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
       case 'post_comment':
         return Colors.teal;
       case 'new_post':
-        return cs.primary;
+        return Colors.blue;
       case 'group_invite':
         return Colors.indigo;
       default:
-        return cs.primary;
+        return Colors.blue;
     }
   }
 
@@ -105,7 +105,7 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: () => _controller.loadNotifications(),
-        color: cs.primary,
+        color: Colors.blue,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
@@ -133,7 +133,7 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
                         icon: Icon(
                           Icons.done_all_rounded,
                           size: 26.sp,
-                          color: cs.primary,
+                          color: Colors.blue,
                         ),
                         tooltip: 'Đánh dấu tất cả đã đọc',
                       ),
@@ -163,7 +163,7 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
                             child: Icon(
                               Icons.notifications_none_rounded,
                               size: 64.sp,
-                              color: cs.primary.withValues(alpha: 0.7),
+                              color: Colors.blue.withValues(alpha: 0.7),
                             ),
                           ),
                           SizedBox(height: 16.h),
@@ -235,7 +235,7 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
                             color: isRead ? cs.surfaceContainerLowest : cs.primaryContainer.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(14.r),
                             border: Border.all(
-                              color: isRead ? cs.outlineVariant.withValues(alpha: 0.4) : cs.primary.withValues(alpha: 0.15),
+                              color: isRead ? cs.outlineVariant.withValues(alpha: 0.4) : Colors.blue.withValues(alpha: 0.15),
                               width: 1,
                             ),
                             boxShadow: [
@@ -332,7 +332,7 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
                                   height: 8.r,
                                   margin: EdgeInsets.only(left: 8.w),
                                   decoration: BoxDecoration(
-                                    color: cs.primary,
+                                    color: Colors.blue,
                                     shape: BoxShape.circle,
                                   ),
                                 ),

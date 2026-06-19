@@ -39,10 +39,11 @@ class AuthApi {
     return await _dio.post('/api/auth/check-email', data: {'email': email});
   }
 
-  Future<Response> login({required String email, required String password}) async {
+  Future<Response> login({required String email, required String password, bool isVerifying = false}) async {
     return await _dio.post('/api/auth/login', data: {
       'email': email,
       'password': password,
+      'isVerifying': isVerifying,
     });
   }
 

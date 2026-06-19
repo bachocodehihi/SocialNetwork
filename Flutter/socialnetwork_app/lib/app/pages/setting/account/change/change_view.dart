@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/setting/account/change/change_controller.dart';
 import 'package:socialnetwork/app/widgets/item/setting.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SettingChangeView extends StatefulWidget {
   const SettingChangeView({super.key});
 
@@ -62,7 +63,7 @@ class _SettingChangeViewState extends State<SettingChangeView> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      'Change information',
+                      Language.of(context, 'change_information'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
@@ -74,7 +75,7 @@ class _SettingChangeViewState extends State<SettingChangeView> {
                 SizedBox(height: 20.h),
                 
                 SettingItem(
-                  title: 'Username',
+                  title: Language.of(context, 'username'),
                   icon: Icons.person_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -96,7 +97,7 @@ class _SettingChangeViewState extends State<SettingChangeView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: 'Gender',
+                  title: Language.of(context, 'gender'),
                   icon: Icons.wc_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -107,7 +108,7 @@ class _SettingChangeViewState extends State<SettingChangeView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: 'Birthday',
+                  title: Language.of(context, 'birthday'),
                   icon: Icons.cake_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -118,8 +119,8 @@ class _SettingChangeViewState extends State<SettingChangeView> {
                 SizedBox(height: 15.h),
                 
                 SettingItem(
-                  title: 'Avatar',
-                  icon: Icons.dark_mode_outlined,
+                  title: Language.of(context, 'avatar'),
+                  icon: Icons.account_circle_outlined,
                   color: cs.onSurface,
                   onTap: () {
                     controller.goToChangeAvatar(context);
@@ -129,7 +130,7 @@ class _SettingChangeViewState extends State<SettingChangeView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: 'Address',
+                  title: Language.of(context, 'address'),
                   icon: Icons.location_on_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -140,7 +141,7 @@ class _SettingChangeViewState extends State<SettingChangeView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: 'Phone',
+                  title: Language.of(context, 'phone'),
                   icon: Icons.phone_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -151,7 +152,7 @@ class _SettingChangeViewState extends State<SettingChangeView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: 'Job',
+                  title: Language.of(context, 'job'),
                   icon: Icons.work_outline_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -162,7 +163,7 @@ class _SettingChangeViewState extends State<SettingChangeView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: 'Nationality',
+                  title: Language.of(context, 'nationality'),
                   icon: Icons.public_outlined,
                   color: cs.onSurface,
                   onTap: () {

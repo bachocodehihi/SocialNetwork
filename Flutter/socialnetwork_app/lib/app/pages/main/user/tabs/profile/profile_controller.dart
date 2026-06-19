@@ -89,7 +89,6 @@ class ProfileUserController extends ChangeNotifier {
 
   Future<void> likeComment(String postId, String commentId) async {
     try {
-      // Optimistic UI update
       final postIndex = posts.indexWhere((p) => p['_id'] == postId);
       if (postIndex != -1) {
         final post = posts[postIndex];
@@ -125,7 +124,6 @@ class ProfileUserController extends ChangeNotifier {
 
   Future<void> likeReply(String postId, String commentId, String replyId) async {
     try {
-      // Optimistic UI update
       final postIndex = posts.indexWhere((p) => p['_id'] == postId);
       if (postIndex != -1) {
         final post = posts[postIndex];
@@ -205,23 +203,27 @@ class ProfileUserController extends ChangeNotifier {
   String get job => user?['job'] ?? '';
   String get nationality => user?['nationality'] ?? '';
 
-  void goToFriends(BuildContext context) {
+  Future<void> goToFriends(BuildContext context) async {
     Navigator.pushNamed(context, Routes.friend);
   }
 
-  void goToFollowing(BuildContext context) {
+  Future<void> goToFollowing(BuildContext context) async {
     Navigator.pushNamed(context, Routes.following);
   }
 
-  void goToFollowers(BuildContext context) {
+  Future<void> goToFollowers(BuildContext context) async {
     Navigator.pushNamed(context, Routes.follower);
   }
 
-  void goToQRCode(BuildContext context) {
+  Future<void> goToQRCode(BuildContext context) async {
     Navigator.pushNamed(context, Routes.code);
   }
 
-  void goToAdd(BuildContext context) async {
+  Future<void> goToSetting(BuildContext context) async {
+    Navigator.pushNamed(context, Routes.setting);
+  }
+
+  Future<void> goToAdd(BuildContext context) async {
     await Navigator.pushNamed(context, Routes.add);
     await loadUser();
   }

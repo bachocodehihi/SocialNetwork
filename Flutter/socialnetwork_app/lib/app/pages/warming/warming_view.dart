@@ -3,8 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/warming/warming_controller.dart';
-import 'package:socialnetwork/app/routes/routes.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class WarmingView extends StatefulWidget {
   const WarmingView({super.key});
 
@@ -54,20 +53,19 @@ class _WarmingViewState extends State<WarmingView> {
             children: [
               const Spacer(),
 
-              // Beautiful glowing golden warning icon
               Container(
                 width: 100.w,
                 height: 100.w,
                 decoration: BoxDecoration(
-                  color: Colors.amber.withOpacity(0.1),
+                  color: Colors.yellow.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.amber.withOpacity(0.3),
+                    color: Colors.yellow.withValues(alpha: 0.3),
                     width: 2.w,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.amber.withOpacity(0.05),
+                      color: Colors.yellow.withValues(alpha: 0.05),
                       blurRadius: 20,
                       spreadRadius: 5,
                     ),
@@ -77,7 +75,7 @@ class _WarmingViewState extends State<WarmingView> {
                   child: Icon(
                     Icons.warning_amber_rounded,
                     size: 50.sp,
-                    color: Colors.amber[700],
+                    color: Colors.yellow,
                   ),
                 ),
               ),
@@ -89,16 +87,14 @@ class _WarmingViewState extends State<WarmingView> {
                 'Yêu Cầu Xóa Tài Khoản',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w500,
                   color: cs.onSurface,
-                  letterSpacing: 0.5,
                 ),
               ),
 
               SizedBox(height: 16.h),
 
-              // Subtitle
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: Text(
@@ -106,87 +102,32 @@ class _WarmingViewState extends State<WarmingView> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: cs.onSurface.withOpacity(0.7),
+                    color: cs.onSurface.withValues(alpha: 0.7),
                     height: 1.5,
                   ),
                 ),
               ),
 
-              SizedBox(height: 32.h),
+              const Spacer(),
 
-              // Elegant details card
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(20.w),
-                decoration: BoxDecoration(
-                  color: brightness == Brightness.dark
-                      ? Colors.grey[900]
-                      : Colors.grey[50],
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(
-                    color: cs.onSurface.withOpacity(0.1),
-                    width: 1.w,
-                  ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  minimumSize: Size(double.infinity, 48.h),
+                  // shape: RoundedRectangleBorder(
+                  //   borderRadius: BorderRadius.circular(30.r),
+                  // ),
+                  shape: const StadiumBorder(),
+                ).copyWith(
+                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                 ),
-                child: Column(
-                  children: [
-                    _buildDetailRow(
-                      context,
-                      label: 'Trạng thái',
-                      value: 'Đang xem xét',
-                      valueColor: Colors.orange[700]!,
-                      isBoldValue: true,
-                    ),
-                    Divider(color: cs.onSurface.withOpacity(0.08), height: 24.h),
-                    _buildDetailRow(
-                      context,
-                      label: 'Thời gian yêu cầu',
-                      value: controller.getFormattedRequestTime(),
-                    ),
-                    Divider(color: cs.onSurface.withOpacity(0.08), height: 24.h),
-                    _buildDetailRow(
-                      context,
-                      label: 'Hạn xóa vĩnh viễn',
-                      value: controller.getFormattedDeletionTime(),
-                      valueColor: Colors.red[600]!,
-                      isBoldValue: true,
-                    ),
-                  ],
-                ),
-              ),
-
-              const Spacer(flex: 2),
-
-              // Back to Home button
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    minimumSize: Size(double.infinity, 50.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    elevation: 2,
-                  ).copyWith(
-                    overlayColor: WidgetStateProperty.all(Colors.white.withOpacity(0.1)),
-                  ),
-                  onPressed: () async {
-                    final target = await Routes.getDashboardRoute();
-                    if (!context.mounted) return;
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      target,
-                      (route) => false,
-                    );
-                  },
-                  child: Text(
-                    'Quay lại trang chủ',
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
+                onPressed: () => controller.returnToHomepage(context),
+                child: Text(
+                  Language.of(context, 'return_to_homepage'),
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    color: Colors.white
                   ),
                 ),
               ),
@@ -194,36 +135,6 @@ class _WarmingViewState extends State<WarmingView> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildDetailRow(
-    BuildContext context, {
-    required String label,
-    required String value,
-    Color? valueColor,
-    bool isBoldValue = false,
-  }) {
-    final cs = Theme.of(context).colorScheme;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: cs.onSurface.withOpacity(0.55),
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: isBoldValue ? FontWeight.bold : FontWeight.w500,
-            color: valueColor ?? cs.onSurface,
-          ),
-        ),
-      ],
     );
   }
 }

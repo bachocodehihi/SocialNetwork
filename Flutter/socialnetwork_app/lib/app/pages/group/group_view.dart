@@ -476,7 +476,7 @@ class _GroupViewState extends State<GroupView> {
                               setModalState(() {});
                             }
                           },
-                          icon: Icon(Icons.send_rounded, color: cs.primary),
+                          icon: Icon(Icons.send_rounded, color: Colors.blue),
                         ),
                       ],
                     ),

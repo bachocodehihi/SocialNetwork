@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:socialnetwork/app/pages/add//add_view.dart';
+import 'package:socialnetwork/app/pages/add/add_view.dart';
 class AddPage extends StatelessWidget {
   const AddPage({super.key});
   @override

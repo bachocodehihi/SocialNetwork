@@ -55,7 +55,7 @@ class SettingItem extends StatelessWidget {
               ],
             ),
             Icon(
-              Icons.chevron_right_rounded, 
+              Icons.chevron_right_outlined, 
               color: color,
               size: 20.sp,
             ),

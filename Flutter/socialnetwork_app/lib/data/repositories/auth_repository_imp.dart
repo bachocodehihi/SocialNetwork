@@ -67,9 +67,9 @@ class AuthRepositoryImp implements AuthRepository {
   }
 
   @override
-  Future<void> login({required String email, required String password}) async {
+  Future<void> login({required String email, required String password, bool isVerifying = false}) async {
     try {
-      final response = await _authApi.login(email: email, password: password);
+      final response = await _authApi.login(email: email, password: password, isVerifying: isVerifying);
       final token = response.data['token']?.toString() ?? '';
       final user = response.data['user'] as Map<String, dynamic>;
       await AuthLocal.saveLogin(token, email, user);

@@ -9,6 +9,7 @@ import 'package:socialnetwork/data/repositories/account_repository_imp.dart';
 import 'package:socialnetwork/data/network/api/account_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:socialnetwork/app/widgets/format/phone.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class AddPhoneView extends StatefulWidget {
   const AddPhoneView({super.key});
   @override
@@ -57,7 +58,7 @@ class _AddPhoneViewState extends State<AddPhoneView> {
             vertical: 16.h,
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -73,7 +74,7 @@ class _AddPhoneViewState extends State<AddPhoneView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Add phone',
+                    Language.of(context, 'add_phone'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -86,7 +87,7 @@ class _AddPhoneViewState extends State<AddPhoneView> {
               SizedBox(height: 20.h),
 
               Text(
-                'Enter your phone',
+                Language.of(context, 'enter_your_phone'),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
@@ -106,7 +107,7 @@ class _AddPhoneViewState extends State<AddPhoneView> {
                   color: cs.onSurface,
                 ),
                 decoration: InputDecoration(
-                  labelText: 'Phone',
+                  labelText: Language.of(context, 'phone'),
                   
                   labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
                   border: OutlineInputBorder(
@@ -172,7 +173,7 @@ class _AddPhoneViewState extends State<AddPhoneView> {
                   child: controller.isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          'Add',
+                          Language.of(context, 'add'),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15.sp,

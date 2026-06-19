@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/setting/account/account_controller.dart';
 import 'package:socialnetwork/app/widgets/item/setting.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SettingAccountView extends StatefulWidget {
   const SettingAccountView({super.key});
 
@@ -56,7 +57,7 @@ class _SettingAccountViewState extends State<SettingAccountView> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      'Account',
+                      Language.of(context, 'account'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
@@ -68,7 +69,7 @@ class _SettingAccountViewState extends State<SettingAccountView> {
                 SizedBox(height: 20.h),
 
                 SettingItem(
-                  title: 'Change information',
+                  title: Language.of(context, 'change_information'),
                   icon: Icons.assignment_ind_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -78,7 +79,7 @@ class _SettingAccountViewState extends State<SettingAccountView> {
                 SizedBox(height: 15.h),
 
                 SettingItem(
-                  title: 'Password',
+                  title: Language.of(context, 'password'),
                   icon: Icons.password_outlined,
                   color: cs.onSurface,
                   onTap: () {
@@ -89,7 +90,7 @@ class _SettingAccountViewState extends State<SettingAccountView> {
                 SizedBox(height: 15.h),
                 
                 SettingItem(
-                  title: 'Delete account',
+                  title: Language.of(context, 'delete_account'),
                   icon: Icons.delete_outlined,
                   color: Colors.red,
                   onTap: () {

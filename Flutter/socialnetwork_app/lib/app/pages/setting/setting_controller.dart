@@ -29,14 +29,15 @@ class SettingController extends ChangeNotifier {
     Navigator.pushNamed(context, Routes.font);
   }
 
+  Future<void> goToPrivacy(BuildContext context) async {
+    Navigator.pushNamed(context, Routes.privacy);
+  }
+
   Future<void> logout(BuildContext context) async {
-    // 1. Remove FCM token from server
     await _accountApi.removeFcmToken();
 
-    // 2. Disconnect socket
     SocketService().disconnect();
 
-    // 3. Clear local data
     await AuthLocal.logout();
 
     if (!context.mounted) return;
