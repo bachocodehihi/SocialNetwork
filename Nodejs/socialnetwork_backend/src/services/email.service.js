@@ -1,40 +1,60 @@
-const { Resend } = require('resend');
+const https = require('https');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const sendOTP = async (email, otp) => {
-    try {
-        // Mẹo test nhiều tài khoản:
-        // Vì Resend Free chỉ cho gửi tới quybach2611@gmail.com, 
-        // đối với bất kỳ email nào khác, chúng ta sẽ ghi mã OTP ra log của Render 
-        // để bạn có thể mở log lên xem và nhập test thoải mái mà không bị báo lỗi.
-        if (email !== 'quybach2611@gmail.com') {
-            console.log(`=========================================`);
-            console.log(`[TESTING OTP] Email: ${email} | Code: ${otp}`);
-            console.log(`=========================================`);
-            return;
-        }
-
-        const response = await resend.emails.send({
-            from: 'Social Network App <onboarding@resend.dev>',
-            to: email,
+const sendOTP = (email, otp) => {
+    return new Promise((resolve, reject) => {
+        // Chuẩn bị dữ liệu gửi cho Brevo
+        const data = JSON.stringify({
+            sender: {
+                name: 'Social Network',
+                email: 'quybach2611@gmail.com'
+            },
+            to: [
+                {
+                    email: email
+                }
+            ],
             subject: 'Account Verification',
-            text: `Your OTP is: ${otp}. This code is valid for 1 minute. Please do not share it with others.`,
-            html: `<h3>Hello!</h3>
-                   <p>Your account verification code is: <strong>${otp}</strong></p>
-                   <p>This code is valid for 1 minute. For security reasons, please do not share this code with others.</p>`,
+            htmlContent: `<h3>Hello!</h3>
+                           <p>Your account verification code is: <strong>${otp}</strong></p>
+                           <p>This code is valid for 1 minute. For security reasons, please do not share this code with others.</p>`
         });
 
-        if (response.error) {
-            console.error("Resend API returned error:", response.error);
-            throw new Error(response.error.message);
-        }
+        // Cấu hình HTTP Request đến Brevo API (port 443 không bị Render chặn)
+        const options = {
+            hostname: 'api.brevo.com',
+            port: 443,
+            path: '/v3/smtp/email',
+            method: 'POST',
+            headers: {
+                'accept': 'application/json',
+                'api-key': process.env.BREVO_API_KEY,
+                'content-type': 'application/json',
+                'content-length': Buffer.byteLength(data)
+            }
+        };
 
-        console.log("Email sent successfully via Resend. ID:", response.data?.id);
-    } catch (error) {
-        console.error("Error sending email via Resend:", error);
-        throw error;
-    }
+        const req = https.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => body += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    console.log(`Email sent successfully via Brevo to ${email}. ID: ${body}`);
+                    resolve(JSON.parse(body));
+                } else {
+                    console.error(`Brevo API returned error status ${res.statusCode}: ${body}`);
+                    reject(new Error(`Brevo API error: ${body}`));
+                }
+            });
+        });
+
+        req.on('error', (error) => {
+            console.error("Error making request to Brevo:", error);
+            reject(error);
+        });
+
+        req.write(data);
+        req.end();
+    });
 };
 
 module.exports = { sendOTP };
