@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:socialnetwork/data/service/socket.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+const String agoraAppId = "63c3b289a0ad46fb90f74f68554f4a9f";
 
 enum CallState { idle, ringing, calling, connected, ended }
 
@@ -59,18 +61,17 @@ class CallService extends ChangeNotifier {
   Timer? _autoCancelTimer;
 
   String? pendingNotificationAction;
-
   Map<String, dynamic>? _pendingOffer;
 
-  RTCPeerConnection? _pc;
-  MediaStream? _localStream;
-  MediaStream? _remoteStream;
-  RTCVideoRenderer? _remoteRenderer;
+  // Agora Engine & State variables
+  RtcEngine? _engine;
+  bool _isJoined = false;
+  int? _remoteUid;
+  final List<int> _groupRemoteUids = [];
 
-  RTCVideoRenderer? get remoteRenderer => _remoteRenderer;
-
-  final Map<String, RTCPeerConnection> _groupPcs = {};
-  final Map<String, Map<String, dynamic>> _groupParticipants = {};
+  RtcEngine? get agoraEngine => _engine;
+  int? get remoteUid => _remoteUid;
+  List<int> get groupRemoteUids => _groupRemoteUids;
 
   void Function(CallInfo)? onIncomingCall;
   void Function()? onCallEnded;
@@ -83,15 +84,12 @@ class CallService extends ChangeNotifier {
   bool get isSpeakerOn => _isSpeakerOn;
   Duration get callDuration => _callDuration;
   bool get isInCall => _callState != CallState.idle && _callState != CallState.ended;
-  Map<String, Map<String, dynamic>> get groupParticipants => _groupParticipants;
 
   Future<void> init() async {
     if (_isInitialized) return;
-    _remoteRenderer = RTCVideoRenderer();
-    await _remoteRenderer!.initialize();
     _registerListeners();
     _isInitialized = true;
-    debugPrint('✅ CallService initialized');
+    debugPrint('✅ CallService initialized with Agora');
   }
 
   void _registerListeners() {
@@ -134,19 +132,92 @@ class CallService extends ChangeNotifier {
     });
   }
 
-  Future<bool> _requestMicrophonePermission() async {
+  Future<bool> _requestPermissions() async {
     if (kIsWeb) return true;
     try {
-      final status = await Permission.microphone.request();
-      if (!status.isGranted) {
+      final isVideo = _currentCall?.callType == 'video';
+      
+      final micStatus = await Permission.microphone.request();
+      if (!micStatus.isGranted) {
         debugPrint('❌ Microphone permission denied');
         onCallError?.call('Bạn cần cấp quyền truy cập Micro để thực hiện cuộc gọi');
         return false;
       }
+      
+      if (isVideo) {
+        final camStatus = await Permission.camera.request();
+        if (!camStatus.isGranted) {
+          debugPrint('❌ Camera permission denied');
+          onCallError?.call('Bạn cần cấp quyền truy cập Camera để thực hiện cuộc gọi video');
+          return false;
+        }
+      }
       return true;
     } catch (e) {
-      debugPrint('⚠️ Microphone permission check skipped or failed on this platform: $e');
+      debugPrint('⚠️ Permissions check failed: $e');
       return true;
+    }
+  }
+
+  Future<void> _initAgoraEngine() async {
+    if (_engine != null) return;
+    try {
+      _engine = createAgoraRtcEngine();
+      await _engine!.initialize(const RtcEngineContext(
+        appId: agoraAppId,
+        channelProfile: ChannelProfileType.channelProfileCommunication,
+      ));
+
+      _engine!.registerEventHandler(
+        RtcEngineEventHandler(
+          onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+            debugPrint("🟢 Local user joined Agora channel: ${connection.channelId}");
+            _isJoined = true;
+            notifyListeners();
+          },
+          onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+            debugPrint("🔊 Remote user joined Agora: $remoteUid");
+            if (_currentCall?.isGroup == true) {
+              if (!_groupRemoteUids.contains(remoteUid)) {
+                _groupRemoteUids.add(remoteUid);
+              }
+            } else {
+              _remoteUid = remoteUid;
+              _callState = CallState.connected;
+              _startDurationTimer();
+              onCallConnected?.call();
+            }
+            notifyListeners();
+          },
+          onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
+            debugPrint("🔴 Remote user went offline: $remoteUid");
+            if (_currentCall?.isGroup == true) {
+              _groupRemoteUids.remove(remoteUid);
+              if (_groupRemoteUids.isEmpty) {
+                endCall();
+              }
+            } else {
+              if (_remoteUid == remoteUid) {
+                endCall();
+              }
+            }
+            notifyListeners();
+          },
+          onLeaveChannel: (RtcConnection connection, RtcStats stats) {
+            debugPrint("⏹️ Local user left Agora channel");
+            _isJoined = false;
+            _remoteUid = null;
+            _groupRemoteUids.clear();
+            notifyListeners();
+          },
+          onError: (ErrorCodeType err, String msg) {
+            debugPrint("⚠️ Agora Error: [$err] $msg");
+            onCallError?.call("Lỗi kết nối cuộc gọi. Vui lòng thử lại sau.");
+          },
+        ),
+      );
+    } catch (e) {
+      debugPrint("❌ Failed to initialize Agora Engine: $e");
     }
   }
 
@@ -156,7 +227,7 @@ class CallService extends ChangeNotifier {
     required Map<String, dynamic> receiverInfo,
   }) async {
     if (_callState != CallState.idle) {
-      debugPrint('⚠️ CallService state was not idle ($_callState). Force resetting before starting a new call.');
+      debugPrint('⚠️ CallService state was not idle ($_callState). Force resetting before starting.');
       _resetCall();
     }
 
@@ -164,7 +235,7 @@ class CallService extends ChangeNotifier {
       _currentCall = CallInfo(
         callId: '',
         conversationId: conversationId,
-        callType: 'voice',
+        callType: 'voice', // Hoặc 'video' tùy chỉnh sau này
         remoteUser: receiverInfo,
         isIncoming: false,
         isGroup: false,
@@ -172,22 +243,14 @@ class CallService extends ChangeNotifier {
       _callState = CallState.ringing;
       notifyListeners();
 
-      await _setupPeerConnection(receiverId);
+      await _setupAgoraAndJoin(conversationId);
 
-      final offer = await _pc!.createOffer({
-        'mandatory': {
-          'OfferToReceiveAudio': true,
-          'OfferToReceiveVideo': false,
-        },
-        'optional': [],
-      });
-      await _pc!.setLocalDescription(offer);
-
+      // Gửi tin nhắn khởi tạo cuộc gọi kèm dummy offer lên Socket
       _socket.emit('call_initiate', {
         'receiverId': receiverId,
         'conversationId': conversationId,
         'callType': 'voice',
-        'offer': {'type': offer.type, 'sdp': offer.sdp},
+        'offer': {'type': 'offer', 'sdp': 'agora'}, 
       });
 
       _autoCancelTimer?.cancel();
@@ -248,27 +311,12 @@ class CallService extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _setupPeerConnection(_currentCall!.remoteUser['_id']);
+      await _setupAgoraAndJoin(_currentCall!.conversationId);
 
-      if (_pendingOffer != null) {
-        await _pc!.setRemoteDescription(
-          RTCSessionDescription(_pendingOffer!['sdp'], _pendingOffer!['type']),
-        );
-        _pendingOffer = null;
-      }
-
-      final answer = await _pc!.createAnswer({
-        'mandatory': {
-          'OfferToReceiveAudio': true,
-          'OfferToReceiveVideo': false,
-        },
-        'optional': [],
-      });
-      await _pc!.setLocalDescription(answer);
-
+      // Gửi tin chấp nhận cuộc gọi kèm dummy answer lên Socket
       _socket.emit('call_accept', {
         'callId': _currentCall!.callId,
-        'answer': {'type': answer.type, 'sdp': answer.sdp},
+        'answer': {'type': 'answer', 'sdp': 'agora'},
       });
     } catch (e) {
       debugPrint('❌ acceptCall error: $e');
@@ -313,13 +361,7 @@ class CallService extends ChangeNotifier {
     }
     _callState = CallState.calling;
     notifyListeners();
-
-    if (data['answer'] != null) {
-      _pc?.setRemoteDescription(RTCSessionDescription(
-        data['answer']['sdp'],
-        data['answer']['type'],
-      ));
-    }
+    // Do Agora kết nối tự động khi bên kia join channel, ta không cần parse answer SDP ở đây
   }
 
   void _onCallRejected(dynamic data) {
@@ -347,31 +389,8 @@ class CallService extends ChangeNotifier {
     onCallEnded?.call();
   }
 
-  Future<void> _onSignal(dynamic data) async {
-    final signal = data['signal'];
-    if (signal == null || _pc == null) return;
-
-    if (signal['type'] == 'candidate') {
-      try {
-        final candidateVal = signal['candidate'];
-        if (candidateVal is Map) {
-          await _pc!.addCandidate(RTCIceCandidate(
-            candidateVal['candidate']?.toString(),
-            candidateVal['sdpMid']?.toString(),
-            candidateVal['sdpMLineIndex'] as int?,
-          ));
-        } else if (candidateVal is String) {
-          await _pc!.addCandidate(RTCIceCandidate(
-            candidateVal,
-            signal['sdpMid']?.toString(),
-            signal['sdpMLineIndex'] as int?,
-          ));
-        }
-      } catch (e) {
-        debugPrint('❌ Error adding ICE candidate: $e');
-      }
-    }
-  }
+  // Khớp với socket, ta không cần làm gì với signal vì Agora tự lo việc kết nối
+  void _onSignal(dynamic data) {}
 
   Future<void> startGroupCall({
     required String conversationId,
@@ -381,9 +400,6 @@ class CallService extends ChangeNotifier {
     if (_callState != CallState.idle) return;
 
     try {
-      final hasPermission = await _requestMicrophonePermission();
-      if (!hasPermission) return;
-
       _currentCall = CallInfo(
         callId: '',
         conversationId: conversationId,
@@ -408,8 +424,8 @@ class CallService extends ChangeNotifier {
         'conversationId': conversationId,
       });
 
-      _localStream?.dispose();
-      _localStream = await navigator.mediaDevices.getUserMedia({'audio': true, 'video': false});
+      await _setupAgoraAndJoin(conversationId);
+
       _startDurationTimer();
       _callState = CallState.connected;
       notifyListeners();
@@ -430,7 +446,7 @@ class CallService extends ChangeNotifier {
     _currentCall = CallInfo(
       callId: data['callId'].toString(),
       conversationId: data['conversationId'].toString(),
-      callType: 'voice',
+      callType: data['callType'] ?? 'voice',
       remoteUser: remoteUser,
       isIncoming: true,
       isGroup: true,
@@ -448,17 +464,11 @@ class CallService extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final hasPermission = await _requestMicrophonePermission();
-      if (!hasPermission) {
-        _resetCall();
-        return;
-      }
-      _localStream?.dispose();
-      _localStream = await navigator.mediaDevices.getUserMedia({'audio': true, 'video': false});
-
       _socket.emit('group_call_join', {
         'conversationId': _currentCall!.conversationId,
       });
+
+      await _setupAgoraAndJoin(_currentCall!.conversationId);
 
       _startDurationTimer();
       _callState = CallState.connected;
@@ -469,202 +479,59 @@ class CallService extends ChangeNotifier {
     }
   }
 
-  Future<void> _onGroupCallUserJoined(dynamic data) async {
-    final joinedUserId = data['userId']?.toString();
-    if (joinedUserId == null || joinedUserId == _socket.currentUserId) return;
-
-    debugPrint('👥 Peer joined group call: $joinedUserId');
-
-    try {
-      final pc = await _createGroupPeerConnection(joinedUserId);
-      _groupPcs[joinedUserId] = pc;
-
-      final offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
-
-      _socket.emit('group_signal', {
-        'targetUserId': joinedUserId,
-        'conversationId': _currentCall!.conversationId,
-        'signal': {'type': offer.type, 'sdp': offer.sdp},
-      });
-    } catch (e) {
-      debugPrint('Error initiating peer connection to $joinedUserId: $e');
-    }
+  // Khớp với socket, các hàm này không cần dựng PeerConnection nữa
+  void _onGroupCallUserJoined(dynamic data) {
+    debugPrint('👥 User joined group call: ${data['userId']}');
   }
 
   void _onGroupCallUserLeft(dynamic data) {
     final leftUserId = data['userId']?.toString();
-    if (leftUserId == null) return;
-
-    debugPrint('👥 Peer left group call: $leftUserId');
-    _groupPcs[leftUserId]?.close();
-    _groupPcs.remove(leftUserId);
-    _groupParticipants.remove(leftUserId);
-    notifyListeners();
+    debugPrint('👥 User left group call: $leftUserId');
   }
 
-  Future<void> _onGroupSignal(dynamic data) async {
-    final fromUserId = data['from']?.toString();
-    final signal = data['signal'];
-    if (fromUserId == null || signal == null) return;
+  void _onGroupSignal(dynamic data) {}
 
-    final type = signal['type'];
-
-    try {
-      RTCPeerConnection? pc = _groupPcs[fromUserId];
-      if (pc == null) {
-        pc = await _createGroupPeerConnection(fromUserId);
-        _groupPcs[fromUserId] = pc;
-      }
-
-      if (type == 'offer') {
-        await pc.setRemoteDescription(RTCSessionDescription(signal['sdp'], signal['type']));
-        final answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-
-        _socket.emit('group_signal', {
-          'targetUserId': fromUserId,
-          'conversationId': _currentCall!.conversationId,
-          'signal': {'type': answer.type, 'sdp': answer.sdp},
-        });
-      } else if (type == 'answer') {
-        await pc.setRemoteDescription(RTCSessionDescription(signal['sdp'], signal['type']));
-      } else if (type == 'candidate') {
-        final candidateVal = signal['candidate'];
-        if (candidateVal is Map) {
-          await pc.addCandidate(RTCIceCandidate(
-            candidateVal['candidate']?.toString(),
-            candidateVal['sdpMid']?.toString(),
-            candidateVal['sdpMLineIndex'] as int?,
-          ));
-        } else if (candidateVal is String) {
-          await pc.addCandidate(RTCIceCandidate(
-            candidateVal,
-            signal['sdpMid']?.toString(),
-            signal['sdpMLineIndex'] as int?,
-          ));
-        }
-      }
-    } catch (e) {
-      debugPrint('Error handling group signal from $fromUserId: $e');
-    }
-  }
-
-  Future<RTCPeerConnection> _createGroupPeerConnection(String targetUserId) async {
-    final config = {
-      'iceServers': [
-        {'urls': 'stun:stun.l.google.com:19302'},
-        {'urls': 'stun:stun1.l.google.com:19302'},
-      ],
-      'sdpSemantics': 'unified-plan',
-    };
-
-    final pc = await createPeerConnection(config);
-
-    if (_localStream != null) {
-      for (final track in _localStream!.getTracks()) {
-        await pc.addTrack(track, _localStream!);
-      }
-    }
-
-    pc.onIceCandidate = (candidate) {
-      if (candidate.candidate == null) return;
-      _socket.emit('group_signal', {
-        'targetUserId': targetUserId,
-        'conversationId': _currentCall!.conversationId,
-        'signal': {
-          'type': 'candidate',
-          'candidate': candidate.candidate,
-          'sdpMid': candidate.sdpMid,
-          'sdpMLineIndex': candidate.sdpMLineIndex,
-        },
-      });
-    };
-
-    pc.onTrack = (event) {
-      debugPrint('🔊 Group call track received from $targetUserId');
-    };
-
-    return pc;
-  }
-
-  Future<void> _setupPeerConnection(String targetUserId) async {
-    final hasPermission = await _requestMicrophonePermission();
+  Future<void> _setupAgoraAndJoin(String channelId) async {
+    final hasPermission = await _requestPermissions();
     if (!hasPermission) {
-      throw Exception('Microphone permission not granted');
+      throw Exception('Camera or Microphone permission not granted');
     }
 
-    await _pc?.close();
-    _pc = null;
+    await _initAgoraEngine();
 
-    final config = {
-      'iceServers': [
-        {'urls': 'stun:stun.l.google.com:19302'},
-        {'urls': 'stun:stun1.l.google.com:19302'},
-      ],
-      'sdpSemantics': 'unified-plan',
-    };
-
-    _pc = await createPeerConnection(config);
-
-    _localStream?.dispose();
-    _localStream = await navigator.mediaDevices.getUserMedia({'audio': true, 'video': false});
-
-    for (final track in _localStream!.getTracks()) {
-      await _pc!.addTrack(track, _localStream!);
+    // Enable/disable video dựa trên loại cuộc gọi
+    final isVideo = _currentCall?.callType == 'video';
+    if (isVideo) {
+      await _engine!.enableVideo();
+      await _engine!.startPreview();
+    } else {
+      await _engine!.enableAudio();
+      await _engine!.disableVideo();
     }
 
-    _pc!.onConnectionState = (state) {
-      debugPrint('⚡ PeerConnection state: $state');
-    };
-
-    _pc!.onIceConnectionState = (state) {
-      debugPrint('⚡ ICE connection state: $state');
-    };
-
-    _pc!.onTrack = (RTCTrackEvent event) async {
-      debugPrint('🔊 WebRTC onTrack: track kind = ${event.track.kind}, streams count = ${event.streams.length}');
-      if (event.streams.isNotEmpty) {
-        _remoteStream = event.streams[0];
-      } else {
-        _remoteStream ??= await createLocalMediaStream('remote_stream');
-        await _remoteStream!.addTrack(event.track);
-      }
-      _remoteRenderer?.srcObject = _remoteStream;
-      
-      _isSpeakerOn = true;
-      Helper.setSpeakerphoneOn(true);
-      
-      _callState = CallState.connected;
-      _startDurationTimer();
-      notifyListeners();
-      onCallConnected?.call();
-    };
-
-    _pc!.onIceCandidate = (RTCIceCandidate candidate) {
-      if (candidate.candidate == null || _currentCall == null) return;
-      _socket.emit('signal', {
-        'targetUserId': targetUserId,
-        'callId': _currentCall!.callId,
-        'signal': {
-          'type': 'candidate',
-          'candidate': candidate.candidate,
-          'sdpMid': candidate.sdpMid,
-          'sdpMLineIndex': candidate.sdpMLineIndex,
-        },
-      });
-    };
+    // Thiết lập tùy chọn tham gia cuộc gọi
+    await _engine!.joinChannel(
+      token: '', // Để trống nếu chọn mode Testing trên Agora console
+      channelId: channelId,
+      uid: 0, // 0 để Agora tự động sinh uid ngẫu nhiên
+      options: ChannelMediaOptions(
+        clientRoleType: ClientRoleType.clientRoleBroadcaster,
+        channelProfile: ChannelProfileType.channelProfileCommunication,
+        publishCameraTrack: isVideo,
+        publishMicrophoneTrack: true,
+      ),
+    );
   }
 
   void toggleMute() {
     _isMuted = !_isMuted;
-    _localStream?.getAudioTracks().forEach((t) => t.enabled = !_isMuted);
+    _engine?.muteLocalAudioStream(_isMuted);
     notifyListeners();
   }
 
   void toggleSpeaker() {
     _isSpeakerOn = !_isSpeakerOn;
-    Helper.setSpeakerphoneOn(_isSpeakerOn);
+    _engine?.setEnableSpeakerphone(_isSpeakerOn);
     notifyListeners();
   }
 
@@ -680,18 +547,15 @@ class CallService extends ChangeNotifier {
   void _resetCall() {
     _autoCancelTimer?.cancel();
     _durationTimer?.cancel();
-    _pc?.close();
-    _pc = null;
-
-    _groupPcs.forEach((_, pc) => pc.close());
-    _groupPcs.clear();
-    _groupParticipants.clear();
-
-    _localStream?.dispose();
-    _localStream = null;
-    _remoteStream?.dispose();
-    _remoteStream = null;
-    _remoteRenderer?.srcObject = null;
+    
+    // Rời kênh và giải phóng Agora Engine
+    _engine?.leaveChannel();
+    _engine?.release();
+    _engine = null;
+    
+    _isJoined = false;
+    _remoteUid = null;
+    _groupRemoteUids.clear();
 
     _callState = CallState.idle;
     _currentCall = null;
@@ -711,7 +575,6 @@ class CallService extends ChangeNotifier {
   @override
   void dispose() {
     _resetCall();
-    _remoteRenderer?.dispose();
     super.dispose();
   }
 }

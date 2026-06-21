@@ -4,10 +4,17 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOTP = async (email, otp) => {
     try {
-        // Lưu ý: Với tài khoản Resend Free chưa cấu hình Domain riêng:
-        // 1. Phải gửi từ địa chỉ: 'onboarding@resend.dev'
-        // 2. Chỉ gửi được đến chính email đăng ký Resend của bạn (quybach2611@gmail.com).
-        // Muốn gửi cho mọi email khác, bạn cần Add Domain của bạn vào Resend dashboard và xác minh DNS.
+        // Mẹo test nhiều tài khoản:
+        // Vì Resend Free chỉ cho gửi tới quybach2611@gmail.com, 
+        // đối với bất kỳ email nào khác, chúng ta sẽ ghi mã OTP ra log của Render 
+        // để bạn có thể mở log lên xem và nhập test thoải mái mà không bị báo lỗi.
+        if (email !== 'quybach2611@gmail.com') {
+            console.log(`=========================================`);
+            console.log(`[TESTING OTP] Email: ${email} | Code: ${otp}`);
+            console.log(`=========================================`);
+            return;
+        }
+
         const response = await resend.emails.send({
             from: 'Social Network App <onboarding@resend.dev>',
             to: email,

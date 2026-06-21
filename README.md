@@ -161,3 +161,13 @@ Dự án đã được cấu hình chặt chẽ bằng hệ thống `.gitignore`
 *   Các thư mục thư viện tải về (`node_modules/`, `.dart_tool/`, `build/`).
 
 ---
+
+WebRTC:
+   STUN: Google STUN
+   TURN: Open Relay Project (Public TURN - Không cần đăng ký)
+
+Email:
+   Resend
+   Brevo
+
+SMS: Firebase Phone Auth

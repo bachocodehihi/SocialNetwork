@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:socialnetwork/data/service/call.dart';
 
 class CallInView extends StatefulWidget {
@@ -75,19 +74,7 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
           backgroundColor: const Color(0xFF0F0F1A),
           body: Stack(
             children: [
-              // Invisible RTCVideoView to play the remote audio stream
-              if (_callService.remoteRenderer != null)
-                SizedBox(
-                  width: 1,
-                  height: 1,
-                  child: Opacity(
-                    opacity: 0.01,
-                    child: RTCVideoView(
-                      _callService.remoteRenderer!,
-                      mirror: false,
-                    ),
-                  ),
-                ),
+
 
               // Animated gradient blobs
               Positioned(

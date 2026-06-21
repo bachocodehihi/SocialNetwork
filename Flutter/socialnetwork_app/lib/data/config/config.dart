@@ -1,5 +1,5 @@
 class Config {
-  static const bool isProduction = false;
+  static const bool isProduction = true;
 
   static const String currentIp = '192.168.1.10';
   static const int currentPort = 5000;
