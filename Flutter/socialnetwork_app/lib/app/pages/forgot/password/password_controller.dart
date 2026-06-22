@@ -113,10 +113,9 @@ class ForgotPasswordController extends ChangeNotifier {
           ),
         ).then((_) {
           if (context.mounted) {
-            Navigator.pushNamedAndRemoveUntil(
+            Navigator.popUntil(
               context,
-              Routes.wellcome,
-              (route) => false,
+              (route) => route.settings.name == Routes.forgot,
             );
           }
         });
