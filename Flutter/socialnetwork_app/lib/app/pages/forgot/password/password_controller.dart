@@ -109,15 +109,15 @@ class ForgotPasswordController extends ChangeNotifier {
           builder: (_) => AppAlertDialog(
             icon: Icons.check_outlined,
             iconColor: Colors.green,
-            message: 'Account created successfully!',
+            message: 'Password changed successfully!',
           ),
         ).then((_) {
           if (context.mounted) {
             Navigator.pushNamedAndRemoveUntil(
-            context,
-            Routes.forgot,
-            (route) => false,
-          );
+              context,
+              Routes.wellcome,
+              (route) => false,
+            );
           }
         });
       }
