@@ -5,6 +5,7 @@ import 'package:socialnetwork/app/routes/routes.dart';
 import 'package:socialnetwork/data/service/notification.dart';
 import 'package:socialnetwork/data/service/socket.dart';
 import 'package:socialnetwork/data/config/config.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 
 class SignUpEmailController extends ChangeNotifier {
   
@@ -23,7 +24,7 @@ class SignUpEmailController extends ChangeNotifier {
 
   void toggleAgreedTerms() {
     isAgreedTerms = !isAgreedTerms;
-    if (isAgreedTerms && isAgreedSocial && _errorMessage == 'Please agree to terms to continue!') {
+    if (isAgreedTerms && isAgreedSocial) {
       _errorMessage = '';
     }
     notifyListeners();
@@ -31,39 +32,40 @@ class SignUpEmailController extends ChangeNotifier {
 
   void toggleAgreedSocial() {
     isAgreedSocial = !isAgreedSocial;
-    if (isAgreedTerms && isAgreedSocial && _errorMessage == 'Please agree to terms to continue!') {
+    if (isAgreedTerms && isAgreedSocial) {
       _errorMessage = '';
     }
     notifyListeners();
   }
 
   static const _messages = {
-    'SERVER_ERROR': 'Server error, please try again!',
-    'EMAIL_REGISTERED': 'Email already exists!',
-    'INVALID_GOOGLE_TOKEN': 'Google authentication failed!',
+    'SERVER_ERROR': 'server_error_please_try_again',
+    'EMAIL_REGISTERED': 'email_already_exists',
+    'INVALID_GOOGLE_TOKEN': 'google_authentication_failed',
   };
 
-  String _getErrorMessage(String code) {
-    return _messages[code] ?? code;
+  String _getErrorMessage(BuildContext context, String code) {
+    final key = _messages[code] ?? code;
+    return Language.of(context, key);
   }
 
-  bool validateEmail() {
+  bool validateEmail(BuildContext context) {
     final email = emailController.text.trim();
 
     if (email.isEmpty) {
-      _errorMessage = 'Please enter email!';
+      _errorMessage = Language.of(context, 'please_enter_email');
       notifyListeners();
       return false;
     }
 
     if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
-      _errorMessage = 'Invalid email!';
+      _errorMessage = Language.of(context, 'invalid_email');
       notifyListeners();
       return false;
     }
 
     if (!isAgreedTerms || !isAgreedSocial) {
-      _errorMessage = 'Please agree to terms to continue!';
+      _errorMessage = Language.of(context, 'please_agree_to_terms_to_continue');
       notifyListeners();
       return false;
     }
@@ -74,7 +76,7 @@ class SignUpEmailController extends ChangeNotifier {
   }
 
   Future<void> submitEmail(BuildContext context) async {
-    if (!validateEmail()) return;
+    if (!validateEmail(context)) return;
 
     final email = emailController.text.trim();
     _isLoading = true;
@@ -84,7 +86,7 @@ class SignUpEmailController extends ChangeNotifier {
 
       final emailExists = await _authUsecase.checkEmail(email);
       if (emailExists) {
-        _errorMessage = _messages['EMAIL_REGISTERED']!;
+        _errorMessage = _getErrorMessage(context, 'EMAIL_REGISTERED');
         return;
       }
 
@@ -99,7 +101,7 @@ class SignUpEmailController extends ChangeNotifier {
       }
     } catch (e) {
       final code = e.toString().replaceAll('Exception: ', '');
-      _errorMessage = _getErrorMessage(code);
+      _errorMessage = _getErrorMessage(context, code);
       notifyListeners();
     } finally {
       _isLoading = false;
@@ -132,7 +134,7 @@ class SignUpEmailController extends ChangeNotifier {
       final String? idToken = googleAuth.idToken;
 
       if (idToken == null) {
-        _errorMessage = 'Could not get ID Token from Google';
+        _errorMessage = Language.of(context, 'could_not_get_id_token_from_google');
         _isLoading = false;
         notifyListeners();
         return;
@@ -159,7 +161,7 @@ class SignUpEmailController extends ChangeNotifier {
 
     } catch (e) {
       final code = e.toString().replaceAll('Exception: ', '');
-      _errorMessage = _getErrorMessage(code);
+      _errorMessage = _getErrorMessage(context, code);
       notifyListeners();
     } finally {
       _isLoading = false;
