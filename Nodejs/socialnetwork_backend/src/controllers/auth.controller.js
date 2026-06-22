@@ -10,6 +10,12 @@ const { cloudinary } = require('../config/cloudinary');
 const sendOtp = async (req, res) => {
     try {
         const { email } = req.body;
+        let type = req.body.type;
+
+        if (!type) {
+            const userExists = await Account.findOne({ email });
+            type = userExists ? 'forgot' : 'signup';
+        }
 
         await OTP.deleteMany({ email });
 
@@ -17,7 +23,7 @@ const sendOtp = async (req, res) => {
         const newOTP = new OTP({ email, otp: otpCode });
         await newOTP.save();
 
-        await sendOTP(email, otpCode);
+        await sendOTP(email, otpCode, type);
 
         return res.status(200).json({ 
             success: true, 
