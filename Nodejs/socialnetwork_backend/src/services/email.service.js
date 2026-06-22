@@ -96,7 +96,7 @@ const sendOTP = (email, otp) => {
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://img.icons8.com/fluency/96/000000/speech-bubble.png" alt="Social Network Logo">
+            <img src="https://socialnetwork-rkjz.onrender.com/logo.png" alt="Social Network Logo">
             <h1>Social Network</h1>
         </div>
         <div class="content">

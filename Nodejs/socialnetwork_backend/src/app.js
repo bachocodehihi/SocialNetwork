@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 
@@ -24,6 +25,10 @@ app.use('/api/message', messageRoute);
 app.use('/api/groups', groupRoute);
 app.use('/api/notification', notificationRoute);
 app.use('/api/admin', adminRoute);
+
+app.get('/logo.png', (req, res) => {
+    res.sendFile(path.join(__dirname, 'logo.png'));
+});
 
 app.get('/', (req, res) => {
     res.send('Social Network API Server is running');
