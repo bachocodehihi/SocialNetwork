@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
 import 'package:socialnetwork/domain/usecases/auth_usecase.dart';
 import 'package:socialnetwork/app/widgets/dialog/alert.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class ForgotPasswordController extends ChangeNotifier {
   final AuthUsecase _authUsecase;
   final String email;
@@ -36,33 +36,34 @@ class ForgotPasswordController extends ChangeNotifier {
   }
 
   static const _messages = {
-    'FORGOT_PASSWORD_SUCCESS': 'Forgot password successfully!',
-    'SERVER_ERROR': 'Server error, please try again!',
+    'FORGOT_PASSWORD_SUCCESS': 'forgot_password_success',
+    'SERVER_ERROR': 'server_error_please_try_again',
   };
 
-  String _getErrorMessage(String code) {
-    return _messages[code] ?? code;
+  String _getErrorMessage(BuildContext context, String code) {
+    final key = _messages[code] ?? code;
+    return Language.of(context, key);
   }
 
-  bool validatePassword() {
+  bool validatePassword(BuildContext context) {
     final newPassword = newPasswordController.text.trim();
 
     final newConfirmPassword = newConfirmPasswordController.text.trim();
 
     if (newPassword.isEmpty) {
-      _errorMessage = 'Please enter password!';
+      _errorMessage = Language.of(context, 'please_enter_password');
       notifyListeners();
       return false;
     }
 
     if (newConfirmPassword.isEmpty) {
-      _errorMessage = 'Please enter confirm password!';
+      _errorMessage = Language.of(context, 'please_enter_confirm_password');
       notifyListeners();
       return false;
     }
 
     if (newPassword.length < 8) {
-      _errorMessage = 'Password must be at least 8 characters!';
+      _errorMessage = Language.of(context, 'password_must_be_at_least_8_characters');
       notifyListeners();
       return false;
     }
@@ -72,14 +73,13 @@ class ForgotPasswordController extends ChangeNotifier {
     );
 
     if (!passwordRegex.hasMatch(newPassword)) {
-      _errorMessage =
-          'Password must include uppercase, lowercase, number and special character!';
+      _errorMessage = Language.of(context, 'password_must_include_requirements');
       notifyListeners();
       return false;
     }
 
     if (newPassword != newConfirmPassword) {
-      _errorMessage = 'Passwords do not match!';
+      _errorMessage = Language.of(context, 'passwords_do_not_match');
       notifyListeners();
       return false;
     }
@@ -91,7 +91,7 @@ class ForgotPasswordController extends ChangeNotifier {
 
   Future<void> forgotPassword(BuildContext context) async {
 
-    if (!validatePassword()) return;
+    if (!validatePassword(context)) return;
 
     final newPassword = newPasswordController.text.trim();
     _isLoading = true;
@@ -109,7 +109,7 @@ class ForgotPasswordController extends ChangeNotifier {
           builder: (_) => AppAlertDialog(
             icon: Icons.check_outlined,
             iconColor: Colors.green,
-            message: 'Password changed successfully!',
+            message: _getErrorMessage(context, 'FORGOT_PASSWORD_SUCCESS'),
           ),
         ).then((_) {
           if (context.mounted) {
@@ -122,7 +122,7 @@ class ForgotPasswordController extends ChangeNotifier {
       }
     } catch (e) {
       final code = e.toString().replaceAll('Exception: ', '');
-      _errorMessage = _getErrorMessage(code);
+      _errorMessage = _getErrorMessage(context, code);
       notifyListeners();
       if (context.mounted) {
         showDialog(
@@ -131,7 +131,7 @@ class ForgotPasswordController extends ChangeNotifier {
           builder: (_) => AppAlertDialog(
             icon: Icons.close_outlined,
             iconColor: Colors.red,
-            message: _getErrorMessage(code),
+            message: _getErrorMessage(context, code),
           ),
         );
       }

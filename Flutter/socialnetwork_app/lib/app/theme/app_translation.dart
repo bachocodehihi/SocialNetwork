@@ -62,6 +62,15 @@ class Language {
       //password
       'forgot_password': 'Forgot password',
 
+    //forgot
+    'enter_your_email_to_change_your_password': 'Enter your email to change your password',
+    'forgot_password_success': 'Password reset successfully!',
+    'please_enter_password': 'Please enter password!',
+    'please_enter_confirm_password': 'Please enter confirm password!',
+    'password_must_be_at_least_8_characters': 'Password must be at least 8 characters!',
+    'password_must_include_requirements': 'Password must include uppercase, lowercase, number and special character!',
+    'passwords_do_not_match': 'Passwords do not match!',
+
     //main
     'home': 'Home',
     'message': 'Message',
@@ -173,6 +182,19 @@ class Language {
       'sign_in_with_google': 'Đăng nhập với Google',
       //password
       'forgot_password': 'Quên mật khẩu',
+
+    //forgot
+    'enter_your_email_to_change_your_password': 'Nhập email để thay đổi mật khẩu',
+      //password
+      'enter_your_new_password': 'Nhập mật khẩu mới của bạn',
+      'new_password': 'Mật khẩu mới',
+      'confirm_new_password': 'Xác nhận mật khẩu mới',
+      'forgot_password_success': 'Đặt lại mật khẩu thành công!',
+      'please_enter_password': 'Vui lòng nhập mật khẩu!',
+      'please_enter_confirm_password': 'Vui lòng nhập xác nhận mật khẩu!',
+      'password_must_be_at_least_8_characters': 'Mật khẩu phải có ít nhất 8 ký tự!',
+      'password_must_include_requirements': 'Mật khẩu phải bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!',
+      'passwords_do_not_match': 'Mật khẩu xác nhận không trùng khớp!',
 
     //main
     'home': 'Trang chủ',
