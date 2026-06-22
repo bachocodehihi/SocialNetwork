@@ -51,6 +51,7 @@ class Language {
       //sign up
       'verify_your_email': 'Verify your email',
       'otp_has_been_sent_to': 'Otp has been sent to ',
+      'didn_t_receive_a code': 'Didn\'t receive a code?',
 
     //sign in
       //email
@@ -134,6 +135,9 @@ class Language {
       'please_enter_email': 'Vui lòng nhập email!',
       'invalid_email': 'Email không hợp lệ!',
       'server_error_please_try_again': 'Lỗi máy chủ, vui lòng thử lại!',
+      'i_agree_to': 'Tôi đồng ý với ',
+      'terms_of_service': 'điều khoản sử dụng',
+      'social_terms_of_service': 'điều khoản Mạng xã hội',
       'continue': 'Tiếp tục',
       'already_have_an_account': 'Bạn đã có tài khoản? ',
       'or': 'Hoặc',
@@ -158,6 +162,8 @@ class Language {
       //sign up
       'verify_your_email': 'Xác thực email của bạn',
       'otp_has_been_sent_to': 'Mã Otp đã được gửi đến ',
+      'didn_t_receive_a_code': 'Không nhận được mã? ',
+      'resend': 'Gửi lại',
 
     //sign in
       //email

@@ -15,9 +15,27 @@ class SignUpEmailController extends ChangeNotifier {
 
   bool _isLoading = false;
   String _errorMessage = '';
+  bool isAgreedTerms = false;
+  bool isAgreedSocial = false;
 
   String get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
+
+  void toggleAgreedTerms() {
+    isAgreedTerms = !isAgreedTerms;
+    if (isAgreedTerms && isAgreedSocial && _errorMessage == 'Please agree to terms to continue!') {
+      _errorMessage = '';
+    }
+    notifyListeners();
+  }
+
+  void toggleAgreedSocial() {
+    isAgreedSocial = !isAgreedSocial;
+    if (isAgreedTerms && isAgreedSocial && _errorMessage == 'Please agree to terms to continue!') {
+      _errorMessage = '';
+    }
+    notifyListeners();
+  }
 
   static const _messages = {
     'SERVER_ERROR': 'Server error, please try again!',
@@ -40,6 +58,12 @@ class SignUpEmailController extends ChangeNotifier {
 
     if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
       _errorMessage = 'Invalid email!';
+      notifyListeners();
+      return false;
+    }
+
+    if (!isAgreedTerms || !isAgreedSocial) {
+      _errorMessage = 'Please agree to terms to continue!';
       notifyListeners();
       return false;
     }
@@ -151,6 +175,12 @@ class SignUpEmailController extends ChangeNotifier {
 
   Future<void> goToSignInEmail(BuildContext context) async {
     Navigator.pushReplacementNamed(context, Routes.signinEmail);
+  }
+
+  Future<void> goToTermTerm(BuildContext context) async {
+  }
+
+  Future<void> goToTermSocial(BuildContext context) async {
   }
 
 }
