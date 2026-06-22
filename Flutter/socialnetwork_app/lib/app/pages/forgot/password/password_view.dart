@@ -17,21 +17,31 @@ class ForgotPasswordView extends StatefulWidget {
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
   late ForgotPasswordController controller;
+  bool _isInitialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final email = args?['email'] as String? ?? '';
-    controller = ForgotPasswordController(
-      AuthUsecase(
-        AuthRepositoryImp(
-          AuthApi(DioClient.createDio()),
+    if (!_isInitialized) {
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      final email = args?['email'] as String? ?? '';
+      controller = ForgotPasswordController(
+        AuthUsecase(
+          AuthRepositoryImp(
+            AuthApi(DioClient.createDio()),
+          ),
         ),
-      ),
-      email: email,
-    );
-    controller.addListener(() => setState(() {}));
+        email: email,
+      );
+      controller.addListener(() => setState(() {}));
+      _isInitialized = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
