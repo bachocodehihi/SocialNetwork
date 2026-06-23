@@ -14,11 +14,11 @@ class PostContentController extends ChangeNotifier {
 
   final TextEditingController contentController = TextEditingController();
 
-  String postType = 'user'; // 'user' or 'group'
+  String postType = 'user';
   Map<String, dynamic>? selectedGroup;
   List<Map<String, dynamic>> myGroups = [];
   List<XFile> pickedImages = [];
-  String privacy = 'public'; // 'public', 'friends', 'private'
+  String privacy = 'public';
 
   bool isLoadingGroups = false;
   bool isSubmitting = false;
@@ -119,7 +119,7 @@ class PostContentController extends ChangeNotifier {
       );
 
       if (context.mounted) {
-        Navigator.pop(context, true); // Returns true to notify main screen to refresh feed
+        Navigator.pop(context, true); 
       }
     } catch (e) {
       errorMessage = e.toString().replaceAll('Exception: ', '');

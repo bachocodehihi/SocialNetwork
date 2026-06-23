@@ -23,7 +23,6 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
       duration: const Duration(seconds: 2),
     )..repeat();
 
-    // Safety check: if call is already ended/idle or null, close screen instantly
     if (_callService.currentCall == null || _callService.callState == CallState.idle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) Navigator.of(context).pop();
@@ -75,8 +74,6 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
           body: Stack(
             children: [
 
-
-              // Animated gradient blobs
               Positioned(
                 top: -100.h,
                 left: -50.w,
@@ -133,7 +130,7 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                               style: TextStyle(
                                 color: Colors.white70,
                                 fontSize: 10.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.5,
                               ),
                             ),
@@ -142,7 +139,6 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                       ),
                       const Spacer(),
 
-                      // Pulsing wave avatar
                       AnimatedBuilder(
                         animation: _pulseController,
                         builder: (context, child) {
@@ -184,7 +180,7 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 48.sp,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       )
@@ -211,14 +207,13 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                         style: TextStyle(
                           color: Colors.blue,
                           fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 1.0,
                         ),
                       ),
 
                       const Spacer(),
 
-                      // Audio Controls Bar
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
                         decoration: BoxDecoration(
@@ -232,7 +227,6 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            // Mic Mute Button
                             _buildCallControl(
                               icon: _callService.isMuted ? Icons.mic_off_outlined : Icons.mic_none_outlined,
                               isActive: _callService.isMuted,
@@ -240,14 +234,12 @@ class _CallInViewState extends State<CallInView> with SingleTickerProviderStateM
                               activeColor: Colors.redAccent,
                             ),
 
-                            // End call button
                             _buildBigRoundButton(
                               icon: Icons.call_end,
                               color: Colors.redAccent,
                               onTap: () => _callService.endCall(),
                             ),
 
-                            // Speakerphone Button
                             _buildCallControl(
                               icon: _callService.isSpeakerOn ? Icons.volume_up_outlined : Icons.volume_down_outlined,
                               isActive: _callService.isSpeakerOn,

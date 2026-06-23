@@ -63,7 +63,6 @@ class CallService extends ChangeNotifier {
   String? pendingNotificationAction;
   Map<String, dynamic>? _pendingOffer;
 
-  // Agora Engine & State variables
   RtcEngine? _engine;
   bool _isJoined = false;
   int? _remoteUid;
@@ -235,7 +234,7 @@ class CallService extends ChangeNotifier {
       _currentCall = CallInfo(
         callId: '',
         conversationId: conversationId,
-        callType: 'voice', // Hoặc 'video' tùy chỉnh sau này
+        callType: 'voice',
         remoteUser: receiverInfo,
         isIncoming: false,
         isGroup: false,
@@ -245,7 +244,6 @@ class CallService extends ChangeNotifier {
 
       await _setupAgoraAndJoin(conversationId);
 
-      // Gửi tin nhắn khởi tạo cuộc gọi kèm dummy offer lên Socket
       _socket.emit('call_initiate', {
         'receiverId': receiverId,
         'conversationId': conversationId,
@@ -313,7 +311,6 @@ class CallService extends ChangeNotifier {
     try {
       await _setupAgoraAndJoin(_currentCall!.conversationId);
 
-      // Gửi tin chấp nhận cuộc gọi kèm dummy answer lên Socket
       _socket.emit('call_accept', {
         'callId': _currentCall!.callId,
         'answer': {'type': 'answer', 'sdp': 'agora'},
@@ -361,7 +358,6 @@ class CallService extends ChangeNotifier {
     }
     _callState = CallState.calling;
     notifyListeners();
-    // Do Agora kết nối tự động khi bên kia join channel, ta không cần parse answer SDP ở đây
   }
 
   void _onCallRejected(dynamic data) {
@@ -389,7 +385,6 @@ class CallService extends ChangeNotifier {
     onCallEnded?.call();
   }
 
-  // Khớp với socket, ta không cần làm gì với signal vì Agora tự lo việc kết nối
   void _onSignal(dynamic data) {}
 
   Future<void> startGroupCall({
@@ -479,7 +474,6 @@ class CallService extends ChangeNotifier {
     }
   }
 
-  // Khớp với socket, các hàm này không cần dựng PeerConnection nữa
   void _onGroupCallUserJoined(dynamic data) {
     debugPrint('👥 User joined group call: ${data['userId']}');
   }
@@ -499,7 +493,6 @@ class CallService extends ChangeNotifier {
 
     await _initAgoraEngine();
 
-    // Enable/disable video dựa trên loại cuộc gọi
     final isVideo = _currentCall?.callType == 'video';
     if (isVideo) {
       await _engine!.enableVideo();
@@ -509,11 +502,10 @@ class CallService extends ChangeNotifier {
       await _engine!.disableVideo();
     }
 
-    // Thiết lập tùy chọn tham gia cuộc gọi
     await _engine!.joinChannel(
-      token: '', // Để trống nếu chọn mode Testing trên Agora console
+      token: '',
       channelId: channelId,
-      uid: 0, // 0 để Agora tự động sinh uid ngẫu nhiên
+      uid: 0,
       options: ChannelMediaOptions(
         clientRoleType: ClientRoleType.clientRoleBroadcaster,
         channelProfile: ChannelProfileType.channelProfileCommunication,
@@ -548,7 +540,6 @@ class CallService extends ChangeNotifier {
     _autoCancelTimer?.cancel();
     _durationTimer?.cancel();
     
-    // Rời kênh và giải phóng Agora Engine
     _engine?.leaveChannel();
     _engine?.release();
     _engine = null;

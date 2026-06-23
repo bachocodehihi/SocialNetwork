@@ -180,9 +180,11 @@ class SignUpEmailController extends ChangeNotifier {
   }
 
   Future<void> goToTermTerm(BuildContext context) async {
+    Navigator.pushNamed(context, Routes.termTerm);
   }
 
   Future<void> goToTermSocial(BuildContext context) async {
+    Navigator.pushNamed(context, Routes.termSocial);
   }
 
 }

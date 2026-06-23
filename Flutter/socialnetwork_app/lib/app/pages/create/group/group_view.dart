@@ -230,7 +230,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                                             .toUpperCase(),
                                         style: TextStyle(
                                           color: cs.onPrimaryContainer,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       )
                                     : null,

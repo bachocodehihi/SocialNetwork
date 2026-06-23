@@ -161,7 +161,7 @@ class _MessageUserViewState extends State<MessageUserView> {
                                   name.substring(0, 1).toUpperCase(),
                                   style: TextStyle(
                                     fontSize: 22.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: cs.onPrimaryContainer,
                                   ),
                                 )
@@ -320,7 +320,7 @@ class _MessageUserViewState extends State<MessageUserView> {
                                   name.substring(0, 1).toUpperCase(),
                                   style: TextStyle(
                                     fontSize: 20.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: cs.onPrimaryContainer,
                                   ),
                                 )

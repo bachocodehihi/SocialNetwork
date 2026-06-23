@@ -61,9 +61,6 @@ class _WellcomeViewState extends State<WellcomeView> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       minimumSize: Size(double.infinity, 48.h),
-                      // shape: RoundedRectangleBorder(
-                      //   borderRadius: BorderRadius.circular(30.r),
-                      // ),
                       shape: const StadiumBorder(),
                     ).copyWith(
                       overlayColor: WidgetStateProperty.all(Colors.grey[300]),
@@ -86,9 +83,6 @@ class _WellcomeViewState extends State<WellcomeView> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey,
                       minimumSize: Size(double.infinity, 48.h),
-                      // shape: RoundedRectangleBorder(
-                      //   borderRadius: BorderRadius.circular(30.r),
-                      // ),
                       shape: const StadiumBorder(),
                     ).copyWith(
                       overlayColor: WidgetStateProperty.all(Colors.grey[300]),

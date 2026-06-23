@@ -82,7 +82,6 @@ class _WarmingViewState extends State<WarmingView> {
 
               SizedBox(height: 32.h),
 
-              // Title
               Text(
                 'Yêu Cầu Xóa Tài Khoản',
                 textAlign: TextAlign.center,
@@ -115,9 +114,6 @@ class _WarmingViewState extends State<WarmingView> {
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
                   minimumSize: Size(double.infinity, 48.h),
-                  // shape: RoundedRectangleBorder(
-                  //   borderRadius: BorderRadius.circular(30.r),
-                  // ),
                   shape: const StadiumBorder(),
                 ).copyWith(
                   overlayColor: WidgetStateProperty.all(Colors.grey[300]),

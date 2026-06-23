@@ -58,6 +58,7 @@ dependencies:
   path_provider: ^2.1.5
   agora_rtc_engine: ^6.5.4
   firebase_auth: ^5.1.0
+  gal: ^2.3.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

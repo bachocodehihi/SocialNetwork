@@ -175,7 +175,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -389,7 +389,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                     'Bình luận',
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: cs.onSurface,
                     ),
                   ),
@@ -493,7 +493,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                                     'Trả lời',
                                                     style: TextStyle(
                                                       fontSize: 11.sp,
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight: FontWeight.w500,
                                                       color: cs.onSurfaceVariant.withValues(alpha: 0.7),
                                                     ),
                                                   ),
@@ -535,7 +535,6 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                     ],
                                   ),
                                   
-                                  // Nested replies
                                   if (replies.isNotEmpty)
                                     Padding(
                                       padding: EdgeInsets.only(left: 42.w, top: 8.h),

@@ -24,7 +24,6 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
       duration: const Duration(seconds: 2),
     )..repeat();
 
-    // Safety check: if call is already ended/idle or null, close screen instantly
     if (_callService.currentCall == null || _callService.callState == CallState.idle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) Navigator.of(context).pop();
@@ -72,7 +71,6 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
       backgroundColor: const Color(0xFF0F0F1A),
       body: Stack(
         children: [
-          // Animated gradient blobs
           Positioned(
             top: -100.h,
             left: -50.w,
@@ -129,7 +127,7 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -138,7 +136,6 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
                   ),
                   const Spacer(),
 
-                  // Pulsing wave avatar
                   AnimatedBuilder(
                     animation: _pulseController,
                     builder: (context, child) {
@@ -180,7 +177,7 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 48.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   )
@@ -212,17 +209,14 @@ class _CallInComingViewState extends State<CallInComingView> with SingleTickerPr
 
                   const Spacer(),
 
-                  // Accept & Decline buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Decline button
                       _buildBigRoundButton(
                         icon: Icons.call_end,
                         color: Colors.redAccent,
                         onTap: () => _callService.rejectCall(),
                       ),
-                      // Accept button
                       _buildBigRoundButton(
                         icon: Icons.call,
                         color: Colors.green,

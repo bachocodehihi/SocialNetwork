@@ -26,7 +26,7 @@ class _AppAlertDialogState extends State<AppAlertDialog> {
     final cs = Theme.of(context).colorScheme;
 
     return Dialog(
-      backgroundColor: cs.surface,
+      backgroundColor: cs.surfaceContainerHigh,
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: kIsWeb ? 0 : 24.w,

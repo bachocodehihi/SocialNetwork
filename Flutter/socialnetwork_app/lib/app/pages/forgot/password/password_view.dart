@@ -237,15 +237,17 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '• Length: At least 8 characters',
+                        Language.of(context, 'length_at_least_8_characters'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: cs.onSurface,
                         ),
                       ),
+
                       SizedBox(height: 10.h),
+                      
                       Text(
-                        '• Must include: Uppercase, lowercase, number & special character',
+                        Language.of(context, 'must_include_uppercase_lowercase_number_and_special character'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: cs.onSurface,

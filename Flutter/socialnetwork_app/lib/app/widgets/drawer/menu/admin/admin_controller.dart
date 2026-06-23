@@ -22,7 +22,6 @@ class MenuDrawerAdminController extends ChangeNotifier {
   String get avatar => user?['avatar'] ?? '';
 
   void logout(BuildContext context) async {
-    // 1. Remove FCM token from server
     try {
       await _accountApi.removeFcmToken();
     } catch (_) {}

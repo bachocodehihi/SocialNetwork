@@ -46,7 +46,6 @@ class _InviteViewState extends State<InviteView> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    // Filter friends list based on search query
     final filteredFriends = controller.friends.where((friend) {
       final username = (friend['username'] ?? '').toString().toLowerCase();
       return username.contains(searchQuery.toLowerCase());
@@ -66,7 +65,7 @@ class _InviteViewState extends State<InviteView> {
           style: TextStyle(
             color: cs.onSurface,
             fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
         centerTitle: true,
@@ -77,7 +76,6 @@ class _InviteViewState extends State<InviteView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search input
               TextField(
                 controller: searchController,
                 onChanged: (val) {
@@ -111,7 +109,7 @@ class _InviteViewState extends State<InviteView> {
                 'Danh sách bạn bè',
                 style: TextStyle(
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   color: cs.onSurfaceVariant,
                 ),
               ),
@@ -179,7 +177,7 @@ class _InviteViewState extends State<InviteView> {
                                 child: avatar.isEmpty
                                     ? Text(
                                         username.substring(0, 1).toUpperCase(),
-                                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
                                       )
                                     : null,
                               ),

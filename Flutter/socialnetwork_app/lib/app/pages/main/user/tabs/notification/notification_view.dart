@@ -172,7 +172,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                             'Không có thông báo nào',
                             style: TextStyle(
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               color: cs.onSurface,
                             ),
                           ),
@@ -261,7 +261,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                                             senderName.substring(0, 1).toUpperCase(),
                                             style: TextStyle(
                                               color: cs.onPrimaryContainer,
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           )
                                         : null,
@@ -294,7 +294,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
                                       item['title'] ?? '',
                                       style: TextStyle(
                                         fontSize: 13.5.sp,
-                                        fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
+                                        fontWeight: isRead ? FontWeight.normal : FontWeight.w500,
                                         color: cs.onSurface,
                                       ),
                                     ),
@@ -460,7 +460,7 @@ class _NotificationUserViewState extends State<NotificationUserView> {
               'Đồng ý',
               style: TextStyle(
                 fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

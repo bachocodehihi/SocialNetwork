@@ -23,7 +23,6 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
       duration: const Duration(seconds: 2),
     )..repeat();
 
-    // Listen to call service events to automatically close UI when call ends
     _callService.addListener(_onCallServiceChanged);
   }
 
@@ -74,10 +73,9 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
         }
 
         return Scaffold(
-          backgroundColor: const Color(0xFF0F0F1A), // Sleek deep premium dark background
+          backgroundColor: const Color(0xFF0F0F1A), 
           body: Stack(
             children: [
-              // Breathtaking animated gradient background blobs
               Positioned(
                 top: -100.h,
                 left: -50.w,
@@ -103,7 +101,6 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                 ),
               ),
 
-              // Glassmorphic overlay to blur background circles
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
                 child: Container(
@@ -111,14 +108,12 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                 ),
               ),
 
-              // Main content
               SafeArea(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
                   child: Column(
                     children: [
                       SizedBox(height: 20.h),
-                      // Top header tag
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                         decoration: BoxDecoration(
@@ -143,7 +138,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                               style: TextStyle(
                                 color: Colors.white70,
                                 fontSize: 10.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.5,
                               ),
                             ),
@@ -152,7 +147,6 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                       ),
                       const Spacer(),
 
-                      // Pulsing avatar waves
                       AnimatedBuilder(
                         animation: _pulseController,
                         builder: (context, child) {
@@ -170,7 +164,6 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                                   ),
                                 );
                               }),
-                              // Main avatar container
                               Container(
                                 width: 130.r,
                                 height: 130.r,
@@ -201,7 +194,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 48.sp,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       )
@@ -213,7 +206,6 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                       ),
                       SizedBox(height: 36.h),
 
-                      // Name and call state
                       Text(
                         name,
                         textAlign: TextAlign.center,
@@ -230,14 +222,13 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                         style: TextStyle(
                           color: state == CallState.connected ? Colors.blue : Colors.white60,
                           fontSize: 16.sp,
-                          fontWeight: state == CallState.connected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: state == CallState.connected ? FontWeight.w500 : FontWeight.normal,
                           letterSpacing: 0.5,
                         ),
                       ),
 
                       const Spacer(),
 
-                      // Action Button Controls with Sleek Premium Design
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
                         decoration: BoxDecoration(
@@ -251,7 +242,6 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            // Mute button
                             _buildCallControl(
                               icon: _callService.isMuted ? Icons.mic_off_outlined : Icons.mic_none_outlined,
                               isActive: _callService.isMuted,
@@ -259,15 +249,12 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                               activeColor: Colors.redAccent,
                             ),
 
-                            // Ringing Decline / Accept Controls
                             if (state == CallState.ringing && isIncoming) ...[
-                              // Decline incoming call
                               _buildBigRoundButton(
                                 icon: Icons.call_end,
                                 color: Colors.redAccent,
                                 onTap: () => _callService.rejectCall(),
                               ),
-                              // Accept incoming call
                               _buildBigRoundButton(
                                 icon: Icons.call,
                                 color: Colors.green,
@@ -280,7 +267,6 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                                 },
                               ),
                             ] else ...[
-                              // Standard End Call button
                               _buildBigRoundButton(
                                 icon: Icons.call_end,
                                 color: Colors.redAccent,
@@ -294,7 +280,6 @@ class _VoiceCallPageState extends State<VoiceCallPage> with SingleTickerProvider
                               ),
                             ],
 
-                            // Speaker button
                             _buildCallControl(
                               icon: _callService.isSpeakerOn ? Icons.volume_up_outlined : Icons.volume_down_outlined,
                               isActive: _callService.isSpeakerOn,

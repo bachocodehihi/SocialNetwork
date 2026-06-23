@@ -22,6 +22,11 @@ import 'package:socialnetwork/app/pages/signup/birthday/birthday_page.dart';
 import 'package:socialnetwork/app/pages/signup/gender/gender_page.dart';
 import 'package:socialnetwork/app/pages/signup/password/password_page.dart';
 
+//term
+import 'package:socialnetwork/app/pages/term/name/name_page.dart';
+import 'package:socialnetwork/app/pages/term/social/social_page.dart';
+import 'package:socialnetwork/app/pages/term/term/term_page.dart';
+
 //verify
 import 'package:socialnetwork/app/pages/verify/signup/signup_page.dart';
 import 'package:socialnetwork/app/pages/verify/forgot/forgot_page.dart';
@@ -124,6 +129,11 @@ class Routes {
   static String signupGender = '/signup/gender';
   static String signupAvatar = '/signup/avatar';
   static String signupPassword = '/signup/password';
+
+  //term
+  static String termName = '/term/name';
+  static String termSocial = '/term/social';
+  static String termTerm = '/term/term';
 
   //verify
   static String verifySignUp = '/verify/signup';
@@ -236,6 +246,11 @@ class Routes {
     signupGender: (_) => SignUpGenderPage(),
     signupAvatar: (_) => SignUpAvatarPage(),
     signupPassword: (_) => SignUpPasswordPage(),
+
+    //term
+    termName: (_) => TermNamePage(),
+    termSocial: (_) => TermSocialPage(),
+    termTerm: (_) => TermTermPage(),
 
     //verify
     verifySignUp: (_) => VerifySignUpPage(),

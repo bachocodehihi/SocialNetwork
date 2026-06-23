@@ -171,7 +171,7 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
                             'Không có thông báo nào',
                             style: TextStyle(
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               color: cs.onSurface,
                             ),
                           ),
@@ -203,7 +203,6 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
 
                       return GestureDetector(
                         onTap: () {
-                          // Mark notification as read
                           if (!isRead) {
                             item['isRead'] = true;
                             setState(() {});
@@ -258,7 +257,7 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
                                             senderName.substring(0, 1).toUpperCase(),
                                             style: TextStyle(
                                               color: cs.onPrimaryContainer,
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           )
                                         : null,
@@ -291,7 +290,7 @@ class _NotificationAdminViewState extends State<NotificationAdminView> {
                                       item['title'] ?? '',
                                       style: TextStyle(
                                         fontSize: 13.5.sp,
-                                        fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
+                                        fontWeight: isRead ? FontWeight.normal : FontWeight.w500,
                                         color: cs.onSurface,
                                       ),
                                     ),

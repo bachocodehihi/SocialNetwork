@@ -114,14 +114,13 @@ class _PlayMachineTictactoeViewState extends State<PlayMachineTictactoeView> {
         message,
         style: TextStyle(
           fontSize: 18.sp,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: textColor,
         ),
       ),
     );
   }
 
-  // 🎮 Build bàn cờ 3x3
   Widget _buildGameBoard(ColorScheme cs) {
     return Container(
       padding: EdgeInsets.all(12.w),
@@ -193,7 +192,7 @@ class _PlayMachineTictactoeViewState extends State<PlayMachineTictactoeView> {
         value,
         style: TextStyle(
           fontSize: 40.sp,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: value == 'X' ? xColor : oColor,
           shadows: [
             Shadow(
@@ -225,7 +224,6 @@ class _PlayMachineTictactoeViewState extends State<PlayMachineTictactoeView> {
     });
   }
 
-  // 🏆 Kiểm tra người thắng
   String? _checkWinner() {
     const lines = [
       [0, 1, 2], [3, 4, 5], [6, 7, 8],

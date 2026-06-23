@@ -451,7 +451,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                 style: TextStyle(
                                   color: cs.onPrimaryContainer,
                                   fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               )
                             : null,
@@ -593,7 +593,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                           _formatDuration(_recordingDuration),
                                           style: TextStyle(
                                             color: Colors.red,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w500,
                                             fontSize: 14.sp,
                                           ),
                                         ),
@@ -1092,7 +1092,7 @@ class _MessageImageGrid extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -1226,7 +1226,7 @@ class _GalleryDialogState extends State<_GalleryDialog> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     shadows: const [
                       Shadow(
                         color: Colors.black,

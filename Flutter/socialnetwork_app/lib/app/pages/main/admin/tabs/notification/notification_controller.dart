@@ -38,7 +38,6 @@ class NotificationAdminController extends ChangeNotifier {
   Future<void> markAllRead() async {
     try {
       await _usecase.markAllRead();
-      // Mark read locally
       for (var item in _notifications) {
         item['isRead'] = true;
       }

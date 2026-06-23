@@ -346,7 +346,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                                                     'Trả lời',
                                                     style: TextStyle(
                                                       fontSize: 12.sp,
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight: FontWeight.w500,
                                                       color: cs.onSurfaceVariant.withValues(alpha: 0.7),
                                                     ),
                                                   ),
@@ -389,7 +389,6 @@ class _HomeUserViewState extends State<HomeUserView> {
                                     ],
                                   ),
                                   
-                                  // Nested replies
                                   if (replies.isNotEmpty)
                                     Padding(
                                       padding: EdgeInsets.only(left: 42.w, top: 8.h),

@@ -191,6 +191,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
+                                        controller.goToTermTerm(context);
                                       },
                                       child: Text(
                                         Language.of(context, 'terms_of_service'),
@@ -249,6 +250,7 @@ class _SignUpEmailViewState extends State<SignUpEmailView> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
+                                        controller.goToTermSocial(context);
                                       },
                                       child: Text(
                                         Language.of(context, 'social_terms_of_service'),

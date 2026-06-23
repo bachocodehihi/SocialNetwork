@@ -10,6 +10,7 @@ import 'package:socialnetwork/data/repositories/auth_repository_imp.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:socialnetwork/data/network/api/auth_api.dart';
 import 'package:socialnetwork/app/widgets/banner/error.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class VerifyForgotView extends StatefulWidget {
   const VerifyForgotView({super.key});
   @override
@@ -162,7 +163,7 @@ class _VerifyForgotViewState extends State<VerifyForgotView> {
         style: TextStyle(
           fontSize: 20.sp,
           fontWeight: FontWeight.w500,
-          color: Colors.black,
+          color: cs.onSurface,
         ),
       ),
     );
@@ -189,7 +190,7 @@ class _VerifyForgotViewState extends State<VerifyForgotView> {
               vertical: 16.h,
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   children: [
@@ -201,36 +202,52 @@ class _VerifyForgotViewState extends State<VerifyForgotView> {
                         color: cs.onSurfaceVariant,
                       ),
                     ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      'Verify',
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                        color: cs.onSurface,
-                      ),
-                    ),
+                    // SizedBox(width: 10.w),
+                    // Text(
+                    //   'Verify',
+                    //   style: TextStyle(
+                    //     fontSize: 20.sp,
+                    //     fontWeight: FontWeight.w500,
+                    //     color: cs.onSurface,
+                    //   ),
+                    // ),
                   ],
                 ),
+
                 SizedBox(height: 20.h),
+
                 Text(
-                  'Verify your email',
+                  Language.of(context, 'verify_your_email'),
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
                     color: cs.onSurface,
                   ),
                 ),
-                SizedBox(height: 8.h),
+
+                SizedBox(height: 10.h),
+
                 Text(
-                  'OTP has been sent to your email.',
+                  Language.of(context, 'otp_has_been_sent_to'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     color: cs.onSurfaceVariant,
                     height: 1.5,
                   ),
                 ),
+
+                SizedBox(height: 10.h),
+
+                Text(
+                    email,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      color: Colors.blue
+                    ),
+                  ),
+
                 SizedBox(height: 40.h),
+
                 GestureDetector(
                   onTap: () {
                     FocusScope.of(context).unfocus();
@@ -280,33 +297,30 @@ class _VerifyForgotViewState extends State<VerifyForgotView> {
 
                 SizedBox(height: 20.h),
 
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.black,
-                      minimumSize: Size(double.infinity, 48.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                      ),
-                    ).copyWith(
-                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.black,
+                    minimumSize: Size(double.infinity, 48.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
                     ),
-                    onPressed: controller.isLoading
-                      ? null
-                      : _onVerify,
-                    child: controller.isLoading
-                      ? const CircularProgressIndicator(
-                        color: Colors.white
-                      ) : Text(
-                          'Continue',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.sp,
-                          ),
-                        ),
+                  ).copyWith(
+                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                   ),
+                  onPressed: controller.isLoading
+                    ? null
+                    : _onVerify,
+                  child: controller.isLoading
+                    ? const CircularProgressIndicator(
+                      color: Colors.white
+                    ) : Text(
+                        Language.of(context, 'continue'),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                        ),
+                      ),
                 ),
 
                 SizedBox(height: 20.h),
@@ -316,7 +330,7 @@ class _VerifyForgotViewState extends State<VerifyForgotView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Didn\'t receive a code? ',
+                        Language.of(context, 'didn_t_receive_a_code'),
                         style: TextStyle(
                           fontSize: 15.sp,
                           color: cs.onSurface,
@@ -339,7 +353,7 @@ class _VerifyForgotViewState extends State<VerifyForgotView> {
                             _startTimer();
                           },
                           child: Text(
-                            'Resend',
+                            Language.of(context, 'resend'),
                             style: TextStyle(
                               fontSize: 15.sp,
                               color: Colors.blue,

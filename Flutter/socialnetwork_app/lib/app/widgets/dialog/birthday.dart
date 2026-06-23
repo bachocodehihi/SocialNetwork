@@ -124,7 +124,6 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Selection highlight
                   IgnorePointer(
                     child: Center(
                       child: Container(

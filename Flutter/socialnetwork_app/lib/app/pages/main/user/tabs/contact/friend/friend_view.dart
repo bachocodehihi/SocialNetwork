@@ -79,7 +79,7 @@ class _ContactFriendViewState extends State<ContactFriendView> {
                             friend['name']!.substring(0, 1).toUpperCase(),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                             ),
                           ) 
                         : null,

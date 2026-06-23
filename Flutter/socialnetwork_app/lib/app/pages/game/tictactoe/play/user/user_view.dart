@@ -60,7 +60,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
             onPressed: () {
               Navigator.pop(context);
               controller.respondRematch(false);
-              Navigator.pop(this.context); // Leave game
+              Navigator.pop(this.context);
             },
             child: const Text('Từ chối'),
           ),
@@ -156,7 +156,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
           'Online Match',
           style: TextStyle(
             fontSize: 20.sp,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             color: cs.onSurface,
           ),
         ),
@@ -173,7 +173,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
               style: TextStyle(
                 fontSize: 12.sp,
                 color: cs.onSecondaryContainer,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -186,7 +186,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         _buildPlayerAvatar('You', controller.mySymbol, controller.isMyTurn, cs),
-        Text('VS', style: TextStyle(fontWeight: FontWeight.bold, color: cs.outline)),
+        Text('VS', style: TextStyle(fontWeight: FontWeight.w500, color: cs.outline)),
         _buildPlayerAvatar('Opponent', controller.mySymbol == 'X' ? 'O' : 'X', !controller.isMyTurn && controller.gameState == 'playing', cs),
       ],
     );
@@ -213,7 +213,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
               symbol,
               style: TextStyle(
                 fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: isTurn ? color : cs.onSurfaceVariant,
               ),
             ),
@@ -224,7 +224,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
           name,
           style: TextStyle(
             fontSize: 14.sp,
-            fontWeight: isTurn ? FontWeight.bold : FontWeight.normal,
+            fontWeight: isTurn ? FontWeight.w500 : FontWeight.normal,
             color: isTurn ? cs.onSurface : cs.onSurfaceVariant,
           ),
         ),
@@ -269,7 +269,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
           message,
           style: TextStyle(
             fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: textColor,
           ),
         ),
@@ -343,7 +343,7 @@ class _PlayUserTictactoeViewState extends State<PlayUserTictactoeView> {
             value,
             style: TextStyle(
               fontSize: 40.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: value == 'X' ? xColor : oColor,
               shadows: [
                 Shadow(

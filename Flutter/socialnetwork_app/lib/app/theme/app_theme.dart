@@ -7,7 +7,6 @@ class AppTheme {
 
   static ThemeData _buildTheme(Brightness brightness) {
     final isLight = brightness == Brightness.light;
-    //final background = isLight ? Colors.white : const Color(0xFF0F0F0F);
 
     final scheme = ColorScheme.fromSeed(
       seedColor: _seed,

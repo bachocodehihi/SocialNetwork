@@ -18,7 +18,6 @@ class ChatGroupController extends ChangeNotifier {
   String _currentUserId = '';
   final TextEditingController _messageController = TextEditingController();
 
-  // Typing indicator
   bool _isTyping = false;
   Timer? _typingTimer;
   final Map<String, bool> _typingUsers = {};
@@ -29,7 +28,6 @@ class ChatGroupController extends ChangeNotifier {
         ),
         _socket = SocketService();
 
-  // ========== Getters ==========
   List<Map<String, dynamic>> get messages => _messages;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -37,8 +35,6 @@ class ChatGroupController extends ChangeNotifier {
   TextEditingController get messageController => _messageController;
   bool get isTyping => _isTyping;
   Map<String, bool> get typingUsers => _typingUsers;
-
-  // ========== Initialization ==========
 
   Future<void> init(String conversationId) async {
     _conversationId = conversationId;
@@ -64,14 +60,11 @@ class ChatGroupController extends ChangeNotifier {
   void _setupSocketListeners() {
     if (_conversationId == null) return;
 
-    // ✅ FIX: Socket nhận message từ người KHÁC, không nhận lại của mình
-    // vì mình đã thêm optimistic message khi gửi
     _socket.onReceiveMessage((msg) {
       final senderId = (msg['sender'] is Map)
           ? msg['sender']['_id']?.toString()
           : msg['sender']?.toString();
 
-      // Bỏ qua nếu là tin nhắn của chính mình (tránh trùng với optimistic)
       if (senderId == _currentUserId) return;
 
       if (!_messages.any((m) => m['_id'] == msg['_id'])) {
@@ -107,8 +100,6 @@ class ChatGroupController extends ChangeNotifier {
       }
     });
   }
-
-  // ========== Message Operations ==========
 
   Future<void> fetchMessages() async {
     if (_conversationId == null) return;
@@ -153,7 +144,6 @@ class ChatGroupController extends ChangeNotifier {
     final trimmedContent = content.trim();
     final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
 
-    // ✅ 1. Thêm optimistic message (hiển thị ngay)
     final tempMsg = {
       '_id': tempId,
       'content': trimmedContent,
@@ -173,14 +163,11 @@ class ChatGroupController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // ✅ 2. Chỉ gọi API (server sẽ emit socket đến người khác)
-      // KHÔNG emit socket ở đây để tránh duplicate
       final sentMsg = await _usecase.sendMessage(
         conversationId: _conversationId!,
         content: trimmedContent,
       );
 
-      // ✅ 3. Thay thế optimistic message bằng message thật từ server
       final idx = _messages.indexWhere((m) => m['_id'] == tempId);
       if (idx != -1) {
         _messages[idx] = Map<String, dynamic>.from(sentMsg)
@@ -188,7 +175,6 @@ class ChatGroupController extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      // ✅ 4. Nếu lỗi, đánh dấu failed
       final idx = _messages.indexWhere((m) => m['_id'] == tempId);
       if (idx != -1) {
         _messages[idx] = {

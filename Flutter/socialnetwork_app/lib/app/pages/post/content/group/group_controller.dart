@@ -67,7 +67,7 @@ class GroupPostContentController extends ChangeNotifier {
       );
 
       if (context.mounted) {
-        Navigator.pop(context, true); // Returns true to trigger feed refresh
+        Navigator.pop(context, true); 
       }
     } catch (e) {
       errorMessage = e.toString().replaceAll('Exception: ', '');

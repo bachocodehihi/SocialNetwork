@@ -114,7 +114,6 @@ class _PostContentViewState extends State<PostContentView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Quyền riêng tư selector
                     Text(
                       'Quyền riêng tư:',
                       style: TextStyle(
@@ -272,7 +271,6 @@ class _PostContentViewState extends State<PostContentView> {
               ),
             ),
 
-            // Bottom controls panel
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               decoration: BoxDecoration(

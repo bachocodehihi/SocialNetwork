@@ -90,7 +90,6 @@ class _GameTictactoeViewState extends State<GameTictactoeView> {
 
     if (mounted && !_isInGame) {
       setState(() => _isInGame = true);
-      // Small delay to ensure dialog is fully closed and context is stable
       Future.delayed(const Duration(milliseconds: 100), () async {
         if (mounted) {
           await Navigator.pushNamed(
@@ -223,7 +222,7 @@ class _GameTictactoeViewState extends State<GameTictactoeView> {
                     title,
                     style: TextStyle(
                       fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: cs.onSurface,
                     ),
                   ),
@@ -310,7 +309,7 @@ class _SearchingDialogState extends State<_SearchingDialog> {
               'Finding Match...',
               style: TextStyle(
                 fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: cs.onSurface,
               ),
             ),
@@ -334,7 +333,7 @@ class _SearchingDialogState extends State<_SearchingDialog> {
                 _formatTime(widget.getSeconds()),
                 style: TextStyle(
                   fontSize: 28.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: Colors.blueAccent,
                   letterSpacing: 4,
                 ),
@@ -358,7 +357,7 @@ class _SearchingDialogState extends State<_SearchingDialog> {
                 ),
                 child: Text(
                   'Cancel',
-                  style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500),
                 ),
               ),
             ),

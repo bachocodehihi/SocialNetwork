@@ -124,21 +124,46 @@ class Language {
         //change
         'change_information': 'Change information',
           //address
+          'change_address': 'Change address',
           //avatar
+          'change_avatar': 'Change avatar',
           //birthday
+          'change_birthday': 'Change birthday',
           //email
+          'change_email': 'Change email',
           //gender
+          'change_gender': 'Change gender',
           //job
+          'change_job': 'Change job',
           //nationality
+          'change_nationality': 'Change nationality',
           //phone
+          'change_phone': 'Change phone',
           //username
-
+          'change_username': 'Change username',
+        //delete
+          //account
+          'enter_your_reason': 'Enter your reason',
+          'reason': 'Reason',
+          'are_you_sure_you_want_to_schedule_the_deletion_of_this_account_The_account_will_be_permanently_deleted_in_24_hours': 'Are you sure you want to schedule the deletion of this account? The account will be permanently deleted in 24 hours.',
+      //switch
+        //account
+        'add_account': 'Add account',
     
     //banner
       //network
       'no_network_connection': 'No network connection!',
       //delete
       'account_will_be deleted_in': 'Account will be deleted in:',
+
+    //qrcode
+    'qr_code': 'QR Code',
+    'download': 'Download',
+    'share': 'Share',
+    'saving': 'Saving...',
+    'permission_denied': 'Permission to access gallery denied.',
+    'save_success': 'QR Code saved to gallery successfully!',
+    'save_failed': 'Failed to save QR Code: ',
   };
 
   static const _vi = {
@@ -270,7 +295,7 @@ class Language {
       //dark mode
       'reduce_eye_strain_save_battery_and_improve_visibility': 'Giảm mỏi mắt, tiết kiệm pin và cải thiện khả năng nhìn.',
       //language
-
+      
       //privacy
 
       //activity
@@ -316,5 +341,14 @@ class Language {
       'no_network_connection': 'Không có kết nối mạng!',
       //delete
       'account_will_be deleted_in': 'Tài khoản sẽ xóa trong vòng:',
+      
+    //qrcode
+    'qr_code': 'Mã QR',
+    'download': 'Tải về',
+    'share': 'Chia sẻ',
+    'saving': 'Đang lưu...',
+    'permission_denied': 'Quyền truy cập thư viện ảnh bị từ chối.',
+    'save_success': 'Đã lưu mã QR vào thư viện ảnh thành công!',
+    'save_failed': 'Không thể lưu mã QR: ',
   };
 } 

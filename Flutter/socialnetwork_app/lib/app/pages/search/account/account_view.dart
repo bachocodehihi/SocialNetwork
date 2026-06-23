@@ -221,7 +221,7 @@ class _SearchAViewState extends State<SearchAccountView> {
               'Recent',
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 color: cs.onSurface,
               ),
             ),

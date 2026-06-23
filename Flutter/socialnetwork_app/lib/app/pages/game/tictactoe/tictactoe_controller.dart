@@ -5,7 +5,7 @@ import 'package:socialnetwork/data/service/socket.dart';
 
 class GameTictactoeController extends ChangeNotifier {
   final SocketService _socketService = SocketService();
-  String matchmakingStatus = 'idle'; // idle, searching
+  String matchmakingStatus = 'idle';
   int searchingSeconds = 0;
   Timer? _timer;
 

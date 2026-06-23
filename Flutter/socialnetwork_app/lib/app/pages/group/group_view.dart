@@ -184,7 +184,7 @@ class _GroupViewState extends State<GroupView> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -371,7 +371,7 @@ class _GroupViewState extends State<GroupView> {
                     'Bình luận',
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: cs.onSurface,
                     ),
                   ),
@@ -405,7 +405,7 @@ class _GroupViewState extends State<GroupView> {
                                     child: authorAvatar.isEmpty
                                         ? Text(
                                             authorName.substring(0, 1).toUpperCase(),
-                                            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+                                            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
                                           )
                                         : null,
                                   ),
@@ -424,7 +424,7 @@ class _GroupViewState extends State<GroupView> {
                                             authorName,
                                             style: TextStyle(
                                               fontSize: 12.sp,
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight: FontWeight.w500,
                                               color: cs.onSurface,
                                             ),
                                           ),

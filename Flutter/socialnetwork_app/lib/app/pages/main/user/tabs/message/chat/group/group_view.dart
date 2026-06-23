@@ -115,7 +115,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                 'Tùy chỉnh giao diện',
                 style: TextStyle(
                   fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: cs.onSurface,
                 ),
               ),
@@ -207,7 +207,6 @@ class _ChatGroupViewState extends State<ChatGroupView> {
         ),
         title: Row(
           children: [
-            // Group avatar
             CircleAvatar(
               radius: 18.r,
               backgroundImage: widget.groupAvatar != null && widget.groupAvatar!.isNotEmpty
@@ -220,7 +219,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                       style: TextStyle(
                         color: cs.onPrimaryContainer,
                         fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     )
                   : null,
@@ -234,7 +233,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                     widget.groupName,
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: cs.onSurface,
                     ),
                     maxLines: 1,
@@ -386,7 +385,6 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                         final msgSenderId = _extractSenderId(msg['sender']);
                         final showAvatar = index == 0 || prevMsgSenderId != msgSenderId;
 
-                        // Show date separator
                         final showDate = index == 0 || 
                             (createdAt != null && _shouldShowDateSeparator(
                               createdAt, 
@@ -447,7 +445,6 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                     onPressed: () {},
                   ),
                   
-                  // Text input
                   Expanded(
                     child: TextField(
                       controller: _controller.messageController,
@@ -477,7 +474,6 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                     ),
                   ),
                   
-                  // Send button
                   SizedBox(width: 8.w),
                   ListenableBuilder(
                     listenable: _controller,
@@ -567,7 +563,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                           widget.groupName.substring(0, 1).toUpperCase(),
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                           ),
                         )
                       : null,
@@ -581,7 +577,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                         widget.groupName,
                         style: TextStyle(
                           fontSize: 18.sp,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       Text(
@@ -718,7 +714,7 @@ class _MessageBubble extends StatelessWidget {
                         style: TextStyle(
                           color: cs.onPrimaryContainer,
                           fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                       )
                     : null,
@@ -732,7 +728,6 @@ class _MessageBubble extends StatelessWidget {
             child: Column(
               crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
-                // Username for group messages
                 if (!isMe && showAvatar && username != null)
                   Padding(
                     padding: EdgeInsets.only(left: 4.w, bottom: 2.h),

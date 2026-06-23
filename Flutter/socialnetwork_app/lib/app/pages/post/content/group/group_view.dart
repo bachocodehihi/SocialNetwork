@@ -61,7 +61,7 @@ class _GroupPostContentViewState extends State<GroupPostContentView> {
               'Tạo bài viết',
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 color: cs.onSurface,
               ),
             ),
@@ -145,7 +145,7 @@ class _GroupPostContentViewState extends State<GroupPostContentView> {
                                 'Thành viên nhóm',
                                 style: TextStyle(
                                   color: cs.onPrimaryContainer,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 12.sp,
                                 ),
                               ),
@@ -156,7 +156,6 @@ class _GroupPostContentViewState extends State<GroupPostContentView> {
                     ),
                     SizedBox(height: 16.h),
 
-                    // Text Input
                     TextField(
                       controller: controller.contentController,
                       maxLines: null,
@@ -177,7 +176,6 @@ class _GroupPostContentViewState extends State<GroupPostContentView> {
                     ),
                     SizedBox(height: 16.h),
 
-                    // Selected image preview
                     if (controller.pickedImages.isNotEmpty) ...[
                       Text(
                         'Đã chọn ${controller.pickedImages.length} ảnh',
@@ -241,7 +239,6 @@ class _GroupPostContentViewState extends State<GroupPostContentView> {
               ),
             ),
 
-            // Bottom controls panel
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               decoration: BoxDecoration(

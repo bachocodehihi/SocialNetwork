@@ -11,7 +11,7 @@ class MessageUsecase {
     String? name,
     List<String>? members,
     String? avatar,
-    String? groupId, // 🔗 Link to Group collection
+    String? groupId,
   }) async {
     return await _repository.createConversation(
       receiverId: receiverId,

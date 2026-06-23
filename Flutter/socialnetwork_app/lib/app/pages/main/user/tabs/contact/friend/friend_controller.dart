@@ -21,7 +21,6 @@ class ContactFriendController extends ChangeNotifier {
       final data = await _usecase.getFriends();
       _friends = data.map((item) {
         final map = Map<String, dynamic>.from(item);
-        // Normalize name and id for use in FriendView
         map['name'] = map['username'] ?? map['name'] ?? 'Unknown';
         map['id'] = map['_id'] ?? map['id'];
         return map;

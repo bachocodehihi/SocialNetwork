@@ -102,7 +102,6 @@ class UserController extends ChangeNotifier {
 
   Future<void> likeComment(String postId, String commentId) async {
     try {
-      // Optimistic UI update
       final postIndex = posts.indexWhere((p) => p['_id'] == postId);
       if (postIndex != -1) {
         final post = posts[postIndex];
@@ -138,7 +137,6 @@ class UserController extends ChangeNotifier {
 
   Future<void> likeReply(String postId, String commentId, String replyId) async {
     try {
-      // Optimistic UI update
       final postIndex = posts.indexWhere((p) => p['_id'] == postId);
       if (postIndex != -1) {
         final post = posts[postIndex];

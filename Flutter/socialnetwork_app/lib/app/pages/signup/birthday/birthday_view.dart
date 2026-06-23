@@ -76,7 +76,6 @@ class _SignUpBirthdayViewState extends State<SignUpBirthdayView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Header
                 Row(
                   children: [
                     GestureDetector(

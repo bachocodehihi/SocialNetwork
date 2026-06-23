@@ -19,10 +19,6 @@ class ActivityController extends ChangeNotifier {
     try {
       final data = await _accountApi.getActivity();
       if (data.isNotEmpty) {
-        // Assume backend returns 7 items for last 7 days
-        // We need to map them to Mon-Sun for the chart if necessary
-        // But the chart expects a list of 7 values.
-        // Let's just update the list with the minutes from the backend.
         for (int i = 0; i < data.length && i < 7; i++) {
           weekDayMinutes[i] = data[i]['minutes'] ?? 0;
         }
