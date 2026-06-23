@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class GenderDialog extends StatefulWidget {
   final String? initialGender;
   final ValueChanged<String> onConfirm;
@@ -47,7 +47,7 @@ class _GenderDialogState extends State<GenderDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'Select gender',
+              Language.of(context, 'select_your_gender'),
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w500,
@@ -55,29 +55,26 @@ class _GenderDialogState extends State<GenderDialog> {
               ),
             ),
             SizedBox(height: 20.h),
-            _radioItem('Male'),
-            _radioItem('Female'),
+            _radioItem(Language.of(context, 'male'),),
+            _radioItem(Language.of(context, 'female'),),
             SizedBox(height: 20.h),
-            MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.black,
-                  minimumSize: Size(double.infinity, 48.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.r),
-                  ),
-                ).copyWith(
-                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.black,
+                minimumSize: Size(double.infinity, 48.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.r),
                 ),
-                onPressed: _onConfirm,
-                child: Text(
-                  'Continue',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15.sp,
-                  ),
+              ).copyWith(
+                overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+              ),
+              onPressed: _onConfirm,
+              child: Text(
+                Language.of(context, 'continue'),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15.sp,
                 ),
               ),
             ),
@@ -90,7 +87,7 @@ class _GenderDialogState extends State<GenderDialog> {
   Widget _radioItem(String value) {
     final bool isSelected = selectedGender == value;
     final cs = Theme.of(context).colorScheme;
-    final bool isMale = value == 'Male';
+    final bool isMale = value == Language.of(context, 'male');
     final Color accentColor = isMale ? Colors.blue : Colors.pink;
 
     return GestureDetector(

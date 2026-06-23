@@ -142,40 +142,37 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
 
               SizedBox(height: 20.h),
 
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.black,
-                    minimumSize: Size(double.infinity, 48.h),
-                    // shape: RoundedRectangleBorder(
-                    //   borderRadius: BorderRadius.circular(30.r),
-                    // ),
-                    shape: const StadiumBorder(),
-                  ).copyWith(
-                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
-                  ),
-                  onPressed: controller.isLoading
-                      ? null
-                      : () => controller.submitDeleteAccount(context),
-                  child: controller.isLoading
-                      ? SizedBox(
-                          width: 20.w,
-                          height: 20.h,
-                          child: const CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Text(
-                          Language.of(context, 'continue'),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.sp,
-                          ),
-                        ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.black,
+                  minimumSize: Size(double.infinity, 48.h),
+                  // shape: RoundedRectangleBorder(
+                  //   borderRadius: BorderRadius.circular(30.r),
+                  // ),
+                  shape: const StadiumBorder(),
+                ).copyWith(
+                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                 ),
+                onPressed: controller.isLoading
+                    ? null
+                    : () => controller.submitDeleteAccount(context),
+                child: controller.isLoading
+                    ? SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                        child: const CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Text(
+                        Language.of(context, 'continue'),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                        ),
+                      ),
               ),
               
             ],    

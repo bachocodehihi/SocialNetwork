@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/signup/gender/gender_controller.dart';
 import 'package:socialnetwork/app/widgets/banner/error.dart';
 import 'package:socialnetwork/app/widgets/dialog/gender.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
+
 class SignUpGenderView extends StatefulWidget {
   const SignUpGenderView({super.key});
   @override
@@ -77,7 +79,7 @@ class _SignUpGenderViewState extends State<SignUpGenderView> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      'Select gender',
+                      Language.of(context, 'select_gender'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
@@ -88,7 +90,7 @@ class _SignUpGenderViewState extends State<SignUpGenderView> {
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  'Select your gender',
+                  Language.of(context, 'select_your_gender'),
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
@@ -102,7 +104,7 @@ class _SignUpGenderViewState extends State<SignUpGenderView> {
                   readOnly: true,
                   onTap: _openGenderDialog,
                   decoration: InputDecoration(
-                    labelText: 'Gender',
+                    labelText: Language.of(context, 'gender'),
                     labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -142,33 +144,30 @@ class _SignUpGenderViewState extends State<SignUpGenderView> {
 
                 SizedBox(height: 20.h),
 
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.black,
-                      minimumSize: Size(double.infinity, 48.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                      ),
-                    ).copyWith(
-                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.black,
+                    minimumSize: Size(double.infinity, 48.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
                     ),
-                    onPressed: controller.isLoading
-                      ? null
-                      : () => controller.submitGender(context),
-                    child: controller.isLoading
-                      ? const CircularProgressIndicator(
-                        color: Colors.white
-                      ) : Text(
-                          'Continue',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.sp,
-                          ),
-                        ),
+                  ).copyWith(
+                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
                   ),
+                  onPressed: controller.isLoading
+                    ? null
+                    : () => controller.submitGender(context),
+                  child: controller.isLoading
+                    ? const CircularProgressIndicator(
+                      color: Colors.white
+                    ) : Text(
+                        Language.of(context, 'continue'),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                        ),
+                      ),
                 ),
                 Column(
                   children: [

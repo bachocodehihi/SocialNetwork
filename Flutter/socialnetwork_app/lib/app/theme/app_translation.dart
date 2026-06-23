@@ -13,6 +13,14 @@ class Language {
     }
   }
 
+  static String gender(BuildContext context, String gender) {
+    final g = gender.toLowerCase();
+    if (g == 'male') return of(context, 'male');
+    if (g == 'female') return of(context, 'female');
+    if (g == 'other') return of(context, 'other');
+    return gender;
+  }
+
   static const _en = {
     //welcome
     'hello': 'Hello!',
@@ -46,7 +54,12 @@ class Language {
       'select_your_birthday': 'Select your birthday',
       //gender
       'gender': 'Gender',
+      'select_gender': 'Select gender',
       'select_your_gender': 'Select your gender',
+      'please_select_gender': 'Please select gender!',
+      'male': 'Male',
+      'female': 'Female',
+      'other': 'Other',
       //avatar
       'avatar': 'Avatar',
       'select_your_avatar': 'Select your avatar',
@@ -199,7 +212,12 @@ class Language {
       'select_your_birthday': 'Chọn ngày sinh của bạn',
       //gender
       'gender': 'Giới tính',
+      'select_gender': 'Chọn giới tính',
       'select_your_gender': 'Chọn giới tính của bạn',
+      'please_select_gender': 'Vui lòng chọn giới tính!',
+      'male': 'Nam',
+      'female': 'Nữ',
+      'other': 'Khác',
       //avatar
       'avatar': 'Ảnh đại diện',
       'select_your_avatar': 'Chọn ảnh đại diện của bạn',

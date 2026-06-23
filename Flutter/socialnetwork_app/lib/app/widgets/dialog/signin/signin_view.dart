@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/widgets/dialog/signin/signin_controller.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SignInWebsiteDialog extends StatefulWidget {
   final String sessionId;
   final VoidCallback onCancel;
@@ -84,7 +84,7 @@ class _SignInWebsiteDialogState extends State<SignInWebsiteDialog> {
                 ),
                 SizedBox(height: 12.h),
                 Text(
-                  'Bạn có muốn đăng nhập tài khoản của mình trên thiết bị Web này không?',
+                  'Bạn có muốn đăng nhập tài khoản của mình trên website này không?',
                   textAlign: TextAlign.justify,
                   style: TextStyle(
                     fontSize: 15.sp,
@@ -113,99 +113,69 @@ class _SignInWebsiteDialogState extends State<SignInWebsiteDialog> {
                 SizedBox(height: 28.h),
                 Row(
                   children: [
-                    // Expanded(
-                    //   child: MouseRegion(
-                    //     cursor: SystemMouseCursors.click,
-                    //     child: OutlinedButton(
-                    //       style: OutlinedButton.styleFrom(
-                    //         padding: EdgeInsets.symmetric(vertical: 14.h),
-                    //         shape: RoundedRectangleBorder(
-                    //           borderRadius: BorderRadius.circular(30.r),
-                    //         ),
-                    //         side: BorderSide(color: cs.onSurface.withValues(alpha: 0.15)),
-                    //       ),
-                    //       onPressed: controller.isLoading
-                    //           ? null
-                    //           : () => controller.cancelSignIn(context),
-                    //       child: Text(
-                    //         'Hủy',
-                    //         style: TextStyle(
-                    //           fontSize: 15.sp,
-                    //           color: Colors.white,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     Expanded(
-                      child: MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 14.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.r),
-                            ),
-                            elevation: 0,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.r),
                           ),
-                          onPressed: controller.isLoading
-                              ? null
-                              : () => controller.cancelSignIn(context),
-                          child: controller.isLoading
-                              ? SizedBox(
-                                  width: 18.w,
-                                  height: 18.w,
-                                  child: const CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(
-                                  'Cancel',
-                                  style: TextStyle(
-                                    fontSize: 15.sp,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                          elevation: 0,
                         ),
+                        onPressed: controller.isLoading
+                            ? null
+                            : () => controller.cancelSignIn(context),
+                        child: controller.isLoading
+                            ? SizedBox(
+                                width: 18.w,
+                                height: 18.w,
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                Language.of(context, 'cancel'),
+                                style: TextStyle(
+                                  fontSize: 15.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
                     SizedBox(width: 10.w),
                     Expanded(
-                      child: MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 14.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.r),
-                            ),
-                            elevation: 0,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.r),
                           ),
-                          onPressed: controller.isLoading
-                              ? null
-                              : () => controller.submitSignIn(context),
-                          child: controller.isLoading
-                              ? SizedBox(
-                                  width: 18.w,
-                                  height: 18.w,
-                                  child: const CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(
-                                  'Sign in',
-                                  style: TextStyle(
-                                    fontSize: 15.sp,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                          elevation: 0,
                         ),
+                        onPressed: controller.isLoading
+                            ? null
+                            : () => controller.submitSignIn(context),
+                        child: controller.isLoading
+                            ? SizedBox(
+                                width: 18.w,
+                                height: 18.w,
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                Language.of(context, 'sign_in'),
+                                style: TextStyle(
+                                  fontSize: 15.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
                   ],

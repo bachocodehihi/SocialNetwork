@@ -76,26 +76,23 @@ class MainUserController extends ChangeNotifier {
             Row(
               children: [
                 Expanded(
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(double.infinity, 48.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                      ).copyWith(
-                        overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(double.infinity, 48.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.r),
                       ),
-                      onPressed: () => Navigator.of(dialogContext).pop(false),
-                      child: Text(
-                        'Hủy',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.sp,
-                        ),
+                    ).copyWith(
+                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                    ),
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    child: Text(
+                      'Hủy',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.sp,
                       ),
                     ),
                   ),
@@ -104,26 +101,23 @@ class MainUserController extends ChangeNotifier {
                 SizedBox(width: 10.w),
 
                 Expanded(
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(double.infinity, 48.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                      ).copyWith(
-                        overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(double.infinity, 48.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.r),
                       ),
-                      onPressed: () => Navigator.of(dialogContext).pop(true),
-                      child: Text(
-                        'Xác nhận',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.sp,
-                        ),
+                    ).copyWith(
+                      overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                    ),
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    child: Text(
+                      'Xác nhận',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.sp,
                       ),
                     ),
                   ),

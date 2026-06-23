@@ -201,27 +201,24 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
 
             SizedBox(height: 20.h),
 
-            MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.black,
-                  minimumSize: Size(double.infinity, 48.h),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.r),
-                  ),
-                ).copyWith(
-                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.black,
+                minimumSize: Size(double.infinity, 48.h),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.r),
                 ),
-                onPressed: _onConfirm,
-                child: Text(
-                  'Confirm',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15.sp,
-                  ),
+              ).copyWith(
+                overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+              ),
+              onPressed: _onConfirm,
+              child: Text(
+                'Confirm',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15.sp,
                 ),
               ),
             ),

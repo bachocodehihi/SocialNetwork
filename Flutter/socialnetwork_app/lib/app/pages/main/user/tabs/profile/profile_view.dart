@@ -959,7 +959,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
 
               if (controller.gender.isNotEmpty)
                 InformationItem(
-                  value: controller.gender, 
+                  value: Language.gender(context, controller.gender), 
                   title: Language.of(context, 'gender'), 
                   icon: Icons.wc_outlined,
                 ),

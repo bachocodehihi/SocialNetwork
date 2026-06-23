@@ -136,29 +136,26 @@ class _VerifyPasswordViewState extends State<VerifyPasswordView> {
 
               SizedBox(height: 20.h),
 
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.black,
-                    minimumSize: Size(double.infinity, 48.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                  ).copyWith(
-                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.black,
+                  minimumSize: Size(double.infinity, 48.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.r),
                   ),
-                  onPressed: controller.isLoading
-                      ? null
-                      : () => controller.submitPassword(context),
-                  child: controller.isLoading ? const CircularProgressIndicator(color: Colors.white) : Text(
-                    'Continue',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
+                ).copyWith(
+                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                ),
+                onPressed: controller.isLoading
+                    ? null
+                    : () => controller.submitPassword(context),
+                child: controller.isLoading ? const CircularProgressIndicator(color: Colors.white) : Text(
+                  'Continue',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
