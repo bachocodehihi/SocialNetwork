@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialnetwork/data/network/api/account_api.dart';
 import 'package:socialnetwork/data/repositories/account_repository_imp.dart';
 import 'package:socialnetwork/domain/usecases/account_usecase.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
-import 'dart:convert';
 
 class SearchAccountController extends ChangeNotifier {
   final AccountUsecase _usecase;
@@ -64,25 +62,18 @@ class SearchAccountController extends ChangeNotifier {
   }
 
   Future<void> saveRecentUser(Map<String, dynamic> user) async {
-    final userId = user['id']?.toString() ?? user['username']?.toString();
-    if (userId == null) return;
+    final searchedUserId = user['_id']?.toString() ?? user['id']?.toString();
+    if (searchedUserId == null) return;
 
     _recentUsers.removeWhere((u) {
-      final id = u['id']?.toString() ?? u['username']?.toString();
-      return id == userId;
+      final id = u['_id']?.toString() ?? u['id']?.toString();
+      return id == searchedUserId;
     });
-
     _recentUsers.insert(0, user);
-
-    if (_recentUsers.length > 10) {
-      _recentUsers.removeLast();
-    }
+    notifyListeners();
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final encoded = _recentUsers.map((u) => jsonEncode(u)).toList();
-      await prefs.setStringList('recent_users', encoded);
-      notifyListeners();
+      await _usecase.saveSearchHistory(searchedUserId);
     } catch (e) {
       //
     }
@@ -90,11 +81,7 @@ class SearchAccountController extends ChangeNotifier {
 
   Future<void> _loadRecentUsers() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getStringList('recent_users') ?? [];
-      _recentUsers = raw
-          .map((s) => Map<String, dynamic>.from(jsonDecode(s)))
-          .toList();
+      _recentUsers = await _usecase.getSearchHistory();
       notifyListeners();
     } catch (e) {
       _recentUsers = [];
@@ -102,16 +89,17 @@ class SearchAccountController extends ChangeNotifier {
   }
 
   Future<void> removeRecentUser(Map<String, dynamic> user) async {
-    final userId = user['id']?.toString() ?? user['username']?.toString();
+    final searchedUserId = user['_id']?.toString() ?? user['id']?.toString();
+    if (searchedUserId == null) return;
+
     _recentUsers.removeWhere((u) {
-      final id = u['id']?.toString() ?? u['username']?.toString();
-      return id == userId;
+      final id = u['_id']?.toString() ?? u['id']?.toString();
+      return id == searchedUserId;
     });
+    notifyListeners();
+
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final encoded = _recentUsers.map((u) => jsonEncode(u)).toList();
-      await prefs.setStringList('recent_users', encoded);
-      notifyListeners();
+      await _usecase.deleteSearchHistory(searchedUserId);
     } catch (e) {
       //
     }
@@ -119,10 +107,10 @@ class SearchAccountController extends ChangeNotifier {
 
   Future<void> clearRecentUsers() async {
     _recentUsers.clear();
+    notifyListeners();
+
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList('recent_users', []);
-      notifyListeners();
+      await _usecase.clearSearchHistory();
     } catch (e) {
       //
     }

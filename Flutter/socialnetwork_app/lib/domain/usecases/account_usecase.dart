@@ -26,4 +26,8 @@ class AccountUsecase {
   Future<Map<String, dynamic>> getUserById(String id) => _repository.getUserById(id);
   Future<Map<String, dynamic>> getPrivacy() => _repository.getPrivacy();
   Future<Map<String, dynamic>> updatePrivacy(Map<String, bool> settings) => _repository.updatePrivacy(settings);
+  Future<List<Map<String, dynamic>>> getSearchHistory() => _repository.getSearchHistory();
+  Future<void> saveSearchHistory(String searchedUserId) => _repository.saveSearchHistory(searchedUserId);
+  Future<void> deleteSearchHistory(String searchedUserId) => _repository.deleteSearchHistory(searchedUserId);
+  Future<void> clearSearchHistory() => _repository.clearSearchHistory();
 }

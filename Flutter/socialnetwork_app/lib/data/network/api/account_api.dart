@@ -196,4 +196,54 @@ class AccountApi {
       throw Exception(e.toString());
     }
   }
+
+  Future<List<Map<String, dynamic>>> getSearchHistory() async {
+    try {
+      final response = await _dio.get(
+        '/api/account/search-history',
+        options: await _authOptions(),
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'] as List?;
+        return data?.map((item) => Map<String, dynamic>.from(item)).toList() ?? [];
+      }
+      return [];
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<void> saveSearchHistory(String searchedUserId) async {
+    try {
+      await _dio.post(
+        '/api/account/search-history',
+        data: {'searchedUserId': searchedUserId},
+        options: await _authOptions(),
+      );
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<void> deleteSearchHistory(String searchedUserId) async {
+    try {
+      await _dio.delete(
+        '/api/account/search-history/$searchedUserId',
+        options: await _authOptions(),
+      );
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<void> clearSearchHistory() async {
+    try {
+      await _dio.delete(
+        '/api/account/search-history',
+        options: await _authOptions(),
+      );
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

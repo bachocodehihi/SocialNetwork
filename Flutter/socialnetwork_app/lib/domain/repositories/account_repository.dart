@@ -8,4 +8,8 @@ abstract class AccountRepository {
   Future<Map<String, dynamic>> getUserById(String id);
   Future<Map<String, dynamic>> getPrivacy();
   Future<Map<String, dynamic>> updatePrivacy(Map<String, bool> settings);
+  Future<List<Map<String, dynamic>>> getSearchHistory();
+  Future<void> saveSearchHistory(String searchedUserId);
+  Future<void> deleteSearchHistory(String searchedUserId);
+  Future<void> clearSearchHistory();
 }

@@ -36,7 +36,7 @@ class _GenderDialogState extends State<GenderDialog> {
     final cs = Theme.of(context).colorScheme;
 
     return Dialog(
-      backgroundColor: cs.surface,
+      backgroundColor: cs.surfaceContainerHigh,
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: kIsWeb ? 0 : 24.w,
@@ -55,8 +55,9 @@ class _GenderDialogState extends State<GenderDialog> {
               ),
             ),
             SizedBox(height: 20.h),
-            _radioItem(Language.of(context, 'male'),),
-            _radioItem(Language.of(context, 'female'),),
+            _radioItem(Language.of(context, 'male')),
+            _radioItem(Language.of(context, 'female')),
+            _radioItem(Language.of(context, 'other')),
             SizedBox(height: 20.h),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -73,7 +74,6 @@ class _GenderDialogState extends State<GenderDialog> {
               child: Text(
                 Language.of(context, 'continue'),
                 style: TextStyle(
-                  color: Colors.white,
                   fontSize: 15.sp,
                 ),
               ),
@@ -87,8 +87,20 @@ class _GenderDialogState extends State<GenderDialog> {
   Widget _radioItem(String value) {
     final bool isSelected = selectedGender == value;
     final cs = Theme.of(context).colorScheme;
-    final bool isMale = value == Language.of(context, 'male');
-    final Color accentColor = isMale ? Colors.blue : Colors.pink;
+    
+    final Color accentColor;
+    final IconData genderIcon;
+
+    if (value == Language.of(context, 'male')) {
+      accentColor = Colors.blue;
+      genderIcon = Icons.male_outlined;
+    } else if (value == Language.of(context, 'female')) {
+      accentColor = Colors.pink;
+      genderIcon = Icons.female_outlined;
+    } else {
+      accentColor = Colors.purple;
+      genderIcon = Icons.transgender_outlined;
+    }
 
     return GestureDetector(
       onTap: () => setState(() => selectedGender = value),
@@ -97,7 +109,7 @@ class _GenderDialogState extends State<GenderDialog> {
         margin: EdgeInsets.symmetric(vertical: 6.h),
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(
-          color: isSelected ? accentColor.withValues(alpha: 0.08) : cs.surface,
+          color: isSelected ? accentColor.withValues(alpha: 0.08) : cs.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: isSelected ? accentColor : Colors.grey.withValues(alpha: 0.3),
@@ -114,7 +126,7 @@ class _GenderDialogState extends State<GenderDialog> {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                isMale ? Icons.male_outlined : Icons.female_outlined,
+                genderIcon,
                 size: 20.sp,
                 color: isSelected ? accentColor : Colors.grey,
               ),

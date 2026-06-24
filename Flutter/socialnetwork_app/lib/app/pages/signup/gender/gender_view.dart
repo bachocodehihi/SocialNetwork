@@ -77,15 +77,15 @@ class _SignUpGenderViewState extends State<SignUpGenderView> {
                         color: cs.onSurface,
                       ),
                     ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      Language.of(context, 'select_gender'),
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                        color: cs.onSurface,
-                      ),
-                    ),
+                    // SizedBox(width: 10.w),
+                    // Text(
+                    //   Language.of(context, 'select_gender'),
+                    //   style: TextStyle(
+                    //     fontSize: 20.sp,
+                    //     fontWeight: FontWeight.w500,
+                    //     color: cs.onSurface,
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: 20.h),

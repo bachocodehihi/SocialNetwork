@@ -30,10 +30,18 @@ class _SignUpBirthdayViewState extends State<SignUpBirthdayView> {
   }
 
   void _openBirthdayDialog() {
-    final currentText = controller.birthdayController.text;
+    final currentText = controller.birthdayController.text.trim();
     DateTime initialDate;
     try {
-      initialDate = currentText.isEmpty ? DateTime.now() : DateTime.parse(currentText);
+      if (currentText.isEmpty) {
+        initialDate = DateTime.now();
+      } else {
+        final parts = currentText.split(' - ');
+        final day = int.parse(parts[0]);
+        final month = int.parse(parts[1]);
+        final year = int.parse(parts[2]);
+        initialDate = DateTime(year, month, day);
+      }
     } catch (_) {
       initialDate = DateTime.now();
     }

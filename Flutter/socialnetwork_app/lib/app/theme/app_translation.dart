@@ -52,6 +52,22 @@ class Language {
       //birthday
       'birthday': 'Birthday',
       'select_your_birthday': 'Select your birthday',
+      'day': 'Day',
+      'month': 'Month',
+      'year': 'Year',
+      'jan': 'Jan',
+      'feb': 'Feb',
+      'mar': 'Mar',
+      'apr': 'Apr',
+      'may': 'May',
+      'jun': 'Jun',
+      'jul': 'Jul',
+      'aug': 'Aug',
+      'sep': 'Sep',
+      'oct': 'Oct',
+      'nov': 'Nov',
+      'dec': 'Dec',
+
       //gender
       'gender': 'Gender',
       'select_gender': 'Select gender',
@@ -210,6 +226,21 @@ class Language {
       //birthday
       'birthday': 'Ngày sinh',
       'select_your_birthday': 'Chọn ngày sinh của bạn',
+      'day': 'Ngày',
+      'month': 'Tháng',
+      'year': 'Năm',
+      'jan': 'Th 1', 
+      'feb': 'Th 2', 
+      'mar': 'Th 3', 
+      'apr': 'Th 4', 
+      'may': 'Th 5', 
+      'jun': 'Th 6',
+      'jul': 'Th 7', 
+      'aug': 'Th 8', 
+      'sep': 'Th 9', 
+      'oct': 'Th 10', 
+      'nov': 'Th 11', 
+      'dec': 'Th 12',
       //gender
       'gender': 'Giới tính',
       'select_gender': 'Chọn giới tính',
@@ -224,6 +255,7 @@ class Language {
       //password
       'enter_your_password': 'Nhập mật khẩu của bạn',
       'password': 'Mật khẩu',
+      'confirm_password': 'Xác nhận mật khẩu',
 
     //verify
       //sign up

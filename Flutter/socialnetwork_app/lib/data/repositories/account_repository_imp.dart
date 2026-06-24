@@ -89,4 +89,40 @@ class AccountRepositoryImp implements AccountRepository {
       throw Exception(_getCode(e.response?.data, 'SERVER_ERROR'));
     }
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> getSearchHistory() async {
+    try {
+      return await _accountApi.getSearchHistory();
+    } on DioException catch (e) {
+      throw Exception(_getCode(e.response?.data, 'SERVER_ERROR'));
+    }
+  }
+
+  @override
+  Future<void> saveSearchHistory(String searchedUserId) async {
+    try {
+      await _accountApi.saveSearchHistory(searchedUserId);
+    } on DioException catch (e) {
+      throw Exception(_getCode(e.response?.data, 'SERVER_ERROR'));
+    }
+  }
+
+  @override
+  Future<void> deleteSearchHistory(String searchedUserId) async {
+    try {
+      await _accountApi.deleteSearchHistory(searchedUserId);
+    } on DioException catch (e) {
+      throw Exception(_getCode(e.response?.data, 'SERVER_ERROR'));
+    }
+  }
+
+  @override
+  Future<void> clearSearchHistory() async {
+    try {
+      await _accountApi.clearSearchHistory();
+    } on DioException catch (e) {
+      throw Exception(_getCode(e.response?.data, 'SERVER_ERROR'));
+    }
+  }
 }

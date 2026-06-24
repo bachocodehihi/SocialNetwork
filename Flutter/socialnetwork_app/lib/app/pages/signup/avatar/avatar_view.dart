@@ -78,14 +78,14 @@ class _SignUpAvatarViewState extends State<SignUpAvatarView> {
                       ),
                     ),
                     SizedBox(width: 10.w),
-                    Text(
-                      Language.of(context, 'select_avatar'),
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                        color: cs.onSurface,
-                      ),
-                    ),
+                    // Text(
+                    //   Language.of(context, 'select_avatar'),
+                    //   style: TextStyle(
+                    //     fontSize: 20.sp,
+                    //     fontWeight: FontWeight.w500,
+                    //     color: cs.onSurface,
+                    //   ),
+                    // ),
                   ],
                 ),
 

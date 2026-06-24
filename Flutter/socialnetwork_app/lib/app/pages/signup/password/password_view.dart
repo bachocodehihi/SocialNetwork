@@ -8,7 +8,7 @@ import 'package:socialnetwork/data/network/api/auth_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:socialnetwork/data/repositories/auth_repository_imp.dart';
 import 'package:socialnetwork/domain/usecases/auth_usecase.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SignUpPasswordView extends StatefulWidget {
   const SignUpPasswordView({super.key});
   @override
@@ -73,20 +73,20 @@ class _SignUpPasswordViewState extends State<SignUpPasswordView> {
                         color: cs.onSurface,
                       ),
                     ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      'Enter password',
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                        color: cs.onSurface,
-                      ),
-                    ),
+                    // SizedBox(width: 10.w),
+                    // Text(
+                    //   'Enter password',
+                    //   style: TextStyle(
+                    //     fontSize: 20.sp,
+                    //     fontWeight: FontWeight.w500,
+                    //     color: cs.onSurface,
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  'Enter your password',
+                  Language.of(context, 'enter_your_password'),
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
@@ -104,7 +104,7 @@ class _SignUpPasswordViewState extends State<SignUpPasswordView> {
                     color: cs.onSurface,
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: Language.of(context, 'password'),
                     labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -144,7 +144,7 @@ class _SignUpPasswordViewState extends State<SignUpPasswordView> {
                     color: cs.onSurface,
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Confirm password',
+                    labelText: Language.of(context, 'confirm_password'),
                     labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -208,7 +208,7 @@ class _SignUpPasswordViewState extends State<SignUpPasswordView> {
                     ? const CircularProgressIndicator(
                       color: Colors.white
                     ) : Text(
-                        'Continue',
+                        Language.of(context, 'continue'),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 15.sp,

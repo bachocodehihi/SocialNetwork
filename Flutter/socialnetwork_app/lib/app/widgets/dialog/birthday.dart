@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class BirthdayDialog extends StatefulWidget {
   final DateTime initialDate;
   final ValueChanged<DateTime> onConfirm;
@@ -21,10 +21,6 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
   late int month;
   late int year;
 
-  final List<String> months = const [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-  ];
   late List<String> days;
   late List<String> years;
 
@@ -52,9 +48,23 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final List<String> months = [
+      Language.of(context, 'jan'),
+      Language.of(context, 'feb'),
+      Language.of(context, 'mar'),
+      Language.of(context, 'apr'),
+      Language.of(context, 'may'),
+      Language.of(context, 'jun'),
+      Language.of(context, 'jul'),
+      Language.of(context, 'aug'),
+      Language.of(context, 'sep'),
+      Language.of(context, 'oct'),
+      Language.of(context, 'nov'),
+      Language.of(context, 'dec'),
+    ];
 
     return Dialog(
-      backgroundColor: cs.surface,
+      backgroundColor: cs.surfaceContainerHigh,
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: kIsWeb ? 0 : 24.w,
@@ -65,7 +75,7 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'Select birthday',
+              Language.of(context, 'select_your_birthday'),
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w500,
@@ -80,7 +90,7 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      'Day',
+                      Language.of(context, 'day'),
                       style: TextStyle(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w500,
@@ -92,7 +102,7 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      'Month',
+                      Language.of(context, 'month'),
                       style: TextStyle(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w500,
@@ -104,7 +114,7 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      'Year',
+                      Language.of(context, 'year'),
                       style: TextStyle(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w500,
@@ -172,8 +182,8 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                cs.surface,
-                                cs.surface.withValues(alpha: 0),
+                                cs.surfaceContainerHigh,
+                                cs.surfaceContainerHigh.withValues(alpha: 0),
                               ],
                             ),
                           ),
@@ -186,8 +196,8 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
                               begin: Alignment.bottomCenter,
                               end: Alignment.topCenter,
                               colors: [
-                                cs.surface,
-                                cs.surface.withValues(alpha: 0),
+                                cs.surfaceContainerHigh,
+                                cs.surfaceContainerHigh.withValues(alpha: 0),
                               ],
                             ),
                           ),
@@ -215,10 +225,10 @@ class _BirthdayDialogState extends State<BirthdayDialog> {
               ),
               onPressed: _onConfirm,
               child: Text(
-                'Confirm',
+                Language.of(context, 'continue'),
                 style: TextStyle(
-                  color: Colors.white,
                   fontSize: 15.sp,
+                  color: Colors.white
                 ),
               ),
             ),
