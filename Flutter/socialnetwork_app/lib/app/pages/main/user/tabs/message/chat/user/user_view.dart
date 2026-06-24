@@ -196,6 +196,9 @@ class _ChatUserViewState extends State<ChatUserView> {
     final messageId = msg['_id']?.toString() ?? msg['id']?.toString();
     final content = msg['content']?.toString() ?? '';
     final isRecalled = msg['isRecalled'] == true;
+    final isPinned = _controller.pinnedMessage != null && 
+        (_controller.pinnedMessage!['_id']?.toString() == messageId || 
+         _controller.pinnedMessage!['id']?.toString() == messageId);
     
     showModalBottomSheet(
       context: context,
