@@ -182,6 +182,83 @@ class _ChatGroupViewState extends State<ChatGroupView> {
     }
   }
 
+  void _scrollToMessage(String messageId) {
+    final index = _controller.messages.indexWhere((m) {
+      final mid = m['_id']?.toString() ?? m['id']?.toString();
+      return mid == messageId;
+    });
+    if (index != -1) {
+      final totalItems = _controller.messages.length;
+      if (totalItems > 0) {
+        final targetOffset = _scrollController.position.maxScrollExtent * (index / totalItems);
+        _scrollController.animateTo(
+          targetOffset,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
+  }
+
+  void _showMessageOptions(Map<String, dynamic> msg) {
+    final cs = Theme.of(context).colorScheme;
+    final messageId = msg['_id']?.toString() ?? msg['id']?.toString();
+    final isPinned = _controller.pinnedMessage != null && 
+        (_controller.pinnedMessage!['_id']?.toString() == messageId || 
+         _controller.pinnedMessage!['id']?.toString() == messageId);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: cs.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 8.h, bottom: 16.h),
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: cs.onSurfaceVariant.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+              ListTile(
+                leading: Icon(
+                  isPinned ? Icons.pin_drop_outlined : Icons.push_pin_outlined,
+                  size: 25.sp,
+                  color: Colors.pink,
+                ),
+                title: Text(
+                  isPinned ? 'Bỏ ghim' : 'Ghim tin nhắn',
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    color: cs.onSurface,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  if (isPinned) {
+                    _controller.unpinMessage();
+                  } else {
+                    if (messageId != null) {
+                      _controller.pinMessage(messageId);
+                    }
+                  }
+                },
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _controller.removeListener(_onControllerChanged);
@@ -290,6 +367,79 @@ class _ChatGroupViewState extends State<ChatGroupView> {
       ),
       body: Column(
         children: [
+          ListenableBuilder(
+            listenable: _controller,
+            builder: (context, _) {
+              final pinned = _controller.pinnedMessage;
+              if (pinned == null) return const SizedBox.shrink();
+              
+              final pinnedContent = pinned['content']?.toString() ?? '';
+              final pinnedSender = pinned['sender'];
+              final pinnedSenderName = pinnedSender is Map 
+                  ? (pinnedSender['username']?.toString() ?? 'Ai đó') 
+                  : 'Ai đó';
+              
+              return Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainerHighest.withValues(alpha: 0.8),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: cs.onSurface.withValues(alpha: 0.1),
+                      width: 0.5,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.push_pin,
+                      size: 16.sp,
+                      color: cs.primary,
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          final pinnedId = pinned['_id']?.toString() ?? pinned['id']?.toString();
+                          if (pinnedId != null) {
+                            _scrollToMessage(pinnedId);
+                          }
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Tin nhắn đã ghim từ $pinnedSenderName',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.bold,
+                                color: cs.primary,
+                              ),
+                            ),
+                            Text(
+                              pinnedContent,
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: cs.onSurface,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close, size: 16.sp),
+                      onPressed: () => _controller.unpinMessage(),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
           Expanded(
             child: GestureDetector(
               onLongPress: _showThemeSettings,
@@ -397,16 +547,22 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                             if (showDate && createdAt != null)
                               _DateSeparator(date: createdAt),
                             
-                            _MessageBubble(
-                              content: content,
-                              isMe: isMe,
-                              time: createdAt != null 
-                                  ? DateFormat('HH:mm').format(createdAt) 
-                                  : '',
-                              avatar: isMe ? null : senderAvatar,
-                              username: isMe ? null : senderName,
-                              isTemp: msg['isTemp'] == true,
-                              showAvatar: showAvatar,
+                            GestureDetector(
+                              onLongPress: () => _showMessageOptions(msg),
+                              child: _MessageBubble(
+                                content: content,
+                                isMe: isMe,
+                                time: createdAt != null 
+                                    ? DateFormat('HH:mm').format(createdAt) 
+                                    : '',
+                                avatar: isMe ? null : senderAvatar,
+                                username: isMe ? null : senderName,
+                                isTemp: msg['isTemp'] == true,
+                                showAvatar: showAvatar,
+                                isPinned: _controller.pinnedMessage != null && 
+                                    (_controller.pinnedMessage!['_id']?.toString() == msg['_id']?.toString() || 
+                                     _controller.pinnedMessage!['id']?.toString() == msg['id']?.toString()),
+                              ),
                             ),
                           ],
                         );
@@ -679,6 +835,7 @@ class _MessageBubble extends StatelessWidget {
   final String? username;
   final bool isTemp;
   final bool showAvatar;
+  final bool isPinned;
 
   const _MessageBubble({
     required this.content,
@@ -688,6 +845,7 @@ class _MessageBubble extends StatelessWidget {
     this.username,
     this.isTemp = false,
     required this.showAvatar,
+    this.isPinned = false,
   });
 
   @override
@@ -804,12 +962,25 @@ class _MessageBubble extends StatelessWidget {
                 
                 Padding(
                   padding: EdgeInsets.only(top: 4.h, right: 4.w),
-                  child: Text(
-                    time,
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: cs.onSurfaceVariant,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        time,
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                      if (isPinned) ...[
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.push_pin,
+                          size: 10.sp,
+                          color: Colors.pink,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ],

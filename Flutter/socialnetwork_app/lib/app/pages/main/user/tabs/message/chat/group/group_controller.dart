@@ -17,6 +17,7 @@ class ChatGroupController extends ChangeNotifier {
   String? _error;
   String _currentUserId = '';
   final TextEditingController _messageController = TextEditingController();
+  Map<String, dynamic>? _pinnedMessage;
 
   bool _isTyping = false;
   Timer? _typingTimer;
@@ -35,6 +36,7 @@ class ChatGroupController extends ChangeNotifier {
   TextEditingController get messageController => _messageController;
   bool get isTyping => _isTyping;
   Map<String, bool> get typingUsers => _typingUsers;
+  Map<String, dynamic>? get pinnedMessage => _pinnedMessage;
 
   Future<void> init(String conversationId) async {
     _conversationId = conversationId;
@@ -48,6 +50,19 @@ class ChatGroupController extends ChangeNotifier {
       _socket.joinRoom(conversationId);
       _setupSocketListeners();
       await fetchMessages();
+      
+      try {
+        final conversations = await _usecase.getConversations();
+        final conv = conversations.firstWhere(
+          (c) => c['_id']?.toString() == conversationId || c['id']?.toString() == conversationId,
+          orElse: () => <String, dynamic>{},
+        );
+        if (conv.isNotEmpty && conv['pinnedMessage'] != null) {
+          _pinnedMessage = Map<String, dynamic>.from(conv['pinnedMessage'] as Map);
+        }
+      } catch (e) {
+        debugPrint('❌ ChatGroupController fetch conversations error: $e');
+      }
     } catch (e) {
       _error = e.toString();
       debugPrint('❌ ChatGroupController init error: $e');
@@ -90,6 +105,22 @@ class ChatGroupController extends ChangeNotifier {
           _typingUsers.remove(senderId);
           notifyListeners();
         }
+      }
+    });
+
+    _socket.on('message_pinned', (data) {
+      if (data is Map && data['conversationId'] == _conversationId) {
+        if (data['pinnedMessage'] != null) {
+          _pinnedMessage = Map<String, dynamic>.from(data['pinnedMessage'] as Map);
+          notifyListeners();
+        }
+      }
+    });
+
+    _socket.on('message_unpinned', (data) {
+      if (data is Map && data['conversationId'] == _conversationId) {
+        _pinnedMessage = null;
+        notifyListeners();
       }
     });
 
@@ -232,10 +263,38 @@ class ChatGroupController extends ChangeNotifier {
       _socket.off('receive_message');
       _socket.off('typing');
       _socket.off('stop_typing');
+      _socket.off('message_pinned');
+      _socket.off('message_unpinned');
       _socket.off('error');
     }
     _typingTimer?.cancel();
     _messageController.dispose();
     super.dispose();
+  }
+
+  Future<void> pinMessage(String messageId) async {
+    if (_conversationId == null) return;
+    try {
+      final res = await _usecase.pinMessage(_conversationId!, messageId);
+      if (res['success'] == true && res['pinnedMessage'] != null) {
+        _pinnedMessage = Map<String, dynamic>.from(res['pinnedMessage'] as Map);
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('❌ Error pinning message: $e');
+    }
+  }
+
+  Future<void> unpinMessage() async {
+    if (_conversationId == null) return;
+    try {
+      final res = await _usecase.unpinMessage(_conversationId!);
+      if (res['success'] == true) {
+        _pinnedMessage = null;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('❌ Error unpinning message: $e');
+    }
   }
 }

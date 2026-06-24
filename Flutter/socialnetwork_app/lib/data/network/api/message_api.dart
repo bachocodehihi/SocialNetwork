@@ -146,4 +146,24 @@ class MessageApi {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>> pinMessage(String conversationId, String messageId) async {
+    final token = await AuthLocal.getToken();
+    final res = await _dio.post(
+      '/api/message/$conversationId/pin/$messageId',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+    final data = res.data;
+    return data is Map<String, dynamic> ? data : {};
+  }
+
+  Future<Map<String, dynamic>> unpinMessage(String conversationId) async {
+    final token = await AuthLocal.getToken();
+    final res = await _dio.post(
+      '/api/message/$conversationId/unpin',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+    final data = res.data;
+    return data is Map<String, dynamic> ? data : {};
+  }
 }

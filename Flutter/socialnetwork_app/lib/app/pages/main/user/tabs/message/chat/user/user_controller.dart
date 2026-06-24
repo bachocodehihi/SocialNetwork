@@ -23,10 +23,13 @@ class ChatUserController extends ChangeNotifier {
   String _currentUserId = '';
   String _receiverStatus = 'offline';
   String? _conversationId;
+  Map<String, dynamic>? _pinnedMessage;
   
   void Function(dynamic)? _statusListener;
   void Function(dynamic)? _messageListener;
   void Function(dynamic)? _recallListener;
+  void Function(dynamic)? _pinListener;
+  void Function(dynamic)? _unpinListener;
  
   ChatUserController({
     required this.receiverId,
@@ -48,6 +51,7 @@ class ChatUserController extends ChangeNotifier {
   String get receiverStatus => _receiverStatus;
   bool get isReceiverOnline => _receiverStatus == 'online';
   String? get conversationId => _conversationId;
+  Map<String, dynamic>? get pinnedMessage => _pinnedMessage;
  
   String? _extractSenderId(dynamic senderRaw) {
     if (senderRaw is Map) {
@@ -75,6 +79,13 @@ class ChatUserController extends ChangeNotifier {
         _conversationId = innerConv['_id']?.toString() ?? innerConv['id']?.toString();
       }
       
+      final Map<String, dynamic> convData = conv['conversation'] != null 
+          ? Map<String, dynamic>.from(conv['conversation'] as Map) 
+          : Map<String, dynamic>.from(conv);
+      if (convData['pinnedMessage'] != null) {
+        _pinnedMessage = Map<String, dynamic>.from(convData['pinnedMessage'] as Map);
+      }
+      
       if (_conversationId == null) {
         _error = 'Không thể tạo conversation';
         _isLoading = false;
@@ -89,6 +100,12 @@ class ChatUserController extends ChangeNotifier {
       
       _recallListener = _onMessageRecalled;
       _socketService.on('message_recalled', _recallListener!);
+
+      _pinListener = _onMessagePinned;
+      _socketService.on('message_pinned', _pinListener!);
+
+      _unpinListener = _onMessageUnpinned;
+      _socketService.on('message_unpinned', _unpinListener!);
       
       await _loadMessages();
       
@@ -269,6 +286,12 @@ class ChatUserController extends ChangeNotifier {
     if (_recallListener != null) {
       _socketService.off('message_recalled', _recallListener);
     }
+    if (_pinListener != null) {
+      _socketService.off('message_pinned', _pinListener);
+    }
+    if (_unpinListener != null) {
+      _socketService.off('message_unpinned', _unpinListener);
+    }
     if (isFriend && _statusListener != null) {
       _socketService.off('friend_status_changed', _statusListener);
     }
@@ -312,5 +335,47 @@ class ChatUserController extends ChangeNotifier {
   Future<void> refresh() async {
     await _loadMessages();
     notifyListeners();
+  }
+
+  void _onMessagePinned(dynamic data) {
+    final msgConvId = data['conversationId']?.toString();
+    if (msgConvId != _conversationId) return;
+    if (data['pinnedMessage'] != null) {
+      _pinnedMessage = Map<String, dynamic>.from(data['pinnedMessage'] as Map);
+      notifyListeners();
+    }
+  }
+
+  void _onMessageUnpinned(dynamic data) {
+    final msgConvId = data['conversationId']?.toString();
+    if (msgConvId != _conversationId) return;
+    _pinnedMessage = null;
+    notifyListeners();
+  }
+
+  Future<void> pinMessage(String messageId) async {
+    if (_conversationId == null) return;
+    try {
+      final res = await _messageUsecase.pinMessage(_conversationId!, messageId);
+      if (res['success'] == true && res['pinnedMessage'] != null) {
+        _pinnedMessage = Map<String, dynamic>.from(res['pinnedMessage'] as Map);
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error pinning message: $e');
+    }
+  }
+
+  Future<void> unpinMessage() async {
+    if (_conversationId == null) return;
+    try {
+      final res = await _messageUsecase.unpinMessage(_conversationId!);
+      if (res['success'] == true) {
+        _pinnedMessage = null;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error unpinning message: $e');
+    }
   }
 }

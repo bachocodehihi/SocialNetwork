@@ -277,19 +277,26 @@ class _ChatUserViewState extends State<ChatUserView> {
                 ),
                 ListTile(
                   leading: Icon(
-                    Icons.push_pin_outlined,
+                    isPinned ? Icons.pin_drop_outlined : Icons.push_pin_outlined,
                     size: 25.sp,
                     color: Colors.pink,
                   ),
                   title: Text(
-                    Language.of(context, 'pin'),
+                    isPinned ? 'Bỏ ghim' : Language.of(context, 'pin'),
                     style: TextStyle(
                       fontSize: 15.sp,
                       color: cs.onSurface,
                     ),
                   ),
                   onTap: () {
-
+                    Navigator.pop(context);
+                    if (isPinned) {
+                      _controller.unpinMessage();
+                    } else {
+                      if (messageId != null) {
+                        _controller.pinMessage(messageId);
+                      }
+                    }
                   },
                 ),
                 ListTile(
@@ -362,6 +369,24 @@ class _ChatUserViewState extends State<ChatUserView> {
         curve: Curves.easeOut,
       );
     });
+  }
+
+  void _scrollToMessage(String messageId) {
+    final index = _controller.messages.indexWhere((m) {
+      final mid = m['_id']?.toString() ?? m['id']?.toString();
+      return mid == messageId;
+    });
+    if (index != -1) {
+      final totalItems = _controller.messages.length;
+      if (totalItems > 0) {
+        final targetOffset = _scrollController.position.maxScrollExtent * (index / totalItems);
+        _scrollController.animateTo(
+          targetOffset,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
   }
  
   @override
@@ -549,6 +574,79 @@ class _ChatUserViewState extends State<ChatUserView> {
                   ),
                 ],
               ),
+            ),
+            ListenableBuilder(
+              listenable: _controller,
+              builder: (context, _) {
+                final pinned = _controller.pinnedMessage;
+                if (pinned == null) return const SizedBox.shrink();
+                
+                final pinnedContent = pinned['content']?.toString() ?? '';
+                final pinnedSender = pinned['sender'];
+                final pinnedSenderName = pinnedSender is Map 
+                    ? (pinnedSender['username']?.toString() ?? 'Ai đó') 
+                    : 'Ai đó';
+                
+                return Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: cs.surfaceContainerHighest.withValues(alpha: 0.8),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: cs.onSurface.withValues(alpha: 0.1),
+                        width: 0.5,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.push_pin,
+                        size: 16.sp,
+                        color: cs.primary,
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            final pinnedId = pinned['_id']?.toString() ?? pinned['id']?.toString();
+                            if (pinnedId != null) {
+                              _scrollToMessage(pinnedId);
+                            }
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tin nhắn đã ghim từ $pinnedSenderName',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: cs.primary,
+                                ),
+                              ),
+                              Text(
+                                pinnedContent,
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: cs.onSurface,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close, size: 16.sp),
+                        onPressed: () => _controller.unpinMessage(),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             Expanded(child: _buildMessagesList(cs)),
             ListenableBuilder(
@@ -861,12 +959,27 @@ class _ChatUserViewState extends State<ChatUserView> {
                                                     ),
                                     ),
                                     SizedBox(height: 3.h),
-                                    Text(
-                                      _formatTime(msg['createdAt']),
-                                      style: TextStyle(
-                                        fontSize: 10.sp,
-                                        color: Colors.grey,
-                                      ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          _formatTime(msg['createdAt']),
+                                          style: TextStyle(
+                                            fontSize: 10.sp,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        if (_controller.pinnedMessage != null && 
+                                            (_controller.pinnedMessage!['_id']?.toString() == msgId || 
+                                             _controller.pinnedMessage!['id']?.toString() == msgId)) ...[
+                                          SizedBox(width: 5.w),
+                                          Icon(
+                                            Icons.push_pin,
+                                            size: 10.sp,
+                                            color: Colors.pink,
+                                          ),
+                                        ],
+                                      ],
                                     ),
                                   ],
                                 ),

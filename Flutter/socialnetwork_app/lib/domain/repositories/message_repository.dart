@@ -30,4 +30,7 @@ abstract class MessageRepository {
   Future<String?> uploadImage(String filePath);
 
   Future<String?> uploadAudio(String filePath);
+
+  Future<Map<String, dynamic>> pinMessage(String conversationId, String messageId);
+  Future<Map<String, dynamic>> unpinMessage(String conversationId);
 }

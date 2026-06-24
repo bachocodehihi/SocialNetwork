@@ -7,6 +7,7 @@ const conversationSchema = new mongoose.Schema({
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],
     admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
     lastMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' },
+    pinnedMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
 
     meta: {
         groupId: { type: mongoose.Schema.Types.ObjectId, ref: 'Group' }

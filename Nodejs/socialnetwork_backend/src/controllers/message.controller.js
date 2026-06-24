@@ -13,7 +13,11 @@ const createConversation = async (req, res) => {
                 const existingConv = await Conversation.findOne({
                     isGroup: true,
                     'meta.groupId': groupId
-                }).populate('members', 'username avatar email');
+                }).populate('members', 'username avatar email')
+                  .populate({
+                      path: 'pinnedMessage',
+                      populate: { path: 'sender', select: 'username avatar' }
+                  });
                 
                 if (existingConv) {
                     return res.status(200).json({ success: true, code: 'CONVERSATION_EXISTS', ...existingConv.toObject() });
@@ -65,7 +69,11 @@ const createConversation = async (req, res) => {
                 isGroup: true,
                 name: name,
                 members: { $all: groupMembers, $size: groupMembers.length }
-            }).populate('members', 'username avatar email');
+            }).populate('members', 'username avatar email')
+              .populate({
+                  path: 'pinnedMessage',
+                  populate: { path: 'sender', select: 'username avatar' }
+              });
             
             if (existingConv) {
                 return res.status(200).json({ success: true, code: 'CONVERSATION_EXISTS', ...existingConv.toObject() });
@@ -96,7 +104,11 @@ const createConversation = async (req, res) => {
             const existingConv = await Conversation.findOne({
                 isGroup: false,
                 members: { $all: [adminId, receiverId], $size: 2 }
-            }).populate('members', 'username avatar email');
+            }).populate('members', 'username avatar email')
+              .populate({
+                  path: 'pinnedMessage',
+                  populate: { path: 'sender', select: 'username avatar' }
+              });
             
             if (existingConv) {
                 return res.status(200).json({ success: true, code: 'CONVERSATION_EXISTS', ...existingConv.toObject() });
@@ -210,6 +222,10 @@ const getConversations = async (req, res) => {
             .populate('members', 'username avatar email lastSeen')
             .populate({
                 path: 'lastMessage',
+                populate: { path: 'sender', select: 'username avatar' }
+            })
+            .populate({
+                path: 'pinnedMessage',
                 populate: { path: 'sender', select: 'username avatar' }
             })
             .sort({ updatedAt: -1 })
@@ -414,6 +430,82 @@ const uploadMessageAudio = async (req, res) => {
     }
 };
 
+const pinMessage = async (req, res) => {
+    try {
+        const { conversationId, messageId } = req.params;
+
+        const conv = await Conversation.findById(conversationId);
+        if (!conv) {
+            return res.status(404).json({ success: false, code: 'CONVERSATION_NOT_FOUND' });
+        }
+
+        if (!conv.members.some(m => m.toString() === req.userId)) {
+            return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
+        }
+
+        const msg = await Message.findById(messageId);
+        if (!msg) {
+            return res.status(404).json({ success: false, code: 'MESSAGE_NOT_FOUND' });
+        }
+
+        if (msg.conversationId.toString() !== conversationId) {
+            return res.status(400).json({ success: false, code: 'MESSAGE_NOT_IN_CONVERSATION' });
+        }
+
+        conv.pinnedMessage = messageId;
+        await conv.save();
+
+        const populatedMsg = await Message.findById(messageId).populate('sender', 'username avatar email');
+
+        try {
+            const io = require('../socket').getIO();
+            io.to(conversationId).emit('message_pinned', {
+                conversationId,
+                pinnedMessage: populatedMsg
+            });
+        } catch (socketErr) {
+            console.warn('Socket emit warning:', socketErr.message);
+        }
+
+        res.status(200).json({ success: true, code: 'PIN_MESSAGE_SUCCESS', pinnedMessage: populatedMsg });
+    } catch (error) {
+        console.error('Pin message error:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const unpinMessage = async (req, res) => {
+    try {
+        const { conversationId } = req.params;
+
+        const conv = await Conversation.findById(conversationId);
+        if (!conv) {
+            return res.status(404).json({ success: false, code: 'CONVERSATION_NOT_FOUND' });
+        }
+
+        if (!conv.members.some(m => m.toString() === req.userId)) {
+            return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
+        }
+
+        conv.pinnedMessage = null;
+        await conv.save();
+
+        try {
+            const io = require('../socket').getIO();
+            io.to(conversationId).emit('message_unpinned', {
+                conversationId
+            });
+        } catch (socketErr) {
+            console.warn('Socket emit warning:', socketErr.message);
+        }
+
+        res.status(200).json({ success: true, code: 'UNPIN_MESSAGE_SUCCESS' });
+    } catch (error) {
+        console.error('Unpin message error:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     createConversation, 
     getConversations, 
@@ -422,5 +514,7 @@ module.exports = {
     deleteMessage,
     markAsRead,
     uploadMessageImage,
-    uploadMessageAudio
+    uploadMessageAudio,
+    pinMessage,
+    unpinMessage
 };

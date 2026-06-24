@@ -64,4 +64,12 @@ class MessageUsecase {
   Future<String?> uploadAudio(String filePath) async {
     return await _repository.uploadAudio(filePath);
   }
+
+  Future<Map<String, dynamic>> pinMessage(String conversationId, String messageId) async {
+    return await _repository.pinMessage(conversationId, messageId);
+  }
+
+  Future<Map<String, dynamic>> unpinMessage(String conversationId) async {
+    return await _repository.unpinMessage(conversationId);
+  }
 }

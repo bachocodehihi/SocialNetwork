@@ -63,4 +63,12 @@ class MessageRepositoryImp implements MessageRepository {
   @override
   Future<String?> uploadAudio(String filePath) =>
       _api.uploadAudio(filePath);
+
+  @override
+  Future<Map<String, dynamic>> pinMessage(String conversationId, String messageId) =>
+      _api.pinMessage(conversationId, messageId);
+
+  @override
+  Future<Map<String, dynamic>> unpinMessage(String conversationId) =>
+      _api.unpinMessage(conversationId);
 }
