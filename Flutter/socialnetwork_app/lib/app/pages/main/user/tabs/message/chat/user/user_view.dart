@@ -394,51 +394,42 @@ class _ChatUserViewState extends State<ChatUserView> {
   }
  
   Widget _buildReplyPreviewInBubble(Map<String, dynamic> repliedTo, bool isMe, ColorScheme cs) {
-    final sender = repliedTo['sender'];
-    final senderName = sender is Map ? (sender['username']?.toString() ?? 'Ai đó') : 'Ai đó';
     final content = repliedTo['content']?.toString() ?? '';
     final replyId = repliedTo['_id']?.toString() ?? repliedTo['id']?.toString() ?? '';
 
     return InkWell(
       onTap: replyId.isNotEmpty ? () => _scrollToMessage(replyId) : null,
-      borderRadius: BorderRadius.circular(14.r),
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(18.r),
+        topRight: Radius.circular(18.r),
+        bottomLeft: Radius.circular(isMe ? 18.r : 4.r),
+        bottomRight: Radius.circular(isMe ? 4.r : 18.r),
+      ),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: isMe 
-              ? Colors.blue.withValues(alpha: 0.3) 
-              : const Color(0xFFD6D6D6).withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(14.r),
+              ? Colors.blue.withValues(alpha: 0.35) 
+              : cs.surfaceContainerHighest.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(18.r),
+            topRight: Radius.circular(18.r),
+            bottomLeft: Radius.circular(isMe ? 18.r : 4.r),
+            bottomRight: Radius.circular(isMe ? 4.r : 18.r),
+          ),
           border: Border.all(
-            color: isMe ? Colors.white.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.08),
+            color: isMe ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
             width: 0.5,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              senderName,
-              style: TextStyle(
-                fontSize: 11.sp,
-                fontWeight: FontWeight.bold,
-                color: isMe ? Colors.white70 : cs.onSurfaceVariant,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 2.h),
-            Text(
-              content,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: isMe ? Colors.white60 : cs.onSurfaceVariant.withValues(alpha: 0.8),
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+        child: Text(
+          content,
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: isMe ? Colors.white70 : cs.onSurfaceVariant.withValues(alpha: 0.8),
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
@@ -1086,7 +1077,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                       ),
                                     if (repliedTo != null && repliedTo is Map && !isRecalled)
                                       Padding(
-                                        padding: EdgeInsets.only(bottom: 4.h),
+                                        padding: EdgeInsets.only(bottom: 1.h),
                                         child: _buildReplyPreviewInBubble(Map<String, dynamic>.from(repliedTo), isMe, cs),
                                       ),
                                     Container(
@@ -1105,8 +1096,8 @@ class _ChatUserViewState extends State<ChatUserView> {
                                                 : (isMe ? Colors.blue : const Color(0xFFD6D6D6)),
                                         border: isRecalled ? Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)) : null,
                                         borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(18.r),
-                                          topRight: Radius.circular(18.r),
+                                          topLeft: Radius.circular(repliedTo != null && !isMe ? 4.r : 18.r),
+                                          topRight: Radius.circular(repliedTo != null && isMe ? 4.r : 18.r),
                                           bottomLeft:
                                               Radius.circular(isMe ? 18.r : 4.r),
                                           bottomRight:
