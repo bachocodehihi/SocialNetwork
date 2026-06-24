@@ -428,7 +428,7 @@ class _ChatUserViewState extends State<ChatUserView> {
           content,
           style: TextStyle(
             fontSize: 13.sp,
-            color: isMe ? Colors.white80 : cs.onSurface.withValues(alpha: 0.8),
+            color: isMe ? Colors.white.withValues(alpha: 0.8) : cs.onSurface.withValues(alpha: 0.8),
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
