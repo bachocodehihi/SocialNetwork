@@ -41,11 +41,13 @@ class MessageRepositoryImp implements MessageRepository {
     required String content,
     String type = 'text',
     List<Map<String, dynamic>>? attachments,
+    String? repliedTo,
   }) => _api.sendMessage(
     conversationId: conversationId,
     content: content,
     type: type,
     attachments: attachments,
+    repliedTo: repliedTo,
   );
   
   @override

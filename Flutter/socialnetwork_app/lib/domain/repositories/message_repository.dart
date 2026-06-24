@@ -21,6 +21,7 @@ abstract class MessageRepository {
     required String content,
     String type = 'text',
     List<Map<String, dynamic>>? attachments,
+    String? repliedTo,
   });
   
   Future<void> deleteMessage(String messageId, {bool forEveryone = false});

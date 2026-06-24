@@ -71,6 +71,7 @@ class MessageApi {
     required String content,
     String type = 'text',
     List<Map<String, dynamic>>? attachments,
+    String? repliedTo,
   }) async {
     final token = await AuthLocal.getToken();
     final res = await _dio.post(
@@ -79,6 +80,7 @@ class MessageApi {
         'content': content,
         'type': type,
         if (attachments != null) 'attachments': attachments,
+        if (repliedTo != null) 'repliedTo': repliedTo,
       },
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );

@@ -338,7 +338,7 @@ const initSocket = (server) => {
 
         socket.on('send_message', async (data) => {
             try {
-                const { conversationId, content, type, attachments } = data;
+                const { conversationId, content, type, attachments, repliedTo } = data;
 
                 const msgContent = content || (type === 'image' ? '[Hình ảnh]' : type === 'audio' ? '[Tin nhắn thoại]' : '');
 
@@ -351,12 +351,20 @@ const initSocket = (server) => {
                     sender: userId,
                     content: msgContent,
                     type: type || 'text',
-                    attachments: parsedAttachments
+                    attachments: parsedAttachments,
+                    repliedTo: repliedTo || null
                 });
                 const saved = await newMessage.save();
                 await Conversation.findByIdAndUpdate(conversationId, { lastMessage: saved._id });
 
-                const populated = await saved.populate('sender', 'username avatar email');
+                const populated = await saved.populate([
+                    { path: 'sender', select: 'username avatar email' },
+                    {
+                        path: 'repliedTo',
+                        select: 'content sender',
+                        populate: { path: 'sender', select: 'username' }
+                    }
+                ]);
                 const messageData = populated.toObject();
                 io.to(conversationId).emit('receive_message', messageData);
 

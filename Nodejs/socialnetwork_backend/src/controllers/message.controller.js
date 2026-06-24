@@ -139,7 +139,7 @@ const createConversation = async (req, res) => {
 const sendMessage = async (req, res) => {
     try {
         const { conversationId } = req.params;
-        const { content, type, attachments } = req.body;
+        const { content, type, attachments, repliedTo } = req.body;
         
         if (!content?.trim() && (!attachments || attachments.length === 0)) {
             return res.status(400).json({ success: false, code: 'CONTENT_REQUIRED' });
@@ -163,7 +163,8 @@ const sendMessage = async (req, res) => {
             sender: req.userId, 
             content: content?.trim() || '',
             type: type || 'text',
-            attachments: parsedAttachments
+            attachments: parsedAttachments,
+            repliedTo: repliedTo || null
         });
         
         await newMsg.save();
@@ -172,7 +173,14 @@ const sendMessage = async (req, res) => {
             updatedAt: new Date()
         });
         
-        const populated = await newMsg.populate('sender', 'username avatar email');
+        const populated = await newMsg.populate([
+            { path: 'sender', select: 'username avatar email' },
+            {
+                path: 'repliedTo',
+                select: 'content sender',
+                populate: { path: 'sender', select: 'username' }
+            }
+        ]);
         const messageData = populated.toObject();
         
         try {
@@ -271,7 +279,11 @@ const getMessages = async (req, res) => {
 
         const messages = await Message.find(query)
             .populate('sender', 'username avatar email')
-            .populate('repliedTo', 'content sender')
+            .populate({
+                path: 'repliedTo',
+                select: 'content sender',
+                populate: { path: 'sender', select: 'username' }
+            })
             .sort({ createdAt: -1 })
             .limit(parseInt(limit))
             .lean();

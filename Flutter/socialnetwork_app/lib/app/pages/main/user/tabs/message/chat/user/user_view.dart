@@ -275,7 +275,8 @@ class _ChatUserViewState extends State<ChatUserView> {
                     ),
                   ),
                   onTap: () {
-
+                    Navigator.pop(context);
+                    _controller.startReply(msg);
                   },
                 ),
                 ListTile(
@@ -392,6 +393,67 @@ class _ChatUserViewState extends State<ChatUserView> {
     }
   }
  
+  Widget _buildReplyPreviewInBubble(Map<String, dynamic> repliedTo, bool isMe, ColorScheme cs) {
+    final sender = repliedTo['sender'];
+    final senderName = sender is Map ? (sender['username']?.toString() ?? 'Ai đó') : 'Ai đó';
+    final content = repliedTo['content']?.toString() ?? '';
+    final replyId = repliedTo['_id']?.toString() ?? repliedTo['id']?.toString() ?? '';
+
+    return InkWell(
+      onTap: replyId.isNotEmpty ? () => _scrollToMessage(replyId) : null,
+      borderRadius: BorderRadius.circular(8.r),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: isMe ? Colors.white.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 3.w,
+              height: 32.h,
+              decoration: BoxDecoration(
+                color: isMe ? Colors.white70 : cs.primary,
+                borderRadius: BorderRadius.circular(1.5.r),
+              ),
+            ),
+            SizedBox(width: 8.w),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    senderName,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isMe ? Colors.white : cs.primary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    content,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: isMe ? Colors.white70 : cs.onSurfaceVariant,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _controller.removeListener(_onMessagesChanged);
@@ -658,6 +720,69 @@ class _ChatUserViewState extends State<ChatUserView> {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (_controller.replyingMessage != null) ...[
+                      Builder(
+                        builder: (context) {
+                          final replySender = _controller.replyingMessage!['sender'];
+                          final replySenderName = replySender is Map 
+                              ? (replySender['username']?.toString() ?? 'Ai đó') 
+                              : 'Ai đó';
+                          final replyContent = _controller.replyingMessage!['content']?.toString() ?? '';
+                          return Container(
+                            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+                            decoration: BoxDecoration(
+                              color: cs.surfaceContainerHighest.withValues(alpha: 0.8),
+                              border: Border(
+                                top: BorderSide(
+                                  color: cs.onSurface.withValues(alpha: 0.1),
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.reply_outlined,
+                                  size: 16.sp,
+                                  color: cs.primary,
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Đang trả lời $replySenderName',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: cs.primary,
+                                        ),
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        replyContent,
+                                        style: TextStyle(
+                                          fontSize: 13.sp,
+                                          color: cs.onSurface,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.close, size: 16.sp),
+                                  onPressed: () => _controller.cancelReply(),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      ),
+                    ],
                     if (_controller.isSending)
                       const LinearProgressIndicator(minHeight: 2),
                     Padding(
@@ -850,6 +975,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                 final isAudioMsg = msg['type'] == 'audio';
                 final attachments = msg['attachments'] as List?;
                 final hasAttachment = attachments != null && attachments.isNotEmpty;
+                final repliedTo = msg['repliedTo'];
     
                 final prevMsgSenderId = i == 0
                     ? null
@@ -916,7 +1042,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                       : CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      padding: (isImageMsg && hasAttachment && !isRecalled)
+                                      padding: (isImageMsg && hasAttachment && repliedTo == null && !isRecalled)
                                           ? EdgeInsets.zero
                                           : isAudioMsg
                                               ? EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h)
@@ -926,7 +1052,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                       decoration: BoxDecoration(
                                         color: isRecalled
                                             ? (isMe ? cs.surfaceContainerHighest.withValues(alpha: 0.5) : cs.surfaceContainerHighest.withValues(alpha: 0.3))
-                                            : (isImageMsg && hasAttachment)
+                                            : (isImageMsg && hasAttachment && repliedTo == null)
                                                 ? Colors.transparent
                                                 : (isMe ? Colors.blue : const Color(0xFFD6D6D6)),
                                         border: isRecalled ? Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)) : null,
@@ -949,17 +1075,31 @@ class _ChatUserViewState extends State<ChatUserView> {
                                                 fontStyle: FontStyle.italic,
                                               ),
                                             )
-                                          : (isImageMsg && hasAttachment)
-                                              ? _MessageImageGrid(imageUrls: attachments)
-                                              : isAudioMsg
-                                                  ? _AudioMessageBubble(audioUrl: attachments?.first?.toString() ?? '', isMe: isMe)
-                                                  : Text(
-                                                      msg['content'] ?? '',
-                                                      style: TextStyle(
-                                                        fontSize: 14.sp,
-                                                        color: isMe ? Colors.white : Colors.black,
-                                                      ),
-                                                    ),
+                                          : Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                if (repliedTo != null && repliedTo is Map) ...[
+                                                  Padding(
+                                                    padding: (isImageMsg && hasAttachment)
+                                                        ? EdgeInsets.fromLTRB(10.w, 8.h, 10.w, 4.h)
+                                                        : EdgeInsets.only(bottom: 6.h),
+                                                    child: _buildReplyPreviewInBubble(Map<String, dynamic>.from(repliedTo), isMe, cs),
+                                                  ),
+                                                ],
+                                                isImageMsg && hasAttachment
+                                                    ? _MessageImageGrid(imageUrls: attachments)
+                                                    : isAudioMsg
+                                                        ? _AudioMessageBubble(audioUrl: attachments?.first?.toString() ?? '', isMe: isMe)
+                                                        : Text(
+                                                            msg['content'] ?? '',
+                                                            style: TextStyle(
+                                                              fontSize: 14.sp,
+                                                              color: isMe ? Colors.white : Colors.black,
+                                                            ),
+                                                          ),
+                                              ],
+                                            ),
                                     ),
                                     SizedBox(height: 3.h),
                                     Row(

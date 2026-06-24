@@ -24,6 +24,7 @@ class ChatUserController extends ChangeNotifier {
   String _receiverStatus = 'offline';
   String? _conversationId;
   Map<String, dynamic>? _pinnedMessage;
+  Map<String, dynamic>? _replyingMessage;
   
   void Function(dynamic)? _statusListener;
   void Function(dynamic)? _messageListener;
@@ -52,6 +53,17 @@ class ChatUserController extends ChangeNotifier {
   bool get isReceiverOnline => _receiverStatus == 'online';
   String? get conversationId => _conversationId;
   Map<String, dynamic>? get pinnedMessage => _pinnedMessage;
+  Map<String, dynamic>? get replyingMessage => _replyingMessage;
+
+  void startReply(Map<String, dynamic> message) {
+    _replyingMessage = message;
+    notifyListeners();
+  }
+
+  void cancelReply() {
+    _replyingMessage = null;
+    notifyListeners();
+  }
  
   String? _extractSenderId(dynamic senderRaw) {
     if (senderRaw is Map) {
@@ -202,6 +214,8 @@ class ChatUserController extends ChangeNotifier {
   Future<void> sendMessage(String content) async {
     if (content.trim().isEmpty || _conversationId == null) return;
     
+    final replyId = _replyingMessage?['_id']?.toString() ?? _replyingMessage?['id']?.toString();
+    _replyingMessage = null;
     _isSending = true;
     notifyListeners();
  
@@ -210,6 +224,7 @@ class ChatUserController extends ChangeNotifier {
         'conversationId': _conversationId,
         'content': content.trim(),
         'type': 'text',
+        if (replyId != null) 'repliedTo': replyId,
       });
     } catch (e) {
       _error = 'Gửi tin nhắn thất bại: ${e.toString()}';
@@ -222,6 +237,8 @@ class ChatUserController extends ChangeNotifier {
   Future<void> sendImageMessages(List<String> filePaths) async {
     if (filePaths.isEmpty || _conversationId == null) return;
     
+    final replyId = _replyingMessage?['_id']?.toString() ?? _replyingMessage?['id']?.toString();
+    _replyingMessage = null;
     _isSending = true;
     notifyListeners();
  
@@ -240,6 +257,7 @@ class ChatUserController extends ChangeNotifier {
           'content': '[Hình ảnh]',
           'type': 'image',
           'attachments': imageUrls,
+          if (replyId != null) 'repliedTo': replyId,
         });
       } else {
         _error = 'Tải ảnh lên thất bại';
@@ -255,6 +273,8 @@ class ChatUserController extends ChangeNotifier {
   Future<void> sendVoiceMessage(String filePath) async {
     if (_conversationId == null) return;
     
+    final replyId = _replyingMessage?['_id']?.toString() ?? _replyingMessage?['id']?.toString();
+    _replyingMessage = null;
     _isSending = true;
     notifyListeners();
  
@@ -266,6 +286,7 @@ class ChatUserController extends ChangeNotifier {
           'content': '[Tin nhắn thoại]',
           'type': 'audio',
           'attachments': [audioUrl],
+          if (replyId != null) 'repliedTo': replyId,
         });
       } else {
         _error = 'Tải tin nhắn thoại lên thất bại';
