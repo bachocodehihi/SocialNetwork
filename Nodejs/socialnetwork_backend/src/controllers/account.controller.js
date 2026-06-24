@@ -1,6 +1,7 @@
 const Account = require('../models/account.model');
 const Activity = require('../models/activity.model');
 const { Post } = require('../models/content.model');
+const SearchHistory = require('../models/searchHistory.model');
 const bcrypt = require('bcrypt');
 
 const getProfile = async (req, res) => {
@@ -471,6 +472,91 @@ const updatePrivacy = async (req, res) => {
     }
 };
 
+const saveSearchHistory = async (req, res) => {
+    try {
+        const { searchedUserId } = req.body;
+        if (!searchedUserId) {
+            return res.status(400).json({ success: false, code: 'SEARCHED_USER_ID_REQUIRED' });
+        }
+
+        if (searchedUserId === req.userId.toString()) {
+            return res.status(200).json({ success: true, code: 'SAVE_SEARCH_HISTORY_SUCCESS' });
+        }
+
+        await SearchHistory.findOneAndUpdate(
+            { user: req.userId, searchedUser: searchedUserId },
+            { updatedAt: new Date() },
+            { upsert: true, new: true }
+        );
+
+        res.status(200).json({ success: true, code: 'SAVE_SEARCH_HISTORY_SUCCESS' });
+    } catch (error) {
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const getSearchHistory = async (req, res) => {
+    try {
+        const history = await SearchHistory.find({ user: req.userId })
+            .sort({ updatedAt: -1 })
+            .limit(10)
+            .populate('searchedUser', 'avatar username email birthday gender address phone job nationality friends followers following privacy')
+            .lean();
+
+        const formattedUsers = history
+            .filter(item => item.searchedUser != null)
+            .map(item => {
+                const user = item.searchedUser;
+                const stats = {
+                    friendsCount: user.friends ? user.friends.length : 0,
+                    followersCount: user.followers ? user.followers.length : 0,
+                    followingCount: user.following ? user.following.length : 0
+                };
+                
+                delete user.friends;
+                delete user.followers;
+                delete user.following;
+
+                if (user._id.toString() !== req.userId.toString()) {
+                    const privacy = user.privacy || {};
+                    if (privacy.email === false) delete user.email;
+                    if (privacy.phone === false) delete user.phone;
+                    if (privacy.address === false) delete user.address;
+                    if (privacy.birthday === false) delete user.birthday;
+                    if (privacy.gender === false) delete user.gender;
+                    if (privacy.job === false) delete user.job;
+                    if (privacy.nationality === false) delete user.nationality;
+                }
+                delete user.privacy;
+
+                return { ...user, stats };
+            });
+
+        res.status(200).json({ success: true, code: 'GET_SEARCH_HISTORY_SUCCESS', data: formattedUsers });
+    } catch (error) {
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const deleteSearchHistory = async (req, res) => {
+    try {
+        const { searchedUserId } = req.params;
+        await SearchHistory.deleteOne({ user: req.userId, searchedUser: searchedUserId });
+        res.status(200).json({ success: true, code: 'DELETE_SEARCH_HISTORY_SUCCESS' });
+    } catch (error) {
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const clearSearchHistory = async (req, res) => {
+    try {
+        await SearchHistory.deleteMany({ user: req.userId });
+        res.status(200).json({ success: true, code: 'CLEAR_SEARCH_HISTORY_SUCCESS' });
+    } catch (error) {
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     getProfile, 
     updateProfile, 
@@ -488,5 +574,9 @@ module.exports = {
     reportUser,
     appealBan,
     getPrivacy,
-    updatePrivacy
+    updatePrivacy,
+    saveSearchHistory,
+    getSearchHistory,
+    deleteSearchHistory,
+    clearSearchHistory
 };

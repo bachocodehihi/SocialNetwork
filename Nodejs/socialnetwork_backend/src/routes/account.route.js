@@ -17,6 +17,10 @@ const {
     appealBan,
     getPrivacy,
     updatePrivacy,
+    getSearchHistory,
+    saveSearchHistory,
+    deleteSearchHistory,
+    clearSearchHistory,
 } = require('../controllers/account.controller');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { upload } = require('../config/cloudinary');
@@ -41,4 +45,10 @@ router.post('/delete', verifyToken, requestDeleteAccount);
 router.post('/cancel-delete', verifyToken, cancelDeleteAccount);
 router.post('/report', verifyToken, reportUser);
 router.post('/appeal', verifyToken, appealBan);
+
+router.get('/search-history', verifyToken, getSearchHistory);
+router.post('/search-history', verifyToken, saveSearchHistory);
+router.delete('/search-history/:searchedUserId', verifyToken, deleteSearchHistory);
+router.delete('/search-history', verifyToken, clearSearchHistory);
+
 module.exports = router;
