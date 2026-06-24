@@ -10,7 +10,8 @@ const {
     uploadMessageImage,
     uploadMessageAudio,
     pinMessage,
-    unpinMessage
+    unpinMessage,
+    editMessage
 } = require('../controllers/message.controller');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { upload } = require('../config/cloudinary');
@@ -23,6 +24,7 @@ router.get('/', verifyToken, getConversations);
 router.get('/:conversationId/messages', verifyToken, getMessages);
 router.post('/:conversationId/send', verifyToken, sendMessage);
 router.delete('/message/:messageId', verifyToken, deleteMessage);
+router.put('/message/:messageId', verifyToken, editMessage);
 router.post('/:conversationId/read', verifyToken, markAsRead);
 router.post('/upload-image', verifyToken, upload.single('image'), uploadMessageImage);
 router.post('/upload-audio', verifyToken, memoryUpload.single('audio'), uploadMessageAudio);

@@ -34,6 +34,7 @@ const messageSchema = new mongoose.Schema({
     readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],
     deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],
     isRecalled: { type: Boolean, default: false },
+    isEdited: { type: Boolean, default: false },
 
     repliedTo: { 
         type: mongoose.Schema.Types.ObjectId, 

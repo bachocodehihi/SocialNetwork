@@ -518,6 +518,57 @@ const unpinMessage = async (req, res) => {
     }
 };
 
+const editMessage = async (req, res) => {
+    try {
+        const { messageId } = req.params;
+        const { content } = req.body;
+
+        if (!content?.trim()) {
+            return res.status(400).json({ success: false, code: 'CONTENT_REQUIRED' });
+        }
+
+        const msg = await Message.findById(messageId);
+        if (!msg) {
+            return res.status(404).json({ success: false, code: 'MESSAGE_NOT_FOUND' });
+        }
+
+        if (msg.sender.toString() !== req.userId) {
+            return res.status(403).json({ success: false, code: 'NOT_AUTHORIZED' });
+        }
+
+        if (msg.isRecalled) {
+            return res.status(400).json({ success: false, code: 'CANNOT_EDIT_RECALLED_MESSAGE' });
+        }
+
+        msg.content = content.trim();
+        msg.isEdited = true;
+        await msg.save();
+
+        const populated = await msg.populate([
+            { path: 'sender', select: 'username avatar email' },
+            {
+                path: 'repliedTo',
+                select: 'content sender',
+                populate: { path: 'sender', select: 'username' }
+            }
+        ]);
+
+        const messageData = populated.toObject();
+
+        try {
+            const io = require('../socket').getIO();
+            io.to(msg.conversationId.toString()).emit('message_edited', messageData);
+        } catch (socketErr) {
+            console.warn('Socket emit warning:', socketErr.message);
+        }
+
+        res.status(200).json({ success: true, code: 'EDIT_MESSAGE_SUCCESS', ...messageData });
+    } catch (error) {
+        console.error('Edit message error:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     createConversation, 
     getConversations, 
@@ -528,5 +579,6 @@ module.exports = {
     uploadMessageImage,
     uploadMessageAudio,
     pinMessage,
-    unpinMessage
+    unpinMessage,
+    editMessage
 };
