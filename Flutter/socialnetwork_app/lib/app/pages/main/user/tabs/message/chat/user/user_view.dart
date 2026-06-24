@@ -409,8 +409,8 @@ class _ChatUserViewState extends State<ChatUserView> {
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: isMe 
-              ? Colors.blue.withValues(alpha: 0.35) 
-              : cs.surfaceContainerHighest.withValues(alpha: 0.4),
+              ? Colors.blue.withValues(alpha: 0.5) 
+              : cs.onSurface.withValues(alpha: 0.18),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(18.r),
             topRight: Radius.circular(18.r),
@@ -418,7 +418,9 @@ class _ChatUserViewState extends State<ChatUserView> {
             bottomRight: Radius.circular(isMe ? 4.r : 18.r),
           ),
           border: Border.all(
-            color: isMe ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
+            color: isMe 
+                ? Colors.white.withValues(alpha: 0.15) 
+                : cs.onSurface.withValues(alpha: 0.1),
             width: 0.5,
           ),
         ),
@@ -426,7 +428,7 @@ class _ChatUserViewState extends State<ChatUserView> {
           content,
           style: TextStyle(
             fontSize: 13.sp,
-            color: isMe ? Colors.white70 : cs.onSurfaceVariant.withValues(alpha: 0.8),
+            color: isMe ? Colors.white80 : cs.onSurface.withValues(alpha: 0.8),
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
