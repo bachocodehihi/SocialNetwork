@@ -4,7 +4,7 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:socialnetwork/data/service/socket.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-const String agoraAppId = "63c3b289a0ad46fb90f74f68554f4a9f";
+const String agoraAppId = '63c3b289a0ad46fb90f74f68554f4a9f';
 
 enum CallState { idle, ringing, calling, connected, ended }
 

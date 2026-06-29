@@ -923,28 +923,28 @@ class _UserViewState extends State<UserView> {
                   children: [
                     _buildStatItem(
                       controller.friendsCount.toString(),
-                      'Friends',
+                      Language.of(context, 'friends'), 
                       onTap: () {
                       },
                     ),
 
                     _buildStatItem(
                       controller.followersCount.toString(), 
-                      'Followers', 
+                      Language.of(context, 'followers'),
                       onTap: () {
                       },
                     ),
 
                     _buildStatItem(
                       controller.followingCount.toString(), 
-                      'Following', 
+                      Language.of(context, 'following'), 
                       onTap: () {
                       },
                     ),
 
                     _buildStatItem(
                       controller.postCount.toString(),
-                      'Posts', 
+                      Language.of(context, 'posts'),  
                       onTap: () {
 
                       },
@@ -957,38 +957,6 @@ class _UserViewState extends State<UserView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Expanded(
-                    //   child: ListenableBuilder(
-                    //     listenable: controller,
-                    //     builder: (context, _) {
-                    //       switch (controller.status) {
-                    //         case FriendStatus.none:
-                    //           return ElevatedButton(
-                    //             onPressed: controller.sendFriendRequest,
-                    //             child: const Text('Add friend'),
-                    //           );
-
-                    //         case FriendStatus.requested:
-                    //           return ElevatedButton(
-                    //             onPressed: () => _showRequestedOptions(),
-                    //             child: const Text('Requested'),
-                    //           );
-
-                    //         case FriendStatus.received:
-                    //           return ElevatedButton(
-                    //             onPressed: () => _showRespondDialog(),
-                    //             child: const Text('Respond'),
-                    //           );
-
-                    //         case FriendStatus.friend:
-                    //           return ElevatedButton(
-                    //             onPressed: () => _showFriendOptions(),
-                    //             child: const Text('Friend'),
-                    //           );
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
                     Expanded(
                       child: ListenableBuilder(
                         listenable: controller,
@@ -999,21 +967,22 @@ class _UserViewState extends State<UserView> {
                                 onPressed: controller.sendFriendRequest,
                                 icon: Icon(
                                   Icons.person_add_outlined, 
-                                  size: 20.sp
+                                  size: 16.sp
                                 ),
                                 label: Text(
                                   Language.of(context, 'add_friend'),
                                   style: TextStyle(
-                                    fontSize: 15.sp,
+                                    fontSize: 13.sp,
                                     color: Colors.white,
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
                                   foregroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  //padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  minimumSize: Size.fromHeight(44.h),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.r),
+                                    borderRadius: BorderRadius.circular(12.r),
                                   ),
                                 ).copyWith(
                                   overlayColor: WidgetStateProperty.all(Colors.grey[300]),
@@ -1025,21 +994,22 @@ class _UserViewState extends State<UserView> {
                                 onPressed: () => _showRequestedOptions(),
                                 icon: Icon(
                                   Icons.pending_outlined, 
-                                  size: 20.sp
+                                  size: 16.sp
                                 ),
                                 label: Text(
                                   Language.of(context, 'requested'),
                                   style: TextStyle(
-                                    fontSize: 15.sp,
+                                    fontSize: 13.sp,
                                     color: Colors.white,
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
                                   foregroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  //padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  minimumSize: Size.fromHeight(44.h),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.r),
+                                    borderRadius: BorderRadius.circular(12.r),
                                   ),
                                 ).copyWith(
                                   overlayColor: WidgetStateProperty.all(Colors.grey[300]),
@@ -1051,21 +1021,22 @@ class _UserViewState extends State<UserView> {
                                 onPressed: () => _showRespondDialog(),
                                 icon: Icon(
                                   Icons.person_add_alt_outlined, 
-                                  size: 20.sp
+                                  size: 16.sp
                                 ),
                                 label: Text(
                                   Language.of(context, 'respond'),
                                   style: TextStyle(
-                                    fontSize: 15.sp,
+                                    fontSize: 13.sp,
                                     color: Colors.white,
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
                                   foregroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  //padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  minimumSize: Size.fromHeight(44.h),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.r),
+                                    borderRadius: BorderRadius.circular(12.r),
                                   ),
                                 ).copyWith(
                                   overlayColor: WidgetStateProperty.all(Colors.grey[300]),
@@ -1076,22 +1047,23 @@ class _UserViewState extends State<UserView> {
                               return ElevatedButton.icon(
                                 onPressed: () => _showFriendOptions(),
                                 icon: Icon(
-                                  Icons.people, 
-                                  size: 20.sp
+                                  Icons.people_outlined, 
+                                  size: 16.sp
                                 ),
                                 label: Text(
                                   Language.of(context, 'friend'),
                                   style: TextStyle(
-                                    fontSize: 15.sp,
+                                    fontSize: 13.sp,
                                     color: Colors.white,
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
                                   foregroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  //padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                  minimumSize: Size.fromHeight(44.h),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.r),
+                                    borderRadius: BorderRadius.circular(12.r),
                                   ),
                                 ).copyWith(
                                   overlayColor: WidgetStateProperty.all(Colors.grey[300]),
@@ -1119,13 +1091,13 @@ class _UserViewState extends State<UserView> {
                         },
                         icon: Icon(
                           Icons.message_outlined, 
-                          size: 20.sp,
+                          size: 16.sp,
                           color: Colors.white,
                         ),
                         label: Text(
                           Language.of(context, 'message'),
                           style: TextStyle(
-                            fontSize: 15.sp,
+                            fontSize: 13.sp,
                             color: Colors.white,
                           ),
                         ),
@@ -1145,7 +1117,7 @@ class _UserViewState extends State<UserView> {
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  Language.of(context, 'information'),
+                  Language.of(context, 'personal_information'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w500,

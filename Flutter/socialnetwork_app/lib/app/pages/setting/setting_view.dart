@@ -163,7 +163,7 @@ class _SettingViewState extends State<SettingView> {
                   icon: Icons.thumb_up_alt_outlined,
                   color: cs.onSurface,
                   onTap: () {
-                    //controller.goToActivity(context);
+                    controller.goToLike(context);
                   },
                 ),
 
@@ -174,7 +174,7 @@ class _SettingViewState extends State<SettingView> {
                   icon: Icons.chat_bubble_outline_outlined,
                   color: cs.onSurface,
                   onTap: () {
-                    //controller.goToActivity(context);
+                    controller.goToComment(context);
                   },
                 ),
 
@@ -195,7 +195,9 @@ class _SettingViewState extends State<SettingView> {
                   title: Language.of(context, 'notification'),
                   icon: Icons.notifications_outlined,
                   color: cs.onSurface,
-                  onTap: () {},
+                  onTap: () {
+                    controller.goToNotification(context);
+                  },
                 ),
 
                 SizedBox(height: 20.h),

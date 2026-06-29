@@ -48,31 +48,31 @@ class _ContactUserViewState extends State<ContactUserView> {
                 ],
               ),
             ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 15.w),
-                child: TabBar(
-                  indicatorColor: Colors.blue,
-                  indicatorWeight: 2,
-                  indicatorSize: TabBarIndicatorSize.label,
-                  dividerColor: Colors.transparent,
-                  labelColor: Colors.blue,
-                  unselectedLabelColor: cs.onSurface,
-                  splashFactory: NoSplash.splashFactory,
-                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  labelStyle: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  unselectedLabelStyle: TextStyle(
-                    fontSize: 15.sp,
-                  ),
-                  tabs: [
-                    Tab(text: Language.of(context, 'requests')),
-                    Tab(text: Language.of(context, 'friends')),
-                    Tab(text: Language.of(context, 'groups')),
-                  ],
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 15.w),
+              child: TabBar(
+                indicatorColor: Colors.blue,
+                indicatorWeight: 2,
+                indicatorSize: TabBarIndicatorSize.label,
+                dividerColor: Colors.transparent,
+                labelColor: Colors.blue,
+                unselectedLabelColor: cs.onSurface,
+                splashFactory: NoSplash.splashFactory,
+                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                labelStyle: TextStyle(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w500,
                 ),
+                unselectedLabelStyle: TextStyle(
+                  fontSize: 15.sp,
+                ),
+                tabs: [
+                  Tab(text: Language.of(context, 'requests')),
+                  Tab(text: Language.of(context, 'friends')),
+                  Tab(text: Language.of(context, 'groups')),
+                ],
               ),
+            ),
             SizedBox(height: 10.h),
             Expanded(
               child: TabBarView(

@@ -29,6 +29,18 @@ class SettingController extends ChangeNotifier {
     Navigator.pushNamed(context, Routes.font);
   }
 
+  Future<void> goToLike(BuildContext context) async {
+    Navigator.pushNamed(context, Routes.like);
+  }
+
+  Future<void> goToComment(BuildContext context) async {
+    Navigator.pushNamed(context, Routes.comment);
+  }
+
+  Future<void> goToNotification(BuildContext context) async {
+    Navigator.pushNamed(context, Routes.notification);
+  }
+
   Future<void> goToPrivacy(BuildContext context) async {
     Navigator.pushNamed(context, Routes.privacy);
   }

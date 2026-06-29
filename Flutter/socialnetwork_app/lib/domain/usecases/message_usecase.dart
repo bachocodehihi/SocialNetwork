@@ -74,4 +74,8 @@ class MessageUsecase {
   Future<Map<String, dynamic>> unpinMessage(String conversationId) async {
     return await _repository.unpinMessage(conversationId);
   }
+
+  Future<Map<String, dynamic>> editMessage({required String messageId, required String content}) async {
+    return await _repository.editMessage(messageId: messageId, content: content);
+  }
 }

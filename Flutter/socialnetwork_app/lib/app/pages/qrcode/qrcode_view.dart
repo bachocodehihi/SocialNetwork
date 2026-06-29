@@ -249,7 +249,9 @@ class _QRCodeViewState extends State<QRCodeView> {
                                     ),
                                   ),
                                 ),
+                                
                                 SizedBox(height: 8.h),
+
                                 Text(
                                   Language.of(context, 'saving'),
                                   style: TextStyle(
@@ -262,7 +264,7 @@ class _QRCodeViewState extends State<QRCodeView> {
                             )
                           : _buildActionButton(
                               context,
-                              icon: Icons.download_rounded,
+                              icon: Icons.download_outlined,
                               label: Language.of(context, 'download'),
                               onTap: () => _downloadQRCode(controller.username!),
                               cs: cs,
@@ -270,10 +272,10 @@ class _QRCodeViewState extends State<QRCodeView> {
                       SizedBox(width: 48.w),
                       _buildActionButton(
                         context,
-                        icon: Icons.share_rounded,
+                        icon: Icons.share_outlined,
                         label: Language.of(context, 'share'),
                         onTap: () {
-                          // TODO: Implement Share QR Code
+                          //TODO: Implement Share QR Code
                         },
                         cs: cs,
                       ),

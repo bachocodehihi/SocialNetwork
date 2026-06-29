@@ -138,7 +138,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                 ),
               ),
               Text(
-                'Tùy chỉnh giao diện',
+                Language.of(context, 'customize_the_interface'),
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
@@ -153,7 +153,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                   color: Colors.blue
                 ),
                 title: Text(
-                  'Chọn ảnh nền từ album',
+                  Language.of(context, 'choose_a_wallpaper_from_the_album'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     color: cs.onSurface
@@ -172,7 +172,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                     color: Colors.red
                   ),
                   title: Text(
-                    'Xóa ảnh nền hiện tại',
+                    Language.of(context, 'remove_current_background_image'),
                     style: TextStyle(
                       fontSize: 15.sp,
                       color: Colors.red
@@ -257,6 +257,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                     ),
                     onTap: () {
                       Navigator.pop(context);
+                      _controller.startEdit(msg);
                       _textController.text = content;
                     },
                   ),
@@ -286,7 +287,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                     color: Colors.pink,
                   ),
                   title: Text(
-                    isPinned ? 'Bỏ ghim' : Language.of(context, 'pin'),
+                    isPinned ? Language.of(context, 'unpin') : Language.of(context, 'pin'),
                     style: TextStyle(
                       fontSize: 15.sp,
                       color: cs.onSurface,
@@ -448,12 +449,26 @@ class _ChatUserViewState extends State<ChatUserView> {
     super.dispose();
   }
  
-  void _sendMessage() {
+  Future<void> _sendMessage() async {
     final text = _textController.text.trim();
     if (text.isEmpty) return;
-    _controller.sendMessage(text);
-    _textController.clear();
-    _scrollToBottom();
+    if (_controller.editingMessage != null) {
+      final msgId = _controller.editingMessage!['_id']?.toString() ?? _controller.editingMessage!['id']?.toString();
+      if (msgId != null) {
+        final success = await _controller.updateMessage(msgId, text);
+        if (success) {
+          _textController.clear();
+        } else {
+          if (mounted) {
+            AppToast.show(context, _controller.error ?? 'Chỉnh sửa tin nhắn thất bại');
+          }
+        }
+      }
+    } else {
+      _controller.sendMessage(text);
+      _textController.clear();
+      _scrollToBottom();
+    }
   }
 
   Future<void> _sendImage() async {
@@ -766,6 +781,68 @@ class _ChatUserViewState extends State<ChatUserView> {
                         }
                       ),
                     ],
+                    if (_controller.editingMessage != null) ...[
+                      Builder(
+                        builder: (context) {
+                          final editContent = _controller.editingMessage!['content']?.toString() ?? '';
+                          return Container(
+                            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+                            decoration: BoxDecoration(
+                              color: cs.surfaceContainerHighest.withValues(alpha: 0.8),
+                              border: Border(
+                                top: BorderSide(
+                                  color: cs.onSurface.withValues(alpha: 0.1),
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.edit_outlined,
+                                  size: 16.sp,
+                                  color: cs.primary,
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        Language.of(context, 'edit_message'),
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: cs.primary,
+                                        ),
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        editContent,
+                                        style: TextStyle(
+                                          fontSize: 13.sp,
+                                          color: cs.onSurface,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.close, size: 16.sp),
+                                  onPressed: () {
+                                    _controller.cancelEdit();
+                                    _textController.clear();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      ),
+                    ],
                     if (_controller.isSending)
                       const LinearProgressIndicator(minHeight: 2),
                     Padding(
@@ -781,7 +858,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                 GestureDetector(
                                   onTap: _cancelRecording,
                                   child: Icon(
-                                    Icons.delete,
+                                    Icons.delete_outlined,
                                     color: Colors.red,
                                     size: 28.sp,
                                   ),
@@ -932,7 +1009,7 @@ class _ChatUserViewState extends State<ChatUserView> {
             if (_controller.messages.isEmpty) {
               return Center(
                 child: Text(
-                  'No messages yet',
+                  Language.of(context, 'no_messages_yet'),
                   style: TextStyle(
                     color: cs.onSurfaceVariant
                   )
@@ -971,7 +1048,8 @@ class _ChatUserViewState extends State<ChatUserView> {
                       
                   if (isMe) {
                     if (replySenderId == _controller.currentUserId) {
-                      replyHeaderText = 'Bạn đã trả lời chính mình';
+                      //replyHeaderText = 'Bạn đã trả lời chính mình';
+                      replyHeaderText = Language.of(context, '');
                     } else {
                       replyHeaderText = 'Bạn đã trả lời $replySenderName';
                     }
@@ -1062,7 +1140,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                           mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                                           children: [
                                             Icon(
-                                              Icons.reply,
+                                              Icons.reply_outlined,
                                               size: 11.sp,
                                               color: cs.onSurfaceVariant.withValues(alpha: 0.6),
                                             ),
@@ -1109,7 +1187,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                       child: isRecalled
                                           ? Text(
                                               isMe ? 
-                                                  Language.of(context, 'you_unsent_a_message') : Language.of(context, 'this_message_was_deleted'),
+                                                  Language.of(context, 'you_recall_a_message') : Language.of(context, 'this_message_was_deleted'),
                                               style: TextStyle(
                                                 fontSize: 14.sp,
                                                 color: cs.onSurfaceVariant.withValues(alpha: 0.6),
@@ -1139,6 +1217,17 @@ class _ChatUserViewState extends State<ChatUserView> {
                                             color: Colors.grey,
                                           ),
                                         ),
+                                        if (msg['isEdited'] == true && !isRecalled) ...[
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            Language.of(context, 'edited'),
+                                            style: TextStyle(
+                                              fontSize: 9.sp,
+                                              color: Colors.grey,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                        ],
                                         if (_controller.pinnedMessage != null && 
                                             (_controller.pinnedMessage!['_id']?.toString() == msgId || 
                                              _controller.pinnedMessage!['id']?.toString() == msgId)) ...[
@@ -1428,7 +1517,10 @@ class _MessageImageGrid extends StatelessWidget {
               height: height ?? 150.h,
               color: Colors.grey[300],
               child: const Center(
-                child: Icon(Icons.broken_image_outlined, color: Colors.red),
+                child: Icon(
+                  Icons.broken_image_outlined, 
+                  color: Colors.red
+                ),
               ),
             );
           },
@@ -1527,7 +1619,11 @@ class _GalleryDialogState extends State<_GalleryDialog> {
             right: 16.w,
             child: SafeArea(
               child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                icon: Icon(
+                  Icons.close_outlined, 
+                  color: Colors.white, 
+                  size: 28.sp
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ),

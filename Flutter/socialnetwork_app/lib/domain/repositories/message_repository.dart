@@ -34,4 +34,5 @@ abstract class MessageRepository {
 
   Future<Map<String, dynamic>> pinMessage(String conversationId, String messageId);
   Future<Map<String, dynamic>> unpinMessage(String conversationId);
+  Future<Map<String, dynamic>> editMessage({required String messageId, required String content});
 }

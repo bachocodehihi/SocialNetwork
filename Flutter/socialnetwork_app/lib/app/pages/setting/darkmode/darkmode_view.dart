@@ -102,7 +102,7 @@ class _SettingDarkmodeViewState extends State<SettingDarkmodeView> {
                                   SizedBox(height: 5.h),
                                   
                                   Text(
-                                    'Reduce eye strain, save battery, and improve visibility.',
+                                    Language.of(context, 'reduce_eye_strain_save_battery_and_improve_visibility'),
                                     textAlign: TextAlign.justify, 
                                     style: TextStyle(
                                       fontSize: 13.sp,

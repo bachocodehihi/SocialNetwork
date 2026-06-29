@@ -83,7 +83,7 @@ class _SettingAccountViewState extends State<SettingAccountView> {
                   icon: Icons.password_outlined,
                   color: cs.onSurface,
                   onTap: () {
-                    controller.goToChange(context);
+                    controller.goToChangePassword(context);
                   },
                 ),
 

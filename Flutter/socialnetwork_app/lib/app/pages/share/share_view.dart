@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-//import 'package:socialnetwork/app/pages/setting/setting_controller.dart';
-//import 'package:socialnetwork/app/widgets/item/setting.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
 
 class ShareView extends StatefulWidget {
@@ -14,15 +12,6 @@ class ShareView extends StatefulWidget {
 }
 
 class _ShareViewState extends State<ShareView> {
-  
-  //late SettingController controller;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   controller = SettingController();
-  // }
-
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
@@ -69,7 +58,9 @@ class _ShareViewState extends State<ShareView> {
                 ),
 
                 SizedBox(height: 20.h),
+
                 
+
               ],
             ),
           ),

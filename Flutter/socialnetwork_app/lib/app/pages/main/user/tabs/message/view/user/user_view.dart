@@ -99,45 +99,39 @@ class _ViewUserViewState extends State<ViewUserView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: _buildFunctionItem(
-                      Icons.person_outlined,
-                      Language.of(context, 'personal_page'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UserPage(
-                              userData: {
-                                '_id': widget.userId,
-                                'username': widget.userName,
-                                'avatar': widget.userAvatar,
-                              },
-                            ),
+                  _buildFunctionItem(
+                    Icons.person_outlined,
+                    Language.of(context, 'personal_page'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserPage(
+                            userData: {
+                              '_id': widget.userId,
+                              'username': widget.userName,
+                              'avatar': widget.userAvatar,
+                            },
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   ),
 
-                  Expanded(
-                    child: _buildFunctionItem(
-                      Icons.edit_outlined,
-                      Language.of(context, 'edit_name'),
-                      onTap: () {
-                        
-                      },
-                    ),
+                  _buildFunctionItem(
+                    Icons.edit_outlined,
+                    Language.of(context, 'edit_name'),
+                    onTap: () {
+                      
+                    },
                   ),
 
-                  Expanded(
-                    child: _buildFunctionItem(
-                      Icons.notifications_outlined,
-                      Language.of(context, 'notification'),
-                      onTap: () {
-                        
-                      },
-                    ),
+                  _buildFunctionItem(
+                    Icons.notifications_outlined,
+                    Language.of(context, 'notification'),
+                    onTap: () {
+                      
+                    },
                   ),
                 ],
               ),
@@ -220,7 +214,7 @@ class _ViewUserViewState extends State<ViewUserView> {
             title,
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 12.sp,
+              fontSize: 13.sp,
             ),
           ),
         ],

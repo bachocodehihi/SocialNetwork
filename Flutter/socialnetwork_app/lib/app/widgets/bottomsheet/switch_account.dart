@@ -37,9 +37,9 @@ class SwitchAccountBottomSheet extends StatelessWidget {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(width: 24.w),
+              
               Text(
                 Language.of(context, 'switch_account'),
                 style: TextStyle(
@@ -48,16 +48,9 @@ class SwitchAccountBottomSheet extends StatelessWidget {
                   color: cs.onSurface,
                 ),
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.close_outlined, 
-                  color: cs.onSurface,
-                  size: 20.sp
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
             ],
           ),
+          SizedBox(height: 6.h),
           Divider(color: cs.onSurface.withValues(alpha: 0.1)),
           Flexible(
             child: SingleChildScrollView(

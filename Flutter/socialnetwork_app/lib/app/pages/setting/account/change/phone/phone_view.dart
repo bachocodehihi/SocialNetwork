@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class ChangePhoneView extends StatefulWidget {
   const ChangePhoneView({super.key});
   @override
@@ -44,7 +45,7 @@ class _ChangePhoneViewState extends State<ChangePhoneView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Change phone',
+                    Language.of(context, 'change_phone'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,

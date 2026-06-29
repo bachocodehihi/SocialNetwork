@@ -10,7 +10,7 @@ import 'package:socialnetwork/data/network/api/account_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:socialnetwork/app/widgets/dropdown/nation.dart';
-
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class ChangeNationalityView extends StatefulWidget {
   const ChangeNationalityView({super.key});
 
@@ -157,7 +157,7 @@ class _ChangeNationalityViewState extends State<ChangeNationalityView>
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Change nationality',
+                    Language.of(context, 'change_nationality'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,

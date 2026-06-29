@@ -764,13 +764,18 @@ class _ProfileUserViewState extends State<ProfileUserView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    Language.of(context, 'profile'),
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w500,
-                      color: cs.onSurface,
-                    ),
+                  Row(
+                    children: [
+                      SizedBox(width: 8.w),
+                      Text(
+                        Language.of(context, 'profile'),
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w500,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                    ],
                   ),
                   // IconButton(
                   //   onPressed: () => Navigator.pushNamed(context, Routes.setting),
@@ -887,13 +892,14 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                       },
                       icon: Icon(
                         Icons.edit_outlined, 
-                        size: 18.sp
+                        size: 16.sp,
+                        color: Colors.white,
                       ),
                       label: Text(
                         Language.of(context, 'add_profile'),
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12.sp
+                          fontSize: 13.sp,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -916,13 +922,14 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                       },
                       icon: Icon(
                         Icons.qr_code_outlined, 
-                        size: 18.sp
+                        size: 16.sp,
+                        color: Colors.white,
                       ),
                       label: Text(
                         'QR code',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12.sp
+                          fontSize: 13.sp
                         ),
                       ),
                       style: ElevatedButton.styleFrom(

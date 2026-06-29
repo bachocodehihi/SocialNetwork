@@ -25,12 +25,14 @@ class ChatUserController extends ChangeNotifier {
   String? _conversationId;
   Map<String, dynamic>? _pinnedMessage;
   Map<String, dynamic>? _replyingMessage;
+  Map<String, dynamic>? _editingMessage;
   
   void Function(dynamic)? _statusListener;
   void Function(dynamic)? _messageListener;
   void Function(dynamic)? _recallListener;
   void Function(dynamic)? _pinListener;
   void Function(dynamic)? _unpinListener;
+  void Function(dynamic)? _editListener;
  
   ChatUserController({
     required this.receiverId,
@@ -54,14 +56,27 @@ class ChatUserController extends ChangeNotifier {
   String? get conversationId => _conversationId;
   Map<String, dynamic>? get pinnedMessage => _pinnedMessage;
   Map<String, dynamic>? get replyingMessage => _replyingMessage;
+  Map<String, dynamic>? get editingMessage => _editingMessage;
 
   void startReply(Map<String, dynamic> message) {
     _replyingMessage = message;
+    _editingMessage = null;
     notifyListeners();
   }
 
   void cancelReply() {
     _replyingMessage = null;
+    notifyListeners();
+  }
+
+  void startEdit(Map<String, dynamic> message) {
+    _editingMessage = message;
+    _replyingMessage = null;
+    notifyListeners();
+  }
+
+  void cancelEdit() {
+    _editingMessage = null;
     notifyListeners();
   }
  
@@ -118,6 +133,9 @@ class ChatUserController extends ChangeNotifier {
 
       _unpinListener = _onMessageUnpinned;
       _socketService.on('message_unpinned', _unpinListener!);
+
+      _editListener = _onMessageEdited;
+      _socketService.on('message_edited', _editListener!);
       
       await _loadMessages();
       
@@ -159,6 +177,30 @@ class ChatUserController extends ChangeNotifier {
         'isRecalled': true,
         'content': 'Tin nhắn đã bị thu hồi',
       };
+      notifyListeners();
+    }
+  }
+
+  void _onMessageEdited(dynamic data) {
+    final msgConvId = data['conversationId']?.toString();
+    if (msgConvId != _conversationId) return;
+
+    final realMsgId = data['_id']?.toString() ?? data['id']?.toString();
+    if (realMsgId == null) return;
+
+    final index = _messages.indexWhere((m) {
+      final mid = m['_id']?.toString() ?? m['id']?.toString();
+      return mid == realMsgId;
+    });
+
+    if (index != -1) {
+      _messages[index] = Map<String, dynamic>.from(data);
+      if (_pinnedMessage != null) {
+        final pinnedId = _pinnedMessage!['_id']?.toString() ?? _pinnedMessage!['id']?.toString();
+        if (pinnedId == realMsgId) {
+          _pinnedMessage = Map<String, dynamic>.from(data);
+        }
+      }
       notifyListeners();
     }
   }
@@ -313,6 +355,9 @@ class ChatUserController extends ChangeNotifier {
     if (_unpinListener != null) {
       _socketService.off('message_unpinned', _unpinListener);
     }
+    if (_editListener != null) {
+      _socketService.off('message_edited', _editListener);
+    }
     if (isFriend && _statusListener != null) {
       _socketService.off('friend_status_changed', _statusListener);
     }
@@ -397,6 +442,37 @@ class ChatUserController extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Error unpinning message: $e');
+    }
+  }
+
+  Future<bool> updateMessage(String messageId, String newContent) async {
+    if (newContent.trim().isEmpty) return false;
+    try {
+      final res = await _messageUsecase.editMessage(messageId: messageId, content: newContent.trim());
+      if (res['success'] == true) {
+        final index = _messages.indexWhere((m) {
+          final mid = m['_id']?.toString() ?? m['id']?.toString();
+          return mid == messageId;
+        });
+        if (index != -1) {
+          _messages[index] = Map<String, dynamic>.from(res);
+          if (_pinnedMessage != null) {
+            final pinnedId = _pinnedMessage!['_id']?.toString() ?? _pinnedMessage!['id']?.toString();
+            if (pinnedId == messageId) {
+              _pinnedMessage = Map<String, dynamic>.from(res);
+            }
+          }
+        }
+        _editingMessage = null;
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error editing message: $e');
+      _error = 'Lỗi sửa tin nhắn: $e';
+      notifyListeners();
+      return false;
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class SettingFontView extends StatefulWidget {
   const SettingFontView({super.key});
   @override
@@ -44,7 +45,7 @@ class _SettingFontViewState extends State<SettingFontView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Font',
+                    Language.of(context, 'font'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,

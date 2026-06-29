@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class ChangeAvatarView extends StatefulWidget {
   const ChangeAvatarView({super.key});
   @override
@@ -44,7 +45,7 @@ class _ChangeAvatarViewState extends State<ChangeAvatarView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Change avatar',
+                    Language.of(context, 'change_avatar'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,

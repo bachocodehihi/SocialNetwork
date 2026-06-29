@@ -109,7 +109,9 @@ class _SearchAViewState extends State<SearchAccountView> {
                     Container(
                       margin: EdgeInsets.only(bottom: 12.h),
                       padding: EdgeInsets.symmetric(
-                          horizontal: 12.w, vertical: 8.h),
+                        horizontal: 12.w, 
+                        vertical: 8.h
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red.shade50,
                         borderRadius: BorderRadius.circular(8.r),
@@ -164,11 +166,16 @@ class _SearchAViewState extends State<SearchAccountView> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.wifi_off_outlined,
-                size: 48.sp, color: cs.onSurfaceVariant),
+              size: 48.sp, 
+              color: cs.onSurfaceVariant
+            ),
             SizedBox(height: 12.h),
             Text(
               'Đã xảy ra lỗi',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
+              style: TextStyle(
+                color: cs.onSurfaceVariant, 
+                fontSize: 14.sp
+              ),
             ),
           ],
         ),
@@ -179,12 +186,18 @@ class _SearchAViewState extends State<SearchAccountView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off_outlined,
-                size: 48.sp, color: cs.onSurfaceVariant),
+            Icon(
+              Icons.search_off_outlined,
+              size: 48.sp, 
+              color: cs.onSurfaceVariant
+            ),
             SizedBox(height: 12.h),
             Text(
               'User not found',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
+              style: TextStyle(
+                color: cs.onSurfaceVariant, 
+                fontSize: 14.sp
+              ),
             ),
           ],
         ),
@@ -200,7 +213,9 @@ class _SearchAViewState extends State<SearchAccountView> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.manage_search_outlined,
-                size: 48.sp, color: cs.onSurfaceVariant),
+              size: 48.sp, 
+              color: cs.onSurfaceVariant
+            ),
             SizedBox(height: 12.h),
             Text(
               'No search history',
@@ -218,19 +233,19 @@ class _SearchAViewState extends State<SearchAccountView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Recent',
+              Language.of(context, 'recent'),
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 15.sp,
                 fontWeight: FontWeight.w500,
                 color: cs.onSurface,
               ),
-            ),
-            TextButton(
-              onPressed: controller.clearRecentUsers,
+            ), 
+            GestureDetector(
+              onTap: controller.clearRecentUsers,
               child: Text(
-                'Clear all',
+                Language.of(context, 'clear_all'), 
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
                   color: Colors.blue,
                 ),
@@ -250,8 +265,11 @@ class _SearchAViewState extends State<SearchAccountView> {
               return _UserTile(
                 user: user,
                 trailing: IconButton(
-                  icon: Icon(Icons.close_outlined,
-                      size: 18.sp, color: cs.onSurfaceVariant),
+                  icon: Icon(
+                    Icons.close_outlined,
+                    size: 18.sp, 
+                    color: cs.onSurfaceVariant
+                  ),
                   onPressed: () => controller.removeRecentUser(user),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -323,7 +341,10 @@ class _UserTile extends StatelessWidget {
             : null,
         backgroundColor: cs.surfaceContainerHighest,
         child: (avatarUrl == null || avatarUrl.isEmpty)
-            ? Icon(Icons.person_outline, color: cs.onSurfaceVariant)
+            ? Icon(
+              Icons.person_outline, 
+              color: cs.onSurfaceVariant
+            )
             : null,
       ),
       title: Text(

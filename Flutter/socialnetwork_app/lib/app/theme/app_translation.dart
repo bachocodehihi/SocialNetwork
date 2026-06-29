@@ -121,6 +121,35 @@ class Language {
       'what_s_on_your_mind': 'What\'s on your mind?',
       'comment': 'Comment',
       //message
+        //chat
+          //user
+          'online': 'Online',
+          'offline': 'Offline',
+          'recall': 'Recall',
+          'edit': 'Edit',
+          'reply': 'Reply',
+          'pin': 'Pin',
+          'unpin': 'Unpin',
+          'copy': 'Copy',
+          'delete': 'Delete',
+          'customize_the_interface': 'Customize the interface',
+          'choose_a_wallpaper_from_the_album': 'Choose a wallpaper from the album',
+          'remove_current_background_image': 'Remove current background image',
+          'you_recall_a_message': 'You recall a message',
+          'this_message_was_recalled': 'This message was recalled',
+          'edited': '(Edited)',
+          'no_messages_yet': 'No messages yet',
+          'edit_message': 'Edit message',
+        //view
+          //user
+          'personal_page': 'Personal page',
+          'edit_name': 'Edit name',
+          'image': 'Image',
+          'call': 'Call',
+          'report': 'Report',
+          'block': 'Block',
+          'delete_chat_history': 'Delete chat history',
+
       //contact
       'requests' : 'Requests',
       'friends': 'Friends',
@@ -131,7 +160,7 @@ class Language {
       'following': 'Following',
       'posts': 'Posts',
       'add_profile': 'Add profile',
-      'personal_information': 'personal_information',
+      'personal_information': 'Personal information',
       'all_posts': 'All posts',
 
     //setting
@@ -149,6 +178,12 @@ class Language {
     'log_out': 'Log out',
       //dark mode
       'reduce_eye_strain_save_battery_and_improve_visibility': 'Reduce eye strain, save battery, and improve visibility.',
+      //privacy
+      'private_account': 'Private account',
+      //activity
+      'this_week': 'This week',
+      'total': 'Total: ',
+      'today': 'Today',
       //account
         //change
         'change_information': 'Change information',
@@ -170,6 +205,8 @@ class Language {
           'change_phone': 'Change phone',
           //username
           'change_username': 'Change username',
+          //password
+          'change_password': 'Change password',
         //delete
           //account
           'enter_your_reason': 'Enter your reason',
@@ -178,6 +215,32 @@ class Language {
       //switch
         //account
         'add_account': 'Add account',
+
+    //search
+    'search': 'Search',
+    'recent': 'Recent',
+    'clear_all': 'Clear all',
+      //detail
+        'all': 'All',
+        'group': 'Group',
+        'post': 'Post',
+
+    //post
+    'create_post': 'Create post',
+    'public': 'Public',
+    'private': 'Private',
+    'choose_photos_from_the_album': 'Choose photos from the album',
+
+    //user
+    'add_friend': 'Add friend',
+    'requested': 'Requested',
+    'respond': 'Respond',
+    'friend': 'Friend',
+    'accept': 'Accept',
+    'reject': 'Reject',
+    'unfriend': 'Unfriend',
+    'cancel_request': 'Cancel request',
+    'cancel': 'Cancel',
     
     //banner
       //network
@@ -186,13 +249,13 @@ class Language {
       'account_will_be deleted_in': 'Account will be deleted in:',
 
     //qrcode
-    'qr_code': 'QR Code',
+    'qr_code': 'QR code',
     'download': 'Download',
     'share': 'Share',
     'saving': 'Saving...',
     'permission_denied': 'Permission to access gallery denied.',
     'save_success': 'QR Code saved to gallery successfully!',
-    'save_failed': 'Failed to save QR Code: ',
+    'save_failed': 'Failed to save QR code: ',
   };
 
   static const _vi = {
@@ -297,6 +360,36 @@ class Language {
       'comment': 'Bình luận',
       //message
       'search_message': 'Tìm kiếm tin nhắn...',
+        //chat
+          //user
+          'online': 'Đang hoạt động',
+          'offline': 'Không hoạt động',
+          'recall': 'Thu hồi',
+          'edit': 'Chỉnh sửa',
+          'reply': 'Trả lời',
+          'pin': 'Ghim',
+          'unpin': 'Bỏ ghim',
+          'copy': 'Sao chép',
+          'delete': 'Xóa',
+          'customize_the_interface': 'Tùy chỉnh giao diện',
+          'choose_a_wallpaper_from_the_album': 'Chọn ảnh nền từ thư viện',
+          'remove_current_background_image': 'Xóa ảnh nền hiện tại',
+          'you_recall_a_message': 'Bạn đã thu hồi một tin nhắn',
+          'this_message_was_recalled': 'Tin nhắn này đã được thu hồi',
+          'edited': '(đã chỉnh sửa)',
+          'no_messages_yet': 'Chưa có tin nhắn',
+          'edit_message': 'Chỉnh sửa tin nhắn',
+          //group
+        //view
+          //user
+          'personal_page': 'Trang cá nhân',
+          'edit_name': 'Chỉnh sửa tên',
+          'image': 'Ảnh',
+          'call': 'Cuộc gọi',
+          'report': 'Báo cáo',
+          'block': 'Chặn',
+          'delete_chat_history': 'Xóa lịch sử nhắn tin',
+
       //contact
       'requests' : 'Lời mời ',
       'friends': 'Bạn bè',
@@ -347,9 +440,11 @@ class Language {
       //language
       
       //privacy
-
+      'private_account': 'Tài khoản riêng tư',
       //activity
-
+      'this_week': 'Tuần này',
+      'total': 'Tổng: ',
+      'today': 'Hôm nay',
       //history
         //like
 
@@ -377,6 +472,8 @@ class Language {
           'change_phone': 'Đổi số điện thoại',
           //username
           'change_username': 'Đổi tên tài khoản',
+          //password
+          'change_password': 'Đổi mật khẩu',
         //delete
           //account
           'enter_your_reason': 'Nhập lý do của bạn',
@@ -386,11 +483,37 @@ class Language {
         //account
         'add_account': 'Thêm tài khoản',
 
+    //search
+    'search': 'Tìm kiếm',
+    'recent': 'Gần đây',
+    'clear_all': 'Xóa tất cả',
+      //detail
+      'all': 'Tất cả',
+      'group': 'Nhóm',
+      'post': 'Bài đăng',
+
+    //post
+    'create_post': 'Tạo bài viết',
+    'public': 'Công khai',
+    'private': 'Riêng tư',
+    'choose_photos_from_the_album': 'Chọn ảnh từ thư viện',
+    
+    //user
+    'add_friend': 'Thêm bạn bè',
+    'requested': 'Đã gửi kết bạn',
+    'respond': 'Phản hồi',
+    'friend': 'Bạn bè',
+    'accept': 'Chấp nhận',
+    'reject': 'Từ chối',
+    'unfriend': 'Hủy bạn bè',
+    'cancel_request': 'Hủy lời mời',
+    'cancel': 'Hủy',
+
     //banner
       //network
       'no_network_connection': 'Không có kết nối mạng!',
       //delete
-      'account_will_be deleted_in': 'Tài khoản sẽ xóa trong vòng:',
+      'account_will_be deleted_in': 'Tài khoản sẽ xóa trong vòng: ',
       
     //qrcode
     'qr_code': 'Mã QR',

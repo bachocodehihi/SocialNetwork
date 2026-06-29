@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:socialnetwork/app/pages/setting/notification/notification_page.dart';
 
 //splash
 import 'package:socialnetwork/app/pages/splash/splash_page.dart';
@@ -62,6 +63,7 @@ import 'package:socialnetwork/app/pages/setting/account/change/username/username
 import 'package:socialnetwork/app/pages/setting/account/change/birthday/birthday_page.dart';
 import 'package:socialnetwork/app/pages/setting/account/change/gender/gender_page.dart';
 import 'package:socialnetwork/app/pages/setting/account/change/nationality/nationality_page.dart';
+import 'package:socialnetwork/app/pages/setting/account/change/password/password_page.dart';
 
 //post
 import 'package:socialnetwork/app/pages/post/content/user/user_page.dart';
@@ -100,10 +102,12 @@ import 'package:socialnetwork/app/pages/main/user/tabs/message/call/user/incomin
 import 'package:socialnetwork/app/pages/main/user/tabs/message/call/user/outgoing/outgoing_page.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/message/call/user/in/in_page.dart';
 
-//friiend
+//list
 import 'package:socialnetwork/app/pages/list/friends/friends_page.dart';
 import 'package:socialnetwork/app/pages/list/followers/followers_page.dart';
 import 'package:socialnetwork/app/pages/list/following/following_page.dart';
+import 'package:socialnetwork/app/pages/list/like/like_page.dart';
+import 'package:socialnetwork/app/pages/list/comment/comment_page.dart';
 
 class Routes {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -177,6 +181,8 @@ class Routes {
   static String follower = '/list/follower';
   static String following = '/list/following';
   static String friend = '/list/friend';
+  static String like = '/list/like';
+  static String comment = '/list/comment';
 
   //post
   static String postContent = '/post/content';
@@ -272,7 +278,7 @@ class Routes {
     darkmode: (_) => SettingDarkmodePage(),
     language: (_) => SettingLanguagePage(),
     font: (_) => SettingFontPage(),
-    notification: (_) => SignUpEmailPage(),
+    notification: (_) => SettingNotificationPage(),
     privacy: (_) => SettingPrivacyPage(),
 
     //switch
@@ -287,13 +293,15 @@ class Routes {
     changeJob: (_) => ChangeJobPage(),
     changePhone: (_) => ChangePhonePage(),
     changeAddress: (_) => ChangeAddressPage(),
-    changePassword: (_) => ChangeAddressPage(),
+    changePassword: (_) => ChangePasswordPage(),
     changeNationality: (_) => ChangeNationalityPage(),
 
     //list
     follower: (_) => ListFollowersPage(),
     following: (_) => ListFollowingPage(),
     friend: (_) => ListFriendPage(),
+    like: (_) => ListLikePage(),
+    comment: (_) => ListCommentPage(),
 
     //post
     postContent: (_) => PostContentPage(),

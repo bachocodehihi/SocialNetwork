@@ -73,4 +73,8 @@ class MessageRepositoryImp implements MessageRepository {
   @override
   Future<Map<String, dynamic>> unpinMessage(String conversationId) =>
       _api.unpinMessage(conversationId);
+
+  @override
+  Future<Map<String, dynamic>> editMessage({required String messageId, required String content}) =>
+      _api.editMessage(messageId: messageId, content: content);
 }

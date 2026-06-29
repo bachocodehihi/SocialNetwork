@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class ChangeAddressView extends StatefulWidget {
   const ChangeAddressView({super.key});
   @override
@@ -44,7 +45,7 @@ class _ChangeAddressViewState extends State<ChangeAddressView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Change address',
+                    Language.of(context, 'change_address'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,

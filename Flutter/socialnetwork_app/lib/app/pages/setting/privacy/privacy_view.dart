@@ -111,7 +111,9 @@ class _SettingPrivacyViewState extends State<SettingPrivacyView> {
                           color: cs.onSurface,
                         ),
                       ),
+
                       SizedBox(height: 20.h),
+
                       PrivacyItem(
                         value: controller.emailOn,
                         title: 'Email', 
@@ -119,7 +121,9 @@ class _SettingPrivacyViewState extends State<SettingPrivacyView> {
                         onChanged: (val) => controller.updatePrivacySetting('email', val),
                         onTap: () {},
                       ),
+
                       SizedBox(height: 15.h),
+
                       PrivacyItem(
                         value: controller.phoneOn,
                         title: Language.of(context, 'phone'), 
@@ -127,7 +131,9 @@ class _SettingPrivacyViewState extends State<SettingPrivacyView> {
                         onChanged: (val) => controller.updatePrivacySetting('phone', val),
                         onTap: () {},
                       ),
+
                       SizedBox(height: 15.h),
+
                       PrivacyItem(
                         value: controller.addressOn,
                         title: Language.of(context, 'address'), 
@@ -135,7 +141,9 @@ class _SettingPrivacyViewState extends State<SettingPrivacyView> {
                         onChanged: (val) => controller.updatePrivacySetting('address', val),
                         onTap: () {},
                       ),
+
                       SizedBox(height: 15.h),
+
                       PrivacyItem(
                         value: controller.birthdayOn,
                         title: Language.of(context, 'birthday'), 
@@ -143,7 +151,9 @@ class _SettingPrivacyViewState extends State<SettingPrivacyView> {
                         onChanged: (val) => controller.updatePrivacySetting('birthday', val),
                         onTap: () {},
                       ),
+
                       SizedBox(height: 15.h),
+
                       PrivacyItem(
                         value: controller.genderOn,
                         title: Language.of(context, 'gender'), 
@@ -151,7 +161,9 @@ class _SettingPrivacyViewState extends State<SettingPrivacyView> {
                         onChanged: (val) => controller.updatePrivacySetting('gender', val),
                         onTap: () {},
                       ),
+
                       SizedBox(height: 15.h),
+
                       PrivacyItem(
                         value: controller.jobOn,
                         title: Language.of(context, 'job'), 
@@ -159,7 +171,9 @@ class _SettingPrivacyViewState extends State<SettingPrivacyView> {
                         onChanged: (val) => controller.updatePrivacySetting('job', val),
                         onTap: () {},
                       ),
+
                       SizedBox(height: 15.h),
+
                       PrivacyItem(
                         value: controller.nationalityOn,
                         title: Language.of(context, 'nationality'), 
@@ -167,6 +181,27 @@ class _SettingPrivacyViewState extends State<SettingPrivacyView> {
                         onChanged: (val) => controller.updatePrivacySetting('nationality', val),
                         onTap: () {},
                       ),
+
+                      SizedBox(height: 20.h),
+
+                      Text(
+                        Language.of(context, 'private_account'), 
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                          color: cs.onSurface,
+                        ),
+                      ),
+
+                      SizedBox(height: 15.h),
+
+                      // PrivacyItem(
+                      //   value: controller.nationalityOn,
+                      //   title: Language.of(context, 'private_account'), 
+                      //   icon: Icons.public_outlined,
+                      //   onChanged: () {},
+                      //   onTap: () {},
+                      // ),
                     ],
                   ),
                 ),

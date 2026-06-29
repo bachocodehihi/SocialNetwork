@@ -168,4 +168,20 @@ class MessageApi {
     final data = res.data;
     return data is Map<String, dynamic> ? data : {};
   }
+
+  Future<Map<String, dynamic>> editMessage({
+    required String messageId,
+    required String content,
+  }) async {
+    final token = await AuthLocal.getToken();
+    final res = await _dio.put(
+      '/api/message/message/$messageId',
+      data: {
+        'content': content,
+      },
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+    final data = res.data;
+    return data is Map<String, dynamic> ? data : {};
+  }
 }

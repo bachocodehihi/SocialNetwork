@@ -8,6 +8,7 @@ import 'package:socialnetwork/domain/usecases/auth_usecase.dart';
 import 'package:socialnetwork/data/repositories/auth_repository_imp.dart';
 import 'package:socialnetwork/data/network/api/auth_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 class VerifyPasswordView extends StatefulWidget {
   const VerifyPasswordView({super.key});
 
@@ -69,7 +70,7 @@ class _VerifyPasswordViewState extends State<VerifyPasswordView> {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Verify password',
+                    Language.of(context, 'verify_password'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -89,7 +90,7 @@ class _VerifyPasswordViewState extends State<VerifyPasswordView> {
                   color: cs.onSurface,
                 ),
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: Language.of(context, 'password'),
                   labelStyle: TextStyle(fontSize: 15.sp, color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.r),
@@ -151,7 +152,7 @@ class _VerifyPasswordViewState extends State<VerifyPasswordView> {
                     ? null
                     : () => controller.submitPassword(context),
                 child: controller.isLoading ? const CircularProgressIndicator(color: Colors.white) : Text(
-                  'Continue',
+                  Language.of(context, 'continue'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 15.sp,
@@ -167,7 +168,7 @@ class _VerifyPasswordViewState extends State<VerifyPasswordView> {
                   controller.goToForget(context);
                 },
                 child: Text(
-                  'Forgot password?',
+                  Language.of(context, 'forgot_password'),
                   style: TextStyle(
                     color: Colors.blue,
                     fontSize: 15.sp,
