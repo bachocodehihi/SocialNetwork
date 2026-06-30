@@ -108,6 +108,7 @@ import 'package:socialnetwork/app/pages/list/followers/followers_page.dart';
 import 'package:socialnetwork/app/pages/list/following/following_page.dart';
 import 'package:socialnetwork/app/pages/list/like/like_page.dart';
 import 'package:socialnetwork/app/pages/list/comment/comment_page.dart';
+import 'package:socialnetwork/app/pages/list/member/member_page.dart';
 
 class Routes {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -183,6 +184,7 @@ class Routes {
   static String friend = '/list/friend';
   static String like = '/list/like';
   static String comment = '/list/comment';
+  static String member = '/list/member';
 
   //post
   static String postContent = '/post/content';
@@ -302,6 +304,7 @@ class Routes {
     friend: (_) => ListFriendPage(),
     like: (_) => ListLikePage(),
     comment: (_) => ListCommentPage(),
+    member: (_) => ListMemberPage(),
 
     //post
     postContent: (_) => PostContentPage(),

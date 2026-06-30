@@ -44,7 +44,7 @@ class ContactGroupController extends ChangeNotifier {
     }
   }
 
-  void goToCreateGroup(BuildContext context) {
+  Future<void> goToCreateGroup(BuildContext context) async {
     Navigator.pushNamed(context, Routes.createGroup);
   }
 

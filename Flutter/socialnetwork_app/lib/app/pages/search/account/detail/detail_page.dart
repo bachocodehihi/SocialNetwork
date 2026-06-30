@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:socialnetwork/app/pages/search/detail/detail_view.dart';
+import 'package:socialnetwork/app/pages/search/account/detail/detail_view.dart';
 class SearchDetailPage extends StatelessWidget {
   const SearchDetailPage({super.key});
   @override

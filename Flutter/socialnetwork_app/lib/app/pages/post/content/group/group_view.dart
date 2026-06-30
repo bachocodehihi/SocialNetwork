@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/post/content/group/group_controller.dart';
+import 'package:socialnetwork/app/widgets/image/image_preview.dart';
 
 class GroupPostContentView extends StatefulWidget {
   final String groupId;
@@ -124,10 +125,15 @@ class _GroupPostContentViewState extends State<GroupPostContentView> {
               ),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(vertical: 12.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                     Row(
                       children: [
                         Container(
@@ -174,66 +180,85 @@ class _GroupPostContentViewState extends State<GroupPostContentView> {
                         border: InputBorder.none,
                       ),
                     ),
-                    SizedBox(height: 16.h),
+                  ],
+                ),
+              ),
 
-                    if (controller.pickedImages.isNotEmpty) ...[
-                      Text(
-                        'Đã chọn ${controller.pickedImages.length} ảnh',
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w500,
-                          color: cs.onSurfaceVariant,
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-                      SizedBox(
-                        height: 120.h,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: controller.pickedImages.length,
-                          separatorBuilder: (context, index) => SizedBox(width: 10.w),
-                          itemBuilder: (context, index) {
-                            final image = controller.pickedImages[index];
-                            return Stack(
-                              children: [
-                                Container(
-                                  width: 120.w,
-                                  height: 120.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    border: Border.all(color: cs.outlineVariant),
-                                    image: DecorationImage(
-                                      image: FileImage(File(image.path)),
-                                      fit: BoxFit.cover,
-                                    ),
+              if (controller.pickedImages.isNotEmpty) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Text(
+                    'Đã chọn ${controller.pickedImages.length} ảnh',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                      color: cs.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                SizedBox(
+                  height: 120.h,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    itemCount: controller.pickedImages.length,
+                    separatorBuilder: (context, index) => SizedBox(width: 10.w),
+                    itemBuilder: (context, index) {
+                      final image = controller.pickedImages[index];
+                      return Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ImagePreviewScreen(
+                                    images: controller.pickedImages,
+                                    initialIndex: index,
                                   ),
                                 ),
-                                Positioned(
-                                  top: 6.h,
-                                  right: 6.w,
-                                  child: GestureDetector(
-                                    onTap: () => controller.removeImage(index),
-                                    child: Container(
-                                      padding: EdgeInsets.all(4.w),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withValues(alpha: 0.6),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.close_rounded,
-                                        size: 14.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
+                              );
+                            },
+                            child: Container(
+                              width: 120.w,
+                              height: 120.h,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(color: cs.outlineVariant),
+                                image: DecorationImage(
+                                  image: FileImage(File(image.path)),
+                                  fit: BoxFit.cover,
                                 ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 20.h),
-                    ],
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 6.h,
+                            right: 6.w,
+                            child: GestureDetector(
+                              onTap: () => controller.removeImage(index),
+                              child: Container(
+                                padding: EdgeInsets.all(4.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.6),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  size: 14.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 20.h),
+              ],
                   ],
                 ),
               ),

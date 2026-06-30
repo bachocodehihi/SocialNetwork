@@ -370,7 +370,7 @@ class _GroupViewState extends State<GroupView> {
                   Text(
                     'Bình luận',
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
                       color: cs.onSurface,
                     ),
@@ -526,16 +526,49 @@ class _GroupViewState extends State<GroupView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
-                        child: Icon(Icons.arrow_back_ios_outlined,
-                            size: 20.sp, 
-                            color: cs.onSurface
-                          ),
+                        child: Icon(
+                          Icons.arrow_back_ios_outlined,
+                          size: 20.sp, 
+                          color: cs.onSurface
+                        ),
                       ),
-                      const Spacer(),
-                      Icon(Icons.more_vert, size: 24.sp, color: cs.onSurface),
+                      // const Spacer(),
+                      // Icon(
+                      //   Icons.more_vert_outlined, 
+                      //   size: 25.sp, 
+                      //   color: cs.onSurface
+                      // ),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              //controller.goToSetting(context);
+                            },
+                            child: Icon(
+                              Icons.search_outlined, 
+                              size: 30.sp,
+                              color: cs.onSurface,
+                            ),
+                          ),
+
+                          SizedBox(width: 10.w),
+                          
+                          GestureDetector(
+                            onTap: () {
+                              //controller.goToSetting(context);
+                            },
+                            child: Icon(
+                              Icons.more_vert_outlined, 
+                              size: 30.sp,
+                              color: cs.onSurface,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   SizedBox(height: 20.h),
@@ -597,10 +630,15 @@ class _GroupViewState extends State<GroupView> {
                       _buildStatItem(
                         controller.membersCount.toString(),
                         'Thành viên',
+                        onTap: () {
+                          controller.goToMember(context);
+                        },
                       ),
                       _buildStatItem(
                         controller.postCount.toString(),
                         'Bài viết',
+                        onTap: () {
+                        },
                       ),
                     ],
                   ),
@@ -658,7 +696,7 @@ class _GroupViewState extends State<GroupView> {
                     child: Row(
                       children: [
                         CircleAvatar(
-                          radius: 28.r,
+                          radius: 25.r,
                           backgroundImage: controller.avatar.isNotEmpty
                               ? NetworkImage(controller.avatar)
                               : null,
@@ -669,7 +707,9 @@ class _GroupViewState extends State<GroupView> {
                               )
                               : null,
                         ),
+
                         SizedBox(width: 10.w),
+
                         Expanded(
                           child: AbsorbPointer(
                             child: TextField(
@@ -716,6 +756,7 @@ class _GroupViewState extends State<GroupView> {
                       color: cs.onSurface,
                     ),
                   ),
+
                   SizedBox(height: 12.h),
 
                   if (controller.loadingPosts)
@@ -748,26 +789,34 @@ class _GroupViewState extends State<GroupView> {
     );
   }
 
-  Widget _buildStatItem(String value, String label) {
+  Widget _buildStatItem(
+    String value, 
+    String label, 
+    {VoidCallback? onTap,
+  }) {
     final cs = Theme.of(context).colorScheme;
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            color: cs.onSurface,
-            fontSize: 15.sp,
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              color: cs.onSurface,
+              fontWeight: FontWeight.w500,
+              fontSize: 15.sp,
+            ),
           ),
-        ),
-        SizedBox(height: 2.h),
-        Text(
-          label,
-          style: TextStyle(
-            color: cs.onSurface,
-            fontSize: 15.sp,
+          SizedBox(height: 2.h),
+          Text(
+            label,
+            style: TextStyle(
+              color: cs.onSurface,
+              fontSize: 12.sp,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

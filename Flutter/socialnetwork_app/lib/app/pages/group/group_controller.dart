@@ -8,7 +8,7 @@ import 'package:socialnetwork/domain/usecases/group_usecase.dart';
 import 'package:socialnetwork/domain/usecases/content_usecase.dart';
 import 'package:socialnetwork/data/local/auth_local.dart';
 import 'package:socialnetwork/app/pages/post/content/group/group_page.dart';
-
+import 'package:socialnetwork/app/routes/routes.dart';
 class GroupController extends ChangeNotifier {
   final String groupId;
   late final GroupUsecase _groupUsecase;
@@ -127,5 +127,9 @@ class GroupController extends ChangeNotifier {
         loadGroupDetails();
       }
     });
+  }
+
+  Future<void> goToMember(BuildContext context) async {
+    Navigator.pushNamed(context, Routes.member, arguments: groupId);
   }
 }

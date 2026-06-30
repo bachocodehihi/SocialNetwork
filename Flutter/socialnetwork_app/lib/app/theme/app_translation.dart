@@ -223,13 +223,17 @@ class Language {
       //detail
         'all': 'All',
         'group': 'Group',
-        'post': 'Post',
+        'group_leader': 'Group Leader',
+        'member_role': 'Member',
 
     //post
     'create_post': 'Create post',
     'public': 'Public',
     'private': 'Private',
     'choose_photos_from_the_album': 'Choose photos from the album',
+    'post': 'Post',
+    'friends_except': 'Friends except',
+    'specific_friends': 'Specific friends',
 
     //user
     'add_friend': 'Add friend',
@@ -490,13 +494,17 @@ class Language {
       //detail
       'all': 'Tất cả',
       'group': 'Nhóm',
-      'post': 'Bài đăng',
+      'group_leader': 'Nhóm trưởng',
+      'member_role': 'Thành viên',
 
     //post
     'create_post': 'Tạo bài viết',
     'public': 'Công khai',
     'private': 'Riêng tư',
     'choose_photos_from_the_album': 'Chọn ảnh từ thư viện',
+    'post': 'Đăng',
+    'friends_except': 'Bạn bè ngoại trừ',
+    'specific_friends': 'Bạn bè cụ thể',
     
     //user
     'add_friend': 'Thêm bạn bè',

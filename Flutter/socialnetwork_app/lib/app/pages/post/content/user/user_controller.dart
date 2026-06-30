@@ -19,6 +19,7 @@ class PostContentController extends ChangeNotifier {
   List<Map<String, dynamic>> myGroups = [];
   List<XFile> pickedImages = [];
   String privacy = 'public';
+  List<Map<String, dynamic>> selectedFriends = [];
 
   bool isLoadingGroups = false;
   bool isSubmitting = false;
@@ -64,6 +65,13 @@ class PostContentController extends ChangeNotifier {
 
   void setPrivacy(String newPrivacy) {
     privacy = newPrivacy;
+    selectedFriends = [];
+    notifyListeners();
+  }
+
+  void setPrivacyWithFriends(String newPrivacy, List<Map<String, dynamic>> friends) {
+    privacy = newPrivacy;
+    selectedFriends = friends;
     notifyListeners();
   }
 

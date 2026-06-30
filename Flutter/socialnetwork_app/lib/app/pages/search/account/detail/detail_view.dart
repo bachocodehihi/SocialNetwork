@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
-import 'package:socialnetwork/app/pages/search/detail/all/all_page.dart';
-import 'package:socialnetwork/app/pages/search/detail/account/account_page.dart';
-import 'package:socialnetwork/app/pages/search/detail/group/group_page.dart';
-import 'package:socialnetwork/app/pages/search/detail/post/post_page.dart';
+import 'package:socialnetwork/app/pages/search/account/detail/all/all_page.dart';
+import 'package:socialnetwork/app/pages/search/account/detail/account/account_page.dart';
+import 'package:socialnetwork/app/pages/search/account/detail/group/group_page.dart';
+import 'package:socialnetwork/app/pages/search/account/detail/post/post_page.dart';
 
 class SearchDetailView extends StatefulWidget {
   const SearchDetailView({super.key});
@@ -126,7 +126,7 @@ class _SearchDetailViewState extends State<SearchDetailView> {
                       Tab(text: Language.of(context, 'all')),
                       Tab(text: Language.of(context, 'account')),
                       Tab(text: Language.of(context, 'group')),
-                      Tab(text: Language.of(context, 'post')),
+                      Tab(text: Language.of(context, 'posts')),
                     ],
                   ),
                 ),

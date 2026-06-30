@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/contact/group/group_controller.dart';
 import 'package:socialnetwork/app/pages/group/group_page.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 
 class ContactGroupView extends StatefulWidget {
   const ContactGroupView({super.key});
@@ -85,7 +86,7 @@ class _ContactGroupViewState extends State<ContactGroupView> {
                       ),
                       SizedBox(width: 5.w),
                       Text(
-                        'Create',
+                        Language.of(context, 'create'),
                         style: TextStyle(
                           fontSize: 15.sp, 
                           color: Colors.blue,
@@ -123,92 +124,98 @@ class _ContactGroupViewState extends State<ContactGroupView> {
               final name = group['name'] ?? 'Group Chat';
               final avatar = group['avatar'];
 
-              return InkWell(
-                onTap: () {
-                  final groupId = group['_id'] ?? '';
-                  if (groupId.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => GroupPage(groupId: groupId),
-                      ),
-                    ).then((_) {
-                      controller.fetchGroups();
-                    });
-                  }
-                },
-                borderRadius: BorderRadius.circular(16.r),
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 12.h),
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    color: cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 25.r,
-                        backgroundColor: cs.primaryContainer,
-                        backgroundImage: avatar != null && avatar.toString().isNotEmpty
-                            ? NetworkImage(avatar)
-                            : null,
-                        child: (avatar == null || avatar.toString().isEmpty)
-                            ? Text(
-                                name.substring(0, 1).toUpperCase(),
+              return Padding(
+                padding: EdgeInsets.only(bottom: 12.h),
+                child: InkWell(
+                  onTap: () {
+                    final groupId = group['_id'] ?? '';
+                    if (groupId.isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GroupPage(groupId: groupId),
+                        ),
+                      ).then((_) {
+                        controller.fetchGroups();
+                      });
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(20.r),
+                  hoverColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  child: Container(
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: cs.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 25.r,
+                          backgroundColor: cs.primaryContainer,
+                          backgroundImage: avatar != null && avatar.toString().isNotEmpty
+                              ? NetworkImage(avatar)
+                              : null,
+                          child: (avatar == null || avatar.toString().isEmpty)
+                              ? Text(
+                                  name.substring(0, 1).toUpperCase(),
+                                  style: TextStyle(
+                                    color: cs.onPrimaryContainer,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18.sp,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                name,
                                 style: TextStyle(
-                                  color: cs.onPrimaryContainer,
+                                  fontSize: 15.sp,
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 18.sp,
+                                  color: cs.onSurface,
                                 ),
-                              )
-                            : null,
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              name,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w500,
-                                color: cs.onSurface,
                               ),
-                            ),
-                            Text(
-                              '${members.length} members',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: cs.onSurfaceVariant,
+                              Text(
+                                '${members.length} members',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: cs.onSurfaceVariant,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () => controller.goToChat(context, group),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                        ).copyWith(
-                          overlayColor: WidgetStateProperty.all(Colors.grey[300]),
-                        ),
-                        child: Text(
-                          'Message',
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            color: Colors.white,
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        ElevatedButton(
+                          onPressed: () => controller.goToChat(context, group),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                            // shape: RoundedRectangleBorder(
+                            //   borderRadius: BorderRadius.circular(12.r),
+                            // ),
+                            shape: const StadiumBorder(),
+                          ).copyWith(
+                            overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                          ),
+                          child: Text(
+                            Language.of(context, 'message'),
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

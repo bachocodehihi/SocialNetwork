@@ -33,13 +33,6 @@ class _HomeUserViewState extends State<HomeUserView> {
     super.dispose();
   }
 
-  final List<Map<String, String>> _stories = const [
-    {'name': 'You', 'avatar': 'Y'},
-    {'name': 'Anna', 'avatar': 'A'},
-    {'name': 'Lucas', 'avatar': 'L'},
-    {'name': 'Mia', 'avatar': 'M'},
-    {'name': 'David', 'avatar': 'D'},
-  ];
 
   String _formatTimeAgo(String? dateTimeStr) {
     if (dateTimeStr == null) return '';
@@ -612,6 +605,7 @@ class _HomeUserViewState extends State<HomeUserView> {
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.08),
@@ -976,40 +970,6 @@ class _HomeUserViewState extends State<HomeUserView> {
                 ),
 
                 SizedBox(height: 20.h),
-
-                SizedBox(
-                  height: 90.h,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _stories.length,
-                    separatorBuilder: (context, index) => SizedBox(width: 12.w),
-                    itemBuilder: (context, index) {
-                      final item = _stories[index];
-                      return Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 28.r,
-                            backgroundColor: cs.primaryContainer,
-                            child: Text(
-                              item['avatar']!,
-                              style: TextStyle(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w500,
-                                color: cs.onPrimaryContainer,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 6.h),
-                          Text(
-                            item['name']!,
-                            style: TextStyle(fontSize: 12.sp, color: cs.onSurface),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(height: 16.h),
                 
                 if (controller.isLoadingFeed && controller.posts.isEmpty)
                   Center(

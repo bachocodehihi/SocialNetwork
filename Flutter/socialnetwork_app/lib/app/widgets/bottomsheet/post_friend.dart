@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
+
 class PostFriendBottomSheet extends StatelessWidget {
-  final VoidCallback onAddAccount;
-  const PostFriendBottomSheet({
-    super.key,
-    required this.onAddAccount,
-  });
+  const PostFriendBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +29,8 @@ class PostFriendBottomSheet extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              
               Text(
-                Language.of(context, ''),
+                Language.of(context, 'privacy'),
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
@@ -59,7 +55,7 @@ class PostFriendBottomSheet extends StatelessWidget {
                       radius: 22.r,
                       backgroundColor: cs.surfaceContainerHighest,
                       child: Icon(
-                        Icons.add_outlined, 
+                        Icons.people_alt_outlined, 
                         color: cs.onSurface,
                         size: 20.sp
                       ),
@@ -72,8 +68,7 @@ class PostFriendBottomSheet extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      Navigator.pop(context);
-                      onAddAccount();
+                      Navigator.pop(context, {'privacy': 'friends'});
                     },
                   ),
                   ListTile(
@@ -82,7 +77,7 @@ class PostFriendBottomSheet extends StatelessWidget {
                       radius: 22.r,
                       backgroundColor: cs.surfaceContainerHighest,
                       child: Icon(
-                        Icons.add_outlined, 
+                        Icons.person_remove_outlined, 
                         color: cs.onSurface,
                         size: 20.sp
                       ),
@@ -95,8 +90,7 @@ class PostFriendBottomSheet extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      Navigator.pop(context);
-                      onAddAccount();
+                      Navigator.pop(context, {'action': 'open_friends_except'});
                     },
                   ),
                   ListTile(
@@ -105,7 +99,7 @@ class PostFriendBottomSheet extends StatelessWidget {
                       radius: 22.r,
                       backgroundColor: cs.surfaceContainerHighest,
                       child: Icon(
-                        Icons.add_outlined, 
+                        Icons.person_add_outlined, 
                         color: cs.onSurface,
                         size: 20.sp
                       ),
@@ -118,8 +112,7 @@ class PostFriendBottomSheet extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      Navigator.pop(context);
-                      onAddAccount();
+                      Navigator.pop(context, {'action': 'open_specific_friends'});
                     },
                   ),
                 ],

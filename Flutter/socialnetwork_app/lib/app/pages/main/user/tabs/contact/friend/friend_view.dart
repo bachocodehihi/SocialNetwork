@@ -63,7 +63,7 @@ class _ContactFriendViewState extends State<ContactFriendView> {
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
                   color: cs.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(20.r),
+                  borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
                 ),
                 child: Row(

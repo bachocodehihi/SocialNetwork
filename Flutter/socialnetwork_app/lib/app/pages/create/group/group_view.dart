@@ -99,11 +99,14 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                 ],
               ),
             ),
+
+            SizedBox(height: 20.h),
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 0 : 24.w),
               child: TextField(
                 controller: controller.groupNameController,
-                //onChanged: (_) => _controller.notifyListeners(),
+                //onChanged: (_) => controller.notifyListeners(),
                 decoration: InputDecoration(
                   labelText: Language.of(context, 'group_name'),
                   hintText: Language.of(context, 'enter_group_name'),
@@ -117,7 +120,8 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                 ),
               ),
             ),
-            SizedBox(height: 16.h),
+
+            SizedBox(height: 20.h),
 
             ListenableBuilder(
               listenable: controller,
@@ -138,6 +142,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                 );
               },
             ),
+
             SizedBox(height: 8.h),
 
             Expanded(
@@ -179,7 +184,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                               size: 48.sp, color: cs.onSurfaceVariant),
                           SizedBox(height: 8.h),
                           Text(
-                            'No friends found',
+                            Language.of(context, 'no_friend_found'),
                             style: TextStyle(color: cs.onSurfaceVariant),
                           ),
                         ],
@@ -190,7 +195,7 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                   return ListView.separated(
                     padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 0 : 24.w),
                     itemCount: friends.length,
-                    separatorBuilder: (_, _) => SizedBox(height: 4.h),
+                    separatorBuilder: (_, _) => SizedBox(height: 12.h),
                     itemBuilder: (context, index) {
                       final friend = friends[index];
                       final id = friend['id'] as String;
@@ -198,27 +203,30 @@ class _CreateGroupViewState extends State<CreateGroupView> {
 
                       return InkWell(
                         onTap: () => controller.toggleSelect(id),
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(16.r),
                         child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 8.h,
-                          ),
+                          padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
-                            color: isSelected
-                                ? Colors.blue.withValues(alpha: 0.08)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12.r),
+                            color: cs.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(16.r),
                             border: Border.all(
-                              color: isSelected
-                                  ? Colors.blue.withValues(alpha: 0.4)
-                                  : Colors.transparent,
+                              color: isSelected 
+                                  ? Colors.blue.withValues(alpha: 0.4) 
+                                  : cs.outlineVariant.withValues(alpha: 0.2),
+                              width: isSelected ? 1.5 : 1,
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.03),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: Row(
                             children: [
                               CircleAvatar(
-                                radius: 24.r,
+                                radius: 25.r,
                                 backgroundImage: friend['avatar'] != null
                                     ? NetworkImage(friend['avatar'])
                                     : null,
@@ -231,11 +239,12 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                                         style: TextStyle(
                                           color: cs.onPrimaryContainer,
                                           fontWeight: FontWeight.w500,
+                                          fontSize: 20.sp,
                                         ),
                                       )
                                     : null,
                               ),
-                              SizedBox(width: 12.w),
+                              SizedBox(width: 14.w),
                               Expanded(
                                 child: Text(
                                   friend['name']!,
@@ -247,15 +256,18 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                                 ),
                               ),
                               Container(
-                                width: 20.w,
-                                height: 20.h,
+                                width: 36.w,
+                                height: 36.w,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: isSelected ? Colors.blue : cs.onSurfaceVariant,
-                                    width: 1.5,
-                                  ),
-                                  color: isSelected ? Colors.blue : Colors.transparent,
+                                  color: isSelected 
+                                      ? Colors.blue.withValues(alpha: 0.1) 
+                                      : cs.surface,
+                                ),
+                                child: Icon(
+                                  isSelected ? Icons.remove_outlined : Icons.add_outlined,
+                                  color: isSelected ? Colors.blue : cs.onSurface,
+                                  size: 20.sp,
                                 ),
                               ),
                             ],
