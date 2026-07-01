@@ -3,6 +3,9 @@ import 'package:socialnetwork/data/network/api/contact_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:socialnetwork/data/repositories/contact_repository_imp.dart';
 import 'package:socialnetwork/domain/usecases/contact_usecase.dart';
+import 'package:socialnetwork/data/network/api/group_api.dart';
+import 'package:socialnetwork/data/repositories/group_repository_imp.dart';
+import 'package:socialnetwork/domain/usecases/group_usecase.dart';
 
 class ScannerController extends ChangeNotifier {
   bool _isFlashOn = false;
@@ -60,6 +63,27 @@ class ScannerController extends ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       _errorMessage = 'Không tìm thấy người dùng';
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> fetchGroupByInviteCode(String inviteCode) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final groupUsecase = GroupUsecase(
+        GroupRepositoryImp(GroupApi(DioClient.createDio())),
+      );
+      final groupData = await groupUsecase.getGroupByInviteCode(inviteCode);
+      _isLoading = false;
+      notifyListeners();
+      return groupData;
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = 'Không tìm thấy thông tin nhóm';
       notifyListeners();
       return null;
     }

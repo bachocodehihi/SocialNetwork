@@ -28,7 +28,7 @@ const messageSchema = new mongoose.Schema({
     content: { type: String, required: true },
     type: { 
         type: String, 
-        enum: ['text', 'image', 'file', 'audio'], 
+        enum: ['text', 'image', 'file', 'audio', 'system'], 
         default: 'text' 
     },
     readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],

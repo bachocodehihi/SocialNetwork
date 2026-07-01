@@ -211,17 +211,34 @@ const joinByQR = async (req, res) => {
             await conv.save();
         }
 
+        const Account = require('../models/account.model');
+        const joiningUser = await Account.findById(userId).select('username avatar email');
+        const joiningUsername = joiningUser ? joiningUser.username : 'Ai đó';
+
+        const { Message } = require('../models/message.model');
+        
+        const systemMessage = new Message({
+            conversationId: conv._id,
+            sender: userId,
+            content: `${joiningUsername} đã tham gia nhóm`,
+            type: 'system'
+        });
+        await systemMessage.save();
+
+        const populatedSysMsg = await systemMessage.populate('sender', 'username avatar email');
+        const sysMsgData = populatedSysMsg.toObject();
+
+        conv.lastMessage = systemMessage._id;
+        await conv.save();
+
         try {
             const io = require('../socket').getIO();
-            const newUser = await require('../models/account.model')
-                .findById(userId)
-                .select('username avatar email');
-                
             io.to(group._id.toString()).emit('member_joined', { 
                 groupId: group._id,
-                user: newUser,
+                user: joiningUser,
                 conversationId: conv._id
             });
+            io.to(conv._id.toString()).emit('receive_message', sysMsgData);
         } catch (e) { /* ignore socket errors */ }
 
         res.json({ 
@@ -335,11 +352,36 @@ const removeMember = async (req, res) => {
             isGroup: true, 
             'meta.groupId': groupId 
         });
+
+        const Account = require('../models/account.model');
+        const leavingUser = await Account.findById(memberId);
+        const leavingUsername = leavingUser ? leavingUser.username : 'Ai đó';
+
+        const { Message } = require('../models/message.model');
+        
+        let systemContent = '';
+        if (memberId === adminId) {
+            systemContent = `${leavingUsername} đã rời khỏi nhóm`;
+        } else {
+            systemContent = `${leavingUsername} đã bị xóa khỏi nhóm`;
+        }
+
+        const systemMessage = new Message({
+            conversationId: conv?._id,
+            sender: memberId,
+            content: systemContent,
+            type: 'system'
+        });
+        await systemMessage.save();
+
+        const populatedSysMsg = await systemMessage.populate('sender', 'username avatar email');
+        const sysMsgData = populatedSysMsg.toObject();
         
         if (conv) {
             conv.members = conv.members.filter(
                 m => m.toString() !== memberId
             );
+            conv.lastMessage = systemMessage._id;
             await conv.save();
         }
 
@@ -350,6 +392,9 @@ const removeMember = async (req, res) => {
                 memberId,
                 conversationId: conv?._id
             });
+            if (conv) {
+                io.to(conv._id.toString()).emit('receive_message', sysMsgData);
+            }
         } catch (e) { /* ignore */ }
 
         res.json({ success: true, code: 'REMOVE_MEMBER_SUCCESS', group });

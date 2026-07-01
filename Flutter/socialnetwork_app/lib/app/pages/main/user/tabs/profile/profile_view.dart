@@ -366,6 +366,8 @@ class _ProfileUserViewState extends State<ProfileUserView> {
     final cs = Theme.of(context).colorScheme;
     String? replyingToCommentId;
     String? replyingToUsername;
+    final Set<String> expandedCommentIds = {};
+    final Map<String, int> visibleRepliesCount = {};
 
     showModalBottomSheet(
       context: context,
@@ -573,13 +575,49 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                     ],
                                   ),
                                   
-                                  if (replies.isNotEmpty)
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 42.w, top: 8.h),
-                                      child: ListView.separated(
+                                  if (replies.isNotEmpty) ...[
+                                    if (!expandedCommentIds.contains(comment['_id'] ?? ''))
+                                      GestureDetector(
+                                        onTap: () {
+                                          setModalState(() {
+                                            final commentId = comment['_id'] ?? '';
+                                            expandedCommentIds.add(commentId);
+                                            visibleRepliesCount[commentId] = 10;
+                                          });
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 42.w, top: 4.h, bottom: 4.h),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.keyboard_arrow_down,
+                                                size: 16.sp,
+                                                color: Colors.blue,
+                                              ),
+                                              SizedBox(width: 4.w),
+                                              Text(
+                                                'Xem ${replies.length} phản hồi',
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.blue,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    if (expandedCommentIds.contains(comment['_id'] ?? ''))
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 42.w, top: 8.h),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            ListView.separated(
                                         shrinkWrap: true,
                                         physics: const NeverScrollableScrollPhysics(),
-                                        itemCount: replies.length,
+                                        itemCount: (visibleRepliesCount[comment['_id']] ?? 10) < replies.length ? (visibleRepliesCount[comment['_id']] ?? 10) : replies.length,
                                         separatorBuilder: (context, _) => SizedBox(height: 8.h),
                                         itemBuilder: (context, rIndex) {
                                           final reply = replies[rIndex];
@@ -607,28 +645,28 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                                   }
                                                 },
                                                 child: CircleAvatar(
-                                                  radius: 12.r,
+                                                  radius: 16.r,
                                                   backgroundImage: rAuthorAvatar.isNotEmpty
                                                       ? NetworkImage(rAuthorAvatar)
                                                       : null,
                                                   child: rAuthorAvatar.isEmpty
                                                       ? Text(
                                                           rAuthorName.substring(0, 1).toUpperCase(),
-                                                          style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.w500),
+                                                          style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
                                                         )
                                                       : null,
                                                 ),
                                               ),
-                                              SizedBox(width: 8.w),
+                                              SizedBox(width: 10.w),
                                               Expanded(
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                    children: [
                                                      Container(
-                                                      padding: EdgeInsets.all(8.w),
+                                                      padding: EdgeInsets.all(10.w),
                                                       decoration: BoxDecoration(
-                                                        color: cs.surfaceContainerHighest.withValues(alpha: 0.6),
-                                                        borderRadius: BorderRadius.circular(10.r),
+                                                        color: cs.surfaceContainerHighest,
+                                                        borderRadius: BorderRadius.circular(12.r),
                                                       ),
                                                       child: Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -647,7 +685,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                                             child: Text(
                                                               rAuthorName,
                                                               style: TextStyle(
-                                                                fontSize: 11.sp,
+                                                                fontSize: 12.sp,
                                                                 fontWeight: FontWeight.w500,
                                                                 color: cs.onSurface,
                                                               ),
@@ -706,7 +744,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                                             children: [
                                                               Icon(
                                                                 rHasLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
-                                                                size: 12.sp,
+                                                                size: 15.sp,
                                                                 color: rHasLiked ? Colors.blue : cs.onSurfaceVariant.withValues(alpha: 0.7),
                                                               ),
                                                               if (rLikesCount > 0) ...[
@@ -731,7 +769,70 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                           );
                                         },
                                       ),
-                                    ),
+                                            SizedBox(height: 8.h),
+                                            Row(
+                                              children: [
+                                                if ((visibleRepliesCount[comment['_id']] ?? 10) < replies.length) ...[
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setModalState(() {
+                                                        final commentId = comment['_id'] ?? '';
+                                                        visibleRepliesCount[commentId] = (visibleRepliesCount[commentId] ?? 10) + 10;
+                                                      });
+                                                    },
+                                                    child: Padding(
+                                                      padding: EdgeInsets.symmetric(vertical: 4.h),
+                                                      child: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Icon(Icons.more_horiz, size: 16.sp, color: Colors.blue),
+                                                          SizedBox(width: 4.w),
+                                                          Text(
+                                                            'Xem thêm phản hồi',
+                                                            style: TextStyle(
+                                                              fontSize: 12.sp,
+                                                              fontWeight: FontWeight.w500,
+                                                              color: Colors.blue,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 16.w),
+                                                ],
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    setModalState(() {
+                                                      final commentId = comment['_id'] ?? '';
+                                                      expandedCommentIds.remove(commentId);
+                                                    });
+                                                  },
+                                                  child: Padding(
+                                                    padding: EdgeInsets.symmetric(vertical: 4.h),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Icon(Icons.keyboard_arrow_up, size: 16.sp, color: Colors.blue),
+                                                        SizedBox(width: 4.w),
+                                                        Text(
+                                                          'Ẩn phản hồi',
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            fontWeight: FontWeight.w500,
+                                                            color: Colors.blue,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
                                 ],
                               );
                             },

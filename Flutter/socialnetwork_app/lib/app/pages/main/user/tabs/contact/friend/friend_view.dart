@@ -99,8 +99,8 @@ class _ContactFriendViewState extends State<ContactFriendView> {
                           Text(
                             friend['status'] ?? 'Active',
                             style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              fontSize: 11.sp,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.65),
                             ),
                           ),
                         ],

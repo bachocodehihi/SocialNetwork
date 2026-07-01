@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:socialnetwork/data/local/auth_local.dart';
-class QRCodeController extends ChangeNotifier {
+class QRCodeUserController extends ChangeNotifier {
 
   Map<String, dynamic>? user;
 
-  QRCodeController() {
+  QRCodeUserController() {
     loadUser();
   }
 

@@ -24,4 +24,16 @@ class GroupUsecase {
   Future<Map<String, dynamic>> inviteToGroup(String groupId, String inviteeId) async {
     return _repository.inviteToGroup(groupId, inviteeId);
   }
+
+  Future<Map<String, dynamic>> getGroupByInviteCode(String inviteCode) async {
+    return _repository.getGroupByInviteCode(inviteCode);
+  }
+
+  Future<Map<String, dynamic>> joinByQR(String inviteCode) async {
+    return _repository.joinByQR(inviteCode);
+  }
+
+  Future<Map<String, dynamic>> removeMember(String groupId, String memberId) async {
+    return _repository.removeMember(groupId, memberId);
+  }
 }

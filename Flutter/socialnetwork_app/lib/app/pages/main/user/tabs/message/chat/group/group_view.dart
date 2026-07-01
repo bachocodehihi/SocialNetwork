@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/message/chat/group/group_controller.dart';
 import 'package:socialnetwork/data/service/call.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
+import 'package:socialnetwork/app/pages/main/user/tabs/message/view/group/group_view.dart';
 
 class ChatGroupView extends StatefulWidget {
   final String conversationId;
@@ -360,7 +361,17 @@ class _ChatGroupViewState extends State<ChatGroupView> {
           IconButton(
             icon: Icon(Icons.more_vert_outlined, color: cs.onSurfaceVariant),
             onPressed: () {
-              _showGroupInfo(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewGroupView(
+                    conversationId: widget.conversationId,
+                    groupId: _controller.groupId ?? '',
+                    groupName: widget.groupName,
+                    groupAvatar: widget.groupAvatar ?? '',
+                  ),
+                ),
+              );
             },
           ),
         ],
@@ -522,9 +533,48 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                         final msg = _controller.messages[index];
                         final isMe = _controller.isMessageFromMe(msg);
                         final content = msg['content'] ?? '';
+                        final type = msg['type'] ?? 'text';
                         final createdAt = msg['createdAt'] != null
                             ? DateTime.tryParse(msg['createdAt'])?.toLocal()
                             : null;
+
+                        if (type == 'system') {
+                          final showDate = index == 0 || 
+                              (createdAt != null && _shouldShowDateSeparator(
+                                createdAt, 
+                                _controller.messages[index - 1]['createdAt']
+                              ));
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (showDate && createdAt != null)
+                                _DateSeparator(date: createdAt),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.h),
+                                child: Center(
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+                                    decoration: BoxDecoration(
+                                      color: cs.onSurface.withValues(alpha: 0.05),
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    child: Text(
+                                      content,
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: cs.onSurfaceVariant,
+                                        fontWeight: FontWeight.w400,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+
                         final sender = msg['sender'] as Map<String, dynamic>?;
                         final senderName = sender?['username'] ?? 'Unknown';
                         final senderAvatar = sender?['avatar'];
@@ -683,113 +733,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
     _controller.sendMessage(content);
   }
 
-  void _showGroupInfo(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Container(
-        padding: EdgeInsets.all(20.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
-            SizedBox(height: 16.h),
-            
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 24.r,
-                  backgroundImage: widget.groupAvatar != null && widget.groupAvatar!.isNotEmpty
-                      ? NetworkImage(widget.groupAvatar!)
-                      : null,
-                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                  child: (widget.groupAvatar == null || widget.groupAvatar!.isEmpty)
-                      ? Text(
-                          widget.groupName.substring(0, 1).toUpperCase(),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-                      : null,
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.groupName,
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(
-                        'Group Chat',
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20.h),
-            
-            _InfoOption(
-              icon: Icons.people_outline_rounded,
-              title: 'Members',
-              subtitle: 'View all members',
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            _InfoOption(
-              icon: Icons.notifications_outlined,
-              title: 'Notifications',
-              subtitle: 'Customize notifications',
-              onTap: () {
-              },
-            ),
-            _InfoOption(
-              icon: Icons.search_rounded,
-              title: 'Search in chat',
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            
-            SizedBox(height: 16.h),
-            Divider(height: 1),
-            SizedBox(height: 8.h),
-            
-            _InfoOption(
-              icon: Icons.exit_to_app_rounded,
-              title: 'Leave group',
-              titleStyle: TextStyle(color: Theme.of(context).colorScheme.error),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
 
 }
@@ -993,52 +937,6 @@ class _MessageBubble extends StatelessWidget {
   }
 }
 
-class _InfoOption extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final TextStyle? titleStyle;
-  final VoidCallback? onTap;
 
-  const _InfoOption({
-    required this.icon,
-    required this.title,
-    this.subtitle,
-    this.titleStyle,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: Colors.blue, size: 24.sp),
-      title: Text(
-        title,
-        style: titleStyle ?? TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle!,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: cs.onSurfaceVariant,
-              ),
-            )
-          : null,
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: cs.onSurfaceVariant,
-        size: 20.sp,
-      ),
-      onTap: onTap,
-    );
-  }
-}
 
 

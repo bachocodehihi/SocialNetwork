@@ -41,4 +41,29 @@ class GroupApi {
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
   }
+
+  Future<Response> getGroupByInviteCode(String inviteCode) async {
+    final token = await AuthLocal.getToken();
+    return _dio.get(
+      '/api/groups/invite/$inviteCode',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+  }
+
+  Future<Response> joinByQR(String inviteCode) async {
+    final token = await AuthLocal.getToken();
+    return _dio.post(
+      '/api/groups/join-qr',
+      data: {'inviteCode': inviteCode},
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+  }
+
+  Future<Response> removeMember(String groupId, String memberId) async {
+    final token = await AuthLocal.getToken();
+    return _dio.delete(
+      '/api/groups/$groupId/members/$memberId',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+  }
 }

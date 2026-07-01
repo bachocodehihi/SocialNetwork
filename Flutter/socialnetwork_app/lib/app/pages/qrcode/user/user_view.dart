@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
 import 'package:socialnetwork/app/widgets/toast/toast.dart';
-import 'package:socialnetwork/app/pages/qrcode/qrcode_controller.dart';
+import 'package:socialnetwork/app/pages/qrcode/user/user_controller.dart';
 //import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:gal/gal.dart';
@@ -12,14 +12,14 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
-class QRCodeView extends StatefulWidget {
-  const QRCodeView({super.key});
+class QRCodeUserView extends StatefulWidget {
+  const QRCodeUserView({super.key});
   @override
-  State<QRCodeView> createState() => _QRCodeViewState();
+  State<QRCodeUserView> createState() => _QRCodeUserViewState();
 }
 
-class _QRCodeViewState extends State<QRCodeView> {
-  late QRCodeController controller;
+class _QRCodeUserViewState extends State<QRCodeUserView> {
+  late QRCodeUserController controller;
   bool _isSaving = false;
   final GlobalKey _globalKey = GlobalKey();
 
@@ -82,7 +82,7 @@ class _QRCodeViewState extends State<QRCodeView> {
   @override
   void initState() {
     super.initState();
-    controller = QRCodeController();
+    controller = QRCodeUserController();
     controller.addListener(() => setState(() {}));
   }
 

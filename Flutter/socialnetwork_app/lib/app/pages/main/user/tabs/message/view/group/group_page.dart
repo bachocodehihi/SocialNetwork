@@ -4,6 +4,12 @@ class ViewGroupPage extends StatelessWidget {
   const ViewGroupPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return const ViewGroupView();
+    final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return ViewGroupView(
+      conversationId: args['conversationId'] ?? '',
+      groupId: args['groupId'] ?? '',
+      groupName: args['groupName'] ?? '',
+      groupAvatar: args['groupAvatar'] ?? '',
+    );
   }
 }

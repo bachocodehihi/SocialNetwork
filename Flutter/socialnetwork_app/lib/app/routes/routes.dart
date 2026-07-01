@@ -69,7 +69,10 @@ import 'package:socialnetwork/app/pages/setting/account/change/password/password
 import 'package:socialnetwork/app/pages/post/content/user/user_page.dart';
 
 //qrcode
-import 'package:socialnetwork/app/pages/qrcode/qrcode_page.dart';
+//user
+import 'package:socialnetwork/app/pages/qrcode/user/user_page.dart';
+//group
+import 'package:socialnetwork/app/pages/qrcode/group/group_page.dart';
 
 //create
 import 'package:socialnetwork/app/pages/create/group/group_page.dart';
@@ -201,6 +204,7 @@ class Routes {
 
   //code
   static String code = '/code';
+  static String codeGroup = '/code/group';
 
   //create
   static String createGroup = '/create/group';
@@ -324,7 +328,8 @@ class Routes {
     postStory: (_) => SignUpEmailPage(),
 
     //code
-    code: (_) => QRCodePage(),
+    code: (_) => QRCodeUserPage(),
+    codeGroup: (_) => const QRCodeGroupPage(),
 
     //create
     createGroup: (_) => CreateGroupPage(),

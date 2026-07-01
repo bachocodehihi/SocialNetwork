@@ -6,6 +6,8 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:socialnetwork/app/pages/scanner/scanner_controller.dart';
 import 'package:socialnetwork/app/pages/user/user_page.dart';
 import 'package:socialnetwork/app/widgets/dialog/signin/signin_view.dart';
+import 'package:socialnetwork/app/pages/group/group_page.dart';
+import 'package:socialnetwork/app/pages/group/join/join_page.dart';
 
 class ScannerView extends StatefulWidget {
   const ScannerView({super.key});
@@ -43,6 +45,54 @@ class _ScannerViewState extends State<ScannerView> {
 
     controller.pauseScanning();
     _scannerController.stop();
+
+    if (qrValue.contains('/join-group/')) {
+      final parts = qrValue.split('/join-group/');
+      if (parts.length > 1) {
+        final inviteCode = parts[1].split('?').first;
+        final groupData = await controller.fetchGroupByInviteCode(inviteCode);
+
+        if (!mounted) return;
+
+        if (groupData != null) {
+          final isMember = groupData['isMember'] == true;
+          final groupId = groupData['_id'] ?? groupData['id'];
+
+          if (isMember) {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => GroupPage(groupId: groupId.toString()),
+              ),
+            );
+          } else {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => JoinGroupPage(
+                  inviteCode: inviteCode,
+                  groupData: groupData,
+                ),
+              ),
+            );
+          }
+
+          _scannerController.start();
+          controller.resumeScanning();
+          return;
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(controller.errorMessage ?? 'Không tìm thấy thông tin nhóm'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          _scannerController.start();
+          controller.resumeScanning();
+          return;
+        }
+      }
+    }
 
     try {
       final decodedJson = jsonDecode(qrValue);

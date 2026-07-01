@@ -12,6 +12,7 @@ class ChatGroupController extends ChangeNotifier {
   final SocketService _socket;
 
   String? _conversationId;
+  String? _groupId;
   List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
   String? _error;
@@ -37,6 +38,7 @@ class ChatGroupController extends ChangeNotifier {
   bool get isTyping => _isTyping;
   Map<String, bool> get typingUsers => _typingUsers;
   Map<String, dynamic>? get pinnedMessage => _pinnedMessage;
+  String? get groupId => _groupId;
 
   Future<void> init(String conversationId) async {
     _conversationId = conversationId;
@@ -57,8 +59,13 @@ class ChatGroupController extends ChangeNotifier {
           (c) => c['_id']?.toString() == conversationId || c['id']?.toString() == conversationId,
           orElse: () => <String, dynamic>{},
         );
-        if (conv.isNotEmpty && conv['pinnedMessage'] != null) {
-          _pinnedMessage = Map<String, dynamic>.from(conv['pinnedMessage'] as Map);
+        if (conv.isNotEmpty) {
+          if (conv['pinnedMessage'] != null) {
+            _pinnedMessage = Map<String, dynamic>.from(conv['pinnedMessage'] as Map);
+          }
+          if (conv['meta'] != null && conv['meta']['groupId'] != null) {
+            _groupId = conv['meta']['groupId'].toString();
+          }
         }
       } catch (e) {
         debugPrint('❌ ChatGroupController fetch conversations error: $e');

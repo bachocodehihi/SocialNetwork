@@ -149,6 +149,9 @@ class Language {
           'report': 'Report',
           'block': 'Block',
           'delete_chat_history': 'Delete chat history',
+          'leave_group': 'Leave group',
+          'search_in_chat': 'Search in chat',
+          'qr_group': 'Group QR Code',
 
       //contact
       'requests' : 'Requests',
@@ -393,6 +396,9 @@ class Language {
           'report': 'Báo cáo',
           'block': 'Chặn',
           'delete_chat_history': 'Xóa lịch sử nhắn tin',
+          'leave_group': 'Rời nhóm',
+          'search_in_chat': 'Tìm kiếm tin nhắn',
+          'qr_group': 'Mã QR nhóm',
 
       //contact
       'requests' : 'Lời mời ',

@@ -57,4 +57,37 @@ class GroupRepositoryImp implements GroupRepository {
     }
     return {};
   }
+
+  @override
+  Future<Map<String, dynamic>> getGroupByInviteCode(String inviteCode) async {
+    final response = await _api.getGroupByInviteCode(inviteCode);
+    final data = response.data;
+    if (data is Map && data['data'] is Map<String, dynamic>) {
+      return Map<String, dynamic>.from(data['data']);
+    }
+    if (data is Map<String, dynamic>) {
+      return data;
+    }
+    return {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> joinByQR(String inviteCode) async {
+    final response = await _api.joinByQR(inviteCode);
+    final data = response.data;
+    if (data is Map<String, dynamic>) {
+      return data;
+    }
+    return {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> removeMember(String groupId, String memberId) async {
+    final response = await _api.removeMember(groupId, memberId);
+    final data = response.data;
+    if (data is Map<String, dynamic>) {
+      return data;
+    }
+    return {};
+  }
 }
