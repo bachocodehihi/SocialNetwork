@@ -239,14 +239,30 @@ const getConversations = async (req, res) => {
             .sort({ updatedAt: -1 })
             .lean();
             
+        const Group = require('../models/group.model');
         const onlineUsers = require('../socket').getOnlineUsers();
-        const enriched = conversations.map(conv => ({
-            ...conv,
-            members: conv.members?.map(member => ({
-                ...member,
-                isOnline: onlineUsers.has(member._id?.toString())
-            }))
-        }));
+        
+        const enriched = [];
+        for (let conv of conversations) {
+            if (conv.isGroup && (!conv.meta || !conv.meta.groupId)) {
+                let group = await Group.findOne({ admin: conv.admin, name: conv.name });
+                if (!group) {
+                    group = await Group.findOne({ name: conv.name });
+                }
+                if (group) {
+                    await Conversation.updateOne({ _id: conv._id }, { $set: { 'meta.groupId': group._id } });
+                    conv.meta = { groupId: group._id };
+                }
+            }
+            
+            enriched.push({
+                ...conv,
+                members: conv.members?.map(member => ({
+                    ...member,
+                    isOnline: onlineUsers.has(member._id?.toString())
+                }))
+            });
+        }
             
         res.status(200).json(enriched);
     } catch (error) {
