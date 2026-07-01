@@ -41,124 +41,151 @@ class _SearchAViewState extends State<SearchAccountView> {
     );
     final cs = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: ListenableBuilder(
-          listenable: controller,
-          builder: (context, _) {
-            return Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: kIsWeb ? 0 : 24.w,
-                vertical: 16.h,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Icon(
-                          Icons.arrow_back_ios_outlined,
-                          size: 20.sp,
-                          color: cs.onSurface,
-                        ),
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        Language.of(context, 'search'),
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w500,
-                          color: cs.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
-                  TextField(
-                    controller: controller.searchController,
-                    onChanged: controller.onSearchChanged,
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: (val) {
-                      if (val.trim().isNotEmpty) {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.searchDetail,
-                          arguments: val,
-                        );
-                      }
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Search...',
-                      prefixIcon: const Icon(Icons.search_outlined),
-                      filled: true,
-                      fillColor: cs.surfaceContainerHighest,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 14.h,
-                        horizontal: 12.w,
-                      ),
-                      suffixIcon: controller.searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () {
-                                controller.searchController.clear();
-                                controller.onSearchChanged('');
-                              },
-                            )
-                          : null,
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-
-                  if (controller.error != null)
-                    Container(
-                      margin: EdgeInsets.only(bottom: 12.h),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w, 
-                        vertical: 8.h
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            color: Colors.red, 
-                            size: 18.sp
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Scaffold(
+        backgroundColor: cs.surface,
+        body: SafeArea(
+          child: ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) {
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: kIsWeb ? 0 : 24.w,
+                  vertical: 16.h,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(
+                            Icons.arrow_back_ios_outlined,
+                            size: 20.sp,
+                            color: cs.onSurface,
                           ),
-                          SizedBox(width: 8.w),
-                          Expanded(
-                            child: Text(
-                              controller.error!,
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                color: Colors.red.shade900
+                        ),
+                        SizedBox(width: 10.w),
+                        Text(
+                          Language.of(context, 'search'),
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w500,
+                            color: cs.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey, 
+                          width: 1.w,
+                        ),
+                        borderRadius: BorderRadius.circular(50.r),
+                        color: Colors.transparent,
+                      ),
+                      child: TextField(
+                        controller: controller.searchController,
+                        onChanged: controller.onSearchChanged,
+                        textInputAction: TextInputAction.search,
+                        textAlignVertical: TextAlignVertical.center,
+                        onSubmitted: (val) {
+                          if (val.trim().isNotEmpty) {
+                            Navigator.pushNamed(
+                              context,
+                              Routes.searchDetail,
+                              arguments: val,
+                            );
+                          }
+                        },
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          color: cs.onSurface,
+                        ),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          hintText: Language.of(context, 'search'),
+                          hintStyle: TextStyle(
+                            fontSize: 15.sp, 
+                            color: Colors.grey,
+                          ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 12.h,
+                            horizontal: 15.w,
+                          ),
+                          suffixIcon: controller.searchController.text.isNotEmpty
+                              ? GestureDetector(
+                                  onTap: () {
+                                    controller.searchController.clear();
+                                    controller.onSearchChanged('');
+                                  },
+                                  child: Icon(
+                                    Icons.clear_outlined,
+                                    color: Colors.grey,
+                                    size: 20.sp,
+                                  ),
+                                )
+                              : null,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 20.h),
+
+                    if (controller.error != null)
+                      Container(
+                        margin: EdgeInsets.only(bottom: 12.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w, 
+                          vertical: 8.h
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Colors.red, 
+                              size: 18.sp
+                            ),
+                            SizedBox(width: 8.w),
+                            Expanded(
+                              child: Text(
+                                controller.error!,
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: Colors.red.shade900
+                                ),
                               ),
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close, size: 18),
-                            onPressed: controller.clearError,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                        ],
+                            IconButton(
+                              icon: Icon(Icons.close_outlined, size: 18.sp),
+                              onPressed: controller.clearError,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                  Expanded(child: _buildContent(cs)),
-                ],
-              ),
-            );
-          },
+                    Expanded(
+                      child: _buildContent(cs),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -264,7 +291,9 @@ class _SearchAViewState extends State<SearchAccountView> {
             ),
           ],
         ),
+
         SizedBox(height: 4.h),
+
         Expanded(
           child: ListView.builder(
             itemCount: controller.recentUsers.length,

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/group/group_controller.dart';
+import 'package:socialnetwork/app/pages/user/user_page.dart';
 import 'package:socialnetwork/app/widgets/avatar/fullscreen.dart';
 import 'package:socialnetwork/app/pages/group/invite/invite_page.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
@@ -315,7 +316,7 @@ class _GroupViewState extends State<GroupView> {
                     ),
                     SizedBox(width: 6.w),
                     Text(
-                      '${(post['comments'] as List? ?? []).length}',
+                      '${_getCommentsCount(post)}',
                       style: TextStyle(
                         fontSize: 13.sp,
                         color: cs.onSurfaceVariant,
@@ -333,6 +334,18 @@ class _GroupViewState extends State<GroupView> {
     );
   }
 
+  int _getCommentsCount(Map<String, dynamic> post) {
+    final comments = post['comments'] as List? ?? [];
+    int count = comments.length;
+    for (final comment in comments) {
+      if (comment is Map) {
+        final replies = comment['replies'] as List? ?? [];
+        count += replies.length;
+      }
+    }
+    return count;
+  }
+
   void _showCommentBottomSheet(BuildContext context, Map<String, dynamic> post) {
     final TextEditingController commentTextController = TextEditingController();
     final cs = Theme.of(context).colorScheme;
@@ -347,16 +360,18 @@ class _GroupViewState extends State<GroupView> {
             final currentPost = controller.posts.firstWhere((p) => p['_id'] == post['_id'], orElse: () => post);
             final comments = currentPost['comments'] as List? ?? [];
 
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.7,
-              decoration: BoxDecoration(
-                color: cs.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-              ),
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: Column(
+            return GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.7,
+                decoration: BoxDecoration(
+                  color: cs.surface,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+                ),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: Column(
                 children: [
                   Container(
                     width: 40.w,
@@ -397,17 +412,29 @@ class _GroupViewState extends State<GroupView> {
                               return Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CircleAvatar(
-                                    radius: 16.r,
-                                    backgroundImage: authorAvatar.isNotEmpty
-                                        ? NetworkImage(authorAvatar)
-                                        : null,
-                                    child: authorAvatar.isEmpty
-                                        ? Text(
-                                            authorName.substring(0, 1).toUpperCase(),
-                                            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
-                                          )
-                                        : null,
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (author.isNotEmpty) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => UserPage(userData: Map<String, dynamic>.from(author)),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 16.r,
+                                      backgroundImage: authorAvatar.isNotEmpty
+                                          ? NetworkImage(authorAvatar)
+                                          : null,
+                                      child: authorAvatar.isEmpty
+                                          ? Text(
+                                              authorName.substring(0, 1).toUpperCase(),
+                                              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
+                                            )
+                                          : null,
+                                    ),
                                   ),
                                   SizedBox(width: 10.w),
                                   Expanded(
@@ -420,12 +447,24 @@ class _GroupViewState extends State<GroupView> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            authorName,
-                                            style: TextStyle(
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w500,
-                                              color: cs.onSurface,
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (author.isNotEmpty) {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (_) => UserPage(userData: Map<String, dynamic>.from(author)),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: Text(
+                                              authorName,
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: cs.onSurface,
+                                              ),
                                             ),
                                           ),
                                           SizedBox(height: 4.h),
@@ -483,7 +522,7 @@ class _GroupViewState extends State<GroupView> {
                   ),
                 ],
               ),
-            );
+            ),);
           },
         );
       },
@@ -596,7 +635,9 @@ class _GroupViewState extends State<GroupView> {
                                 : null,
                             child: controller.groupAvatar.isEmpty
                                 ? Icon(Icons.group_outlined, 
-                                    size: 50.r, color: cs.onSurfaceVariant)
+                                    size: 50.r, 
+                                    color: cs.onSurfaceVariant
+                                  )
                                 : null,
                           ),
                         ),
@@ -665,7 +706,7 @@ class _GroupViewState extends State<GroupView> {
                             size: 20.sp
                           ),
                           label: Text(
-                            'Mời bạn bè',
+                            Language.of(context, 'invite_friend'),
                             style: TextStyle(
                               fontSize: 15.sp,
                               color: Colors.white,
@@ -711,32 +752,29 @@ class _GroupViewState extends State<GroupView> {
                         SizedBox(width: 10.w),
 
                         Expanded(
-                          child: AbsorbPointer(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey, 
+                                width: 1.w
+                              ),
+                              borderRadius: BorderRadius.circular(50.r),
+                              color: Colors.transparent,
+                            ),
                             child: TextField(
+                              enabled: false,
                               decoration: InputDecoration(
                                 hintText: Language.of(context, 'what_s_on_your_mind'),
                                 hintStyle: TextStyle(
-                                  fontSize: 15.sp,
+                                  fontSize: 15.sp, 
                                   color: Colors.grey,
                                 ),
-                                filled: false,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  borderSide: BorderSide(color: Colors.grey, width: 1),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  borderSide: BorderSide(color: Colors.grey, width: 1),
-                                ),
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
                                 contentPadding: EdgeInsets.symmetric(
-                                  vertical: 14.h,
-                                  horizontal: 12.w,
+                                  vertical: 10.h,
+                                  horizontal: 15.w,
                                 ),
                               ),
                             ),

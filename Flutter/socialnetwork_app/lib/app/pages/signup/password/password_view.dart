@@ -126,12 +126,12 @@ class _SignUpPasswordViewState extends State<SignUpPasswordView> {
                         return const TextStyle(color: Colors.grey);
                       },
                     ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
+                    suffixIcon: GestureDetector(
+                      onTap: controller.togglePasswordVisibility,
+                      child: Icon(
                         controller.obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                         color: Colors.grey,
                       ),
-                      onPressed: controller.togglePasswordVisibility,
                     ),
                   ),
                 ),
@@ -166,12 +166,12 @@ class _SignUpPasswordViewState extends State<SignUpPasswordView> {
                         return const TextStyle(color: Colors.grey);
                       },
                     ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
+                    suffixIcon: GestureDetector(
+                      onTap: controller.toggleConfirmPasswordVisibility,
+                      child: Icon(
                         controller.obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                         color: Colors.grey,
                       ),
-                      onPressed: controller.toggleConfirmPasswordVisibility,
                     ),
                   ),
                 ),

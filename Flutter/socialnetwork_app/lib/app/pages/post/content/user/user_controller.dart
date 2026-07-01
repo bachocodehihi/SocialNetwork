@@ -118,12 +118,27 @@ class PostContentController extends ChangeNotifier {
       if (postType == 'group') {
         groupId = selectedGroup?['_id']?.toString();
       }
+      List<String>? allowedFriends;
+      List<String>? exceptedFriends;
+      if (postType == 'user') {
+        final friendIds = selectedFriends
+            .map((f) => (f['id'] ?? f['_id']).toString())
+            .toList();
+        if (privacy == 'specific_friends') {
+          allowedFriends = friendIds;
+        } else if (privacy == 'friends_except') {
+          exceptedFriends = friendIds;
+        }
+      }
+
       await _contentUsecase.createPost(
         content: contentController.text.trim(),
         postType: postType,
         privacy: postType == 'user' ? privacy : null,
         groupId: groupId,
         imagePaths: imagePaths,
+        allowedFriends: allowedFriends,
+        exceptedFriends: exceptedFriends,
       );
 
       if (context.mounted) {

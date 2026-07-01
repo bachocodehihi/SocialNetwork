@@ -13,6 +13,8 @@ class ContentRepositoryImp implements ContentRepository {
     String? privacy,
     String? groupId,
     List<String>? imagePaths,
+    List<String>? allowedFriends,
+    List<String>? exceptedFriends,
   }) async {
     final response = await _api.createPost(
       content: content,
@@ -20,6 +22,8 @@ class ContentRepositoryImp implements ContentRepository {
       privacy: privacy,
       groupId: groupId,
       imagePaths: imagePaths,
+      allowedFriends: allowedFriends,
+      exceptedFriends: exceptedFriends,
     );
     final data = response.data;
     if (data is Map<String, dynamic>) {

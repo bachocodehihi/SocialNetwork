@@ -14,12 +14,14 @@ class MessageUserView extends StatefulWidget {
 
 class _MessageUserViewState extends State<MessageUserView> {
   late MessageController controller;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     controller = MessageController();
     controller.addListener(_onControllerUpdate);
+    _searchController.addListener(() => setState(() {}));
   }
 
   void _onControllerUpdate() {
@@ -30,6 +32,7 @@ class _MessageUserViewState extends State<MessageUserView> {
   void dispose() {
     controller.removeListener(_onControllerUpdate);
     controller.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -46,31 +49,35 @@ class _MessageUserViewState extends State<MessageUserView> {
     );
     final cs = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: controller.refresh,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: kIsWeb ? 0 : 24.w,
-                vertical: 16.h,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(cs),
-                  SizedBox(height: 20.h),
-                  _buildSearchBar(cs),
-                  SizedBox(height: 20.h),
-                  if (controller.onlineFriends.isNotEmpty) ...[
-                    _buildOnlineFriendsList(cs),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Scaffold(
+        backgroundColor: cs.surface,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: controller.refresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: kIsWeb ? 0 : 24.w,
+                  vertical: 16.h,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(cs),
                     SizedBox(height: 20.h),
+                    _buildSearchBar(cs),
+                    SizedBox(height: 20.h),
+                    if (controller.onlineFriends.isNotEmpty) ...[
+                      _buildOnlineFriendsList(cs),
+                      SizedBox(height: 20.h),
+                    ],
+                    _buildConversationsList(cs),
                   ],
-                  _buildConversationsList(cs),
-                ],
+                ),
               ),
             ),
           ),
@@ -98,23 +105,46 @@ class _MessageUserViewState extends State<MessageUserView> {
   Widget _buildSearchBar(ColorScheme cs) {
     return Container(
       decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: cs.shadow.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+          color: Colors.grey, 
+          width: 1.w,
+        ),
+        borderRadius: BorderRadius.circular(50.r),
+        color: Colors.transparent,
       ),
       child: TextField(
+        controller: _searchController,
+        textAlignVertical: TextAlignVertical.center,
+        style: TextStyle(
+          fontSize: 15.sp,
+          color: cs.onSurface,
+        ),
         decoration: InputDecoration(
+          isDense: true,
           hintText: 'Search messages...',
-          hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.7)),
-          prefixIcon: Icon(Icons.search_outlined, color: cs.onSurfaceVariant),
+          hintStyle: TextStyle(
+            fontSize: 15.sp, 
+            color: Colors.grey,
+          ),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(
+            vertical: 12.h,
+            horizontal: 15.w,
+          ),
+          suffixIcon: _searchController.text.isNotEmpty
+              ? GestureDetector(
+                  onTap: () {
+                    _searchController.clear();
+                  },
+                  child: Icon(
+                    Icons.clear_outlined,
+                    color: Colors.grey,
+                    size: 20.sp,
+                  ),
+                )
+              : null,
         ),
       ),
     );

@@ -5,6 +5,8 @@ abstract class ContentRepository {
     String? privacy,
     String? groupId,
     List<String>? imagePaths,
+    List<String>? allowedFriends,
+    List<String>? exceptedFriends,
   });
 
   Future<List<Map<String, dynamic>>> getFeed();

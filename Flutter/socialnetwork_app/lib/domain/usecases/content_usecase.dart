@@ -11,6 +11,8 @@ class ContentUsecase {
     String? privacy,
     String? groupId,
     List<String>? imagePaths,
+    List<String>? allowedFriends,
+    List<String>? exceptedFriends,
   }) async {
     if (content.trim().isEmpty) {
       throw Exception('Nội dung không được để trống');
@@ -24,6 +26,8 @@ class ContentUsecase {
       privacy: privacy,
       groupId: groupId,
       imagePaths: imagePaths,
+      allowedFriends: allowedFriends,
+      exceptedFriends: exceptedFriends,
     );
   }
 

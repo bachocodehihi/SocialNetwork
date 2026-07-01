@@ -122,12 +122,12 @@ class _SignInPasswordViewState extends State<SignInPasswordView> {
                       return const TextStyle(color: Colors.grey);
                     },
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
+                  suffixIcon: GestureDetector(
+                    onTap: controller.toggleObscurePassword,
+                    child: Icon(
                       controller.obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                       color: Colors.grey,
                     ),
-                    onPressed: controller.toggleObscurePassword,
                   ),
                 ),
               ),

@@ -25,6 +25,7 @@ class SelectFriendView extends StatefulWidget {
 
 class _SelectFriendViewState extends State<SelectFriendView> {
   late final SelectFriendController controller;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -34,11 +35,13 @@ class _SelectFriendViewState extends State<SelectFriendView> {
     controller = SelectFriendController(usecase);
     controller.initSelectedIds(widget.initialSelectedIds);
     controller.fetchFriends();
+    _searchController.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
     controller.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -54,10 +57,13 @@ class _SelectFriendViewState extends State<SelectFriendView> {
     );
     final cs = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: Padding(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Scaffold(
+        backgroundColor: cs.surface,
+        body: SafeArea(
+          child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: kIsWeb ? 0 : 24.w,
             vertical: 16.h,
@@ -94,27 +100,50 @@ class _SelectFriendViewState extends State<SelectFriendView> {
 
                   Container(
                     decoration: BoxDecoration(
-                      color: cs.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(30.r),
-                      border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.grey, 
+                        width: 1.w,
+                      ),
+                      borderRadius: BorderRadius.circular(50.r),
+                      color: Colors.transparent,
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: TextField(
+                      controller: _searchController,
                       onChanged: (val) {
                         controller.setSearchQuery(val);
                       },
+                      textAlignVertical: TextAlignVertical.center,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: cs.onSurface,
+                      ),
                       decoration: InputDecoration(
+                        isDense: true,
                         hintText: 'Tìm kiếm bạn bè...',
                         hintStyle: TextStyle(
-                          fontSize: 14.sp,
-                          color: cs.onSurfaceVariant,
-                        ),
-                        icon: Icon(
-                          Icons.search,
-                          size: 20.sp,
-                          color: cs.onSurfaceVariant,
+                          fontSize: 15.sp, 
+                          color: Colors.grey,
                         ),
                         border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 12.h,
+                          horizontal: 15.w,
+                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? GestureDetector(
+                                onTap: () {
+                                  _searchController.clear();
+                                  controller.setSearchQuery('');
+                                },
+                                child: Icon(
+                                  Icons.clear_outlined,
+                                  color: Colors.grey,
+                                  size: 20.sp,
+                                ),
+                              )
+                            : null,
                       ),
                     ),
                   ),
@@ -292,6 +321,7 @@ class _SelectFriendViewState extends State<SelectFriendView> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

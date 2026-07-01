@@ -24,6 +24,7 @@ class _ShareViewState extends State<ShareView> with SingleTickerProviderStateMix
     _tabController = TabController(length: 3, vsync: this);
     _controller = ShareController();
     _controller.addListener(_onControllerChanged);
+    _searchController.addListener(() => setState(() {}));
   }
 
   void _onControllerChanged() {
@@ -224,9 +225,12 @@ class _ShareViewState extends State<ShareView> with SingleTickerProviderStateMix
       );
     }
 
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Scaffold(
+        backgroundColor: cs.surface,
+        body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: kIsWeb ? 0 : 24.w,
@@ -256,15 +260,18 @@ class _ShareViewState extends State<ShareView> with SingleTickerProviderStateMix
                   ),
                 ],
               ),
+
               SizedBox(height: 20.h),
-              // Premium Search Bar
+
               Container(
                 decoration: BoxDecoration(
-                  color: cs.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(30.r),
-                  border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: Colors.grey, 
+                    width: 1.w,
+                  ),
+                  borderRadius: BorderRadius.circular(50.r),
+                  color: Colors.transparent,
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: TextField(
                   controller: _searchController,
                   onChanged: (val) {
@@ -272,23 +279,46 @@ class _ShareViewState extends State<ShareView> with SingleTickerProviderStateMix
                       _searchQuery = val;
                     });
                   },
+                  textAlignVertical: TextAlignVertical.center,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    color: cs.onSurface,
+                  ),
                   decoration: InputDecoration(
+                    isDense: true,
                     hintText: 'Tìm kiếm bạn bè, nhóm...',
                     hintStyle: TextStyle(
-                      fontSize: 14.sp,
-                      color: cs.onSurfaceVariant,
-                    ),
-                    icon: Icon(
-                      Icons.search,
-                      size: 20.sp,
-                      color: cs.onSurfaceVariant,
+                      fontSize: 15.sp, 
+                      color: Colors.grey,
                     ),
                     border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 12.h,
+                      horizontal: 15.w,
+                    ),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? GestureDetector(
+                            onTap: () {
+                              _searchController.clear();
+                              setState(() {
+                                _searchQuery = '';
+                              });
+                            },
+                            child: Icon(
+                              Icons.clear_outlined,
+                              color: Colors.grey,
+                              size: 20.sp,
+                            ),
+                          )
+                        : null,
                   ),
                 ),
               ),
+
               SizedBox(height: 20.h),
-              // Segment / Custom Tab Bar
+              
               Container(
                 height: 48.h,
                 decoration: BoxDecoration(
@@ -327,6 +357,7 @@ class _ShareViewState extends State<ShareView> with SingleTickerProviderStateMix
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

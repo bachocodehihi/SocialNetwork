@@ -22,6 +22,7 @@ class _SearchDetailViewState extends State<SearchDetailView> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _searchController.addListener(() => setState(() {}));
   }
 
   @override
@@ -51,11 +52,14 @@ class _SearchDetailViewState extends State<SearchDetailView> {
     );
     final cs = Theme.of(context).colorScheme;
 
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        backgroundColor: cs.surface,
-        body: SafeArea(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          backgroundColor: cs.surface,
+          body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: kIsWeb ? 0 : 24.w,
@@ -80,29 +84,49 @@ class _SearchDetailViewState extends State<SearchDetailView> {
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: cs.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(30.r),
-                          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: Colors.grey, 
+                            width: 1.w,
+                          ),
+                          borderRadius: BorderRadius.circular(50.r),
+                          color: Colors.transparent,
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: TextField(
                           controller: _searchController,
                           textInputAction: TextInputAction.search,
+                          textAlignVertical: TextAlignVertical.center,
                           onSubmitted: (val) {
-                            // Can update state or query here if needed
                           },
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            color: cs.onSurface,
+                          ),
                           decoration: InputDecoration(
+                            isDense: true,
                             hintText: Language.of(context, 'search'),
                             hintStyle: TextStyle(
-                              fontSize: 14.sp,
-                              color: cs.onSurfaceVariant,
-                            ),
-                            icon: Icon(
-                              Icons.search,
-                              size: 20.sp,
-                              color: cs.onSurfaceVariant,
+                              fontSize: 15.sp, 
+                              color: Colors.grey,
                             ),
                             border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 12.h,
+                              horizontal: 15.w,
+                            ),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? GestureDetector(
+                                    onTap: () {
+                                      _searchController.clear();
+                                    },
+                                    child: Icon(
+                                      Icons.clear_outlined,
+                                      color: Colors.grey,
+                                      size: 20.sp,
+                                    ),
+                                  )
+                                : null,
                           ),
                         ),
                       ),
@@ -181,6 +205,7 @@ class _SearchDetailViewState extends State<SearchDetailView> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -291,6 +291,7 @@ class _InviteViewState extends State<InviteView> {
     super.initState();
     controller = InviteController(groupId: widget.groupId);
     controller.addListener(_onControllerChanged);
+    searchController.addListener(() => setState(() {}));
   }
 
   void _onControllerChanged() {
@@ -322,10 +323,13 @@ class _InviteViewState extends State<InviteView> {
       final username = (friend['username'] ?? '').toString().toLowerCase();
       return username.contains(searchQuery.toLowerCase());
     }).toList();
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: Padding(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Scaffold(
+        backgroundColor: cs.surface,
+        body: SafeArea(
+          child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: kIsWeb ? 0 : 24.w,
             vertical: 16.h,
@@ -357,32 +361,57 @@ class _InviteViewState extends State<InviteView> {
 
               SizedBox(height: 20.h),
 
-              TextField(
-                controller: searchController,
-                onChanged: (val) {
-                  setState(() {
-                    searchQuery = val;
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Tìm kiếm bạn bè...',
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: searchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            searchController.clear();
-                            setState(() {
-                              searchQuery = '';
-                            });
-                          },
-                        )
-                      : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: cs.outlineVariant),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey, 
+                    width: 1.w,
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 8.h),
+                  borderRadius: BorderRadius.circular(50.r),
+                  color: Colors.transparent,
+                ),
+                child: TextField(
+                  controller: searchController,
+                  onChanged: (val) {
+                    setState(() {
+                      searchQuery = val;
+                    });
+                  },
+                  textAlignVertical: TextAlignVertical.center,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    color: cs.onSurface,
+                  ),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Tìm kiếm bạn bè...',
+                    hintStyle: TextStyle(
+                      fontSize: 15.sp, 
+                      color: Colors.grey,
+                    ),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 12.h,
+                      horizontal: 15.w,
+                    ),
+                    suffixIcon: searchQuery.isNotEmpty
+                        ? GestureDetector(
+                            onTap: () {
+                              searchController.clear();
+                              setState(() {
+                                searchQuery = '';
+                              });
+                            },
+                            child: Icon(
+                              Icons.clear_outlined,
+                              color: Colors.grey,
+                              size: 20.sp,
+                            ),
+                          )
+                        : null,
+                  ),
                 ),
               ),
 
@@ -524,7 +553,8 @@ class _InviteViewState extends State<InviteView> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 

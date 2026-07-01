@@ -194,33 +194,46 @@ class _HomeUserViewState extends State<HomeUserView> {
     );
   }
 
+  int _getCommentsCount(Map<String, dynamic> post) {
+    final comments = post['comments'] as List? ?? [];
+    int count = comments.length;
+    for (final comment in comments) {
+      if (comment is Map) {
+        final replies = comment['replies'] as List? ?? [];
+        count += replies.length;
+      }
+    }
+    return count;
+  }
+
   void _showCommentBottomSheet(BuildContext context, Map<String, dynamic> post) {
     final TextEditingController commentTextController = TextEditingController();
     final cs = Theme.of(context).colorScheme;
+    String? replyingToCommentId;
+    String? replyingToUsername;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        String? replyingToCommentId;
-        String? replyingToUsername;
-
         return StatefulBuilder(
           builder: (context, setModalState) {
             final currentPost = controller.posts.firstWhere((p) => p['_id'] == post['_id'], orElse: () => post);
             final comments = currentPost['comments'] as List? ?? [];
 
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.7,
-              decoration: BoxDecoration(
-                color: cs.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-              ),
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: Column(
+            return GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.7,
+                decoration: BoxDecoration(
+                  color: cs.surface,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+                ),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: Column(
                 children: [
                   Container(
                     width: 40.w,
@@ -271,17 +284,29 @@ class _HomeUserViewState extends State<HomeUserView> {
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      CircleAvatar(
-                                        radius: 16.r,
-                                        backgroundImage: authorAvatar.isNotEmpty
-                                            ? NetworkImage(authorAvatar)
-                                            : null,
-                                        child: authorAvatar.isEmpty
-                                            ? Text(
-                                                authorName.substring(0, 1).toUpperCase(),
-                                                style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
-                                              )
-                                            : null,
+                                      GestureDetector(
+                                        onTap: () {
+                                          if (author.isNotEmpty) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => UserPage(userData: Map<String, dynamic>.from(author)),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 16.r,
+                                          backgroundImage: authorAvatar.isNotEmpty
+                                              ? NetworkImage(authorAvatar)
+                                              : null,
+                                          child: authorAvatar.isEmpty
+                                              ? Text(
+                                                  authorName.substring(0, 1).toUpperCase(),
+                                                  style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
+                                                )
+                                              : null,
+                                        ),
                                       ),
                                       SizedBox(width: 10.w),
                                       Expanded(
@@ -297,12 +322,24 @@ class _HomeUserViewState extends State<HomeUserView> {
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    authorName,
-                                                    style: TextStyle(
-                                                      fontSize: 12.sp,
-                                                      fontWeight: FontWeight.w500,
-                                                      color: cs.onSurface,
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      if (author.isNotEmpty) {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (_) => UserPage(userData: Map<String, dynamic>.from(author)),
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
+                                                    child: Text(
+                                                      authorName,
+                                                      style: TextStyle(
+                                                        fontSize: 12.sp,
+                                                        fontWeight: FontWeight.w500,
+                                                        color: cs.onSurface,
+                                                      ),
                                                     ),
                                                   ),
                                                   SizedBox(height: 4.h),
@@ -404,17 +441,29 @@ class _HomeUserViewState extends State<HomeUserView> {
                                           return Row(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              CircleAvatar(
-                                                radius: 12.r,
-                                                backgroundImage: rAuthorAvatar.isNotEmpty
-                                                    ? NetworkImage(rAuthorAvatar)
-                                                    : null,
-                                                child: rAuthorAvatar.isEmpty
-                                                    ? Text(
-                                                        rAuthorName.substring(0, 1).toUpperCase(),
-                                                        style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.w500),
-                                                      )
-                                                    : null,
+                                              GestureDetector(
+                                                onTap: () {
+                                                  if (rAuthor.isNotEmpty) {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (_) => UserPage(userData: Map<String, dynamic>.from(rAuthor)),
+                                                      ),
+                                                    );
+                                                  }
+                                                },
+                                                child: CircleAvatar(
+                                                  radius: 12.r,
+                                                  backgroundImage: rAuthorAvatar.isNotEmpty
+                                                      ? NetworkImage(rAuthorAvatar)
+                                                      : null,
+                                                  child: rAuthorAvatar.isEmpty
+                                                      ? Text(
+                                                          rAuthorName.substring(0, 1).toUpperCase(),
+                                                          style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.w500),
+                                                        )
+                                                      : null,
+                                                ),
                                               ),
                                               SizedBox(width: 8.w),
                                               Expanded(
@@ -430,12 +479,24 @@ class _HomeUserViewState extends State<HomeUserView> {
                                                       child: Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
-                                                          Text(
-                                                            rAuthorName,
-                                                            style: TextStyle(
-                                                              fontSize: 11.sp,
-                                                              fontWeight: FontWeight.w500,
-                                                              color: cs.onSurface,
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              if (rAuthor.isNotEmpty) {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (_) => UserPage(userData: Map<String, dynamic>.from(rAuthor)),
+                                                                  ),
+                                                                );
+                                                              }
+                                                            },
+                                                            child: Text(
+                                                              rAuthorName,
+                                                              style: TextStyle(
+                                                                fontSize: 11.sp,
+                                                                fontWeight: FontWeight.w500,
+                                                                color: cs.onSurface,
+                                                              ),
                                                             ),
                                                           ),
                                                           SizedBox(height: 2.h),
@@ -458,6 +519,23 @@ class _HomeUserViewState extends State<HomeUserView> {
                                                           style: TextStyle(
                                                             fontSize: 10.sp,
                                                             color: cs.onSurfaceVariant.withValues(alpha: 0.7),
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 12.w),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            setModalState(() {
+                                                              replyingToCommentId = comment['_id'] ?? index.toString();
+                                                              replyingToUsername = rAuthorName;
+                                                            });
+                                                          },
+                                                          child: Text(
+                                                            'Trả lời',
+                                                            style: TextStyle(
+                                                              fontSize: 10.sp,
+                                                              fontWeight: FontWeight.w500,
+                                                              color: cs.onSurfaceVariant.withValues(alpha: 0.7),
+                                                            ),
                                                           ),
                                                         ),
                                                         SizedBox(width: 12.w),
@@ -580,7 +658,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                   ),
                 ],
               ),
-            );
+            ),);
           },
         );
       },
@@ -699,7 +777,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                   ],
                 ),
               ),
-              Icon(Icons.more_horiz_rounded, color: cs.onSurfaceVariant),
+              Icon(Icons.more_horiz_outlined, color: cs.onSurfaceVariant),
             ],
           ),
           SizedBox(height: 12.h),
@@ -754,7 +832,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                     ),
                     SizedBox(width: 6.w),
                     Text(
-                      '${post['comments']?.length ?? 0}',
+                      '${_getCommentsCount(post)}',
                       style: TextStyle(
                         fontSize: 13.sp,
                         color: cs.onSurfaceVariant,
@@ -940,7 +1018,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: cs.onSurface, 
+                              color: Colors.grey, 
                               width: 1.w
                             ),
                             borderRadius: BorderRadius.circular(50.r),
@@ -952,7 +1030,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                               hintText: Language.of(context, 'what_s_on_your_mind'),
                               hintStyle: TextStyle(
                                 fontSize: 15.sp, 
-                                color: cs.onSurface
+                                color: Colors.grey,
                               ),
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,

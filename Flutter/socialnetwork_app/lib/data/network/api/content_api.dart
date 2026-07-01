@@ -11,6 +11,8 @@ class ContentApi {
     String? privacy,
     String? groupId,
     List<String>? imagePaths,
+    List<String>? allowedFriends,
+    List<String>? exceptedFriends,
   }) async {
     final token = await AuthLocal.getToken();
     
@@ -23,6 +25,12 @@ class ContentApi {
     }
     if (groupId != null) {
       data['group'] = groupId;
+    }
+    if (allowedFriends != null && allowedFriends.isNotEmpty) {
+      data['allowedFriends'] = allowedFriends.join(',');
+    }
+    if (exceptedFriends != null && exceptedFriends.isNotEmpty) {
+      data['exceptedFriends'] = exceptedFriends.join(',');
     }
 
     final formData = FormData.fromMap(data);
