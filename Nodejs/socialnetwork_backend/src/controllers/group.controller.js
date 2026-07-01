@@ -482,6 +482,36 @@ const inviteToGroup = async (req, res) => {
     }
 };
 
+const getGroupByInviteCode = async (req, res) => {
+    try {
+        const { inviteCode } = req.params;
+        const userId = req.userId;
+        
+        const group = await Group.findOne({ inviteCode })
+            .populate('members', 'username avatar email')
+            .populate('admin', 'username avatar')
+            .lean();
+            
+        if (!group) {
+            return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
+        }
+        
+        const isMember = group.members.some(m => m._id?.toString() === userId);
+        
+        res.json({ 
+            success: true, 
+            code: 'GET_GROUP_BY_INVITE_CODE_SUCCESS', 
+            data: {
+                ...group,
+                isMember
+            }
+        });
+    } catch (error) {
+        console.error('Get group by invite code error:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     createGroup, 
     getGroups, 
@@ -491,5 +521,6 @@ module.exports = {
     removeMember,
     updateGroup,
     deleteGroup,
-    inviteToGroup
+    inviteToGroup,
+    getGroupByInviteCode
 };

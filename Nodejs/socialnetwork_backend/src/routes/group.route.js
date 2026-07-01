@@ -10,10 +10,12 @@ const {
     removeMember,
     updateGroup,
     deleteGroup,
-    inviteToGroup
+    inviteToGroup,
+    getGroupByInviteCode
 } = require('../controllers/group.controller');
 
 router.get('/', verifyToken, getGroups);
+router.get('/invite/:inviteCode', verifyToken, getGroupByInviteCode);
 router.get('/:groupId', verifyToken, getGroupById);
 router.post('/', verifyToken, createGroup);
 router.put('/:groupId', verifyToken, updateGroup);
