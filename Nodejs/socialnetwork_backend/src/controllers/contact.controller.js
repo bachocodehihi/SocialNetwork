@@ -269,7 +269,19 @@ const getFriends = async (req, res) => {
                 const now = new Date();
                 const diffMinutes = Math.floor((now - new Date(lastSeen)) / 60000);
                 if (!isNaN(diffMinutes)) {
-                    status = diffMinutes < 5 ? 'Online' : `Last active ${diffMinutes}m ago`;
+                    if (diffMinutes < 5) {
+                        status = 'Online';
+                    } else if (diffMinutes < 60) {
+                        status = `Last active ${diffMinutes} ${diffMinutes === 1 ? 'min' : 'mins'} ago`;
+                    } else {
+                        const diffHours = Math.floor(diffMinutes / 60);
+                        if (diffHours < 24) {
+                            status = `Last active ${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+                        } else {
+                            const diffDays = Math.floor(diffHours / 24);
+                            status = `Last active ${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
+                        }
+                    }
                 }
             }
             
