@@ -20,7 +20,9 @@ const postSchema = new mongoose.Schema({
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
     postType: { type: String, enum: ['user', 'group'], default: 'user' },
-    privacy: { type: String, enum: ['public', 'friends', 'private'], default: 'public' },
+    privacy: { type: String, enum: ['public', 'friends', 'private', 'friends_except', 'specific_friends'], default: 'public' },
+    allowedFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: [] }],
+    exceptedFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: [] }],
     group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group', default: null }
 }, { timestamps: true });
 

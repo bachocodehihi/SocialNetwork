@@ -4,7 +4,7 @@ const { createNotification } = require('./notification.controller');
 
 const createPost = async (req, res) => {
     try {
-        const { content, postType, privacy, group } = req.body;
+        const { content, postType, privacy, group, allowedFriends, exceptedFriends } = req.body;
         
         const images = [];
         if (req.files && req.files.length > 0) {
@@ -28,12 +28,48 @@ const createPost = async (req, res) => {
             }
         }
 
+        let allowed = [];
+        if (allowedFriends) {
+            try {
+                if (typeof allowedFriends === 'string') {
+                    if (allowedFriends.startsWith('[')) {
+                        allowed = JSON.parse(allowedFriends);
+                    } else {
+                        allowed = allowedFriends.split(',').map(s => s.trim()).filter(Boolean);
+                    }
+                } else if (Array.isArray(allowedFriends)) {
+                    allowed = allowedFriends;
+                }
+            } catch (e) {
+                console.error("Error parsing allowedFriends:", e);
+            }
+        }
+
+        let excepted = [];
+        if (exceptedFriends) {
+            try {
+                if (typeof exceptedFriends === 'string') {
+                    if (exceptedFriends.startsWith('[')) {
+                        excepted = JSON.parse(exceptedFriends);
+                    } else {
+                        excepted = exceptedFriends.split(',').map(s => s.trim()).filter(Boolean);
+                    }
+                } else if (Array.isArray(exceptedFriends)) {
+                    excepted = exceptedFriends;
+                }
+            } catch (e) {
+                console.error("Error parsing exceptedFriends:", e);
+            }
+        }
+
         const newPost = new Post({
             author: req.userId,
             content,
             images,
             postType: postType || 'user',
             privacy: postType === 'group' ? 'friends' : (privacy || 'public'),
+            allowedFriends: allowed,
+            exceptedFriends: excepted,
             group: postType === 'group' ? group : null
         });
 
@@ -103,7 +139,26 @@ const getFeed = async (req, res) => {
                                 { author: { $in: friendIds } }
                             ]
                         },
-                        // 3. Private posts by self
+                        // 3. Friends except posts
+                        {
+                            privacy: 'friends_except',
+                            $or: [
+                                { author: req.userId },
+                                {
+                                    author: { $in: friendIds },
+                                    exceptedFriends: { $ne: req.userId }
+                                }
+                            ]
+                        },
+                        // 4. Specific friends posts
+                        {
+                            privacy: 'specific_friends',
+                            $or: [
+                                { author: req.userId },
+                                { allowedFriends: req.userId }
+                            ]
+                        },
+                        // 5. Private posts by self
                         {
                             privacy: 'private',
                             author: req.userId
@@ -259,10 +314,39 @@ const getUserPosts = async (req, res) => {
     try {
         const { userId } = req.params;
 
-        const posts = await Post.find({
+        const Account = require('../models/account.model');
+        const currentUser = await Account.findById(req.userId);
+        if (!currentUser) {
+            return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+        }
+
+        const friendIds = currentUser.friends || [];
+        const isFriend = friendIds.some(id => id.toString() === userId);
+
+        const query = {
             author: userId,
             postType: 'user'
-        })
+        };
+
+        if (userId !== req.userId) {
+            const orConditions = [
+                { privacy: 'public' }
+            ];
+            if (isFriend) {
+                orConditions.push({ privacy: 'friends' });
+                orConditions.push({
+                    privacy: 'friends_except',
+                    exceptedFriends: { $ne: req.userId }
+                });
+            }
+            orConditions.push({
+                privacy: 'specific_friends',
+                allowedFriends: req.userId
+            });
+            query.$or = orConditions;
+        }
+
+        const posts = await Post.find(query)
         .populate('author', 'username avatar')
         .populate({
             path: 'comments',
