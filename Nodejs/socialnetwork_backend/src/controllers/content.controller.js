@@ -85,6 +85,19 @@ const createPost = async (req, res) => {
             const friends = currentUser.friends || [];
             const uniqueFriendIds = [...new Set(friends.map(id => id.toString()))];
             for (const friendId of uniqueFriendIds) {
+                // Privacy check before notification
+                if (newPost.privacy === 'private') {
+                    continue; // Private post, no friends can see
+                }
+                if (newPost.privacy === 'friends_except') {
+                    const isExcepted = excepted.some(id => id.toString() === friendId);
+                    if (isExcepted) continue;
+                }
+                if (newPost.privacy === 'specific_friends') {
+                    const isAllowed = allowed.some(id => id.toString() === friendId);
+                    if (!isAllowed) continue;
+                }
+
                 await createNotification({
                     recipient: friendId,
                     sender: req.userId,
