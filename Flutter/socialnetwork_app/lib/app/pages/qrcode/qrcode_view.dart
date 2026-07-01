@@ -11,6 +11,7 @@ import 'package:gal/gal.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
+import 'package:socialnetwork/app/routes/routes.dart';
 class QRCodeView extends StatefulWidget {
   const QRCodeView({super.key});
   @override
@@ -275,7 +276,7 @@ class _QRCodeViewState extends State<QRCodeView> {
                         icon: Icons.share_outlined,
                         label: Language.of(context, 'share'),
                         onTap: () {
-                          //TODO: Implement Share QR Code
+                          Navigator.pushNamed(context, Routes.share);
                         },
                         cs: cs,
                       ),

@@ -81,6 +81,8 @@ import 'package:socialnetwork/data/local/auth_local.dart';
 
 //search
 import 'package:socialnetwork/app/pages/search/account/account_page.dart';
+import 'package:socialnetwork/app/pages/search/account/detail/detail_page.dart';
+
 
 //scanner
 import 'package:socialnetwork/app/pages/scanner/scanner_page.dart';
@@ -109,6 +111,10 @@ import 'package:socialnetwork/app/pages/list/following/following_page.dart';
 import 'package:socialnetwork/app/pages/list/like/like_page.dart';
 import 'package:socialnetwork/app/pages/list/comment/comment_page.dart';
 import 'package:socialnetwork/app/pages/list/member/member_page.dart';
+
+//share
+import 'package:socialnetwork/app/pages/share/share_page.dart';
+
 
 class Routes {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -186,6 +192,9 @@ class Routes {
   static String comment = '/list/comment';
   static String member = '/list/member';
 
+  //share
+  static String share = '/share';
+
   //post
   static String postContent = '/post/content';
   static String postStory = '/post/story';
@@ -211,6 +220,7 @@ class Routes {
 
   //search
   static String search = '/search';
+  static String searchDetail = '/search/detail';
 
   //scanner
   static String scanner = '/scanner';
@@ -306,6 +316,9 @@ class Routes {
     comment: (_) => ListCommentPage(),
     member: (_) => ListMemberPage(),
 
+    //share
+    share: (_) => const SharePage(),
+
     //post
     postContent: (_) => PostContentPage(),
     postStory: (_) => SignUpEmailPage(),
@@ -322,6 +335,7 @@ class Routes {
 
     //search
     search: (_) => SearchAccountPage(),
+    searchDetail: (_) => const SearchDetailPage(),
 
     //scanner
     scanner: (_) => ScannerPage(),

@@ -16,6 +16,29 @@ class SearchDetailView extends StatefulWidget {
 }
 
 class _SearchDetailViewState extends State<SearchDetailView> {
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final String query = ModalRoute.of(context)?.settings.arguments as String? ?? '';
+    if (_searchController.text.isEmpty && query.isNotEmpty) {
+      _searchController.text = query;
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
@@ -27,10 +50,12 @@ class _SearchDetailViewState extends State<SearchDetailView> {
       ),
     );
     final cs = Theme.of(context).colorScheme;
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: SingleChildScrollView(
+
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        backgroundColor: cs.surface,
+        body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: kIsWeb ? 0 : 24.w,
@@ -52,36 +77,32 @@ class _SearchDetailViewState extends State<SearchDetailView> {
 
                     SizedBox(width: 10.w),
 
-                    GestureDetector(
-                      onTap: () {
-                        //controller.goToPostContent(context);
-                      },
-                      child: Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: cs.onSurface, 
-                              width: 1.w
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: cs.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(30.r),
+                          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: TextField(
+                          controller: _searchController,
+                          textInputAction: TextInputAction.search,
+                          onSubmitted: (val) {
+                            // Can update state or query here if needed
+                          },
+                          decoration: InputDecoration(
+                            hintText: Language.of(context, 'search'),
+                            hintStyle: TextStyle(
+                              fontSize: 14.sp,
+                              color: cs.onSurfaceVariant,
                             ),
-                            borderRadius: BorderRadius.circular(50.r),
-                            color: Colors.transparent,
-                          ),
-                          child: TextField(
-                            enabled: false,
-                            decoration: InputDecoration(
-                              hintText: Language.of(context, 'search'),
-                              hintStyle: TextStyle(
-                                fontSize: 15.sp, 
-                                color: cs.onSurface
-                              ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 10.h,
-                                horizontal: 15.w,
-                              ),
+                            icon: Icon(
+                              Icons.search,
+                              size: 20.sp,
+                              color: cs.onSurfaceVariant,
                             ),
+                            border: InputBorder.none,
                           ),
                         ),
                       ),
@@ -91,7 +112,7 @@ class _SearchDetailViewState extends State<SearchDetailView> {
 
                     GestureDetector(
                       onTap: () {
-
+                        // filter tune action
                       },
                       child: Icon(
                         Icons.tune_outlined,
@@ -102,13 +123,13 @@ class _SearchDetailViewState extends State<SearchDetailView> {
                   ],
                 ),
 
-                SizedBox(width: 10.w),
+                SizedBox(height: 20.h),
 
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15.w),
                   child: TabBar(
                     indicatorColor: Colors.blue,
-                    indicatorWeight: 2,
+                    indicatorWeight: 2.h,
                     indicatorSize: TabBarIndicatorSize.label,
                     dividerColor: Colors.transparent,
                     labelColor: Colors.blue,
@@ -162,5 +183,4 @@ class _SearchDetailViewState extends State<SearchDetailView> {
       ),
     );
   }
-
 }

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:socialnetwork/app/pages/search/account/account_controller.dart';
 import 'package:socialnetwork/app/pages/user/user_page.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
+import 'package:socialnetwork/app/routes/routes.dart';
 
 class SearchAccountView extends StatefulWidget {
   const SearchAccountView({super.key});
@@ -79,6 +80,16 @@ class _SearchAViewState extends State<SearchAccountView> {
                   TextField(
                     controller: controller.searchController,
                     onChanged: controller.onSearchChanged,
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: (val) {
+                      if (val.trim().isNotEmpty) {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.searchDetail,
+                          arguments: val,
+                        );
+                      }
+                    },
                     decoration: InputDecoration(
                       hintText: 'Search...',
                       prefixIcon: const Icon(Icons.search_outlined),
