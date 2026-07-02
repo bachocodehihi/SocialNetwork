@@ -1,5 +1,6 @@
 const { Post, Comment } = require('../models/content.model');
 const Account = require('../models/account.model');
+const Group = require('../models/group.model');
 const { createNotification } = require('./notification.controller');
 
 const createPost = async (req, res) => {
@@ -17,12 +18,11 @@ const createPost = async (req, res) => {
             if (!group) {
                 return res.status(400).json({ success: false, code: 'GROUP_ID_REQUIRED' });
             }
-            const Group = require('../models/group.model');
             const targetGroup = await Group.findById(group);
             if (!targetGroup) {
                 return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
             }
-            const isMember = targetGroup.members.includes(req.userId) || targetGroup.admin.toString() === req.userId;
+            const isMember = targetGroup.members.some(m => m.toString() === req.userId) || targetGroup.admin.toString() === req.userId;
             if (!isMember) {
                 return res.status(403).json({ success: false, code: 'NOT_GROUP_MEMBER' });
             }
