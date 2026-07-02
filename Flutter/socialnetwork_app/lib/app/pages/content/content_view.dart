@@ -304,6 +304,7 @@ class _ContentViewState extends State<ContentView> {
                                                     SizedBox(height: 4.h),
                                                     Text(
                                                       comment['content'] ?? '',
+                                                      textAlign: TextAlign.justify,
                                                       style: TextStyle(
                                                         fontSize: 13.sp,
                                                         color: cs.onSurfaceVariant,
@@ -497,6 +498,7 @@ class _ContentViewState extends State<ContentView> {
                                                                   SizedBox(height: 2.h),
                                                                   Text(
                                                                     reply['content'] ?? '',
+                                                                    textAlign: TextAlign.justify,
                                                                     style: TextStyle(
                                                                       fontSize: 12.sp,
                                                                       color: cs.onSurfaceVariant,
@@ -673,6 +675,9 @@ class _ContentViewState extends State<ContentView> {
                           Expanded(
                             child: TextField(
                               controller: commentTextController,
+                              minLines: 1,
+                              maxLines: 5,
+                              textAlign: TextAlign.justify,
                               style: TextStyle(fontSize: 15.sp),
                               decoration: InputDecoration(
                                 hintText: replyingToCommentId != null ? 'Trả lời bình luận...' : 'Viết bình luận...',
@@ -845,6 +850,7 @@ class _ContentViewState extends State<ContentView> {
                 // Post content text
                 SelectableText(
                   contentText,
+                  textAlign: TextAlign.justify,
                   style: TextStyle(
                     fontSize: 15.sp,
                     color: cs.onSurface.withValues(alpha: 0.95),

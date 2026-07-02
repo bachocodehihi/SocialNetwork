@@ -505,10 +505,13 @@ class _ChatGroupViewState extends State<ChatGroupView> {
           brightness == Brightness.dark ? Brightness.light : Brightness.dark,
     ));
     final cs = Theme.of(context).colorScheme;
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: Column(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.translucent,
+      child: Scaffold(
+        backgroundColor: cs.surface,
+        body: SafeArea(
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -932,7 +935,10 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                                 Expanded(
                                   child: TextField(
                                     controller: _textController,
+                                    minLines: 1,
+                                    maxLines: 5,
                                     enabled: !_controller.isSending,
+                                    textAlign: TextAlign.justify,
                                     decoration: InputDecoration(
                                       hintText: 'Nhắn tin...',
                                       hintStyle: TextStyle(
@@ -951,8 +957,6 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                                       ),
                                       isDense: true,
                                     ),
-                                    maxLines: 4,
-                                    minLines: 1,
                                     textInputAction: TextInputAction.send,
                                     onChanged: _controller.onTypingChanged,
                                     onSubmitted: (_) => _sendMessage(),
@@ -979,7 +983,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
           ],
         ),
       ),
-    );
+    ),);
   }
 
   Widget _buildMessagesList(ColorScheme cs) {
@@ -1261,6 +1265,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                                                   ? _AudioMessageBubble(audioUrl: attachments?.first?.toString() ?? '', isMe: isMe)
                                                   : Text(
                                                       content,
+                                                      textAlign: TextAlign.justify,
                                                       style: TextStyle(
                                                         fontSize: 14.sp,
                                                         color: isMe ? Colors.white : Colors.black,

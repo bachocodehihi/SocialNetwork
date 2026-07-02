@@ -500,10 +500,13 @@ class _ChatUserViewState extends State<ChatUserView> {
           brightness == Brightness.dark ? Brightness.light : Brightness.dark,
     ));
     final cs = Theme.of(context).colorScheme;
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: Column(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.translucent,
+      child: Scaffold(
+        backgroundColor: cs.surface,
+        body: SafeArea(
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -925,7 +928,10 @@ class _ChatUserViewState extends State<ChatUserView> {
                                 Expanded(
                                   child: TextField(
                                     controller: _textController,
+                                    minLines: 1,
+                                    maxLines: 5,
                                     enabled: !_controller.isSending,
+                                    textAlign: TextAlign.justify,
                                     decoration: InputDecoration(
                                       hintText: 'Nhắn tin...',
                                       hintStyle: TextStyle(
@@ -944,8 +950,6 @@ class _ChatUserViewState extends State<ChatUserView> {
                                       ),
                                       isDense: true,
                                     ),
-                                    maxLines: 4,
-                                    minLines: 1,
                                     textInputAction: TextInputAction.send,
                                     onSubmitted: (_) => _sendMessage(),
                                   ),
@@ -971,7 +975,7 @@ class _ChatUserViewState extends State<ChatUserView> {
           ],
         ),
       ),
-    );
+    ),);
   }
  
   Widget _buildMessagesList(ColorScheme cs) {
@@ -1200,6 +1204,7 @@ class _ChatUserViewState extends State<ChatUserView> {
                                                   ? _AudioMessageBubble(audioUrl: attachments?.first?.toString() ?? '', isMe: isMe)
                                                   : Text(
                                                       msg['content'] ?? '',
+                                                      textAlign: TextAlign.justify,
                                                       style: TextStyle(
                                                         fontSize: 14.sp,
                                                         color: isMe ? Colors.white : Colors.black,

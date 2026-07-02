@@ -304,6 +304,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
               if (!isLong) {
                 return Text(
                   content,
+                  textAlign: TextAlign.justify,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: cs.onSurface.withValues(alpha: 0.9),
@@ -323,6 +324,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                 children: [
                   Text(
                     displayContent,
+                    textAlign: TextAlign.justify,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: cs.onSurface.withValues(alpha: 0.9),
@@ -567,6 +569,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                                   SizedBox(height: 4.h),
                                                   Text(
                                                     comment['content'] ?? '',
+                                                    textAlign: TextAlign.justify,
                                                     style: TextStyle(
                                                       fontSize: 13.sp,
                                                       color: cs.onSurfaceVariant,
@@ -759,6 +762,7 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                                                           SizedBox(height: 2.h),
                                                           Text(
                                                             reply['content'] ?? '',
+                                                            textAlign: TextAlign.justify,
                                                             style: TextStyle(
                                                               fontSize: 12.sp,
                                                               color: cs.onSurfaceVariant,
@@ -941,6 +945,9 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                         Expanded(
                           child: TextField(
                             controller: commentTextController,
+                            minLines: 1,
+                            maxLines: 5,
+                            textAlign: TextAlign.justify,
                             style: TextStyle(fontSize: 14.sp),
                             decoration: InputDecoration(
                               hintText: replyingToCommentId != null ? 'Trả lời bình luận...' : 'Viết bình luận...',

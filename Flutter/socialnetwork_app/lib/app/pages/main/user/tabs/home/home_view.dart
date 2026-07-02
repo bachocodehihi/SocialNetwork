@@ -361,6 +361,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                                                   SizedBox(height: 4.h),
                                                   Text(
                                                     comment['content'] ?? '',
+                                                    textAlign: TextAlign.justify,
                                                     style: TextStyle(
                                                       fontSize: 13.sp,
                                                       color: cs.onSurfaceVariant,
@@ -554,6 +555,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                                                           SizedBox(height: 2.h),
                                                           Text(
                                                             reply['content'] ?? '',
+                                                            textAlign: TextAlign.justify,
                                                             style: TextStyle(
                                                               fontSize: 12.sp,
                                                               color: cs.onSurfaceVariant,
@@ -736,6 +738,9 @@ class _HomeUserViewState extends State<HomeUserView> {
                         Expanded(
                           child: TextField(
                             controller: commentTextController,
+                            minLines: 1,
+                            maxLines: 5,
+                            textAlign: TextAlign.justify,
                             style: TextStyle(fontSize: 15.sp),
                             decoration: InputDecoration(
                               hintText: replyingToCommentId != null ? 'Trả lời bình luận...' : 'Viết bình luận...',
@@ -909,6 +914,7 @@ class _HomeUserViewState extends State<HomeUserView> {
               if (!isLong) {
                 return Text(
                   content,
+                  textAlign: TextAlign.justify,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: cs.onSurface.withValues(alpha: 0.9),
@@ -928,6 +934,7 @@ class _HomeUserViewState extends State<HomeUserView> {
                 children: [
                   Text(
                     displayContent,
+                    textAlign: TextAlign.justify,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: cs.onSurface.withValues(alpha: 0.9),
