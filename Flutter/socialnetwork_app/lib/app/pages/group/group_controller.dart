@@ -100,10 +100,111 @@ class GroupController extends ChangeNotifier {
     } catch (_) {}
   }
 
+  String get userId => currentUser?['_id'] ?? '';
+
   Future<void> commentPost(String postId, String content) async {
     try {
       final res = await _contentUsecase.commentPost(postId, content);
       final updatedPost = res['post'] ?? res;
+      final idx = posts.indexWhere((p) => p['_id'] == postId);
+      if (idx != -1) {
+        posts[idx] = Map<String, dynamic>.from(updatedPost);
+        notifyListeners();
+      }
+    } catch (_) {}
+  }
+
+  Future<void> addComment(String postId, String content) async {
+    try {
+      final res = await _contentUsecase.commentPost(postId, content);
+      final updatedPost = res['post'] ?? res;
+      final idx = posts.indexWhere((p) => p['_id'] == postId);
+      if (idx != -1) {
+        posts[idx] = Map<String, dynamic>.from(updatedPost);
+        notifyListeners();
+      }
+    } catch (_) {}
+  }
+
+  Future<void> likeComment(String postId, String commentId) async {
+    try {
+      final postIndex = posts.indexWhere((p) => p['_id'] == postId);
+      if (postIndex != -1) {
+        final post = posts[postIndex];
+        final List<dynamic> commentsList = List.from(post['comments'] ?? []);
+        final commentIndex = commentsList.indexWhere((c) => c['_id'] == commentId);
+        if (commentIndex != -1) {
+          final comment = Map<String, dynamic>.from(commentsList[commentIndex]);
+          final List<dynamic> likes = List.from(comment['likes'] ?? []);
+          final currentUserId = userId;
+          if (likes.contains(currentUserId)) {
+            likes.remove(currentUserId);
+          } else {
+            likes.add(currentUserId);
+          }
+          comment['likes'] = likes;
+          comment['hasLiked'] = likes.contains(currentUserId);
+          comment['likesCount'] = likes.length;
+          commentsList[commentIndex] = comment;
+          post['comments'] = commentsList;
+          notifyListeners();
+        }
+      }
+
+      final result = await _contentUsecase.likeComment(commentId);
+      final updatedPost = result['post'] ?? result;
+      if (postIndex != -1) {
+        posts[postIndex] = Map<String, dynamic>.from(updatedPost);
+        notifyListeners();
+      }
+    } catch (_) {}
+  }
+
+  Future<void> likeReply(String postId, String commentId, String replyId) async {
+    try {
+      final postIndex = posts.indexWhere((p) => p['_id'] == postId);
+      if (postIndex != -1) {
+        final post = posts[postIndex];
+        final List<dynamic> commentsList = List.from(post['comments'] ?? []);
+        final commentIndex = commentsList.indexWhere((c) => c['_id'] == commentId);
+        if (commentIndex != -1) {
+          final comment = Map<String, dynamic>.from(commentsList[commentIndex]);
+          final List<dynamic> repliesList = List.from(comment['replies'] ?? []);
+          final replyIndex = repliesList.indexWhere((r) => r['_id'] == replyId);
+          if (replyIndex != -1) {
+            final reply = Map<String, dynamic>.from(repliesList[replyIndex]);
+            final List<dynamic> likes = List.from(reply['likes'] ?? []);
+            final currentUserId = userId;
+            if (likes.contains(currentUserId)) {
+              likes.remove(currentUserId);
+            } else {
+              likes.add(currentUserId);
+            }
+            reply['likes'] = likes;
+            reply['hasLiked'] = likes.contains(currentUserId);
+            reply['likesCount'] = likes.length;
+            repliesList[replyIndex] = reply;
+            comment['replies'] = repliesList;
+            commentsList[commentIndex] = comment;
+            post['comments'] = commentsList;
+            notifyListeners();
+          }
+        }
+      }
+
+      final result = await _contentUsecase.likeReply(commentId, replyId);
+      final updatedPost = result['post'] ?? result;
+      if (postIndex != -1) {
+        posts[postIndex] = Map<String, dynamic>.from(updatedPost);
+        notifyListeners();
+      }
+    } catch (_) {}
+  }
+
+  Future<void> addReply(String postId, String commentId, String content) async {
+    try {
+      final result = await _contentUsecase.replyComment(postId, commentId, content);
+      final updatedPost = result['post'] ?? result;
       final idx = posts.indexWhere((p) => p['_id'] == postId);
       if (idx != -1) {
         posts[idx] = Map<String, dynamic>.from(updatedPost);

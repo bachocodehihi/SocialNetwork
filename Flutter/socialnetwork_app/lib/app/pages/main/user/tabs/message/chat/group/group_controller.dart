@@ -5,20 +5,25 @@ import 'package:socialnetwork/data/network/api/message_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:socialnetwork/data/repositories/message_repository_imp.dart';
 import 'package:socialnetwork/data/service/socket.dart';
+import 'package:socialnetwork/data/service/sound.dart';
 import 'package:socialnetwork/domain/usecases/message_usecase.dart';
 
 class ChatGroupController extends ChangeNotifier {
   final MessageUsecase _usecase;
   final SocketService _socket;
+  final SoundService _soundService = SoundService();
 
   String? _conversationId;
   String? _groupId;
   List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
+  bool _isSending = false;
   String? _error;
   String _currentUserId = '';
   final TextEditingController _messageController = TextEditingController();
   Map<String, dynamic>? _pinnedMessage;
+  Map<String, dynamic>? _replyingMessage;
+  Map<String, dynamic>? _editingMessage;
 
   bool _isTyping = false;
   Timer? _typingTimer;
@@ -32,13 +37,46 @@ class ChatGroupController extends ChangeNotifier {
 
   List<Map<String, dynamic>> get messages => _messages;
   bool get isLoading => _isLoading;
+  bool get isSending => _isSending;
   String? get error => _error;
   String get currentUserId => _currentUserId;
   TextEditingController get messageController => _messageController;
   bool get isTyping => _isTyping;
   Map<String, bool> get typingUsers => _typingUsers;
   Map<String, dynamic>? get pinnedMessage => _pinnedMessage;
+  Map<String, dynamic>? get replyingMessage => _replyingMessage;
+  Map<String, dynamic>? get editingMessage => _editingMessage;
   String? get groupId => _groupId;
+  String? get conversationId => _conversationId;
+
+  void startReply(Map<String, dynamic> message) {
+    _replyingMessage = message;
+    _editingMessage = null;
+    notifyListeners();
+  }
+
+  void cancelReply() {
+    _replyingMessage = null;
+    notifyListeners();
+  }
+
+  void startEdit(Map<String, dynamic> message) {
+    _editingMessage = message;
+    _replyingMessage = null;
+    notifyListeners();
+  }
+
+  void cancelEdit() {
+    _editingMessage = null;
+    notifyListeners();
+  }
+
+  String? _extractSenderId(dynamic senderRaw) {
+    if (senderRaw is Map) {
+      return senderRaw['_id']?.toString() ?? senderRaw['id']?.toString();
+    }
+    return senderRaw?.toString();
+  }
 
   Future<void> init(String conversationId) async {
     _conversationId = conversationId;
@@ -79,21 +117,94 @@ class ChatGroupController extends ChangeNotifier {
     }
   }
 
+  void _onReceiveMessage(dynamic data) {
+    final msgConvId = data['conversationId']?.toString();
+    if (msgConvId != _conversationId) return;
+    
+    final realMsgId = data['_id']?.toString() ?? data['id']?.toString();
+    if (realMsgId == null) return;
+    
+    final senderId = _extractSenderId(data['sender']);
+    
+    final exists = _messages.any((m) {
+      final mid = m['_id']?.toString() ?? m['id']?.toString();
+      return mid == realMsgId;
+    });
+    
+    if (!exists) {
+      _messages.add(Map<String, dynamic>.from(data));
+      if (senderId != _currentUserId) {
+        _soundService.playMessageReceived();
+      }
+      notifyListeners();
+    }
+  }
+
+  void _onMessageRecalled(dynamic data) {
+    final msgId = data['messageId']?.toString();
+    if (msgId == null) return;
+    final index = _messages.indexWhere((m) {
+      final mid = m['_id']?.toString() ?? m['id']?.toString();
+      return mid == msgId;
+    });
+    if (index != -1) {
+      _messages[index] = {
+        ..._messages[index],
+        'isRecalled': true,
+        'content': 'Tin nhắn đã bị thu hồi',
+      };
+      notifyListeners();
+    }
+  }
+
+  void _onMessageEdited(dynamic data) {
+    final msgConvId = data['conversationId']?.toString();
+    if (msgConvId != _conversationId) return;
+
+    final realMsgId = data['_id']?.toString() ?? data['id']?.toString();
+    if (realMsgId == null) return;
+
+    final index = _messages.indexWhere((m) {
+      final mid = m['_id']?.toString() ?? m['id']?.toString();
+      return mid == realMsgId;
+    });
+
+    if (index != -1) {
+      _messages[index] = Map<String, dynamic>.from(data);
+      if (_pinnedMessage != null) {
+        final pinnedId = _pinnedMessage!['_id']?.toString() ?? _pinnedMessage!['id']?.toString();
+        if (pinnedId == realMsgId) {
+          _pinnedMessage = Map<String, dynamic>.from(data);
+        }
+      }
+      notifyListeners();
+    }
+  }
+
+  void _onMessagePinned(dynamic data) {
+    final msgConvId = data['conversationId']?.toString();
+    if (msgConvId != _conversationId) return;
+    if (data['pinnedMessage'] != null) {
+      _pinnedMessage = Map<String, dynamic>.from(data['pinnedMessage'] as Map);
+      notifyListeners();
+    }
+  }
+
+  void _onMessageUnpinned(dynamic data) {
+    final msgConvId = data['conversationId']?.toString();
+    if (msgConvId != _conversationId) return;
+    _pinnedMessage = null;
+    notifyListeners();
+  }
+
   void _setupSocketListeners() {
     if (_conversationId == null) return;
 
-    _socket.onReceiveMessage((msg) {
-      final senderId = (msg['sender'] is Map)
-          ? msg['sender']['_id']?.toString()
-          : msg['sender']?.toString();
-
-      if (senderId == _currentUserId) return;
-
-      if (!_messages.any((m) => m['_id'] == msg['_id'])) {
-        _messages.add(Map<String, dynamic>.from(msg));
-        notifyListeners();
-      }
-    });
+    _socket.on('receive_message', _onReceiveMessage);
+    _socket.on('message_recalled', _onMessageRecalled);
+    _socket.on('message_edited', _onMessageEdited);
+    _socket.on('message_pinned', _onMessagePinned);
+    _socket.on('message_unpinned', _onMessageUnpinned);
 
     _socket.on('typing', (data) {
       if (data is Map && data['conversationId'] == _conversationId) {
@@ -112,22 +223,6 @@ class ChatGroupController extends ChangeNotifier {
           _typingUsers.remove(senderId);
           notifyListeners();
         }
-      }
-    });
-
-    _socket.on('message_pinned', (data) {
-      if (data is Map && data['conversationId'] == _conversationId) {
-        if (data['pinnedMessage'] != null) {
-          _pinnedMessage = Map<String, dynamic>.from(data['pinnedMessage'] as Map);
-          notifyListeners();
-        }
-      }
-    });
-
-    _socket.on('message_unpinned', (data) {
-      if (data is Map && data['conversationId'] == _conversationId) {
-        _pinnedMessage = null;
-        notifyListeners();
       }
     });
 
@@ -180,50 +275,156 @@ class ChatGroupController extends ChangeNotifier {
     if (content.trim().isEmpty || _conversationId == null) return;
 
     final trimmedContent = content.trim();
-    final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
-
-    final tempMsg = {
-      '_id': tempId,
-      'content': trimmedContent,
-      'sender': {
-        '_id': _currentUserId,
-        'username': 'You',
-        'avatar': null,
-      },
-      'createdAt': DateTime.now().toIso8601String(),
-      'type': 'text',
-      'isTemp': true,
-    };
-
-    _messages.add(tempMsg);
-    _messageController.clear();
+    final replyId = _replyingMessage?['_id']?.toString() ?? _replyingMessage?['id']?.toString();
+    _replyingMessage = null;
+    _isSending = true;
     _stopTyping();
     notifyListeners();
 
     try {
-      final sentMsg = await _usecase.sendMessage(
-        conversationId: _conversationId!,
-        content: trimmedContent,
-      );
+      _socket.emit('send_message', {
+        'conversationId': _conversationId,
+        'content': trimmedContent,
+        'type': 'text',
+        if (replyId != null) 'repliedTo': replyId,
+      });
+    } catch (e) {
+      _error = 'Gửi tin nhắn thất bại: ${e.toString()}';
+      debugPrint('❌ Send message error: $e');
+    } finally {
+      _isSending = false;
+      notifyListeners();
+    }
+  }
 
-      final idx = _messages.indexWhere((m) => m['_id'] == tempId);
-      if (idx != -1) {
-        _messages[idx] = Map<String, dynamic>.from(sentMsg)
-          ..remove('isTemp');
+  Future<void> sendImageMessages(List<String> filePaths) async {
+    if (filePaths.isEmpty || _conversationId == null) return;
+    
+    final replyId = _replyingMessage?['_id']?.toString() ?? _replyingMessage?['id']?.toString();
+    _replyingMessage = null;
+    _isSending = true;
+    notifyListeners();
+ 
+    try {
+      final List<String> imageUrls = [];
+      for (final path in filePaths) {
+        final imageUrl = await _usecase.uploadImage(path);
+        if (imageUrl != null) {
+          imageUrls.add(imageUrl);
+        }
       }
+
+      if (imageUrls.isNotEmpty) {
+        _socket.emit('send_message', {
+          'conversationId': _conversationId,
+          'content': '[Hình ảnh]',
+          'type': 'image',
+          'attachments': imageUrls,
+          if (replyId != null) 'repliedTo': replyId,
+        });
+      } else {
+        _error = 'Tải ảnh lên thất bại';
+      }
+    } catch (e) {
+      _error = 'Gửi hình ảnh thất bại: ${e.toString()}';
+      debugPrint('❌ Send images error: $e');
+    } finally {
+      _isSending = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> sendVoiceMessage(String filePath) async {
+    if (_conversationId == null) return;
+    
+    final replyId = _replyingMessage?['_id']?.toString() ?? _replyingMessage?['id']?.toString();
+    _replyingMessage = null;
+    _isSending = true;
+    notifyListeners();
+ 
+    try {
+      final audioUrl = await _usecase.uploadAudio(filePath);
+      if (audioUrl != null) {
+        _socket.emit('send_message', {
+          'conversationId': _conversationId,
+          'content': '[Tin nhắn thoại]',
+          'type': 'audio',
+          'attachments': [audioUrl],
+          if (replyId != null) 'repliedTo': replyId,
+        });
+      } else {
+        _error = 'Tải tin nhắn thoại lên thất bại';
+      }
+    } catch (e) {
+      _error = 'Gửi tin nhắn thoại thất bại: ${e.toString()}';
+      debugPrint('❌ Send voice error: $e');
+    } finally {
+      _isSending = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteMessage(String messageId) async {
+    try {
+      await _usecase.deleteMessage(messageId, forEveryone: false);
+      _messages.removeWhere((m) {
+        final mid = m['_id']?.toString() ?? m['id']?.toString();
+        return mid == messageId;
+      });
       notifyListeners();
     } catch (e) {
-      final idx = _messages.indexWhere((m) => m['_id'] == tempId);
-      if (idx != -1) {
-        _messages[idx] = {
-          ..._messages[idx],
-          'isTemp': false,
-          'isFailed': true,
+      debugPrint('❌ Error deleting message: $e');
+    }
+  }
+
+  Future<void> recallMessage(String messageId) async {
+    try {
+      await _usecase.deleteMessage(messageId, forEveryone: true);
+      final index = _messages.indexWhere((m) {
+        final mid = m['_id']?.toString() ?? m['id']?.toString();
+        return mid == messageId;
+      });
+      if (index != -1) {
+        _messages[index] = {
+          ..._messages[index],
+          'isRecalled': true,
+          'content': 'Tin nhắn đã bị thu hồi',
         };
+        notifyListeners();
       }
-      _error = e.toString();
-      debugPrint('❌ Send message error: $e');
+    } catch (e) {
+      debugPrint('❌ Error recalling message: $e');
+    }
+  }
+
+  Future<bool> updateMessage(String messageId, String newContent) async {
+    if (newContent.trim().isEmpty) return false;
+    try {
+      final res = await _usecase.editMessage(messageId: messageId, content: newContent.trim());
+      if (res['success'] == true) {
+        final index = _messages.indexWhere((m) {
+          final mid = m['_id']?.toString() ?? m['id']?.toString();
+          return mid == messageId;
+        });
+        if (index != -1) {
+          _messages[index] = Map<String, dynamic>.from(res);
+          if (_pinnedMessage != null) {
+            final pinnedId = _pinnedMessage!['_id']?.toString() ?? _pinnedMessage!['id']?.toString();
+            if (pinnedId == messageId) {
+              _pinnedMessage = Map<String, dynamic>.from(res);
+            }
+          }
+        }
+        _editingMessage = null;
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('❌ Error editing message: $e');
+      _error = 'Lỗi sửa tin nhắn: $e';
       notifyListeners();
+      return false;
     }
   }
 
@@ -267,11 +468,13 @@ class ChatGroupController extends ChangeNotifier {
   void dispose() {
     if (_conversationId != null) {
       _socket.leaveRoom(_conversationId!);
-      _socket.off('receive_message');
+      _socket.off('receive_message', _onReceiveMessage);
+      _socket.off('message_recalled', _onMessageRecalled);
+      _socket.off('message_edited', _onMessageEdited);
+      _socket.off('message_pinned', _onMessagePinned);
+      _socket.off('message_unpinned', _onMessageUnpinned);
       _socket.off('typing');
       _socket.off('stop_typing');
-      _socket.off('message_pinned');
-      _socket.off('message_unpinned');
       _socket.off('error');
     }
     _typingTimer?.cancel();

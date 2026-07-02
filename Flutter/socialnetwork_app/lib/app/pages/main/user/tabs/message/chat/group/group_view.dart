@@ -1,13 +1,21 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:record/record.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/message/chat/group/group_controller.dart';
 import 'package:socialnetwork/data/service/call.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
 import 'package:socialnetwork/app/pages/main/user/tabs/message/view/group/group_view.dart';
+import 'package:socialnetwork/app/widgets/toast/toast.dart';
+import 'package:socialnetwork/app/theme/app_translation.dart';
 
 class ChatGroupView extends StatefulWidget {
   final String conversationId;
@@ -29,9 +37,20 @@ class ChatGroupView extends StatefulWidget {
 
 class _ChatGroupViewState extends State<ChatGroupView> {
   late final ChatGroupController _controller;
+  final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  bool _showScrollButton = false;
+  bool _hasText = false;
+  int _lastMessageCount = 0;
   String? _customBgPath;
+
+  bool _isRecording = false;
+  bool _isCancelHovered = false;
+  DateTime? _recordingStartTime;
+  Timer? _recordingTimer;
+  Duration _recordingDuration = Duration.zero;
+  final AudioRecorder _audioRecorder = AudioRecorder();
+  String? _tempRecordPath;
+  double _dragOffsetDx = 0.0;
 
   @override
   void initState() {
@@ -39,7 +58,10 @@ class _ChatGroupViewState extends State<ChatGroupView> {
     _loadBackgroundImage();
     _controller = ChatGroupController();
     _controller.init(widget.conversationId);
-    _controller.addListener(_onControllerChanged);
+    _textController.addListener(() {
+      setState(() => _hasText = _textController.text.trim().isNotEmpty);
+    });
+    _controller.addListener(_onMessagesChanged);
     _scrollController.addListener(_onScroll);
   }
 
@@ -113,19 +135,26 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                 ),
               ),
               Text(
-                'Tùy chỉnh giao diện',
+                Language.of(context, 'customize_the_interface'),
                 style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
                   color: cs.onSurface,
                 ),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 15.h),
               ListTile(
-                leading: Icon(Icons.image_outlined, color: Colors.blue),
+                leading: Icon(
+                  Icons.image_outlined, 
+                  size: 25.sp,
+                  color: Colors.blue
+                ),
                 title: Text(
-                  'Chọn ảnh nền từ album',
-                  style: TextStyle(color: cs.onSurface),
+                  Language.of(context, 'choose_a_wallpaper_from_the_album'),
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    color: cs.onSurface
+                  ),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -134,17 +163,24 @@ class _ChatGroupViewState extends State<ChatGroupView> {
               ),
               if (_customBgPath != null)
                 ListTile(
-                  leading: Icon(Icons.delete_outline, color: cs.error),
+                  leading: Icon(
+                    Icons.delete_outlined,
+                    size: 25.sp,
+                    color: Colors.red
+                  ),
                   title: Text(
-                    'Xóa ảnh nền hiện tại',
-                    style: TextStyle(color: cs.error),
+                    Language.of(context, 'remove_current_background_image'),
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      color: Colors.red
+                    ),
                   ),
                   onTap: () {
                     Navigator.pop(context);
                     _clearBackgroundImage();
                   },
                 ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 10.h),
             ],
           ),
         );
@@ -152,62 +188,15 @@ class _ChatGroupViewState extends State<ChatGroupView> {
     );
   }
 
-  void _onControllerChanged() {
-    if (_scrollController.hasClients && 
-        _scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100) {
-      _scrollToBottom();
-    }
-    setState(() {});
-  }
-
-  void _onScroll() {
-    final show = _scrollController.hasClients && 
-                 _scrollController.offset > 200;
-    if (show != _showScrollButton) {
-      setState(() => _showScrollButton = show);
-    }
-    
-    if (_scrollController.position.pixels <= 0 && 
-        !_controller.isLoading) {
-      _controller.fetchOlderMessages();
-    }
-  }
-
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
-  void _scrollToMessage(String messageId) {
-    final index = _controller.messages.indexWhere((m) {
-      final mid = m['_id']?.toString() ?? m['id']?.toString();
-      return mid == messageId;
-    });
-    if (index != -1) {
-      final totalItems = _controller.messages.length;
-      if (totalItems > 0) {
-        final targetOffset = _scrollController.position.maxScrollExtent * (index / totalItems);
-        _scrollController.animateTo(
-          targetOffset,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    }
-  }
-
-  void _showMessageOptions(Map<String, dynamic> msg) {
+  void _showMessageOptions(Map<String, dynamic> msg, bool isMe) {
     final cs = Theme.of(context).colorScheme;
     final messageId = msg['_id']?.toString() ?? msg['id']?.toString();
+    final content = msg['content']?.toString() ?? '';
+    final isRecalled = msg['isRecalled'] == true;
     final isPinned = _controller.pinnedMessage != null && 
         (_controller.pinnedMessage!['_id']?.toString() == messageId || 
          _controller.pinnedMessage!['id']?.toString() == messageId);
-
+    
     showModalBottomSheet(
       context: context,
       backgroundColor: cs.surface,
@@ -228,14 +217,121 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
+              if (!isRecalled) ...[
+                if (isMe) ...[
+                  ListTile(
+                    leading: Icon(
+                      Icons.cached_outlined,
+                      size: 25.sp,
+                      color: Colors.orange,
+                    ),
+                    title: Text(
+                      Language.of(context, 'recall'),
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: cs.onSurface,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (messageId != null) {
+                        _controller.recallMessage(messageId);
+                      }
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      Icons.edit_outlined,
+                      size: 25.sp,
+                      color: Colors.blue,
+                    ),
+                    title: Text(
+                      Language.of(context, 'edit'),
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        color: cs.onSurface,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _controller.startEdit(msg);
+                      _textController.text = content;
+                    },
+                  ),
+                ],
+                ListTile(
+                  leading: Icon(
+                    Icons.undo_outlined,
+                    size: 25.sp,
+                    color: Colors.purple,
+                  ),
+                  title: Text(
+                    Language.of(context, 'reply'),
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      color: cs.onSurface,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _controller.startReply(msg);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    isPinned ? Icons.pin_drop_outlined : Icons.push_pin_outlined,
+                    size: 25.sp,
+                    color: Colors.pink,
+                  ),
+                  title: Text(
+                    isPinned ? Language.of(context, 'unpin') : Language.of(context, 'pin'),
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      color: cs.onSurface,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    if (isPinned) {
+                      _controller.unpinMessage();
+                    } else {
+                      if (messageId != null) {
+                        _controller.pinMessage(messageId);
+                      }
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.copy_outlined,
+                    size: 25.sp,
+                    color: Colors.green,
+                  ),
+                  title: Text(
+                    Language.of(context, 'copy'),
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      color: cs.onSurface,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Clipboard.setData(ClipboardData(text: content));
+                    AppToast.show(
+                      context, 
+                      Language.of(context, 'copied')
+                    );
+                  },
+                ),
+              ],
               ListTile(
                 leading: Icon(
-                  isPinned ? Icons.pin_drop_outlined : Icons.push_pin_outlined,
+                  Icons.delete_outlined,
                   size: 25.sp,
-                  color: Colors.pink,
+                  color: Colors.red,
                 ),
                 title: Text(
-                  isPinned ? 'Bỏ ghim' : 'Ghim tin nhắn',
+                  Language.of(context, 'delete'),
                   style: TextStyle(
                     fontSize: 15.sp,
                     color: cs.onSurface,
@@ -243,12 +339,8 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  if (isPinned) {
-                    _controller.unpinMessage();
-                  } else {
-                    if (messageId != null) {
-                      _controller.pinMessage(messageId);
-                    }
+                  if (messageId != null) {
+                    _controller.deleteMessage(messageId);
                   }
                 },
               ),
@@ -260,489 +352,1095 @@ class _ChatGroupViewState extends State<ChatGroupView> {
     );
   }
 
+  void _onMessagesChanged() {
+    final currentCount = _controller.messages.length;
+    if (currentCount > _lastMessageCount) {
+      _lastMessageCount = currentCount;
+      _scrollToBottom();
+    } else {
+      _lastMessageCount = currentCount;
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels <= 0 && 
+        !_controller.isLoading) {
+      _controller.fetchOlderMessages();
+    }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  void _scrollToMessage(String messageId) {
+    final index = _controller.messages.indexWhere((m) {
+      final mid = m['_id']?.toString() ?? m['id']?.toString();
+      return mid == messageId;
+    });
+    if (index != -1) {
+      final totalItems = _controller.messages.length;
+      if (totalItems > 0) {
+        final targetOffset = _scrollController.position.maxScrollExtent * (index / totalItems);
+        _scrollController.animateTo(
+          targetOffset,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
+  }
+
+  Widget _buildReplyPreviewInBubble(Map<String, dynamic> repliedTo, bool isMe, ColorScheme cs) {
+    final content = repliedTo['content']?.toString() ?? '';
+    final replyId = repliedTo['_id']?.toString() ?? repliedTo['id']?.toString() ?? '';
+
+    return InkWell(
+      onTap: replyId.isNotEmpty ? () => _scrollToMessage(replyId) : null,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(18.r),
+        topRight: Radius.circular(18.r),
+        bottomLeft: Radius.circular(isMe ? 18.r : 4.r),
+        bottomRight: Radius.circular(isMe ? 4.r : 18.r),
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isMe 
+              ? Colors.blue.withValues(alpha: 0.5) 
+              : cs.onSurface.withValues(alpha: 0.18),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(18.r),
+            topRight: Radius.circular(18.r),
+            bottomLeft: Radius.circular(isMe ? 18.r : 4.r),
+            bottomRight: Radius.circular(isMe ? 4.r : 18.r),
+          ),
+          border: Border.all(
+            color: isMe 
+                ? Colors.white.withValues(alpha: 0.15) 
+                : cs.onSurface.withValues(alpha: 0.1),
+            width: 0.5,
+          ),
+        ),
+        child: Text(
+          content,
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: isMe ? Colors.white.withValues(alpha: 0.8) : cs.onSurface.withValues(alpha: 0.8),
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
-    _controller.removeListener(_onControllerChanged);
-    _controller.dispose();
+    _controller.removeListener(_onMessagesChanged);
+    _textController.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _recordingTimer?.cancel();
+    _audioRecorder.dispose();
+    _controller.dispose();
     super.dispose();
+  }
+
+  Future<void> _sendMessage() async {
+    final text = _textController.text.trim();
+    if (text.isEmpty) return;
+    if (_controller.editingMessage != null) {
+      final msgId = _controller.editingMessage!['_id']?.toString() ?? _controller.editingMessage!['id']?.toString();
+      if (msgId != null) {
+        final success = await _controller.updateMessage(msgId, text);
+        if (success) {
+          _textController.clear();
+        } else {
+          if (mounted) {
+            AppToast.show(context, _controller.error ?? 'Chỉnh sửa tin nhắn thất bại');
+          }
+        }
+      }
+    } else {
+      _controller.sendMessage(text);
+      _textController.clear();
+      _scrollToBottom();
+    }
+  }
+
+  Future<void> _sendImage() async {
+    try {
+      final picker = ImagePicker();
+      final List<XFile> images = await picker.pickMultiImage();
+      if (images.isEmpty) return;
+      
+      final paths = images.map((img) => img.path).toList();
+      await _controller.sendImageMessages(paths);
+    } catch (e) {
+      debugPrint('Error picking message images: $e');
+    }
+  }
+
+  String? _extractSenderId(dynamic senderRaw) {
+    if (senderRaw is Map) {
+      return senderRaw['_id']?.toString() ?? senderRaw['id']?.toString();
+    }
+    return senderRaw?.toString();
   }
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness:
+          brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+    ));
     final cs = Theme.of(context).colorScheme;
-
     return Scaffold(
       backgroundColor: cs.surface,
-      appBar: AppBar(
-        backgroundColor: cs.surface,
-        elevation: 0.5,
-        scrolledUnderElevation: 2,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, size: 20, color: cs.onSurface),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 18.r,
-              backgroundImage: widget.groupAvatar != null && widget.groupAvatar!.isNotEmpty
-                  ? NetworkImage(widget.groupAvatar!)
-                  : null,
-              backgroundColor: cs.primaryContainer,
-              child: (widget.groupAvatar == null || widget.groupAvatar!.isEmpty)
-                  ? Text(
-                      widget.groupName.substring(0, 1).toUpperCase(),
-                      style: TextStyle(
-                        color: cs.onPrimaryContainer,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
-                  : null,
-            ),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                kIsWeb ? 0 : 24.w,
+                16.h,
+                kIsWeb ? 0 : 24.w,
+                10.h,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    widget.groupName,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: cs.onSurface,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (widget.isGroup)
-                    ListenableBuilder(
-                      listenable: _controller,
-                      builder: (context, _) {
-                        final typingCount = _controller.typingUsers.length;
-                        if (typingCount > 0) {
-                          return Text(
-                            typingCount == 1 
-                                ? 'Someone is typing...' 
-                                : '$typingCount people are typing...',
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Icon(
+                          Icons.arrow_back_ios_outlined,
+                          size: 20.sp,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      CircleAvatar(
+                        radius: 18.r,
+                        backgroundColor: cs.primaryContainer,
+                        backgroundImage: widget.groupAvatar != null && widget.groupAvatar!.isNotEmpty
+                            ? NetworkImage(widget.groupAvatar!)
+                            : null,
+                        child: (widget.groupAvatar == null || widget.groupAvatar!.isEmpty)
+                            ? Text(
+                                widget.groupName.substring(0, 1).toUpperCase(),
+                                style: TextStyle(
+                                  color: cs.onPrimaryContainer,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
+                            : null,
+                      ),
+                      SizedBox(width: 10.w),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.groupName,
                             style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.blue,
-                              fontStyle: FontStyle.italic,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                              color: cs.onSurface,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (widget.isGroup)
+                            ListenableBuilder(
+                              listenable: _controller,
+                              builder: (context, _) {
+                                final typingCount = _controller.typingUsers.length;
+                                if (typingCount > 0) {
+                                  return Text(
+                                    typingCount == 1 
+                                        ? 'Ai đó đang soạn tin...' 
+                                        : '$typingCount người đang soạn tin...',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Colors.blue,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  );
+                                }
+                                return Text(
+                                  Language.of(context, 'groups'),
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: cs.onSurfaceVariant,
+                                  ),
+                                );
+                              },
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          await CallService().startGroupCall(
+                            conversationId: widget.conversationId,
+                            groupName: widget.groupName,
+                            groupAvatar: widget.groupAvatar,
+                          );
+                          Navigator.pushNamed(context, Routes.callOutgoing);
+                        },
+                        child: Icon(
+                          Icons.phone_outlined,
+                          size: 25.sp,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      SizedBox(width: 20.w),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Icon(
+                          Icons.videocam_outlined,
+                          size: 25.sp,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                      SizedBox(width: 20.w),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewGroupView(
+                                conversationId: widget.conversationId,
+                                groupId: _controller.groupId ?? '',
+                                groupName: widget.groupName,
+                                groupAvatar: widget.groupAvatar ?? '',
+                              ),
                             ),
                           );
-                        }
-                        return SizedBox.shrink();
-                      },
-                    ),
+                        },
+                        child: Icon(
+                          Icons.more_vert_outlined,
+                          size: 25.sp,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.phone_outlined, color: cs.onSurfaceVariant),
-            onPressed: () async {
-              await CallService().startGroupCall(
-                conversationId: widget.conversationId,
-                groupName: widget.groupName,
-                groupAvatar: widget.groupAvatar,
-              );
-              Navigator.pushNamed(context, Routes.callOutgoing);
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.videocam_outlined, color: cs.onSurfaceVariant),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.more_vert_outlined, color: cs.onSurfaceVariant),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewGroupView(
-                    conversationId: widget.conversationId,
-                    groupId: _controller.groupId ?? '',
-                    groupName: widget.groupName,
-                    groupAvatar: widget.groupAvatar ?? '',
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          ListenableBuilder(
-            listenable: _controller,
-            builder: (context, _) {
-              final pinned = _controller.pinnedMessage;
-              if (pinned == null) return const SizedBox.shrink();
-              
-              final pinnedContent = pinned['content']?.toString() ?? '';
-              final pinnedSender = pinned['sender'];
-              final pinnedSenderName = pinnedSender is Map 
-                  ? (pinnedSender['username']?.toString() ?? 'Ai đó') 
-                  : 'Ai đó';
-              
-              return Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
-                decoration: BoxDecoration(
-                  color: cs.surfaceContainerHighest.withValues(alpha: 0.8),
-                  border: Border(
-                    bottom: BorderSide(
-                      color: cs.onSurface.withValues(alpha: 0.1),
-                      width: 0.5,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.push_pin,
-                      size: 16.sp,
-                      color: cs.primary,
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          final pinnedId = pinned['_id']?.toString() ?? pinned['id']?.toString();
-                          if (pinnedId != null) {
-                            _scrollToMessage(pinnedId);
-                          }
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Tin nhắn đã ghim từ $pinnedSenderName',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.bold,
-                                color: cs.primary,
-                              ),
-                            ),
-                            Text(
-                              pinnedContent,
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                color: cs.onSurface,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
+            ListenableBuilder(
+              listenable: _controller,
+              builder: (context, _) {
+                final pinned = _controller.pinnedMessage;
+                if (pinned == null) return const SizedBox.shrink();
+                
+                final pinnedContent = pinned['content']?.toString() ?? '';
+                final pinnedSender = pinned['sender'];
+                final pinnedSenderName = pinnedSender is Map 
+                    ? (pinnedSender['username']?.toString() ?? 'Ai đó') 
+                    : 'Ai đó';
+                
+                return Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: cs.surfaceContainerHighest.withValues(alpha: 0.8),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: cs.onSurface.withValues(alpha: 0.1),
+                        width: 0.5,
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.close, size: 16.sp),
-                      onPressed: () => _controller.unpinMessage(),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          Expanded(
-            child: GestureDetector(
-              onLongPress: _showThemeSettings,
-              behavior: HitTestBehavior.translucent,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: cs.surfaceContainerLow,
-                  image: _customBgPath != null && File(_customBgPath!).existsSync()
-                      ? DecorationImage(
-                          image: FileImage(File(_customBgPath!)),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
-                ),
-                child: ListenableBuilder(
-                  listenable: _controller,
-                  builder: (context, _) {
-                if (_controller.isLoading && _controller.messages.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (_controller.error != null) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.error_outline_rounded, 
-                            color: cs.error, size: 48.sp),
-                        SizedBox(height: 8.h),
-                        Text(
-                          'Lỗi: ${_controller.error}',
-                          style: TextStyle(color: cs.error),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 12.h),
-                        ElevatedButton(
-                          onPressed: () => _controller.init(widget.conversationId),
-                          child: const Text('Thử lại'),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                if (_controller.messages.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.chat_bubble_outline_rounded,
-                            size: 48.sp, color: cs.onSurfaceVariant),
-                        SizedBox(height: 8.h),
-                        Text(
-                          'Chưa có tin nhắn nào',
-                          style: TextStyle(color: cs.onSurfaceVariant),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          'Hãy bắt đầu cuộc trò chuyện!',
-                          style: TextStyle(
-                            color: cs.onSurfaceVariant,
-                            fontSize: 12.sp,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.push_pin,
+                        size: 16.sp,
+                        color: cs.primary,
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            final pinnedId = pinned['_id']?.toString() ?? pinned['id']?.toString();
+                            if (pinnedId != null) {
+                              _scrollToMessage(pinnedId);
+                            }
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tin nhắn đã ghim từ $pinnedSenderName',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: cs.primary,
+                                ),
+                              ),
+                              Text(
+                                pinnedContent,
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: cs.onSurface,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                }
-
-                return Stack(
-                  children: [
-                    ListView.builder(
-                      controller: _scrollController,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w, 
-                        vertical: 12.h
                       ),
-                      itemCount: _controller.messages.length,
-                      itemBuilder: (context, index) {
-                        final msg = _controller.messages[index];
-                        final isMe = _controller.isMessageFromMe(msg);
-                        final content = msg['content'] ?? '';
-                        final type = msg['type'] ?? 'text';
-                        final createdAt = msg['createdAt'] != null
-                            ? DateTime.tryParse(msg['createdAt'])?.toLocal()
-                            : null;
-
-                        if (type == 'system') {
-                          final showDate = index == 0 || 
-                              (createdAt != null && _shouldShowDateSeparator(
-                                createdAt, 
-                                _controller.messages[index - 1]['createdAt']
-                              ));
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              if (showDate && createdAt != null)
-                                _DateSeparator(date: createdAt),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.h),
-                                child: Center(
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-                                    decoration: BoxDecoration(
-                                      color: cs.onSurface.withValues(alpha: 0.05),
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
-                                    child: Text(
-                                      content,
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: cs.onSurfaceVariant,
-                                        fontWeight: FontWeight.w400,
-                                        fontStyle: FontStyle.italic,
+                      IconButton(
+                        icon: Icon(Icons.close, size: 16.sp),
+                        onPressed: () => _controller.unpinMessage(),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            Expanded(child: _buildMessagesList(cs)),
+            ListenableBuilder(
+              listenable: _controller,
+              builder: (context, _) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_controller.replyingMessage != null) ...[
+                      Builder(
+                        builder: (context) {
+                          final replySender = _controller.replyingMessage!['sender'];
+                          final replySenderName = replySender is Map 
+                              ? (replySender['username']?.toString() ?? 'Ai đó') 
+                              : 'Ai đó';
+                          final replyContent = _controller.replyingMessage!['content']?.toString() ?? '';
+                          return Container(
+                            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+                            decoration: BoxDecoration(
+                              color: cs.surfaceContainerHighest.withValues(alpha: 0.8),
+                              border: Border(
+                                top: BorderSide(
+                                  color: cs.onSurface.withValues(alpha: 0.1),
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.reply_outlined,
+                                  size: 16.sp,
+                                  color: cs.primary,
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Đang trả lời $replySenderName',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: cs.primary,
+                                        ),
                                       ),
-                                      textAlign: TextAlign.center,
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        replyContent,
+                                        style: TextStyle(
+                                          fontSize: 13.sp,
+                                          color: cs.onSurface,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.close, size: 16.sp),
+                                  onPressed: () => _controller.cancelReply(),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      ),
+                    ],
+                    if (_controller.editingMessage != null) ...[
+                      Builder(
+                        builder: (context) {
+                          final editContent = _controller.editingMessage!['content']?.toString() ?? '';
+                          return Container(
+                            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+                            decoration: BoxDecoration(
+                              color: cs.surfaceContainerHighest.withValues(alpha: 0.8),
+                              border: Border(
+                                top: BorderSide(
+                                  color: cs.onSurface.withValues(alpha: 0.1),
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.edit_outlined,
+                                  size: 16.sp,
+                                  color: cs.primary,
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        Language.of(context, 'edit_message'),
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: cs.primary,
+                                        ),
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        editContent,
+                                        style: TextStyle(
+                                          fontSize: 13.sp,
+                                          color: cs.onSurface,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.close, size: 16.sp),
+                                  onPressed: () {
+                                    _controller.cancelEdit();
+                                    _textController.clear();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      ),
+                    ],
+                    if (_controller.isSending)
+                      const LinearProgressIndicator(minHeight: 2),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        kIsWeb ? 0 : 24.w,
+                        10.h,
+                        kIsWeb ? 0 : 24.w,
+                        16.h,
+                      ),
+                      child: _isRecording
+                          ? Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: _cancelRecording,
+                                  child: Icon(
+                                    Icons.delete_outlined,
+                                    color: Colors.red,
+                                    size: 28.sp,
+                                  ),
+                                ),
+                                SizedBox(width: 15.w),
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                                    decoration: BoxDecoration(
+                                      color: cs.surfaceContainerHighest,
+                                      borderRadius: BorderRadius.circular(24.r),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        _RecordingDot(),
+                                        SizedBox(width: 8.w),
+                                        Text(
+                                          _formatDuration(_recordingDuration),
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14.sp,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          );
-                        }
+                                SizedBox(width: 15.w),
+                                GestureDetector(
+                                  onTap: _stopAndSendRecording,
+                                  child: Icon(
+                                    Icons.send_outlined,
+                                    color: Colors.blue,
+                                    size: 25.sp,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: _controller.isSending ? null : _sendImage,
+                                  child: Icon(
+                                    Icons.image_outlined, 
+                                    size: 25.sp,
+                                    color: _controller.isSending ? cs.onSurface.withValues(alpha: 0.3) : cs.onSurface,
+                                  ),
+                                ),
 
-                        final sender = msg['sender'] as Map<String, dynamic>?;
-                        final senderName = sender?['username'] ?? 'Unknown';
-                        final senderAvatar = sender?['avatar'];
+                                SizedBox(width: 20.w),
 
-                        final prevMsgSenderId = index == 0
-                            ? null
-                            : _extractSenderId(_controller.messages[index - 1]['sender']);
-                        final msgSenderId = _extractSenderId(msg['sender']);
-                        final showAvatar = index == 0 || prevMsgSenderId != msgSenderId;
+                                GestureDetector(
+                                  onTap: _startRecording,
+                                  child: Icon(
+                                    Icons.mic_outlined, 
+                                    size: 25.sp,
+                                    color: cs.onSurface,
+                                  ),
+                                ),
 
-                        final showDate = index == 0 || 
-                            (createdAt != null && _shouldShowDateSeparator(
-                              createdAt, 
-                              _controller.messages[index - 1]['createdAt']
-                            ));
- 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (showDate && createdAt != null)
-                              _DateSeparator(date: createdAt),
-                            
-                            GestureDetector(
-                              onLongPress: () => _showMessageOptions(msg),
-                              child: _MessageBubble(
-                                content: content,
-                                isMe: isMe,
-                                time: createdAt != null 
-                                    ? DateFormat('HH:mm').format(createdAt) 
-                                    : '',
-                                avatar: isMe ? null : senderAvatar,
-                                username: isMe ? null : senderName,
-                                isTemp: msg['isTemp'] == true,
-                                showAvatar: showAvatar,
-                                isPinned: _controller.pinnedMessage != null && 
-                                    (_controller.pinnedMessage!['_id']?.toString() == msg['_id']?.toString() || 
-                                     _controller.pinnedMessage!['id']?.toString() == msg['id']?.toString()),
-                              ),
+                                SizedBox(width: 10.w),
+
+                                Expanded(
+                                  child: TextField(
+                                    controller: _textController,
+                                    enabled: !_controller.isSending,
+                                    decoration: InputDecoration(
+                                      hintText: 'Nhắn tin...',
+                                      hintStyle: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: cs.onSurface,
+                                      ),
+                                      filled: true,
+                                      fillColor: cs.surfaceContainerHighest,
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 16.w,
+                                        vertical: 10.h,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(24.r),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      isDense: true,
+                                    ),
+                                    maxLines: 4,
+                                    minLines: 1,
+                                    textInputAction: TextInputAction.send,
+                                    onChanged: _controller.onTypingChanged,
+                                    onSubmitted: (_) => _sendMessage(),
+                                  ),
+                                ),
+
+                                SizedBox(width: 10.w),
+
+                                GestureDetector(
+                                  onTap: _hasText && !_controller.isSending ? _sendMessage : null,
+                                  child: Icon(
+                                    Icons.send_outlined,
+                                    color: _hasText && !_controller.isSending ? Colors.blue : cs.onSurface,
+                                    size: 25.sp,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        );
-                      },
                     ),
                   ],
                 );
               },
             ),
-          ),
+          ],
         ),
-      ),
-
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.w, 
-              vertical: 8.h
-            ),
-            decoration: BoxDecoration(
-              color: cs.surface,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              top: false,
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.emoji_emotions_outlined, 
-                        color: cs.onSurfaceVariant),
-                    onPressed: () {},
-                  ),
-                  
-                  Expanded(
-                    child: TextField(
-                      controller: _controller.messageController,
-                      decoration: InputDecoration(
-                        hintText: 'Nhắn tin...',
-                        hintStyle: TextStyle(
-                          fontSize: 14.sp,
-                          color: cs.onSurfaceVariant.withValues(alpha: 0.6),
-                        ),
-                        filled: true,
-                        fillColor: cs.surfaceContainerHighest,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 10.h,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24.r),
-                          borderSide: BorderSide.none,
-                        ),
-                        isDense: true,
-                      ),
-                      maxLines: 4,
-                      minLines: 1,
-                      textInputAction: TextInputAction.send,
-                      onChanged: _controller.onTypingChanged,
-                      onSubmitted: (_) => _handleSend(),
-                    ),
-                  ),
-                  
-                  SizedBox(width: 8.w),
-                  ListenableBuilder(
-                    listenable: _controller,
-                    builder: (context, _) {
-                      final hasText = _controller.messageController.text.trim().isNotEmpty;
-                      return GestureDetector(
-                        onTap: hasText ? _handleSend : null,
-                        child: SizedBox(
-                          width: 48,
-                          height: 48,
-                          child: Center(
-                            child: Icon(
-                              Icons.send_rounded,
-                              color: hasText ? Colors.blue : cs.onSurfaceVariant.withValues(alpha: 0.5),
-                              size: 24.0,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
 
-  bool _shouldShowDateSeparator(DateTime current, String? previous) {
+  Widget _buildMessagesList(ColorScheme cs) {
+    final hasBgImage = _customBgPath != null && File(_customBgPath!).existsSync();
+
+    return GestureDetector(
+      onLongPress: _showThemeSettings,
+      behavior: HitTestBehavior.translucent,
+      child: Container(
+        decoration: BoxDecoration(
+          color: cs.surfaceDim,
+          image: hasBgImage
+              ? DecorationImage(
+                  image: FileImage(File(_customBgPath!)),
+                  fit: BoxFit.cover,
+                )
+              : null,
+        ),
+        child: ListenableBuilder(
+          listenable: _controller,
+          builder: (context, _) {
+            if (_controller.isLoading && _controller.messages.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (_controller.error != null) {
+              return Center(
+                child: Text(
+                  '${_controller.error}',
+                  style: TextStyle(
+                    color: cs.error
+                  )
+                )
+              );
+            }
+            if (_controller.messages.isEmpty) {
+              return Center(
+                child: Text(
+                  Language.of(context, 'no_messages_yet'),
+                  style: TextStyle(
+                    color: cs.onSurfaceVariant
+                  )
+                )
+              );
+            }
+    
+            return ListView.builder(
+              controller: _scrollController,
+              padding: EdgeInsets.symmetric(
+                horizontal: kIsWeb ? 0 : 5.w, 
+                vertical: 12.h
+              ),
+              itemCount: _controller.messages.length,
+              shrinkWrap: false,
+              cacheExtent: 500,
+              itemBuilder: (context, i) {
+                final msg = _controller.messages[i];
+                final msgSenderId = _extractSenderId(msg['sender']);
+                final isMe = msgSenderId == _controller.currentUserId;
+                final isRecalled = msg['isRecalled'] == true;
+                final isImageMsg = msg['type'] == 'image';
+                final isAudioMsg = msg['type'] == 'audio';
+                final isSystemMsg = msg['type'] == 'system';
+                final content = msg['content'] ?? '';
+                final attachments = msg['attachments'] as List?;
+                final hasAttachment = attachments != null && attachments.isNotEmpty;
+                final repliedTo = msg['repliedTo'];
+                final createdAt = msg['createdAt'] != null
+                    ? (msg['createdAt'] is String 
+                        ? DateTime.tryParse(msg['createdAt'])?.toLocal()
+                        : msg['createdAt'] is int 
+                            ? DateTime.fromMillisecondsSinceEpoch(msg['createdAt']).toLocal()
+                            : null)
+                    : null;
+
+                final prevMsgSenderId = i == 0
+                    ? null
+                    : _extractSenderId(_controller.messages[i - 1]['sender']);
+                final showAvatar = i == 0 || prevMsgSenderId != msgSenderId;
+
+                final showDate = i == 0 || 
+                    (createdAt != null && _shouldShowDateSeparator(
+                      createdAt, 
+                      _controller.messages[i - 1]['createdAt']
+                    ));
+
+                if (isSystemMsg) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (showDate && createdAt != null)
+                        _DateSeparator(date: createdAt),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        child: Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+                            decoration: BoxDecoration(
+                              color: cs.onSurface.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Text(
+                              content,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: cs.onSurfaceVariant,
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.italic,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                final sender = msg['sender'] as Map?;
+                final senderName = sender?['username']?.toString() ?? 'Unknown';
+                final senderAvatar = sender?['avatar']?.toString() ?? '';
+
+                String? replyHeaderText;
+                if (repliedTo != null && repliedTo is Map && !isRecalled) {
+                  final replySender = repliedTo['sender'];
+                  final replySenderName = replySender is Map 
+                      ? (replySender['username']?.toString() ?? 'Ai đó') 
+                      : 'Ai đó';
+                  final replySenderId = replySender is Map
+                      ? (replySender['_id']?.toString() ?? replySender['id']?.toString())
+                      : replySender?.toString();
+                      
+                  if (isMe) {
+                    if (replySenderId == _controller.currentUserId) {
+                      replyHeaderText = '';
+                    } else {
+                      replyHeaderText = 'Bạn đã trả lời $replySenderName';
+                    }
+                  } else {
+                    final currentSender = msg['sender'];
+                    final currentSenderName = currentSender is Map 
+                        ? (currentSender['username']?.toString() ?? 'Unknown') 
+                        : 'Unknown';
+                    if (replySenderId == _controller.currentUserId) {
+                      replyHeaderText = '$currentSenderName đã trả lời bạn';
+                    } else if (replySenderId == msgSenderId) {
+                      replyHeaderText = '$currentSenderName đã trả lời chính họ';
+                    } else {
+                      replyHeaderText = '$currentSenderName đã trả lời $replySenderName';
+                    }
+                  }
+                }
+    
+                final msgId = msg['_id']?.toString() ??
+                    msg['id']?.toString() ??
+                    'msg_${i}_${msg['content']?.hashCode ?? 0}';
+    
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (showDate && createdAt != null)
+                      _DateSeparator(date: createdAt),
+                    RepaintBoundary(
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 6.h),
+                        child: Row(
+                          key: ValueKey('msg_$msgId'),
+                          mainAxisAlignment:
+                              isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            if (!isMe) ...[
+                              showAvatar
+                                  ? CircleAvatar(
+                                      radius: 14.r,
+                                      backgroundColor: cs.primaryContainer,
+                                      backgroundImage: senderAvatar.isNotEmpty
+                                          ? NetworkImage(senderAvatar)
+                                          : null,
+                                      child: senderAvatar.isEmpty
+                                          ? Text(
+                                              senderName.isNotEmpty ? senderName.substring(0, 1).toUpperCase() : '?',
+                                              style: TextStyle(
+                                                color: cs.onPrimaryContainer,
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            )
+                                          : null,
+                                    )
+                                  : SizedBox(width: 28.w),
+                              SizedBox(width: 8.w),
+                            ],
+                            GestureDetector(
+                              onLongPress: () => _showMessageOptions(msg, isMe),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(maxWidth: 0.65.sw),
+                                child: Column(
+                                  crossAxisAlignment: isMe
+                                      ? CrossAxisAlignment.end
+                                      : CrossAxisAlignment.start,
+                                  children: [
+                                    if (!isMe && showAvatar)
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 8.w, bottom: 2.h),
+                                        child: Text(
+                                          senderName,
+                                          style: TextStyle(
+                                            fontSize: 11.sp,
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    if (replyHeaderText != null && replyHeaderText.isNotEmpty)
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 4.h, left: isMe ? 0 : 8.w, right: isMe ? 8.w : 0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.reply_outlined,
+                                              size: 11.sp,
+                                              color: cs.onSurfaceVariant.withValues(alpha: 0.6),
+                                            ),
+                                            SizedBox(width: 4.w),
+                                            Text(
+                                              replyHeaderText,
+                                              style: TextStyle(
+                                                fontSize: 11.sp,
+                                                color: cs.onSurfaceVariant.withValues(alpha: 0.6),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    if (repliedTo != null && repliedTo is Map && !isRecalled)
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 1.h),
+                                        child: _buildReplyPreviewInBubble(Map<String, dynamic>.from(repliedTo), isMe, cs),
+                                      ),
+                                    Container(
+                                      padding: (isImageMsg && hasAttachment && !isRecalled)
+                                          ? EdgeInsets.zero
+                                          : isAudioMsg
+                                              ? EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h)
+                                              : EdgeInsets.symmetric(
+                                                  horizontal: 14.w, vertical: 10.h
+                                                ),
+                                      decoration: BoxDecoration(
+                                        color: isRecalled
+                                            ? (isMe ? cs.surfaceContainerHighest.withValues(alpha: 0.5) : cs.surfaceContainerHighest.withValues(alpha: 0.3))
+                                            : (isImageMsg && hasAttachment)
+                                                ? Colors.transparent
+                                                : (isMe ? Colors.blue : const Color(0xFFD6D6D6)),
+                                        border: isRecalled ? Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)) : null,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(repliedTo != null && !isMe ? 4.r : 18.r),
+                                          topRight: Radius.circular(repliedTo != null && isMe ? 4.r : 18.r),
+                                          bottomLeft:
+                                              Radius.circular(isMe ? 18.r : 4.r),
+                                          bottomRight:
+                                              Radius.circular(isMe ? 4.r : 18.r),
+                                        ),
+                                      ),
+                                      child: isRecalled
+                                          ? Text(
+                                              isMe ? 
+                                                  Language.of(context, 'you_recall_a_message') : Language.of(context, 'this_message_was_recalled'),
+                                              style: TextStyle(
+                                                fontSize: 14.sp,
+                                                color: cs.onSurfaceVariant.withValues(alpha: 0.6),
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                            )
+                                          : (isImageMsg && hasAttachment)
+                                              ? _MessageImageGrid(imageUrls: attachments)
+                                              : isAudioMsg
+                                                  ? _AudioMessageBubble(audioUrl: attachments?.first?.toString() ?? '', isMe: isMe)
+                                                  : Text(
+                                                      content,
+                                                      style: TextStyle(
+                                                        fontSize: 14.sp,
+                                                        color: isMe ? Colors.white : Colors.black,
+                                                      ),
+                                                    ),
+                                    ),
+                                    SizedBox(height: 3.h),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          _formatTime(createdAt),
+                                          style: TextStyle(
+                                            fontSize: 10.sp,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        if (msg['isEdited'] == true && !isRecalled) ...[
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            Language.of(context, 'edited'),
+                                            style: TextStyle(
+                                              fontSize: 9.sp,
+                                              color: Colors.grey,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                        ],
+                                        if (_controller.pinnedMessage != null && 
+                                            (_controller.pinnedMessage!['_id']?.toString() == msgId || 
+                                             _controller.pinnedMessage!['id']?.toString() == msgId)) ...[
+                                          SizedBox(width: 5.w),
+                                          Icon(
+                                            Icons.push_pin,
+                                            size: 10.sp,
+                                            color: Colors.pink,
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (isMe) SizedBox(width: 5.w),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  bool _shouldShowDateSeparator(DateTime current, dynamic previous) {
     if (previous == null) return true;
-    final prevDate = DateTime.tryParse(previous)?.toLocal();
+    final prevDate = previous is String
+        ? DateTime.tryParse(previous)?.toLocal()
+        : previous is int
+            ? DateTime.fromMillisecondsSinceEpoch(previous).toLocal()
+            : null;
     if (prevDate == null) return true;
     
     return current.year != prevDate.year ||
            current.month != prevDate.month ||
            current.day != prevDate.day;
   }
-
-  String _extractSenderId(dynamic sender) {
-    if (sender == null) return '';
-    if (sender is Map) return sender['_id']?.toString() ?? '';
-    return sender.toString();
+ 
+  String _formatTime(DateTime? dt) {
+    return dt != null
+        ? '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}'
+        : '';
   }
 
-  void _handleSend() {
-    final content = _controller.messageController.text;
-    if (content.trim().isEmpty) return;
+  Future<void> _startRecording() async {
+    try {
+      if (!await _audioRecorder.hasPermission()) {
+        AppToast.show(context, 'Vui lòng cấp quyền ghi âm');
+        return;
+      }
+      
+      final tempDir = await getTemporaryDirectory();
+      _tempRecordPath = '${tempDir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+      
+      await _audioRecorder.start(
+        const RecordConfig(encoder: AudioEncoder.aacLc), 
+        path: _tempRecordPath!,
+      );
+
+      HapticFeedback.heavyImpact();
+
+      setState(() {
+        _isRecording = true;
+        _isCancelHovered = false;
+        _dragOffsetDx = 0.0;
+        _recordingDuration = Duration.zero;
+        _recordingStartTime = DateTime.now();
+      });
+
+      _recordingTimer?.cancel();
+      _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (mounted && _isRecording) {
+          setState(() {
+            _recordingDuration = DateTime.now().difference(_recordingStartTime!);
+          });
+        }
+      });
+    } catch (e) {
+      debugPrint('Error starting recording: $e');
+    }
+  }
+
+  Future<void> _cancelRecording() async {
+    if (!_isRecording) return;
     
-    _controller.sendMessage(content);
+    _recordingTimer?.cancel();
+    final path = await _audioRecorder.stop();
+    
+    setState(() {
+      _isRecording = false;
+    });
+
+    HapticFeedback.mediumImpact();
+    AppToast.show(context, 'Đã hủy ghi âm');
+    if (path != null) {
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+      }
+    }
   }
 
+  Future<void> _stopAndSendRecording() async {
+    if (!_isRecording) return;
+    
+    _recordingTimer?.cancel();
+    final path = await _audioRecorder.stop();
+    
+    setState(() {
+      _isRecording = false;
+    });
 
+    if (path != null) {
+      final durationInSeconds = _recordingDuration.inSeconds;
+      if (durationInSeconds < 1) {
+        AppToast.show(context, 'Thời lượng ghi âm quá ngắn');
+        final file = File(path);
+        if (await file.exists()) {
+          await file.delete();
+        }
+        return;
+      }
+      
+      HapticFeedback.lightImpact();
+      await _sendVoiceMessage(path);
+    }
+  }
 
+  Future<void> _sendVoiceMessage(String path) async {
+    await _controller.sendVoiceMessage(path);
+  }
 
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$minutes:$seconds';
+  }
 }
 
 class _DateSeparator extends StatelessWidget {
   final DateTime date;
   
   const _DateSeparator({required this.date});
-
+ 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -754,14 +1452,14 @@ class _DateSeparator extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
           decoration: BoxDecoration(
-            color: cs.surfaceContainerHighest,
+            color: cs.surface,
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Text(
             formatted,
             style: TextStyle(
               fontSize: 11.sp,
-              color: cs.onSurfaceVariant,
+              color: cs.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -771,172 +1469,373 @@ class _DateSeparator extends StatelessWidget {
   }
 }
 
-class _MessageBubble extends StatelessWidget {
-  final String content;
-  final bool isMe;
-  final String time;
-  final String? avatar;
-  final String? username;
-  final bool isTemp;
-  final bool showAvatar;
-  final bool isPinned;
+class _MessageImageGrid extends StatelessWidget {
+  final List<dynamic> imageUrls;
 
-  const _MessageBubble({
-    required this.content,
-    required this.isMe,
-    required this.time,
-    this.avatar,
-    this.username,
-    this.isTemp = false,
-    required this.showAvatar,
-    this.isPinned = false,
-  });
+  const _MessageImageGrid({required this.imageUrls});
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (!isMe) ...[
-            if (showAvatar)
-              CircleAvatar(
-                radius: 16.r,
-                backgroundImage: avatar != null && avatar.toString().isNotEmpty
-                    ? NetworkImage(avatar!)
-                    : null,
-                backgroundColor: cs.primaryContainer,
-                child: (avatar == null || avatar.toString().isEmpty)
-                    ? Text(
-                        (username ?? '?').substring(0, 1).toUpperCase(),
-                        style: TextStyle(
-                          color: cs.onPrimaryContainer,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )
-                    : null,
-              )
-            else
-              SizedBox(width: 32.r),
-            SizedBox(width: 8.w),
+    final count = imageUrls.length;
+    if (count == 1) {
+      return _buildSingleImage(context, imageUrls.first.toString(), 0, isSingle: true);
+    } else if (count == 2) {
+      return SizedBox(
+        width: 200.w,
+        child: Row(
+          children: [
+            Expanded(child: _buildSingleImage(context, imageUrls[0].toString(), 0, height: 120.h)),
+            SizedBox(width: 4.w),
+            Expanded(child: _buildSingleImage(context, imageUrls[1].toString(), 1, height: 120.h)),
           ],
-          
-          Flexible(
-            child: Column(
-              crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-              children: [
-                if (!isMe && showAvatar && username != null)
-                  Padding(
-                    padding: EdgeInsets.only(left: 4.w, bottom: 2.h),
-                    child: Text(
-                      username!,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  
-                Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7,
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 10.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isMe ? Colors.blue : cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(16),
-                      topRight: const Radius.circular(16),
-                      bottomLeft: Radius.circular(isMe ? 16 : 4),
-                      bottomRight: Radius.circular(isMe ? 4 : 16),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        content,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: isMe ? Colors.white : cs.onSurface,
-                          height: 1.3,
-                        ),
-                      ),
-                      if (isTemp)
-                        Padding(
-                          padding: EdgeInsets.only(top: 4.h),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: 12,
-                                height: 12,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: isMe 
-                                      ? Colors.white.withValues(alpha: 0.7) 
-                                      : cs.onSurfaceVariant,
-                                ),
-                              ),
-                              SizedBox(width: 4.w),
-                              Text(
-                                'Sending...',
-                                style: TextStyle(
-                                  fontSize: 10.sp,
-                                  color: isMe 
-                                      ? Colors.white.withValues(alpha: 0.7) 
-                                      : cs.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: 200.w,
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 4.w,
+            mainAxisSpacing: 4.h,
+            childAspectRatio: 1.0,
+          ),
+          itemCount: count > 4 ? 4 : count,
+          itemBuilder: (context, idx) {
+            if (idx == 3 && count > 4) {
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  _buildSingleImage(context, imageUrls[idx].toString(), idx),
+                  GestureDetector(
+                    onTap: () => _openGallery(context, idx),
+                    child: Container(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      child: Center(
+                        child: Text(
+                          '+${count - 3}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                    ],
-                  ),
-                ),
-                
-                Padding(
-                  padding: EdgeInsets.only(top: 4.h, right: 4.w),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        time,
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          color: cs.onSurfaceVariant,
-                        ),
                       ),
-                      if (isPinned) ...[
-                        SizedBox(width: 4.w),
-                        Icon(
-                          Icons.push_pin,
-                          size: 10.sp,
-                          color: Colors.pink,
-                        ),
-                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
+            return _buildSingleImage(context, imageUrls[idx].toString(), idx);
+          },
+        ),
+      );
+    }
+  }
+
+  void _openGallery(BuildContext context, int initialIndex) {
+    showDialog(
+      context: context,
+      builder: (context) => _GalleryDialog(
+        imageUrls: imageUrls.map((e) => e.toString()).toList(),
+        initialIndex: initialIndex,
+      ),
+    );
+  }
+
+  Widget _buildSingleImage(BuildContext context, String url, int index, {double? height, bool isSingle = false}) {
+    return GestureDetector(
+      onTap: () => _openGallery(context, index),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(isSingle ? 18.r : 8.r),
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+          width: isSingle ? 200.w : null,
+          height: height,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Container(
+              width: isSingle ? 200.w : null,
+              height: height ?? 150.h,
+              color: Colors.grey[300],
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: isSingle ? 200.w : null,
+              height: height ?? 150.h,
+              color: Colors.grey[300],
+              child: const Center(
+                child: Icon(
+                  Icons.broken_image_outlined, 
+                  color: Colors.red
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _GalleryDialog extends StatefulWidget {
+  final List<String> imageUrls;
+  final int initialIndex;
+
+  const _GalleryDialog({required this.imageUrls, required this.initialIndex});
+
+  @override
+  State<_GalleryDialog> createState() => _GalleryDialogState();
+}
+
+class _GalleryDialogState extends State<_GalleryDialog> {
+  late PageController _pageController;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog.fullscreen(
+      backgroundColor: Colors.black,
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: widget.imageUrls.length,
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              return InteractiveViewer(
+                minScale: 1.0,
+                maxScale: 4.0,
+                child: Center(
+                  child: Image.network(
+                    widget.imageUrls[index],
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+          Positioned(
+            top: 20.h,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Center(
+                child: Text(
+                  '${_currentIndex + 1} / ${widget.imageUrls.length}',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    shadows: const [
+                      Shadow(
+                        color: Colors.black,
+                        blurRadius: 4,
+                        offset: Offset(0, 1),
+                      ),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
-          if (isMe) SizedBox(width: 8.w),
+          Positioned(
+            top: 20.h,
+            right: 16.w,
+            child: SafeArea(
+              child: IconButton(
+                icon: Icon(
+                  Icons.close_outlined, 
+                  color: Colors.white, 
+                  size: 28.sp
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
+class _AudioMessageBubble extends StatefulWidget {
+  final String audioUrl;
+  final bool isMe;
 
+  const _AudioMessageBubble({required this.audioUrl, required this.isMe});
 
+  @override
+  State<_AudioMessageBubble> createState() => _AudioMessageBubbleState();
+}
 
+class _AudioMessageBubbleState extends State<_AudioMessageBubble> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isPlaying = false;
+  Duration _duration = Duration.zero;
+  Duration _position = Duration.zero;
+  StreamSubscription? _durationSubscription;
+  StreamSubscription? _positionSubscription;
+  StreamSubscription? _playerStateSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _durationSubscription = _audioPlayer.onDurationChanged.listen((d) {
+      if (mounted) setState(() => _duration = d);
+    });
+    _positionSubscription = _audioPlayer.onPositionChanged.listen((p) {
+      if (mounted) setState(() => _position = p);
+    });
+    _playerStateSubscription = _audioPlayer.onPlayerStateChanged.listen((state) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = state == PlayerState.playing;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _durationSubscription?.cancel();
+    _positionSubscription?.cancel();
+    _playerStateSubscription?.cancel();
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _togglePlay() async {
+    try {
+      if (_isPlaying) {
+        await _audioPlayer.pause();
+      } else {
+        await _audioPlayer.play(UrlSource(widget.audioUrl));
+      }
+    } catch (e) {
+      debugPrint('Error playing audio: $e');
+    }
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$minutes:$seconds';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textColor = widget.isMe ? Colors.white : Colors.black;
+    final progressColor = widget.isMe ? Colors.white70 : Colors.black54;
+    final displayDuration = _duration == Duration.zero ? '...' : _formatDuration(_duration);
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          constraints: const BoxConstraints(),
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            _isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
+            color: textColor,
+            size: 32.sp,
+          ),
+          onPressed: _togglePlay,
+        ),
+        SizedBox(width: 8.w),
+        SizedBox(
+          width: 80.w,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(4.r),
+            child: LinearProgressIndicator(
+              value: _duration.inMilliseconds > 0 
+                  ? _position.inMilliseconds / _duration.inMilliseconds 
+                  : 0.0,
+              backgroundColor: progressColor.withValues(alpha: 0.2),
+              valueColor: AlwaysStoppedAnimation<Color>(textColor),
+              minHeight: 4.h,
+            ),
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Text(
+          _formatDuration(_position) + ' / ' + displayDuration,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10.sp,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RecordingDot extends StatefulWidget {
+  @override
+  State<_RecordingDot> createState() => _RecordingDotState();
+}
+
+class _RecordingDotState extends State<_RecordingDot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _controller,
+      child: Container(
+        width: 8.w,
+        height: 8.w,
+        decoration: const BoxDecoration(
+          color: Colors.red,
+          shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}

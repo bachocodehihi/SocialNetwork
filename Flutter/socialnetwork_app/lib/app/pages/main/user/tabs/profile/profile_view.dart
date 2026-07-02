@@ -7,6 +7,7 @@ import 'package:socialnetwork/app/pages/main/user/tabs/profile/profile_controlle
 import 'package:socialnetwork/app/widgets/avatar/fullscreen.dart';
 import 'package:socialnetwork/app/widgets/item/information.dart';
 import 'package:socialnetwork/app/theme/app_translation.dart';
+import 'package:socialnetwork/app/pages/content/content_page.dart';
 
 class ProfileUserView extends StatefulWidget {
   const ProfileUserView({super.key});
@@ -17,6 +18,7 @@ class ProfileUserView extends StatefulWidget {
 
 class _ProfileUserViewState extends State<ProfileUserView> {
   late ProfileUserController controller;
+  final Set<String> _expandedPostIds = {};
 
   @override
   void initState() {
@@ -53,13 +55,15 @@ class _ProfileUserViewState extends State<ProfileUserView> {
     }
   }
 
-  Widget _buildPostImages(List<dynamic> images) {
+  Widget _buildPostImages(Map<String, dynamic> post) {
+    final images = post['images'] as List? ?? [];
     if (images.isEmpty) return const SizedBox.shrink();
 
     final cs = Theme.of(context).colorScheme;
 
+    Widget child;
     if (images.length == 1) {
-      return Container(
+      child = Container(
         margin: EdgeInsets.only(top: 8.h),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
@@ -77,10 +81,8 @@ class _ProfileUserViewState extends State<ProfileUserView> {
           ),
         ),
       );
-    }
-
-    if (images.length == 2) {
-      return Container(
+    } else if (images.length == 2) {
+      child = Container(
         margin: EdgeInsets.only(top: 8.h),
         height: 150.h,
         child: Row(
@@ -109,86 +111,98 @@ class _ProfileUserViewState extends State<ProfileUserView> {
           ],
         ),
       );
-    }
-
-    return Container(
-      margin: EdgeInsets.only(top: 8.h),
-      height: 180.h,
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12.r),
-                  bottomLeft: Radius.circular(12.r),
-                ),
-                border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Image.network(images[0], fit: BoxFit.cover, height: double.infinity),
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(12.r),
-                      ),
-                      border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.network(images[1], fit: BoxFit.cover, height: double.infinity),
+    } else {
+      child = Container(
+        margin: EdgeInsets.only(top: 8.h),
+        height: 180.h,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12.r),
+                    bottomLeft: Radius.circular(12.r),
                   ),
+                  border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
                 ),
-                SizedBox(height: 8.h),
-                Expanded(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(12.r),
-                          ),
-                          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
+                clipBehavior: Clip.antiAlias,
+                child: Image.network(images[0], fit: BoxFit.cover, height: double.infinity),
+              ),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(12.r),
                         ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Image.network(images[2], fit: BoxFit.cover, height: double.infinity),
+                        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
                       ),
-                      if (images.length > 3)
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.network(images[1], fit: BoxFit.cover, height: double.infinity),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Expanded(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.only(
                               bottomRight: Radius.circular(12.r),
                             ),
+                            border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
                           ),
-                          child: Center(
-                            child: Text(
-                              '+${images.length - 3}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w500,
+                          clipBehavior: Clip.antiAlias,
+                          child: Image.network(images[2], fit: BoxFit.cover, height: double.infinity),
+                        ),
+                        if (images.length > 3)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(12.r),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '+${images.length - 3}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ],
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ContentPage(post: post),
           ),
-        ],
-      ),
+        );
+      },
+      child: child,
     );
   }
 
@@ -280,16 +294,67 @@ class _ProfileUserViewState extends State<ProfileUserView> {
             ],
           ),
           SizedBox(height: 12.h),
-          Text(
-            post['content'] ?? '',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: cs.onSurface.withValues(alpha: 0.9),
-              height: 1.3,
-            ),
+          Builder(
+            builder: (context) {
+              final content = post['content'] ?? '';
+              final lines = content.split('\n');
+              final isLong = content.length > 200 || lines.length > 5;
+              final isExpanded = _expandedPostIds.contains(post['_id']);
+              
+              if (!isLong) {
+                return Text(
+                  content,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: cs.onSurface.withValues(alpha: 0.9),
+                    height: 1.3,
+                  ),
+                );
+              }
+              
+              final displayContent = isExpanded 
+                  ? content 
+                  : (lines.length > 5 
+                      ? lines.take(5).join('\n') + '...' 
+                      : content.substring(0, 200) + '...');
+                      
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    displayContent,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: cs.onSurface.withValues(alpha: 0.9),
+                      height: 1.3,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (isExpanded) {
+                          _expandedPostIds.remove(post['_id']);
+                        } else {
+                          _expandedPostIds.add(post['_id']);
+                        }
+                      });
+                    },
+                    child: Text(
+                      isExpanded ? 'Ẩn bớt' : 'Xem thêm',
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
           ),
           
-          _buildPostImages(post['images'] as List? ?? []),
+          _buildPostImages(post),
 
           SizedBox(height: 12.h),
           Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.5)),
@@ -895,8 +960,11 @@ class _ProfileUserViewState extends State<ProfileUserView> {
                             if (text.isNotEmpty) {
                               commentTextController.clear();
                               if (replyingToCommentId != null) {
-                                await controller.addReply(post['_id'], replyingToCommentId!, text);
+                                final targetCommentId = replyingToCommentId!;
+                                await controller.addReply(post['_id'], targetCommentId, text);
                                 setModalState(() {
+                                  expandedCommentIds.add(targetCommentId);
+                                  visibleRepliesCount[targetCommentId] = 9999;
                                   replyingToCommentId = null;
                                   replyingToUsername = null;
                                 });

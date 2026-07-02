@@ -11,6 +11,9 @@ import 'package:socialnetwork/data/network/api/group_api.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
 import 'package:socialnetwork/data/repositories/group_repository_imp.dart';
 import 'package:socialnetwork/domain/usecases/group_usecase.dart';
+import 'package:socialnetwork/data/network/api/message_api.dart';
+import 'package:socialnetwork/data/repositories/message_repository_imp.dart';
+import 'package:socialnetwork/domain/usecases/message_usecase.dart';
 import 'package:socialnetwork/app/routes/routes.dart';
 import 'package:socialnetwork/app/widgets/toast/toast.dart';
 
@@ -34,9 +37,41 @@ class ViewGroupView extends StatefulWidget {
 
 class _ViewGroupViewState extends State<ViewGroupView> {
   bool _isLeaving = false;
+  late String _groupId;
+
+  @override
+  void initState() {
+    super.initState();
+    _groupId = widget.groupId;
+    if (_groupId.isEmpty && widget.conversationId.isNotEmpty) {
+      _loadGroupId();
+    }
+  }
+
+  Future<void> _loadGroupId() async {
+    try {
+      final messageUsecase = MessageUsecase(
+        MessageRepositoryImp(MessageApi(DioClient.createDio())),
+      );
+      final conversations = await messageUsecase.getConversations();
+      final conv = conversations.firstWhere(
+        (c) => c['_id']?.toString() == widget.conversationId || c['id']?.toString() == widget.conversationId,
+        orElse: () => <String, dynamic>{},
+      );
+      if (conv.isNotEmpty && conv['meta'] != null && conv['meta']['groupId'] != null) {
+        if (mounted) {
+          setState(() {
+            _groupId = conv['meta']['groupId'].toString();
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading group ID in ViewGroupView: $e');
+    }
+  }
 
   Future<void> _leaveGroup() async {
-    if (widget.groupId.isEmpty) {
+    if (_groupId.isEmpty) {
       AppToast.show(context, 'Không tìm thấy thông tin ID nhóm. Vui lòng quay lại và thử lại.');
       return;
     }
@@ -91,7 +126,7 @@ class _ViewGroupViewState extends State<ViewGroupView> {
         ),
       );
 
-      final res = await groupUsecase.removeMember(widget.groupId, currentUserId.toString());
+      final res = await groupUsecase.removeMember(_groupId, currentUserId.toString());
       if (res['success'] == true) {
         if (mounted) {
           AppToast.show(context, 'Rời nhóm thành công!');
@@ -191,20 +226,24 @@ class _ViewGroupViewState extends State<ViewGroupView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _buildFunctionItem(
-                        Icons.people_outline_rounded,
+                        Icons.people_outline_outlined,
                         Language.of(context, 'member'),
                         onTap: () {
+                          if (_groupId.isEmpty) {
+                            AppToast.show(context, 'Đang tải thông tin nhóm, vui lòng đợi giây lát...');
+                            return;
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ListMemberView(groupId: widget.groupId),
+                              builder: (context) => ListMemberView(groupId: _groupId),
                             ),
                           );
                         },
                       ),
 
                       _buildFunctionItem(
-                        Icons.search_rounded,
+                        Icons.search_outlined,
                         Language.of(context, 'search_in_chat'),
                         onTap: () {
                           
@@ -234,14 +273,38 @@ class _ViewGroupViewState extends State<ViewGroupView> {
                   SizedBox(height: 15.h),
 
                   SettingItem(
+                    title: Language.of(context, 'member'),
+                    icon: Icons.groups_outlined,
+                    color: cs.onSurface,
+                    onTap: () {
+                      if (_groupId.isEmpty) {
+                        AppToast.show(context, 'Đang tải thông tin nhóm, vui lòng đợi giây lát...');
+                        return;
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ListMemberView(groupId: _groupId),
+                        ),
+                      );
+                    },
+                  ),
+
+                  SizedBox(height: 15.h),
+
+                  SettingItem(
                     title: Language.of(context, 'qr_group'),
                     icon: Icons.qr_code_outlined,
                     color: cs.onSurface,
                     onTap: () {
+                      if (_groupId.isEmpty) {
+                        AppToast.show(context, 'Đang tải thông tin nhóm, vui lòng đợi giây lát...');
+                        return;
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => QRCodeGroupView(groupId: widget.groupId),
+                          builder: (context) => QRCodeGroupView(groupId: _groupId),
                         ),
                       );
                     },
@@ -301,7 +364,7 @@ class _ViewGroupViewState extends State<ViewGroupView> {
     final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: SizedBox(
         width: 100.w,
         child: Column(
           children: [

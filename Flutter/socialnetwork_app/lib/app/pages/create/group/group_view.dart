@@ -21,6 +21,7 @@ class CreateGroupView extends StatefulWidget {
 
 class _CreateGroupViewState extends State<CreateGroupView> {
   late CreateGroupController controller;
+  String _selectedPrivacy = 'public';
 
   @override
   void initState() {
@@ -118,6 +119,130 @@ class _CreateGroupViewState extends State<CreateGroupView> {
                     vertical: 14.h,
                   ),
                 ),
+              ),
+            ),
+
+            SizedBox(height: 20.h),
+
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 0 : 24.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Quyền riêng tư của nhóm',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: cs.onSurfaceVariant,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ChoiceChip(
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.public_outlined,
+                              size: 14.sp,
+                              color: _selectedPrivacy == 'public' ? Colors.white : cs.onSurface,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              'Công khai',
+                              style: TextStyle(
+                                color: _selectedPrivacy == 'public' ? Colors.white : cs.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        selected: _selectedPrivacy == 'public',
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() {
+                              _selectedPrivacy = 'public';
+                            });
+                          }
+                        },
+                        selectedColor: Colors.blue,
+                        checkmarkColor: Colors.white,
+                        labelStyle: TextStyle(
+                          color: _selectedPrivacy == 'public' ? Colors.white : cs.onSurface,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                      ChoiceChip(
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.lock_outlined,
+                              size: 14.sp,
+                              color: _selectedPrivacy == 'private' ? Colors.white : cs.onSurface,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              'Riêng tư',
+                              style: TextStyle(
+                                color: _selectedPrivacy == 'private' ? Colors.white : cs.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        selected: _selectedPrivacy == 'private',
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() {
+                              _selectedPrivacy = 'private';
+                            });
+                          }
+                        },
+                        selectedColor: Colors.blue,
+                        checkmarkColor: Colors.white,
+                        labelStyle: TextStyle(
+                          color: _selectedPrivacy == 'private' ? Colors.white : cs.onSurface,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                      ChoiceChip(
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.business_outlined,
+                              size: 14.sp,
+                              color: _selectedPrivacy == 'internal' ? Colors.white : cs.onSurface,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              'Nội bộ',
+                              style: TextStyle(
+                                color: _selectedPrivacy == 'internal' ? Colors.white : cs.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        selected: _selectedPrivacy == 'internal',
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() {
+                              _selectedPrivacy = 'internal';
+                            });
+                          }
+                        },
+                        selectedColor: Colors.blue,
+                        checkmarkColor: Colors.white,
+                        labelStyle: TextStyle(
+                          color: _selectedPrivacy == 'internal' ? Colors.white : cs.onSurface,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
 

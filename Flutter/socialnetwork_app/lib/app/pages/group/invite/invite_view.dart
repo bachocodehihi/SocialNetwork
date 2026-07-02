@@ -471,10 +471,11 @@ class _InviteViewState extends State<InviteView> {
                       separatorBuilder: (context, index) => SizedBox(height: 12.h),
                       itemBuilder: (context, index) {
                         final friend = filteredFriends[index];
-                        final friendId = friend['_id'] ?? '';
+                        final friendId = (friend['_id'] ?? friend['id'] ?? '').toString();
                         final username = friend['username'] ?? 'Người dùng';
                         final avatar = friend['avatar'] ?? '';
                         final isInvited = controller.invitedFriendIds.contains(friendId);
+                        final isMember = controller.memberIds.contains(friendId);
 
                         return Container(
                           padding: EdgeInsets.all(12.w),
@@ -506,41 +507,52 @@ class _InviteViewState extends State<InviteView> {
                                   ),
                                 ),
                               ),
-                              ElevatedButton(
-                                onPressed: isInvited
-                                    ? null
-                                    : () async {
-                                        final success = await controller.inviteFriend(friendId);
-                                        if (success && mounted) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('Đã gửi lời mời tới $username!'),
-                                              backgroundColor: Colors.green,
-                                              duration: const Duration(seconds: 1),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isInvited ? Colors.grey : Colors.blue,
-                                  foregroundColor: Colors.white,
+                              if (isMember)
+                                Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                                  // shape: RoundedRectangleBorder(
-                                  //   borderRadius: BorderRadius.circular(12.r),
-                                  // ),
-                                  shape: const StadiumBorder(),
-                                ).copyWith(
-                                  overlayColor: WidgetStateProperty.all(Colors.grey[300]),
-                                ),
-                                child: Text(
-                                  isInvited ? 'Đã mời' : 'Mời',
-                                  style: TextStyle(
-                                    fontSize: 15.sp,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                                  child: Text(
+                                    Language.of(context, 'search') == 'Tìm kiếm'
+                                        ? 'Đã tham gia'
+                                        : 'Joined',
+                                    style: TextStyle(
+                                      fontSize: 13.sp,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                )
+                              else
+                                ElevatedButton(
+                                  onPressed: isInvited
+                                      ? null
+                                      : () async {
+                                          final success = await controller.inviteFriend(friendId);
+                                          if (success && context.mounted) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Đã gửi lời mời tới $username!'),
+                                                backgroundColor: Colors.green,
+                                                duration: const Duration(seconds: 1),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: isInvited ? Colors.grey : Colors.blue,
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                                    shape: const StadiumBorder(),
+                                  ).copyWith(
+                                    overlayColor: WidgetStateProperty.all(Colors.grey[300]),
+                                  ),
+                                  child: Text(
+                                    isInvited ? 'Đã mời' : 'Mới',
+                                    style: TextStyle(
+                                      fontSize: 15.sp,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                         );

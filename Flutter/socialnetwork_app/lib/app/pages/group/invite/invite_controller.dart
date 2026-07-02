@@ -14,6 +14,7 @@ class InviteController extends ChangeNotifier {
 
   List<Map<String, dynamic>> friends = [];
   Set<String> invitedFriendIds = {};
+  Set<String> memberIds = {};
   bool isLoading = false;
   String? error;
 
@@ -46,7 +47,18 @@ class InviteController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      friends = await _contactUsecase.getFriends();
+      final results = await Future.wait([
+        _contactUsecase.getFriends(),
+        _groupUsecase.getGroupById(groupId),
+      ]);
+      friends = List<Map<String, dynamic>>.from(results[0] as List);
+      
+      final groupData = results[1] as Map<String, dynamic>;
+      final rawMembers = groupData['members'] as List? ?? [];
+      memberIds = rawMembers
+          .map((m) => (m is Map ? (m['_id'] ?? m['id'] ?? '') : m).toString())
+          .where((id) => id.isNotEmpty)
+          .toSet();
     } catch (e) {
       error = e.toString();
     } finally {

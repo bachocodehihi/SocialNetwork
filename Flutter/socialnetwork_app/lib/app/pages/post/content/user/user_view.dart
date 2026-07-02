@@ -968,6 +968,7 @@ class _PostContentViewState extends State<PostContentView> {
       onTap: () => FocusScope.of(context).unfocus(),
       behavior: HitTestBehavior.opaque,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: cs.surface,
         body: SafeArea(
             child: Padding(

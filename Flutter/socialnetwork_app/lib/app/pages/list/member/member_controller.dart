@@ -14,6 +14,9 @@ class MemberController extends ChangeNotifier {
   bool isLoading = false;
   String? error;
 
+  String _searchQuery = '';
+  String get searchQuery => _searchQuery;
+
   MemberController({
     required this.groupId,
     GroupUsecase? groupUsecase,
@@ -27,7 +30,28 @@ class MemberController extends ChangeNotifier {
     fetchMembers();
   }
 
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
+
+  List<Map<String, dynamic>> get filteredMembers {
+    if (_searchQuery.isEmpty) return members;
+    final query = _searchQuery.toLowerCase();
+    return members.where((m) {
+      final username = (m['username'] ?? m['name'] ?? '').toString().toLowerCase();
+      return username.contains(query);
+    }).toList();
+  }
+
   Future<void> fetchMembers() async {
+    if (groupId.trim().isEmpty) {
+      isLoading = false;
+      error = 'Không tìm thấy ID nhóm';
+      notifyListeners();
+      return;
+    }
+
     isLoading = true;
     error = null;
     notifyListeners();
@@ -52,4 +76,5 @@ class MemberController extends ChangeNotifier {
       notifyListeners();
     }
   }
+
 }
