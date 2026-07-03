@@ -196,6 +196,124 @@ function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: st
   );
 }
 
+// Custom Link Preview Card using Google's Favicon service
+function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boolean }) {
+  let domain = '';
+  try {
+    domain = new URL(url).hostname;
+  } catch (e) {
+    return null;
+  }
+
+  const getPlatformIcon = () => {
+    try {
+      const parsedUrl = new URL(url);
+      const host = parsedUrl.hostname.toLowerCase();
+      const path = parsedUrl.pathname.toLowerCase();
+
+      if (host.includes('youtube.com') || host.includes('youtu.be')) {
+        return '/assets/link/youtube.png';
+      }
+      if (host.includes('facebook.com') || host.includes('fb.com')) {
+        return '/assets/link/facebook.png';
+      }
+      if (host.includes('tiktok.com')) {
+        return '/assets/link/tiktok.png';
+      }
+      if (host.includes('zalo.me')) {
+        return '/assets/link/zalo.png';
+      }
+      if (host.includes('instagram.com')) {
+        return '/assets/link/instagram.png';
+      }
+      if (host.includes('linkedin.com')) {
+        return '/assets/link/linkedin.png';
+      }
+      if (host.includes('drive.google.com')) {
+        return '/assets/link/googledrive.png';
+      }
+      if (host.includes('google.com') && (path.includes('/maps') || host.includes('maps.google.com'))) {
+        return '/assets/link/googlemaps.png';
+      }
+      if (host.includes('steampowered.com') || host.includes('steamcommunity.com')) {
+        return '/assets/link/steam.png';
+      }
+      
+      return `https://www.google.com/s2/favicons?domain=${host}&sz=64`;
+    } catch (e) {
+      return '/assets/link/chrome.png';
+    }
+  };
+
+  const iconUrl = getPlatformIcon();
+
+  return (
+    <a 
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`mt-2 flex items-center gap-2.5 p-2 rounded-xl text-inherit no-underline border transition-all hover:bg-grey/10 cursor-pointer block ${
+        isOwnMessage 
+          ? 'bg-white/10 border-white/10 hover:border-white/20' 
+          : 'bg-grey/5 border-grey/10 hover:border-grey/20'
+      }`}
+    >
+      <div className="flex items-center gap-2">
+        <div className="w-6 h-6 rounded-md overflow-hidden bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-grey/10">
+          <img 
+            src={iconUrl} 
+            alt={domain} 
+            className="w-4.5 h-4.5 object-contain"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/assets/link/chrome.png'; 
+            }}
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <span className="text-xs font-semibold truncate block">
+            {domain}
+          </span>
+          <span className={`text-[9px] block ${isOwnMessage ? 'text-white/70' : 'text-grey/60'} truncate`}>
+            Nhấp để truy cập trang web
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function renderTextWithLinks(content: string, isOwnMessage: boolean) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = content.split(urlRegex);
+  const urls = content.match(urlRegex) || [];
+
+  return (
+    <>
+      <p className="whitespace-pre-wrap text-justify">
+        {parts.map((part, index) => {
+          if (part.match(urlRegex)) {
+            return (
+              <a
+                key={index}
+                href={part}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`underline break-all ${isOwnMessage ? 'text-white hover:text-white/80' : 'text-blue hover:text-blue-hover'}`}
+              >
+                {part}
+              </a>
+            );
+          }
+          return part;
+        })}
+      </p>
+      {urls.map((url, index) => (
+        <LinkPreviewCard key={index} url={url} isOwnMessage={isOwnMessage} />
+      ))}
+    </>
+  );
+}
+
 // Custom Image Grid Bubble matching Flutter's image rendering
 function ImageBubble({ urls }: { urls: string[] }) {
   if (!urls || urls.length === 0) return null;
@@ -736,7 +854,7 @@ function MessageContent() {
                               ) : msg.type === 'file' && msg.attachments?.length > 0 ? (
                                 <FileBubble url={msg.attachments[0]} filename={msg.content || 'Tài liệu'} isOwnMessage={isOwnMessage} />
                               ) : (
-                                <p className="whitespace-pre-wrap text-justify">{msg.content}</p>
+                                renderTextWithLinks(msg.content, isOwnMessage)
                               )}
                             </div>
 
