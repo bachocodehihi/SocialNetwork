@@ -50,4 +50,10 @@ export const accountService = {
     const res = await api.put('/account/privacy', settings);
     return res.data;
   },
+
+  getUserById: async (id: string) => {
+    const res = await api.get(`/account/user/${id}`);
+    return res.data;
+  },
 };
+

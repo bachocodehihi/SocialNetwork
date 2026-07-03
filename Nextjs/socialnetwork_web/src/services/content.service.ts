@@ -39,4 +39,10 @@ export const contentService = {
     });
     return res.data;
   },
+
+  getUserPosts: async (userId: string) => {
+    const res = await api.get(`/content/user/${userId}`);
+    return res.data;
+  },
 };
+
