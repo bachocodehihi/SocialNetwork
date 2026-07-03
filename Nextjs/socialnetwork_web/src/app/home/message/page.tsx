@@ -1,6 +1,7 @@
 'use client';
 import Navbar from '@/components/Navbar';
 import { messageService } from '@/services/message.service';
+import { accountService } from '@/services/accout.service';
 import { useAlert } from '@/components/Alert/alertcontext';
 import { NETWORK } from '@/config/config';
 import { useEffect, useState, useRef, Suspense } from 'react';
@@ -14,7 +15,7 @@ function MessageContent() {
   const directUserId = searchParams.get('userId');
   const { showSuccess, showError } = useAlert();
 
-  // Socket state
+  // Socket state ref
   const socketRef = useRef<Socket | null>(null);
 
   // States
@@ -29,6 +30,12 @@ function MessageContent() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Ref to always have the latest selectedConv in the socket listener without reconnecting
+  const selectedConvRef = useRef(selectedConv);
+  useEffect(() => {
+    selectedConvRef.current = selectedConv;
+  }, [selectedConv]);
+
   // Scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -38,21 +45,20 @@ function MessageContent() {
     scrollToBottom();
   }, [messages]);
 
-  // Load User profile
+  // Load User profile from server (to get correct _id or id)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('user');
-      if (stored) {
-        try {
-          setCurrentUser(JSON.parse(stored));
-        } catch (e) {
-          console.error(e);
-        }
+    const fetchUserProfile = async () => {
+      try {
+        const profile = await accountService.getProfile();
+        setCurrentUser(profile);
+      } catch (err) {
+        console.error('Failed to load user profile in message page:', err);
       }
-    }
+    };
+    fetchUserProfile();
   }, []);
 
-  // Fetch conversations
+  // Fetch conversations list
   const fetchConversations = async (selectUserId?: string) => {
     setLoadingConv(true);
     try {
@@ -95,7 +101,7 @@ function MessageContent() {
     fetchConversations(directUserId || undefined);
   }, [directUserId]);
 
-  // Connect Socket.io
+  // Connect Socket.io ONCE on mount
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (!token) return;
@@ -110,6 +116,10 @@ function MessageContent() {
 
     socket.on('connect', () => {
       console.log('⚡ Connected to socket server');
+      // Re-join active room if connection lost and recovered
+      if (selectedConvRef.current) {
+        socket.emit('join_room', selectedConvRef.current._id);
+      }
     });
 
     // Listen for new messages
@@ -117,13 +127,13 @@ function MessageContent() {
       setMessages(prev => {
         // Prevent duplicate messages
         if (prev.some(m => m._id === message._id)) return prev;
-        if (message.conversationId === selectedConv?._id) {
+        if (message.conversationId === selectedConvRef.current?._id) {
           return [...prev, message];
         }
         return prev;
       });
 
-      // Update last message in conversation list
+      // Update last message in conversations list
       setConversations(prev => {
         return prev.map(c => {
           if (c._id === message.conversationId) {
@@ -138,8 +148,8 @@ function MessageContent() {
       });
     });
 
+    // Listen for general conversation updates
     socket.on('conversation_updated', (data: any) => {
-      // Refresh conversation list dynamically
       setConversations(prev => {
         const index = prev.findIndex(c => c._id === data.conversationId);
         if (index !== -1) {
@@ -158,9 +168,9 @@ function MessageContent() {
     return () => {
       socket.disconnect();
     };
-  }, [selectedConv]);
+  }, []);
 
-  // Join selected conversation room and fetch message history
+  // Join selected conversation room and fetch message history when selectedConv changes
   useEffect(() => {
     if (!selectedConv) return;
 
@@ -181,13 +191,13 @@ function MessageContent() {
 
     loadMessages();
 
-    // Join socket room
+    // Join room on current socket instance
     if (socketRef.current) {
       socketRef.current.emit('join_room', selectedConv._id);
     }
   }, [selectedConv]);
 
-  // Handle Send Message
+  // Handle Send Message (Matches Flutter socket-only implementation)
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!messageInput.trim() || !selectedConv) return;
@@ -195,40 +205,15 @@ function MessageContent() {
     const content = messageInput.trim();
     setMessageInput('');
 
-    try {
-      const res = await messageService.sendMessage(selectedConv._id, content);
-      
-      // If socket isn't working, append message manually
-      setMessages(prev => {
-        if (prev.some(m => m._id === res._id)) return prev;
-        return [...prev, res];
+    if (socketRef.current) {
+      // Emit the socket event - the backend will write this to DB and broadcast via 'receive_message'
+      socketRef.current.emit('send_message', {
+        conversationId: selectedConv._id,
+        content,
+        type: 'text'
       });
-
-      // Update last message locally
-      setConversations(prev => {
-        return prev.map(c => {
-          if (c._id === selectedConv._id) {
-            return {
-              ...c,
-              lastMessage: res,
-              updatedAt: res.createdAt
-            };
-          }
-          return c;
-        }).sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime());
-      });
-
-      // Emit through socket for real-time delivery
-      if (socketRef.current) {
-        socketRef.current.emit('send_message', {
-          conversationId: selectedConv._id,
-          content,
-          type: 'text'
-        });
-      }
-    } catch (err) {
-      console.error('Failed to send message:', err);
-      showError('Gửi tin nhắn thất bại.');
+    } else {
+      showError('Mất kết nối máy chủ chat.');
     }
   };
 
@@ -404,7 +389,10 @@ function MessageContent() {
                   </div>
                 ) : (
                   messages.map((msg) => {
-                    const isOwnMessage = msg.sender?._id === currentUser?.id || msg.sender?._id === currentUser?._id || msg.sender === currentUser?.id || msg.sender === currentUser?._id;
+                    const currentUserId = currentUser?._id || currentUser?.id;
+                    const senderId = typeof msg.sender === 'object' ? (msg.sender?._id || msg.sender?.id) : msg.sender;
+                    const isOwnMessage = senderId && currentUserId && (senderId === currentUserId);
+
                     const senderName = msg.sender?.username || 'Bạn bè';
                     const senderAvatar = msg.sender?.avatar;
 
