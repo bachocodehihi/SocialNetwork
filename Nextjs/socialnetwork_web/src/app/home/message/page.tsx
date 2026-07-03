@@ -430,7 +430,7 @@ function MessageContent() {
                                 : 'bg-[#D6D6D6] text-black rounded-bl-none shadow-sm'
                             }`}
                           >
-                            <p>{msg.content}</p>
+                            <p className="whitespace-pre-wrap text-justify">{msg.content}</p>
                           </div>
 
                           {/* Timestamp outside bubble */}
