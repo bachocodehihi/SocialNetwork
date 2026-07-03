@@ -1,20 +1,80 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAlert } from '../../../components/Alert/alertcontext';
+import { ArrowLeft, Moon, Sun } from 'lucide-react';
+
 export default function DarkmodePage() {
+  const router = useRouter();
+  const { showSuccess } = useAlert();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark';
+    setIsDarkMode(isDark);
+  }, []);
+
+  const toggleDarkMode = (checked: boolean) => {
+    setIsDarkMode(checked);
+    if (checked) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      showSuccess('Đã chuyển sang Chế độ tối!');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      showSuccess('Đã chuyển sang Chế độ sáng!');
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-grey/5 p-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 border border-grey/10 text-center">
-        <h1 className="text-3xl font-extrabold text-grey-hover capitalize mb-4">
-          setting &gt; darkmode
-        </h1>
-        <p className="text-grey-hover mb-6">
-          This page is currently under construction. Please check back later!
-        </p>
-        <a 
-          href="/home" 
-          className="inline-block bg-blue hover:bg-blue-hover text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
-        >
-          Go Back Home
-        </a>
-      </div>
+    <div className="min-h-screen bg-grey/5 pb-16 font-sans text-grey-hover">
+      {/* Header */}
+      <header className="sticky top-0 bg-white border-b border-grey/20 z-40 shadow-sm">
+        <div className="max-w-2xl mx-auto px-4 h-16 flex items-center gap-3.5">
+          <button 
+            onClick={() => router.push('/setting')}
+            className="w-10 h-10 rounded-full hover:bg-grey/10 active:scale-95 flex items-center justify-center text-grey-hover transition border-0 bg-transparent cursor-pointer"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight">Chế độ tối</h1>
+        </div>
+      </header>
+
+      {/* Body */}
+      <main className="max-w-2xl mx-auto px-4 mt-6">
+        <div className="bg-white rounded-2xl p-5 border border-grey/20 shadow-sm flex items-center justify-between">
+          <div className="flex items-start gap-4 min-w-0 pr-4">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-purple-50 text-purple-500`}>
+              <Moon className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm sm:text-base text-black">Chế độ tối</h3>
+              <p className="text-xs sm:text-sm text-grey font-medium mt-1 text-justify leading-relaxed">
+                Giảm mỏi mắt, tiết kiệm pin cho thiết bị của bạn và cải thiện khả năng hiển thị trong môi trường ánh sáng yếu.
+              </p>
+            </div>
+          </div>
+
+          {/* Premium Switch Switcher */}
+          <button 
+            onClick={() => toggleDarkMode(!isDarkMode)}
+            className={`w-14 h-8 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 focus:outline-none border-0 ${isDarkMode ? 'bg-blue' : 'bg-grey/30'}`}
+          >
+            <div 
+              className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 flex items-center justify-center ${isDarkMode ? 'translate-x-6' : 'translate-x-0'}`}
+            >
+              {isDarkMode ? (
+                <Moon className="w-3.5 h-3.5 text-blue" />
+              ) : (
+                <Sun className="w-3.5 h-3.5 text-yellow-500" />
+              )}
+            </div>
+          </button>
+
+        </div>
+      </main>
     </div>
   );
 }
