@@ -40,8 +40,12 @@ function MessageContent() {
   // Auto-adjust height of composer textarea
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = '40px';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+      if (messageInput) {
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+      } else {
+        textareaRef.current.style.height = '40px';
+      }
     }
   }, [messageInput]);
 
@@ -475,7 +479,7 @@ function MessageContent() {
                   }}
                   placeholder="Nhập tin nhắn..." 
                   rows={1}
-                  className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle"
+                  className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle text-justify"
                 />
 
                 <button 
