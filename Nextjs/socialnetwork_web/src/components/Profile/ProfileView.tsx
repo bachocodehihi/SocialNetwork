@@ -537,32 +537,24 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
 
   return (
     <div className="min-h-screen bg-grey/5 pb-12">
-      {/* Cover Image + Header Container */}
-      <div className="relative bg-white border-b border-grey/10 shadow-sm">
-        {/* Sleek Premium Modern mesh gradient as cover photo */}
-        <div className="h-48 sm:h-64 md:h-80 w-full bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-500 relative flex items-start p-4 justify-between overflow-hidden">
-          {/* Glassmorphism Back button if viewing another user */}
+      {/* Header Container without cover photo */}
+      <div className="bg-white border-b border-grey/10 shadow-sm pt-6 pb-6">
+        <div className="max-w-5xl mx-auto px-4">
+          {/* Back button if viewing another user */}
           {!isSelf && (
             <button
               onClick={() => router.back()}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 text-white transition border-0 cursor-pointer shadow-sm"
+              className="flex items-center gap-1.5 text-grey hover:text-grey-hover transition border-0 bg-transparent cursor-pointer font-bold text-sm mb-4"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4" />
+              <span>Quay lại</span>
             </button>
           )}
-          
-          <div className="absolute bottom-4 right-4 bg-black/45 backdrop-blur-md px-3 py-1 rounded-lg text-white/90 text-xs font-semibold select-none flex items-center gap-1.5 border border-white/10">
-            <Sparkles className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
-            <span>Chủ đề Không Gian</span>
-          </div>
-        </div>
 
-        {/* Profile Meta Section */}
-        <div className="max-w-5xl mx-auto px-4 pb-6 pt-2">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between -mt-16 sm:-mt-24 mb-4 gap-4 relative z-10">
-            {/* Avatar & Username */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full overflow-hidden border-4 border-white bg-white shadow-md flex-shrink-0 flex items-center justify-center relative group">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            {/* Avatar & Username details */}
+            <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-grey/25 bg-grey/5 flex-shrink-0 flex items-center justify-center relative shadow-sm">
                 {profileUser?.avatar ? (
                   <img
                     src={profileUser.avatar}
@@ -570,12 +562,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <User className="w-16 h-16 text-grey" />
+                  <User className="w-12 h-12 text-grey" />
                 )}
               </div>
 
-              <div className="sm:mb-3">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 flex items-center gap-2">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 flex items-center gap-2 justify-center sm:justify-start">
                   {profileUser?.username || 'Hồ sơ người dùng'}
                 </h1>
                 <p className="text-sm text-grey font-medium mt-1">
@@ -585,7 +577,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
             </div>
 
             {/* Profile Action Buttons */}
-            <div className="flex items-center justify-center gap-2.5 sm:mb-3">
+            <div className="flex items-center justify-center gap-2.5">
               {isSelf ? (
                 <button
                   onClick={() => router.push('/setting/account/change')}
@@ -692,7 +684,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
           </div>
 
           {/* Bio info */}
-          <div className="border-t border-grey/10 pt-4 mt-2">
+          <div className="border-t border-grey/10 pt-4 mt-6">
             <p className="text-sm text-gray-600 max-w-2xl text-center sm:text-left leading-relaxed">
               {profileUser?.bio || 'Xin chào! Chào mừng đến với trang cá nhân của tôi. Hãy kết nối và chia sẻ những khoảnh khắc tuyệt vời cùng tôi nhé! ✨'}
             </p>
