@@ -414,7 +414,7 @@ function MessageContent() {
                           </div>
                         )}
 
-                        <div className="flex flex-col">
+                        <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
                           {/* Group sender name */}
                           {!isOwnMessage && selectedConv.isGroup && (
                             <span className="text-[10px] text-grey/60 font-semibold mb-1 ml-1">
@@ -424,21 +424,19 @@ function MessageContent() {
 
                           {/* Bubble box */}
                           <div 
-                            className={`p-3 rounded-2xl text-[14px] leading-relaxed break-words max-w-sm ${
+                            className={`p-3 rounded-2xl text-[14px] leading-relaxed break-words max-w-xs md:max-w-md ${
                               isOwnMessage 
                                 ? 'bg-blue text-white rounded-br-none' 
-                                : 'bg-white text-grey-hover border border-grey/10 rounded-bl-none shadow-sm'
+                                : 'bg-[#D6D6D6] text-black rounded-bl-none shadow-sm'
                             }`}
                           >
                             <p>{msg.content}</p>
-                            <span 
-                              className={`block text-[9px] mt-1 text-right font-medium ${
-                                isOwnMessage ? 'text-white/70' : 'text-grey/50'
-                              }`}
-                            >
-                              {formatTime(msg.createdAt)}
-                            </span>
                           </div>
+
+                          {/* Timestamp outside bubble */}
+                          <span className="block text-[10px] mt-1 text-grey/50 font-semibold px-1">
+                            {formatTime(msg.createdAt)}
+                          </span>
                         </div>
                       </div>
                     );
