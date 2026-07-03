@@ -29,12 +29,21 @@ function MessageContent() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Ref to always have the latest selectedConv in the socket listener without reconnecting
   const selectedConvRef = useRef(selectedConv);
   useEffect(() => {
     selectedConvRef.current = selectedConv;
   }, [selectedConv]);
+
+  // Auto-adjust height of composer textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '40px';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+    }
+  }, [messageInput]);
 
   // Scroll to bottom
   const scrollToBottom = () => {
@@ -204,6 +213,9 @@ function MessageContent() {
 
     const content = messageInput.trim();
     setMessageInput('');
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '40px';
+    }
 
     if (socketRef.current) {
       // Emit the socket event - the backend will write this to DB and broadcast via 'receive_message'
@@ -451,12 +463,19 @@ function MessageContent() {
                   <Smile className="w-5 h-5" />
                 </button>
 
-                <input 
-                  type="text" 
+                <textarea 
+                  ref={textareaRef}
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage(e);
+                    }
+                  }}
                   placeholder="Nhập tin nhắn..." 
-                  className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-full py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all"
+                  rows={1}
+                  className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle"
                 />
 
                 <button 
