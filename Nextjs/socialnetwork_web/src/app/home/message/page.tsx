@@ -141,12 +141,31 @@ function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: st
 
   const fileMeta = getFileAssetAndMeta();
 
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      // Fallback: Use Supabase/Cloudinary query param or direct link
+      const downloadUrl = url.includes('?') 
+        ? `${url}&download=${encodeURIComponent(filename)}` 
+        : `${url}?download=${encodeURIComponent(filename)}`;
+      window.open(downloadUrl, '_blank');
+    }
+  };
+
   return (
-    <a 
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      download
+    <div 
+      onClick={handleDownload}
       className="flex items-center gap-3 py-1 text-inherit no-underline cursor-pointer group"
     >
       <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-white p-1.5 shadow-sm`}>
@@ -173,7 +192,7 @@ function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: st
       }`}>
         <Download className="w-4 h-4" />
       </div>
-    </a>
+    </div>
   );
 }
 
