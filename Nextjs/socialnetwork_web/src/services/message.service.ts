@@ -16,6 +16,33 @@ export const messageService = {
     return res.data;
   },
 
+  uploadImage: async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await api.post('/message/upload-image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return res.data;
+  },
+
+  uploadAudio: async (file: File) => {
+    const formData = new FormData();
+    formData.append('audio', file);
+    const res = await api.post('/message/upload-audio', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return res.data;
+  },
+
+  uploadFile: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await api.post('/message/upload-file', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return res.data;
+  },
+
   createConversation: async (receiverId: string) => {
     const res = await api.post('/message', { receiverId });
     return res.data;

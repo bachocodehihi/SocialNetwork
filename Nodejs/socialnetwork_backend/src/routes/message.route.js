@@ -9,6 +9,7 @@ const {
     markAsRead,
     uploadMessageImage,
     uploadMessageAudio,
+    uploadMessageFile,
     pinMessage,
     unpinMessage,
     editMessage
@@ -28,6 +29,7 @@ router.put('/message/:messageId', verifyToken, editMessage);
 router.post('/:conversationId/read', verifyToken, markAsRead);
 router.post('/upload-image', verifyToken, upload.single('image'), uploadMessageImage);
 router.post('/upload-audio', verifyToken, memoryUpload.single('audio'), uploadMessageAudio);
+router.post('/upload-file', verifyToken, memoryUpload.single('file'), uploadMessageFile);
 
 router.post('/:conversationId/pin/:messageId', verifyToken, pinMessage);
 router.post('/:conversationId/unpin', verifyToken, unpinMessage);

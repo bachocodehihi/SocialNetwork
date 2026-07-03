@@ -458,6 +458,43 @@ const uploadMessageAudio = async (req, res) => {
     }
 };
 
+const uploadMessageFile = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, code: 'FILE_REQUIRED' });
+        }
+        
+        const fs = require('fs');
+        const path = require('path');
+        const { cloudinary } = require('../config/cloudinary');
+
+        const tempDir = path.join(__dirname, '../../temp');
+        if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+        }
+        
+        const ext = path.extname(req.file.originalname) || '';
+        const tempFilePath = path.join(tempDir, `${Date.now()}_temp_file${ext}`);
+        fs.writeFileSync(tempFilePath, req.file.buffer);
+
+        const result = await cloudinary.uploader.upload(tempFilePath, {
+            folder: 'socialnetwork_files',
+            resource_type: 'raw'
+        });
+
+        try {
+            fs.unlinkSync(tempFilePath);
+        } catch (unlinkErr) {
+            console.error('Error deleting temp file:', unlinkErr);
+        }
+
+        res.status(200).json({ success: true, url: result.secure_url });
+    } catch (error) {
+        console.error('Upload message file error:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 const pinMessage = async (req, res) => {
     try {
         const { conversationId, messageId } = req.params;
@@ -594,6 +631,7 @@ module.exports = {
     markAsRead,
     uploadMessageImage,
     uploadMessageAudio,
+    uploadMessageFile,
     pinMessage,
     unpinMessage,
     editMessage

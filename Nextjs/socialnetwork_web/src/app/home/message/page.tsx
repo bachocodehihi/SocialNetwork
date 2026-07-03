@@ -6,8 +6,195 @@ import { useAlert } from '@/components/Alert/alertcontext';
 import { NETWORK } from '@/config/config';
 import { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { MessageSquare, Search, Send, User, Phone, Video, Info, Loader2, Smile } from 'lucide-react';
+import { MessageSquare, Search, Send, User, Phone, Video, Info, Loader2, Smile, FileText, Download, Play, Pause, Paperclip, Image as ImageIcon } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
+
+// Custom Audio Player Bubble matching Flutter's layout
+function AudioPlayerBubble({ url, isOwnMessage }: { url: string; isOwnMessage: boolean }) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch(err => console.error("Play failed:", err));
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const handleEnded = () => {
+    setIsPlaying(false);
+    setCurrentTime(0);
+  };
+
+  const formatDuration = (secs: number) => {
+    if (isNaN(secs)) return '00:00';
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = Math.floor(secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  return (
+    <div className="flex items-center gap-3 py-1">
+      <audio 
+        ref={audioRef} 
+        src={url} 
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={handleEnded}
+      />
+      <button 
+        type="button"
+        onClick={togglePlay}
+        className={`w-9 h-9 rounded-full flex items-center justify-center cursor-pointer border-0 transition-all flex-shrink-0 ${
+          isOwnMessage 
+            ? 'bg-white/20 text-white hover:bg-white/30' 
+            : 'bg-blue text-white hover:bg-blue/90'
+        }`}
+      >
+        {isPlaying ? (
+          <Pause className="w-4 h-4 fill-current" />
+        ) : (
+          <Play className="w-4 h-4 fill-current ml-0.5" />
+        )}
+      </button>
+
+      <div className="flex flex-col gap-1 min-w-[120px]">
+        {/* Progress bar */}
+        <div className={`h-1 rounded-full relative w-full ${isOwnMessage ? 'bg-white/30' : 'bg-black/10'}`}>
+          <div 
+            className={`h-full rounded-full ${isOwnMessage ? 'bg-white' : 'bg-blue'}`}
+            style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+          />
+        </div>
+        {/* Time info */}
+        <span className={`text-[10px] font-semibold ${isOwnMessage ? 'text-white/80' : 'text-grey/70'}`}>
+          {formatDuration(currentTime)} / {formatDuration(duration || 0)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// Custom File Bubble matching Flutter's layout and icon mappings
+function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: string; isOwnMessage: boolean }) {
+  const ext = filename.split('.').pop()?.toLowerCase() || '';
+
+  const getFileAssetAndMeta = () => {
+    switch (ext) {
+      case 'doc':
+      case 'docx':
+        return { path: '/assets/file/word.png', bg: 'bg-blue/10 text-blue', label: 'Word Document' };
+      case 'xls':
+      case 'xlsx':
+        return { path: '/assets/file/excel.png', bg: 'bg-green-600/10 text-green-600', label: 'Excel Spreadsheet' };
+      case 'ppt':
+      case 'pptx':
+        return { path: '/assets/file/powerpoint.png', bg: 'bg-orange-600/10 text-orange-600', label: 'PowerPoint' };
+      case 'py':
+        return { path: '/assets/file/python.png', bg: 'bg-yellow-600/10 text-yellow-600', label: 'Python Script' };
+      case 'mdb':
+      case 'accdb':
+        return { path: '/assets/file/access.png', bg: 'bg-red-600/10 text-red-600', label: 'Access Database' };
+      case 'zip':
+      case 'rar':
+      case '7z':
+      case 'tar':
+      case 'gz':
+        return { path: '/assets/file/zip.png', bg: 'bg-amber-600/10 text-amber-600', label: 'Archive' };
+      case 'mp4':
+      case 'avi':
+      case 'mkv':
+      case 'mov':
+      case 'flv':
+      case 'wmv':
+      case 'mpeg':
+      case 'mpg':
+      case 'mp3':
+      case 'wav':
+      case 'wma':
+      case 'm4a':
+      case 'flac':
+      case 'ogg':
+        return { path: '/assets/file/windowsmediaplayer.png', bg: 'bg-purple-600/10 text-purple-600', label: 'Media File' };
+      default:
+        return { path: '/assets/file/document.png', bg: 'bg-grey/15 text-grey-hover', label: 'Document' };
+    }
+  };
+
+  const fileMeta = getFileAssetAndMeta();
+
+  return (
+    <a 
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      download
+      className="flex items-center gap-3 py-1 text-inherit no-underline cursor-pointer group"
+    >
+      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-white p-1.5 shadow-sm`}>
+        <img 
+          src={fileMeta.path} 
+          alt={fileMeta.label} 
+          className="w-full h-full object-contain" 
+        />
+      </div>
+
+      <div className="flex-1 min-w-0 max-w-[200px]">
+        <p className={`text-sm font-semibold truncate ${isOwnMessage ? 'text-white' : 'text-black'}`}>
+          {filename}
+        </p>
+        <span className={`text-[10px] block ${isOwnMessage ? 'text-white/75' : 'text-grey/60'}`}>
+          {ext.toUpperCase()} • {fileMeta.label}
+        </span>
+      </div>
+
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition ${
+        isOwnMessage 
+          ? 'bg-white/10 hover:bg-white/20 text-white' 
+          : 'bg-grey/10 hover:bg-grey/25 text-grey-hover'
+      }`}>
+        <Download className="w-4 h-4" />
+      </div>
+    </a>
+  );
+}
+
+// Custom Image Grid Bubble matching Flutter's image rendering
+function ImageBubble({ urls }: { urls: string[] }) {
+  if (!urls || urls.length === 0) return null;
+
+  return (
+    <div className="grid gap-2 max-w-sm rounded-lg overflow-hidden">
+      {urls.map((url, idx) => (
+        <img 
+          key={idx} 
+          src={url} 
+          alt={`Attachment ${idx + 1}`} 
+          className="max-h-60 w-full object-cover rounded-lg cursor-pointer hover:opacity-95 transition"
+          onClick={() => window.open(url, '_blank')}
+        />
+      ))}
+    </div>
+  );
+}
 
 function MessageContent() {
   const router = useRouter();
@@ -37,6 +224,76 @@ function MessageContent() {
     selectedConvRef.current = selectedConv;
   }, [selectedConv]);
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedConv) return;
+    
+    try {
+      setIsUploading(true);
+      const res = await messageService.uploadImage(file);
+      if (res.success && res.url) {
+        if (socketRef.current) {
+          socketRef.current.emit('send_message', {
+            conversationId: selectedConv._id,
+            content: file.name,
+            type: 'image',
+            attachments: [res.url]
+          });
+        }
+      } else {
+        showError('Không thể tải ảnh lên.');
+      }
+    } catch (err) {
+      console.error(err);
+      showError('Gửi ảnh thất bại.');
+    } finally {
+      setIsUploading(false);
+      if (imageInputRef.current) imageInputRef.current.value = '';
+    }
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedConv) return;
+
+    try {
+      setIsUploading(true);
+      const isAudio = file.type.startsWith('audio/') || ['.mp3', '.wav', '.m4a', '.wma', '.flac', '.ogg'].some(ext => file.name.toLowerCase().endsWith(ext));
+      
+      let res;
+      let msgType = 'file';
+      if (isAudio) {
+        res = await messageService.uploadAudio(file);
+        msgType = 'audio';
+      } else {
+        res = await messageService.uploadFile(file);
+      }
+
+      if (res.success && res.url) {
+        if (socketRef.current) {
+          socketRef.current.emit('send_message', {
+            conversationId: selectedConv._id,
+            content: file.name,
+            type: msgType,
+            attachments: [res.url]
+          });
+        }
+      } else {
+        showError('Không thể tải tệp lên.');
+      }
+    } catch (err) {
+      console.error(err);
+      showError('Gửi tệp thất bại.');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   // Auto-adjust height of composer textarea
   useEffect(() => {
     if (textareaRef.current) {
@@ -56,7 +313,7 @@ function MessageContent() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isUploading]);
 
   // Load User profile from server (to get correct _id or id)
   useEffect(() => {
@@ -404,68 +661,130 @@ function MessageContent() {
                     <p className="text-xs text-grey/50 mt-1">Hãy bắt đầu gửi tin nhắn đầu tiên cho họ!</p>
                   </div>
                 ) : (
-                  messages.map((msg) => {
-                    const currentUserId = currentUser?._id || currentUser?.id;
-                    const senderId = typeof msg.sender === 'object' ? (msg.sender?._id || msg.sender?.id) : msg.sender;
-                    const isOwnMessage = senderId && currentUserId && (senderId === currentUserId);
+                  <>
+                    {messages.map((msg) => {
+                      const currentUserId = currentUser?._id || currentUser?.id;
+                      const senderId = typeof msg.sender === 'object' ? (msg.sender?._id || msg.sender?.id) : msg.sender;
+                      const isOwnMessage = senderId && currentUserId && (senderId === currentUserId);
 
-                    const senderName = msg.sender?.username || 'Bạn bè';
-                    const senderAvatar = msg.sender?.avatar;
+                      const senderName = msg.sender?.username || 'Bạn bè';
+                      const senderAvatar = msg.sender?.avatar;
 
-                    return (
-                      <div 
-                        key={msg._id} 
-                        className={`flex gap-3 max-w-[85%] ${
-                          isOwnMessage ? 'ml-auto flex-row-reverse' : ''
-                        }`}
-                      >
-                        {/* Avatar */}
-                        {!isOwnMessage && selectedConv.isGroup && (
-                          <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/25 bg-grey/10 flex items-center justify-center flex-shrink-0">
-                            {senderAvatar ? (
-                              <img src={senderAvatar} alt={senderName} className="w-full h-full object-cover" />
-                            ) : (
-                              <User className="w-4 h-4 text-grey/60" />
-                            )}
-                          </div>
-                        )}
-
-                        <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
-                          {/* Group sender name */}
+                      return (
+                        <div 
+                          key={msg._id} 
+                          className={`flex gap-3 max-w-[85%] ${
+                            isOwnMessage ? 'ml-auto flex-row-reverse' : ''
+                          }`}
+                        >
+                          {/* Avatar */}
                           {!isOwnMessage && selectedConv.isGroup && (
-                            <span className="text-[10px] text-grey/60 font-semibold mb-1 ml-1">
-                              {senderName}
-                            </span>
+                            <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/25 bg-grey/10 flex items-center justify-center flex-shrink-0">
+                              {senderAvatar ? (
+                                <img src={senderAvatar} alt={senderName} className="w-full h-full object-cover" />
+                              ) : (
+                                <User className="w-4 h-4 text-grey/60" />
+                              )}
+                            </div>
                           )}
 
-                          {/* Bubble box */}
-                          <div 
-                            className={`p-3 rounded-2xl text-[14px] leading-relaxed break-words max-w-xs md:max-w-md ${
-                              isOwnMessage 
-                                ? 'bg-blue text-white rounded-br-none' 
-                                : 'bg-[#D6D6D6] text-black rounded-bl-none shadow-sm'
-                            }`}
-                          >
-                            <p className="whitespace-pre-wrap text-justify">{msg.content}</p>
-                          </div>
+                          <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
+                            {/* Group sender name */}
+                            {!isOwnMessage && selectedConv.isGroup && (
+                              <span className="text-[10px] text-grey/60 font-semibold mb-1 ml-1">
+                                {senderName}
+                              </span>
+                            )}
 
-                          {/* Timestamp outside bubble */}
-                          <span className="block text-[10px] mt-1 text-grey/50 font-semibold px-1">
-                            {formatTime(msg.createdAt)}
-                          </span>
+                            {/* Bubble box */}
+                            <div 
+                              className={`rounded-2xl text-[14px] leading-relaxed break-words max-w-xs md:max-w-md shadow-sm ${
+                                msg.type === 'image' && msg.attachments?.length > 0
+                                  ? 'bg-transparent text-black' 
+                                  : msg.type === 'audio'
+                                    ? 'p-2'
+                                    : 'p-3'
+                              } ${
+                                isOwnMessage 
+                                  ? msg.type === 'image' && msg.attachments?.length > 0 ? '' : 'bg-blue text-white rounded-br-none' 
+                                  : msg.type === 'image' && msg.attachments?.length > 0 ? '' : 'bg-[#D6D6D6] text-black rounded-bl-none'
+                              }`}
+                            >
+                              {msg.type === 'image' && msg.attachments?.length > 0 ? (
+                                <ImageBubble urls={msg.attachments} />
+                              ) : msg.type === 'audio' && msg.attachments?.length > 0 ? (
+                                <AudioPlayerBubble url={msg.attachments[0]} isOwnMessage={isOwnMessage} />
+                              ) : msg.type === 'file' && msg.attachments?.length > 0 ? (
+                                <FileBubble url={msg.attachments[0]} filename={msg.content || 'Tài liệu'} isOwnMessage={isOwnMessage} />
+                              ) : (
+                                <p className="whitespace-pre-wrap text-justify">{msg.content}</p>
+                              )}
+                            </div>
+
+                            {/* Timestamp outside bubble */}
+                            <span className="block text-[10px] mt-1 text-grey/50 font-semibold px-1">
+                              {formatTime(msg.createdAt)}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {isUploading && (
+                      <div className="flex gap-3 max-w-[85%] ml-auto flex-row-reverse items-center">
+                        <div className="bg-blue/10 text-blue/70 p-3 rounded-2xl rounded-br-none flex items-center gap-2">
+                          <Loader2 className="w-4 h-4 animate-spin text-blue" />
+                          <span>Đang gửi tệp...</span>
                         </div>
                       </div>
-                    );
-                  })
+                    )}
+                  </>
                 )}
                 <div ref={messagesEndRef} />
               </div>
 
               {/* Message Input Composer */}
-              <form onSubmit={handleSendMessage} className="p-4 border-t border-grey/20 bg-white flex items-center gap-3">
-                <button type="button" className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer flex-shrink-0">
-                  <Smile className="w-5 h-5" />
-                </button>
+              <form onSubmit={handleSendMessage} className="p-4 border-t border-grey/20 bg-white flex items-center gap-3 relative">
+                {/* Hidden File Inputs */}
+                <input 
+                  type="file" 
+                  ref={imageInputRef} 
+                  onChange={handleImageSelect} 
+                  accept="image/*" 
+                  className="hidden" 
+                />
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileSelect} 
+                  accept="*/*" 
+                  className="hidden" 
+                />
+
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button 
+                    type="button" 
+                    onClick={() => imageInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
+                    title="Gửi hình ảnh"
+                  >
+                    <ImageIcon className="w-5 h-5" />
+                  </button>
+
+                  <button 
+                    type="button" 
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
+                    title="Gửi tài liệu hoặc âm thanh"
+                  >
+                    <Paperclip className="w-5 h-5" />
+                  </button>
+
+                  <button type="button" className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
+                    <Smile className="w-5 h-5" />
+                  </button>
+                </div>
 
                 <textarea 
                   ref={textareaRef}
@@ -477,21 +796,26 @@ function MessageContent() {
                       handleSendMessage(e);
                     }
                   }}
-                  placeholder="Nhập tin nhắn..." 
+                  disabled={isUploading}
+                  placeholder={isUploading ? "Đang tải tệp lên..." : "Nhập tin nhắn..."} 
                   rows={1}
-                  className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle text-justify"
+                  className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle text-justify disabled:opacity-50"
                 />
 
                 <button 
                   type="submit"
-                  disabled={!messageInput.trim()}
+                  disabled={!messageInput.trim() || isUploading}
                   className={`w-10 h-10 rounded-full flex items-center justify-center transition border-none flex-shrink-0 cursor-pointer ${
-                    messageInput.trim() 
+                    messageInput.trim() && !isUploading
                       ? 'bg-blue text-white hover:bg-blue-hover active:scale-95 shadow-sm' 
                       : 'bg-grey/20 text-grey/40 cursor-not-allowed'
                   }`}
                 >
-                  <Send className="w-4.5 h-4.5" />
+                  {isUploading ? (
+                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
+                  ) : (
+                    <Send className="w-4.5 h-4.5" />
+                  )}
                 </button>
               </form>
             </>
