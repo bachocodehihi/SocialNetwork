@@ -1130,7 +1130,7 @@ export default function HomePage() {
                                         >
                                           {cAuthorName}
                                         </h5>
-                                        <p className="text-sm text-gray-800 whitespace-pre-wrap break-all leading-normal">
+                                        <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
                                           {comment.content}
                                         </p>
                                       </div>
@@ -1208,7 +1208,7 @@ export default function HomePage() {
                                                     >
                                                       {rAuthorName}
                                                     </h5>
-                                                    <p className="text-sm text-gray-800 whitespace-pre-wrap break-all leading-normal">
+                                                    <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
                                                       {reply.content}
                                                     </p>
                                                   </div>
