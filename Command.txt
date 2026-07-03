@@ -22,7 +22,7 @@ node src/server.js
 git status
 git add .
 git commit -m ""
-git commit -a -m "3"
+git commit -a -m ""
 git push origin repair-website:repair-app --force
 git push origin repair-website:repair-backend --force
 git push origin repair-website
