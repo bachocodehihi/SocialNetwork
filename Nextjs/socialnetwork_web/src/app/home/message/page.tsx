@@ -197,13 +197,47 @@ function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: st
 }
 
 // Custom Link Preview Card using Google's Favicon service
+interface LinkPreviewData {
+  title: string;
+  image: string;
+  description: string;
+}
+
 function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boolean }) {
+  const [preview, setPreview] = useState<LinkPreviewData | null>(null);
+  const [loading, setLoading] = useState(true);
+
   let domain = '';
   try {
     domain = new URL(url).hostname;
   } catch (e) {
     return null;
   }
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    messageService.getLinkPreview(url)
+      .then(res => {
+        if (active && res.success) {
+          setPreview({
+            title: res.title,
+            image: res.image,
+            description: res.description
+          });
+        }
+      })
+      .catch(err => {
+        console.error('Failed to load link preview', err);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [url]);
 
   const getPlatformIcon = () => {
     try {
@@ -247,36 +281,100 @@ function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boo
 
   const iconUrl = getPlatformIcon();
 
+  if (loading) {
+    return (
+      <div className="mt-2 flex items-center gap-2 p-2 rounded-xl border bg-grey/5 border-grey/10 animate-pulse w-60">
+        <div className="w-6 h-6 rounded-md bg-grey/20 flex-shrink-0" />
+        <div className="flex-1 space-y-1">
+          <div className="h-3 bg-grey/20 rounded w-1/3" />
+          <div className="h-2.5 bg-grey/20 rounded w-1/2" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!preview || (!preview.title && !preview.image)) {
+    return (
+      <a 
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`mt-2 flex items-center gap-2.5 p-2 rounded-xl text-inherit no-underline border transition-all hover:bg-grey/10 cursor-pointer block ${
+          isOwnMessage 
+            ? 'bg-white/10 border-white/10 hover:border-white/20' 
+            : 'bg-grey/5 border-grey/10 hover:border-grey/20'
+        }`}
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md overflow-hidden bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-grey/10">
+            <img 
+              src={iconUrl} 
+              alt={domain} 
+              className="w-4.5 h-4.5 object-contain"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/assets/link/chrome.png'; 
+              }}
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-xs font-semibold truncate block">
+              {domain}
+            </span>
+            <span className={`text-[9px] block ${isOwnMessage ? 'text-white/70' : 'text-grey/60'} truncate`}>
+              Nhấp để truy cập trang web
+            </span>
+          </div>
+        </div>
+      </a>
+    );
+  }
+
   return (
     <a 
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`mt-2 flex items-center gap-2.5 p-2 rounded-xl text-inherit no-underline border transition-all hover:bg-grey/10 cursor-pointer block ${
+      className={`mt-2 flex flex-col rounded-xl overflow-hidden text-inherit no-underline border transition-all hover:bg-grey/10 cursor-pointer max-w-xs md:max-w-md ${
         isOwnMessage 
           ? 'bg-white/10 border-white/10 hover:border-white/20' 
-          : 'bg-grey/5 border-grey/10 hover:border-grey/20'
+          : 'bg-white border-grey/15 hover:border-grey/30 text-black'
       }`}
     >
-      <div className="flex items-center gap-2">
-        <div className="w-6 h-6 rounded-md overflow-hidden bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-grey/10">
+      {preview.image && (
+        <div className="w-full aspect-video relative overflow-hidden bg-grey/5 border-b border-grey/10">
+          <img 
+            src={preview.image} 
+            alt={preview.title || domain}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+      <div className="p-3 flex flex-col gap-1">
+        <div className="flex items-center gap-1.5 mb-1">
           <img 
             src={iconUrl} 
             alt={domain} 
-            className="w-4.5 h-4.5 object-contain"
+            className="w-4 h-4 object-contain rounded-sm"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/assets/link/chrome.png'; 
             }}
           />
-        </div>
-        <div className="flex-1 min-w-0">
-          <span className="text-xs font-semibold truncate block">
+          <span className={`text-[10px] font-bold uppercase tracking-wider ${isOwnMessage ? 'text-white/80' : 'text-grey/70'}`}>
             {domain}
           </span>
-          <span className={`text-[9px] block ${isOwnMessage ? 'text-white/70' : 'text-grey/60'} truncate`}>
-            Nhấp để truy cập trang web
-          </span>
         </div>
+        
+        {preview.title && (
+          <h4 className={`text-sm font-bold line-clamp-2 ${isOwnMessage ? 'text-white' : 'text-grey-hover'}`}>
+            {preview.title}
+          </h4>
+        )}
+        
+        {preview.description && (
+          <p className={`text-xs line-clamp-2 mt-0.5 leading-normal ${isOwnMessage ? 'text-white/80' : 'text-grey'}`}>
+            {preview.description}
+          </p>
+        )}
       </div>
     </a>
   );

@@ -628,6 +628,76 @@ const editMessage = async (req, res) => {
         res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
+const getLinkPreview = async (req, res) => {
+    try {
+        const { url } = req.query;
+        if (!url) {
+            return res.status(400).json({ success: false, message: 'URL is required' });
+        }
+
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+        });
+        if (!response.ok) {
+            return res.status(400).json({ success: false, message: 'Failed to fetch URL' });
+        }
+
+        const html = await response.text();
+
+        const decodeHTMLEntities = (str) => {
+            if (!str) return '';
+            return str
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")
+                .replace(/&ldquo;/g, '“')
+                .replace(/&rdquo;/g, '”')
+                .replace(/&lsquo;/g, '‘')
+                .replace(/&rsquo;/g, '’');
+        };
+
+        const ogTitleRegex = /<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']*)["'][^>]*>|<meta[^>]*content=["']([^"']*)["'][^>]*property=["']og:title["'][^>]*>/i;
+        const ogImageRegex = /<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']*)["'][^>]*>|<meta[^>]*content=["']([^"']*)["'][^>]*property=["']og:image["'][^>]*>/i;
+        const ogDescRegex = /<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']*)["'][^>]*>|<meta[^>]*content=["']([^"']*)["'][^>]*property=["']og:description["'][^>]*>/i;
+        const titleRegex = /<title[^>]*>([^<]*)<\/title>/i;
+
+        let title = '';
+        let image = '';
+        let description = '';
+
+        const titleMatch = html.match(ogTitleRegex);
+        if (titleMatch) {
+            title = titleMatch[1] || titleMatch[2];
+        } else {
+            const pageTitleMatch = html.match(titleRegex);
+            if (pageTitleMatch) title = pageTitleMatch[1];
+        }
+
+        const imageMatch = html.match(ogImageRegex);
+        if (imageMatch) {
+            image = imageMatch[1] || imageMatch[2];
+        }
+
+        const descMatch = html.match(ogDescRegex);
+        if (descMatch) {
+            description = descMatch[1] || descMatch[2];
+        }
+
+        res.status(200).json({
+            success: true,
+            title: decodeHTMLEntities(title ? title.trim() : ''),
+            image: image ? image.trim() : '',
+            description: decodeHTMLEntities(description ? description.trim() : '')
+        });
+    } catch (error) {
+        console.error('Link preview error:', error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
 
 module.exports = { 
     createConversation, 
@@ -641,5 +711,6 @@ module.exports = {
     uploadMessageFile,
     pinMessage,
     unpinMessage,
-    editMessage
+    editMessage,
+    getLinkPreview
 };

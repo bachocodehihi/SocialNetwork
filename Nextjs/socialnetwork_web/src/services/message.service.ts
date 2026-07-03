@@ -51,5 +51,10 @@ export const messageService = {
   markAsRead: async (conversationId: string) => {
     const res = await api.post(`/message/${conversationId}/read`);
     return res.data;
+  },
+
+  getLinkPreview: async (url: string) => {
+    const res = await api.get('/message/link-preview', { params: { url } });
+    return res.data;
   }
 };

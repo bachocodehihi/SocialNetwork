@@ -12,7 +12,8 @@ const {
     uploadMessageFile,
     pinMessage,
     unpinMessage,
-    editMessage
+    editMessage,
+    getLinkPreview
 } = require('../controllers/message.controller');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { upload } = require('../config/cloudinary');
@@ -22,6 +23,7 @@ const memoryUpload = multer({ storage: multer.memoryStorage() });
 router.post('/', verifyToken, createConversation);
 router.get('/', verifyToken, getConversations);
 
+router.get('/link-preview', verifyToken, getLinkPreview);
 router.get('/:conversationId/messages', verifyToken, getMessages);
 router.post('/:conversationId/send', verifyToken, sendMessage);
 router.delete('/message/:messageId', verifyToken, deleteMessage);
