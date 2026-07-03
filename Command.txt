@@ -27,7 +27,3 @@ git push origin repair-website:repair-backend --force
 git push origin repair-website
 git push origin main
 git clone
-
-SocialNetwork2026.@!
-Publishable Key: sb_publishable_68IkJH6lSNrBo-LS7S3gYw_fmjpuYkQ
-Project URL: https://rlxrgxbbtslxlmaqpvlh.supabase.co
