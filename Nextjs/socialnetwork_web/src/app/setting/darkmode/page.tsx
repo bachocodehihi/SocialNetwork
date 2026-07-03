@@ -60,7 +60,7 @@ export default function DarkmodePage() {
           {/* Standard Switch Switcher */}
           <button 
             onClick={() => toggleDarkMode(!isDarkMode)}
-            className={`w-12 h-7 flex items-center rounded-full p-0.5 cursor-pointer transition-colors duration-300 focus:outline-none border-0 ${isDarkMode ? 'bg-blue' : 'bg-grey/30'}`}
+            className={`flex-shrink-0 w-12 h-7 flex items-center rounded-full p-0.5 cursor-pointer transition-colors duration-300 focus:outline-none border-0 ${isDarkMode ? 'bg-blue' : 'bg-grey/30'}`}
           >
             <div 
               className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${isDarkMode ? 'translate-x-5' : 'translate-x-0'}`}

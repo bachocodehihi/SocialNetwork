@@ -115,7 +115,7 @@ export default function NotificationSettingsPage() {
                 {/* Switch Switcher */}
                 <button 
                   onClick={() => handleToggle(item.key)}
-                  className={`w-12 h-7 flex items-center rounded-full p-0.5 cursor-pointer transition-colors duration-300 focus:outline-none border-0 ${value ? 'bg-blue' : 'bg-grey/30'}`}
+                  className={`flex-shrink-0 w-12 h-7 flex items-center rounded-full p-0.5 cursor-pointer transition-colors duration-300 focus:outline-none border-0 ${value ? 'bg-blue' : 'bg-grey/30'}`}
                 >
                   <div 
                     className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${value ? 'translate-x-5' : 'translate-x-0'}`}
