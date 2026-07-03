@@ -635,9 +635,31 @@ const getLinkPreview = async (req, res) => {
             return res.status(400).json({ success: false, message: 'URL is required' });
         }
 
+        // 1. Special handling for YouTube links via official oEmbed API to bypass bot/consent detection
+        try {
+            const parsedUrl = new URL(url);
+            const host = parsedUrl.hostname.toLowerCase();
+            if (host.includes('youtube.com') || host.includes('youtu.be')) {
+                const oEmbedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+                const yResponse = await fetch(oEmbedUrl);
+                if (yResponse.ok) {
+                    const data = await yResponse.json();
+                    return res.status(200).json({
+                        success: true,
+                        title: data.title || '',
+                        image: data.thumbnail_url || '',
+                        description: data.author_name ? `Kênh: ${data.author_name}` : 'Xem video trên YouTube'
+                    });
+                }
+            }
+        } catch (e) {
+            console.error('YouTube oEmbed error:', e);
+        }
+
+        // 2. Generic fallback scraper for other websites
         const response = await fetch(url, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36'
             }
         });
         if (!response.ok) {
