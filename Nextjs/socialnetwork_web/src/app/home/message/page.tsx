@@ -239,7 +239,7 @@ function MessageContent() {
   });
 
   return (
-    <div className="min-h-screen bg-grey/5 flex flex-col font-sans">
+    <div className="h-screen overflow-hidden bg-grey/5 flex flex-col font-sans">
       <Navbar activeTab="message" />
 
       {/* Main Messaging Container */}
