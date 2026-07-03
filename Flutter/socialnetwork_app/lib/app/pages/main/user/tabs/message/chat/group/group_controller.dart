@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:socialnetwork/data/local/auth_local.dart';
 import 'package:socialnetwork/data/network/api/message_api.dart';
@@ -7,6 +8,7 @@ import 'package:socialnetwork/data/repositories/message_repository_imp.dart';
 import 'package:socialnetwork/data/service/socket.dart';
 import 'package:socialnetwork/data/service/sound.dart';
 import 'package:socialnetwork/domain/usecases/message_usecase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatGroupController extends ChangeNotifier {
   final MessageUsecase _usecase;
@@ -364,6 +366,47 @@ class ChatGroupController extends ChangeNotifier {
     }
   }
 
+  Future<void> sendFileMessage(String filePath, String fileName) async {
+    if (_conversationId == null) return;
+    
+    final replyId = _replyingMessage?['_id']?.toString() ?? _replyingMessage?['id']?.toString();
+    _replyingMessage = null;
+    _isSending = true;
+    notifyListeners();
+ 
+    try {
+      final file = File(filePath);
+      final sanitizedName = _sanitizeFileName(fileName);
+      final uniqueFileName = "${DateTime.now().millisecondsSinceEpoch}_$sanitizedName";
+      
+      final supabase = Supabase.instance.client;
+      await supabase.storage.from('documents').upload(
+        uniqueFileName,
+        file,
+      );
+
+      final String publicUrl = supabase.storage.from('documents').getPublicUrl(uniqueFileName);
+
+      if (publicUrl.isNotEmpty) {
+        _socket.emit('send_message', {
+          'conversationId': _conversationId,
+          'content': fileName,
+          'type': 'file',
+          'attachments': [publicUrl],
+          if (replyId != null) 'repliedTo': replyId,
+        });
+      } else {
+        _error = 'Tải file lên thất bại';
+      }
+    } catch (e) {
+      _error = 'Gửi file thất bại: ${e.toString()}';
+      debugPrint('❌ Send file error: $e');
+    } finally {
+      _isSending = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> deleteMessage(String messageId) async {
     try {
       await _usecase.deleteMessage(messageId, forEveryone: false);
@@ -506,5 +549,34 @@ class ChatGroupController extends ChangeNotifier {
     } catch (e) {
       debugPrint('❌ Error unpinning message: $e');
     }
+  }
+
+  String _sanitizeFileName(String name) {
+    const vietnamese = 'aAeEoOuUiIdDyY';
+    final vietnameseRegex = [
+      RegExp(r'[àáạảãâầấậẩẫăằắặẳẵ]'),
+      RegExp(r'[ÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴ]'),
+      RegExp(r'[èéẹẻẽêềếệểễ]'),
+      RegExp(r'[ÈÉẸẺẼÊỀẾỆỂỄ]'),
+      RegExp(r'[òóọỏõôồốộổỗơờớợởỡ]'),
+      RegExp(r'[ÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠ]'),
+      RegExp(r'[ùúụủũưừứựửữ]'),
+      RegExp(r'[ÙÚỤỦŨƯỪỨỰỬỮ]'),
+      RegExp(r'[ìíịỉĩ]'),
+      RegExp(r'[ÌÍỊỈĨ]'),
+      RegExp(r'[đ]'),
+      RegExp(r'[Đ]'),
+      RegExp(r'[ỳýỵỷỹ]'),
+      RegExp(r'[ỲÝỴỶỸ]')
+    ];
+
+    String result = name;
+    for (int i = 0; i < vietnameseRegex.length; i++) {
+      result = result.replaceAll(vietnameseRegex[i], vietnamese[i]);
+    }
+
+    result = result.replaceAll(RegExp(r'\s+'), '_');
+    result = result.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '');
+    return result;
   }
 }

@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
@@ -489,6 +491,22 @@ class _ChatGroupViewState extends State<ChatGroupView> {
     }
   }
 
+  Future<void> _sendFile() async {
+    try {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'],
+      );
+      if (result == null || result.files.single.path == null) return;
+      
+      final filePath = result.files.single.path!;
+      final fileName = result.files.single.name;
+      await _controller.sendFileMessage(filePath, fileName);
+    } catch (e) {
+      debugPrint('Error picking file: $e');
+    }
+  }
+
   String? _extractSenderId(dynamic senderRaw) {
     if (senderRaw is Map) {
       return senderRaw['_id']?.toString() ?? senderRaw['id']?.toString();
@@ -919,7 +937,18 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                                   ),
                                 ),
 
-                                SizedBox(width: 20.w),
+                                SizedBox(width: 15.w),
+
+                                GestureDetector(
+                                  onTap: _controller.isSending ? null : _sendFile,
+                                  child: Icon(
+                                    Icons.attach_file_outlined, 
+                                    size: 25.sp,
+                                    color: _controller.isSending ? cs.onSurface.withValues(alpha: 0.3) : cs.onSurface,
+                                  ),
+                                ),
+
+                                SizedBox(width: 15.w),
 
                                 GestureDetector(
                                   onTap: _startRecording,
@@ -1046,6 +1075,7 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                 final isImageMsg = msg['type'] == 'image';
                 final isAudioMsg = msg['type'] == 'audio';
                 final isSystemMsg = msg['type'] == 'system';
+                final isFileMsg = msg['type'] == 'file';
                 final content = msg['content'] ?? '';
                 final attachments = msg['attachments'] as List?;
                 final hasAttachment = attachments != null && attachments.isNotEmpty;
@@ -1263,14 +1293,20 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                                               ? _MessageImageGrid(imageUrls: attachments)
                                               : isAudioMsg
                                                   ? _AudioMessageBubble(audioUrl: attachments?.first?.toString() ?? '', isMe: isMe)
-                                                  : Text(
-                                                      content,
-                                                      textAlign: TextAlign.justify,
-                                                      style: TextStyle(
-                                                        fontSize: 14.sp,
-                                                        color: isMe ? Colors.white : Colors.black,
-                                                      ),
-                                                    ),
+                                                  : isFileMsg
+                                                      ? _FileMessageBubble(
+                                                          fileUrl: attachments?.first?.toString() ?? '',
+                                                          fileName: content,
+                                                          isMe: isMe,
+                                                        )
+                                                      : Text(
+                                                          content,
+                                                          textAlign: TextAlign.justify,
+                                                          style: TextStyle(
+                                                            fontSize: 14.sp,
+                                                            color: isMe ? Colors.white : Colors.black,
+                                                          ),
+                                                        ),
                                     ),
                                     SizedBox(height: 3.h),
                                     Row(
@@ -1839,6 +1875,133 @@ class _RecordingDotState extends State<_RecordingDot> with SingleTickerProviderS
         decoration: const BoxDecoration(
           color: Colors.red,
           shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}
+
+class _FileMessageBubble extends StatelessWidget {
+  final String fileUrl;
+  final String fileName;
+  final bool isMe;
+
+  const _FileMessageBubble({
+    required this.fileUrl,
+    required this.fileName,
+    required this.isMe,
+  });
+
+  String _getFileAsset(String extension) {
+    switch (extension) {
+      case 'doc':
+      case 'docx':
+        return 'assets/file/word.png';
+      case 'xls':
+      case 'xlsx':
+        return 'assets/file/excel.png';
+      case 'ppt':
+      case 'pptx':
+        return 'assets/file/powerpoint.png';
+      case 'py':
+        return 'assets/file/python.png';
+      case 'mdb':
+      case 'accdb':
+        return 'assets/file/access.png';
+      case 'zip':
+      case 'rar':
+      case '7z':
+      case 'tar':
+      case 'gz':
+        return 'assets/file/zip.png';
+      case 'mp4':
+      case 'avi':
+      case 'mkv':
+      case 'mov':
+      case 'flv':
+      case 'wmv':
+      case 'mpeg':
+      case 'mpg':
+      case 'mp3':
+      case 'wav':
+      case 'wma':
+      case 'm4a':
+      case 'flac':
+      case 'ogg':
+        return 'assets/file/windowsmediaplayer.png';
+      default:
+        return 'assets/file/document.png';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final extension = fileName.split('.').last.toLowerCase();
+    final assetPath = _getFileAsset(extension);
+
+    return InkWell(
+      onTap: () async {
+        if (fileUrl.isNotEmpty) {
+          final uri = Uri.parse(fileUrl);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            debugPrint('Could not launch $fileUrl');
+          }
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Image.asset(
+                assetPath,
+                width: 28.w,
+                height: 28.w,
+                fit: BoxFit.contain,
+              ),
+            ),
+            SizedBox(width: 10.w),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    fileName,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: isMe ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    extension.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      color: isMe ? Colors.white.withValues(alpha: 0.7) : Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 8.w),
+            Icon(
+              Icons.download_outlined,
+              color: isMe ? Colors.white.withValues(alpha: 0.8) : Colors.black54,
+              size: 20.sp,
+            ),
+          ],
         ),
       ),
     );
