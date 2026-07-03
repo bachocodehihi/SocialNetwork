@@ -463,32 +463,39 @@ const uploadMessageFile = async (req, res) => {
         if (!req.file) {
             return res.status(400).json({ success: false, code: 'FILE_REQUIRED' });
         }
-        
-        const fs = require('fs');
-        const path = require('path');
-        const { cloudinary } = require('../config/cloudinary');
 
-        const tempDir = path.join(__dirname, '../../temp');
-        if (!fs.existsSync(tempDir)) {
-            fs.mkdirSync(tempDir, { recursive: true });
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_KEY;
+
+        if (!supabaseUrl || !supabaseKey) {
+            console.error('Supabase configuration missing in .env');
+            return res.status(500).json({ success: false, code: 'SUPABASE_CONFIG_MISSING' });
         }
-        
-        const ext = path.extname(req.file.originalname) || '';
-        const tempFilePath = path.join(tempDir, `${Date.now()}_temp_file${ext}`);
-        fs.writeFileSync(tempFilePath, req.file.buffer);
 
-        const result = await cloudinary.uploader.upload(tempFilePath, {
-            folder: 'socialnetwork_files',
-            resource_type: 'raw'
+        const sanitizedName = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const uniqueFileName = `${Date.now()}_${sanitizedName}`;
+
+        const uploadUrl = `${supabaseUrl}/storage/v1/object/documents/${uniqueFileName}`;
+
+        const response = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${supabaseKey}`,
+                'apikey': supabaseKey,
+                'Content-Type': req.file.mimetype || 'application/octet-stream'
+            },
+            body: req.file.buffer
         });
 
-        try {
-            fs.unlinkSync(tempFilePath);
-        } catch (unlinkErr) {
-            console.error('Error deleting temp file:', unlinkErr);
+        if (!response.ok) {
+            const errText = await response.text();
+            console.error('Supabase upload error response:', errText);
+            return res.status(500).json({ success: false, code: 'UPLOAD_FAILED', error: errText });
         }
 
-        res.status(200).json({ success: true, url: result.secure_url });
+        const publicUrl = `${supabaseUrl}/storage/v1/object/public/documents/${uniqueFileName}`;
+
+        res.status(200).json({ success: true, url: publicUrl });
     } catch (error) {
         console.error('Upload message file error:', error);
         res.status(500).json({ success: false, code: 'SERVER_ERROR' });
