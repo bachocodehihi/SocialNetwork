@@ -1,16 +1,257 @@
 'use client';
 import Navbar from '@/components/Navbar';
-import { MessageSquare, Search, Send, User, Phone, Video, Info } from 'lucide-react';
-import { useState } from 'react';
+import { messageService } from '@/services/message.service';
+import { useAlert } from '@/components/Alert/alertcontext';
+import { NETWORK } from '@/config/config';
+import { useEffect, useState, useRef, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { MessageSquare, Search, Send, User, Phone, Video, Info, Loader2, Smile } from 'lucide-react';
+import { io, Socket } from 'socket.io-client';
 
-const MOCK_CONVERSATIONS = [
-  { id: '1', name: 'Nguyễn Văn A', avatar: '', lastMessage: 'Ê, chiều nay đi đá bóng không?', time: '10:30', unread: 2, online: true },
-  { id: '2', name: 'Trần Thị B', avatar: '', lastMessage: 'Dạ vâng, để em gửi tài liệu qua ạ.', time: 'Hôm qua', unread: 0, online: false },
-  { id: '3', name: 'Lê Văn C', avatar: '', lastMessage: 'Ảnh đẹp quá bạn ơi!', time: '2 ngày trước', unread: 0, online: true },
-];
+function MessageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const directUserId = searchParams.get('userId');
+  const { showSuccess, showError } = useAlert();
 
-export default function MessagePage() {
-  const [selectedChat, setSelectedChat] = useState<any>(MOCK_CONVERSATIONS[0]);
+  // Socket state
+  const socketRef = useRef<Socket | null>(null);
+
+  // States
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [selectedConv, setSelectedConv] = useState<any>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [messageInput, setMessageInput] = useState('');
+  const [loadingConv, setLoadingConv] = useState(true);
+  const [loadingMsgs, setLoadingMsgs] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to bottom
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Load User profile
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        try {
+          setCurrentUser(JSON.parse(stored));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, []);
+
+  // Fetch conversations
+  const fetchConversations = async (selectUserId?: string) => {
+    setLoadingConv(true);
+    try {
+      const data = await messageService.getConversations();
+      setConversations(data);
+
+      if (selectUserId) {
+        // Look for an existing direct conversation with this user
+        const existing = data.find((c: any) => 
+          !c.isGroup && c.members.some((m: any) => m._id === selectUserId)
+        );
+
+        if (existing) {
+          setSelectedConv(existing);
+        } else {
+          // Create new conversation
+          try {
+            const newConvRes = await messageService.createConversation(selectUserId);
+            const newConv = newConvRes.conversation || newConvRes;
+            setConversations(prev => [newConv, ...prev]);
+            setSelectedConv(newConv);
+          } catch (err) {
+            console.error('Failed to create new conversation:', err);
+            showError('Không thể bắt đầu hội thoại.');
+          }
+        }
+      } else if (data.length > 0 && !selectedConv) {
+        setSelectedConv(data[0]);
+      }
+    } catch (err) {
+      console.error('Error fetching conversations:', err);
+      showError('Không thể tải danh sách cuộc trò chuyện.');
+    } finally {
+      setLoadingConv(false);
+    }
+  };
+
+  // Initial load
+  useEffect(() => {
+    fetchConversations(directUserId || undefined);
+  }, [directUserId]);
+
+  // Connect Socket.io
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (!token) return;
+
+    const socketUrl = NETWORK.wsUrl.replace('ws://', 'http://').replace('wss://', 'https://');
+    const socket = io(socketUrl, {
+      auth: { token },
+      transports: ['websocket', 'polling']
+    });
+
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+      console.log('⚡ Connected to socket server');
+    });
+
+    // Listen for new messages
+    socket.on('receive_message', (message: any) => {
+      setMessages(prev => {
+        // Prevent duplicate messages
+        if (prev.some(m => m._id === message._id)) return prev;
+        if (message.conversationId === selectedConv?._id) {
+          return [...prev, message];
+        }
+        return prev;
+      });
+
+      // Update last message in conversation list
+      setConversations(prev => {
+        return prev.map(c => {
+          if (c._id === message.conversationId) {
+            return {
+              ...c,
+              lastMessage: message,
+              updatedAt: message.createdAt
+            };
+          }
+          return c;
+        }).sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime());
+      });
+    });
+
+    socket.on('conversation_updated', (data: any) => {
+      // Refresh conversation list dynamically
+      setConversations(prev => {
+        const index = prev.findIndex(c => c._id === data.conversationId);
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = {
+            ...updated[index],
+            lastMessage: data.lastMessage,
+            updatedAt: data.updatedAt
+          };
+          return updated.sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime());
+        }
+        return prev;
+      });
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [selectedConv]);
+
+  // Join selected conversation room and fetch message history
+  useEffect(() => {
+    if (!selectedConv) return;
+
+    const loadMessages = async () => {
+      setLoadingMsgs(true);
+      try {
+        const data = await messageService.getMessages(selectedConv._id);
+        setMessages(data);
+        // Mark as read
+        await messageService.markAsRead(selectedConv._id);
+      } catch (err) {
+        console.error('Error fetching messages:', err);
+        showError('Không thể tải tin nhắn.');
+      } finally {
+        setLoadingMsgs(false);
+      }
+    };
+
+    loadMessages();
+
+    // Join socket room
+    if (socketRef.current) {
+      socketRef.current.emit('join_room', selectedConv._id);
+    }
+  }, [selectedConv]);
+
+  // Handle Send Message
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!messageInput.trim() || !selectedConv) return;
+
+    const content = messageInput.trim();
+    setMessageInput('');
+
+    try {
+      const res = await messageService.sendMessage(selectedConv._id, content);
+      
+      // If socket isn't working, append message manually
+      setMessages(prev => {
+        if (prev.some(m => m._id === res._id)) return prev;
+        return [...prev, res];
+      });
+
+      // Update last message locally
+      setConversations(prev => {
+        return prev.map(c => {
+          if (c._id === selectedConv._id) {
+            return {
+              ...c,
+              lastMessage: res,
+              updatedAt: res.createdAt
+            };
+          }
+          return c;
+        }).sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime());
+      });
+
+      // Emit through socket for real-time delivery
+      if (socketRef.current) {
+        socketRef.current.emit('send_message', {
+          conversationId: selectedConv._id,
+          content,
+          type: 'text'
+        });
+      }
+    } catch (err) {
+      console.error('Failed to send message:', err);
+      showError('Gửi tin nhắn thất bại.');
+    }
+  };
+
+  const getChatPartner = (conv: any) => {
+    if (conv.isGroup) return { name: conv.name, avatar: conv.avatar };
+    const partner = conv.members?.find((m: any) => m._id !== currentUser?.id && m._id !== currentUser?._id);
+    return partner || { username: 'Người dùng', avatar: '' };
+  };
+
+  const formatTime = (dateStr: string) => {
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    } catch (e) {
+      return '';
+    }
+  };
+
+  const filteredConversations = conversations.filter(c => {
+    const partner = getChatPartner(c);
+    const name = c.isGroup ? c.name : (partner.username || '');
+    return name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <div className="min-h-screen bg-grey/5 flex flex-col font-sans">
@@ -29,6 +270,8 @@ export default function MessagePage() {
               <input 
                 type="text" 
                 placeholder="Tìm kiếm cuộc trò chuyện..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-transparent border-none outline-none text-sm w-full placeholder-grey/60 text-grey-hover font-medium"
               />
             </div>
@@ -36,115 +279,212 @@ export default function MessagePage() {
 
           {/* Conversations list scrollable */}
           <div className="flex-1 overflow-y-auto divide-y divide-grey/5">
-            {MOCK_CONVERSATIONS.map((chat) => (
-              <div
-                key={chat.id}
-                onClick={() => setSelectedChat(chat)}
-                className={`flex items-center gap-3.5 p-4 cursor-pointer transition duration-150 ${
-                  selectedChat?.id === chat.id 
-                    ? 'bg-blue/5 border-l-4 border-blue' 
-                    : 'hover:bg-grey/5'
-                }`}
-              >
-                <div className="relative flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center">
-                    {chat.avatar ? (
-                      <img src={chat.avatar} alt={chat.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <User className="w-6 h-6 text-grey/60" />
-                    )}
-                  </div>
-                  {chat.online && (
-                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-                  )}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <h4 className="font-bold text-grey-hover truncate text-[14.5px]">{chat.name}</h4>
-                    <span className="text-[11px] text-grey/60">{chat.time}</span>
-                  </div>
-                  <p className={`text-xs truncate ${chat.unread > 0 ? 'text-black font-bold' : 'text-grey/70'}`}>
-                    {chat.lastMessage}
-                  </p>
-                </div>
-
-                {chat.unread > 0 && (
-                  <span className="flex-shrink-0 bg-blue text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                    {chat.unread}
-                  </span>
-                )}
+            {loadingConv ? (
+              <div className="flex items-center justify-center py-10">
+                <Loader2 className="w-6 h-6 animate-spin text-blue mr-2" />
+                <span className="text-sm text-grey font-bold">Đang tải cuộc trò chuyện...</span>
               </div>
-            ))}
+            ) : filteredConversations.length === 0 ? (
+              <div className="text-center py-12 text-grey">
+                <MessageSquare className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                <p className="text-sm font-semibold">Không tìm thấy cuộc trò chuyện nào</p>
+              </div>
+            ) : (
+              filteredConversations.map((chat) => {
+                const partner = getChatPartner(chat);
+                const isSelected = selectedConv?._id === chat._id;
+                const partnerName = chat.isGroup ? chat.name : partner.username;
+                const partnerAvatar = chat.isGroup ? chat.avatar : partner.avatar;
+                
+                // Active/online status
+                const isOnline = !chat.isGroup && partner.isOnline;
+
+                return (
+                  <div
+                    key={chat._id}
+                    onClick={() => setSelectedConv(chat)}
+                    className={`flex items-center gap-3.5 p-4 cursor-pointer transition duration-150 ${
+                      isSelected 
+                        ? 'bg-blue/5 border-l-4 border-blue' 
+                        : 'hover:bg-grey/5'
+                    }`}
+                  >
+                    {/* Avatar */}
+                    <div className="relative flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center">
+                        {partnerAvatar ? (
+                          <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-6 h-6 text-grey/60" />
+                        )}
+                      </div>
+                      {isOnline && (
+                        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
+                      )}
+                    </div>
+
+                    {/* Chat Text Details */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-baseline mb-1">
+                        <h4 className="font-bold text-grey-hover truncate text-[14.5px]">{partnerName}</h4>
+                        {chat.lastMessage && (
+                          <span className="text-[10px] text-grey/60">
+                            {formatTime(chat.lastMessage.createdAt)}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs truncate text-grey/70">
+                        {chat.lastMessage ? chat.lastMessage.content : 'Chưa có tin nhắn'}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 
-        {/* Right Panel: Chat Room Details / Placeholder */}
+        {/* Right Panel: Chat Room Details */}
         <div className="flex-1 bg-white flex flex-col min-w-0">
-          {selectedChat ? (
+          {selectedConv ? (
             <>
               {/* Chat Header */}
-              <div className="h-16 px-6 border-b border-grey/20 flex items-center justify-between flex-shrink-0">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center flex-shrink-0">
-                    <User className="w-5 h-5 text-grey/60" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-bold text-grey-hover truncate text-base">{selectedChat.name}</h3>
-                    <p className="text-[11px] text-green-500 font-semibold">
-                      {selectedChat.online ? 'Đang hoạt động' : 'Ngoại tuyến'}
-                    </p>
-                  </div>
-                </div>
+              {(() => {
+                const partner = getChatPartner(selectedConv);
+                const partnerName = selectedConv.isGroup ? selectedConv.name : partner.username;
+                const partnerAvatar = selectedConv.isGroup ? selectedConv.avatar : partner.avatar;
+                const isOnline = !selectedConv.isGroup && partner.isOnline;
 
-                {/* Call controls */}
-                <div className="flex items-center gap-1">
-                  <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
-                    <Phone className="w-5 h-5" />
-                  </button>
-                  <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
-                    <Video className="w-5 h-5" />
-                  </button>
-                  <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
-                    <Info className="w-5 h-5" />
-                  </button>
-                </div>
+                return (
+                  <div className="h-16 px-6 border-b border-grey/20 flex items-center justify-between flex-shrink-0 bg-white">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center flex-shrink-0">
+                        {partnerAvatar ? (
+                          <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-5 h-5 text-grey/60" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-bold text-grey-hover truncate text-base">{partnerName}</h3>
+                        <p className={`text-[11px] font-semibold ${isOnline ? 'text-green-500' : 'text-grey/50'}`}>
+                          {isOnline ? 'Đang hoạt động' : 'Ngoại tuyến'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Call controls */}
+                    <div className="flex items-center gap-1">
+                      <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
+                        <Phone className="w-5 h-5" />
+                      </button>
+                      <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
+                        <Video className="w-5 h-5" />
+                      </button>
+                      <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
+                        <Info className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Chat Room Messages List */}
+              <div className="flex-1 p-4 bg-grey/5 overflow-y-auto space-y-4">
+                {loadingMsgs ? (
+                  <div className="flex items-center justify-center h-full">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue mr-2" />
+                    <span className="text-grey font-bold">Đang tải tin nhắn...</span>
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6">
+                    <MessageSquare className="w-12 h-12 text-blue/30 mb-2" />
+                    <h4 className="font-bold text-grey-hover">Chưa có cuộc trò chuyện nào</h4>
+                    <p className="text-xs text-grey/50 mt-1">Hãy bắt đầu gửi tin nhắn đầu tiên cho họ!</p>
+                  </div>
+                ) : (
+                  messages.map((msg) => {
+                    const isOwnMessage = msg.sender?._id === currentUser?.id || msg.sender?._id === currentUser?._id || msg.sender === currentUser?.id || msg.sender === currentUser?._id;
+                    const senderName = msg.sender?.username || 'Bạn bè';
+                    const senderAvatar = msg.sender?.avatar;
+
+                    return (
+                      <div 
+                        key={msg._id} 
+                        className={`flex gap-3 max-w-[85%] ${
+                          isOwnMessage ? 'ml-auto flex-row-reverse' : ''
+                        }`}
+                      >
+                        {/* Avatar */}
+                        {!isOwnMessage && selectedConv.isGroup && (
+                          <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/25 bg-grey/10 flex items-center justify-center flex-shrink-0">
+                            {senderAvatar ? (
+                              <img src={senderAvatar} alt={senderName} className="w-full h-full object-cover" />
+                            ) : (
+                              <User className="w-4 h-4 text-grey/60" />
+                            )}
+                          </div>
+                        )}
+
+                        <div className="flex flex-col">
+                          {/* Group sender name */}
+                          {!isOwnMessage && selectedConv.isGroup && (
+                            <span className="text-[10px] text-grey/60 font-semibold mb-1 ml-1">
+                              {senderName}
+                            </span>
+                          )}
+
+                          {/* Bubble box */}
+                          <div 
+                            className={`p-3 rounded-2xl text-[14px] leading-relaxed break-words max-w-sm ${
+                              isOwnMessage 
+                                ? 'bg-blue text-white rounded-br-none' 
+                                : 'bg-white text-grey-hover border border-grey/10 rounded-bl-none shadow-sm'
+                            }`}
+                          >
+                            <p>{msg.content}</p>
+                            <span 
+                              className={`block text-[9px] mt-1 text-right font-medium ${
+                                isOwnMessage ? 'text-white/70' : 'text-grey/50'
+                              }`}
+                            >
+                              {formatTime(msg.createdAt)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+                <div ref={messagesEndRef} />
               </div>
 
-              {/* Chat screen body */}
-              <div className="flex-1 p-6 bg-grey/5 overflow-y-auto flex flex-col justify-center items-center text-center">
-                <div className="max-w-md bg-white p-8 rounded-2xl border border-grey/20 shadow-sm">
-                  <div className="w-14 h-14 rounded-full bg-blue/10 text-blue flex items-center justify-center mx-auto mb-4">
-                    <MessageSquare className="w-7 h-7" />
-                  </div>
-                  <h2 className="text-xl font-bold text-grey-hover mb-2">Trò chuyện với {selectedChat.name}</h2>
-                  <p className="text-sm text-grey/70 mb-5 leading-relaxed">
-                    Tính năng gửi nhận tin nhắn trực tuyến (Realtime Chat) đang được hoàn thiện. Vui lòng kết nối với ứng dụng Flutter hoặc quay lại sau!
-                  </p>
-                  <a
-                    href="/home"
-                    className="inline-block bg-blue hover:bg-blue-hover text-white text-sm font-bold px-6 py-2.5 rounded-full transition duration-150 shadow-sm"
-                  >
-                    Quay về Bảng tin
-                  </a>
-                </div>
-              </div>
+              {/* Message Input Composer */}
+              <form onSubmit={handleSendMessage} className="p-4 border-t border-grey/20 bg-white flex items-center gap-3">
+                <button type="button" className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer flex-shrink-0">
+                  <Smile className="w-5 h-5" />
+                </button>
 
-              {/* Message Composer (Disabled mock input) */}
-              <div className="p-4 border-t border-grey/20 bg-white flex items-center gap-3">
                 <input 
                   type="text" 
-                  disabled
-                  placeholder="Gửi tin nhắn (Tính năng đang khóa)..." 
-                  className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-full py-3 px-5 text-grey/50 cursor-not-allowed"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  placeholder="Nhập tin nhắn..." 
+                  className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-full py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all"
                 />
+
                 <button 
-                  disabled 
-                  className="w-11 h-11 bg-grey/20 text-grey/40 rounded-full flex items-center justify-center cursor-not-allowed border-none"
+                  type="submit"
+                  disabled={!messageInput.trim()}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition border-none flex-shrink-0 cursor-pointer ${
+                    messageInput.trim() 
+                      ? 'bg-blue text-white hover:bg-blue-hover active:scale-95 shadow-sm' 
+                      : 'bg-grey/20 text-grey/40 cursor-not-allowed'
+                  }`}
                 >
                   <Send className="w-4.5 h-4.5" />
                 </button>
-              </div>
+              </form>
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-grey/5">
@@ -159,5 +499,17 @@ export default function MessagePage() {
 
       </div>
     </div>
+  );
+}
+
+export default function MessagePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center bg-grey/5">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent"></div>
+      </div>
+    }>
+      <MessageContent />
+    </Suspense>
   );
 }

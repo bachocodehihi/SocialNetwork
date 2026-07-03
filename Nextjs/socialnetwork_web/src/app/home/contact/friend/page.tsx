@@ -188,7 +188,7 @@ export default function ContactFriendPage() {
 
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => router.push('/home/message')}
+                              onClick={() => router.push(`/home/message?userId=${friendInfo._id || friendInfo.id}`)}
                               title="Nhắn tin"
                               className="p-2.5 rounded-xl bg-blue/10 hover:bg-blue/20 text-blue border-none cursor-pointer transition"
                             >
