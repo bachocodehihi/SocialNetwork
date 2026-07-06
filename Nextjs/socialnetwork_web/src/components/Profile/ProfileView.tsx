@@ -957,7 +957,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                     </div>
 
                     {/* Post Content */}
-                    <div className="text-grey-hover text-sm sm:text-[15px] leading-relaxed mb-3 whitespace-pre-wrap text-justify px-1">
+                    <div className="text-slate-800 text-sm sm:text-[15px] leading-relaxed mb-3 whitespace-pre-wrap text-justify px-1">
                       {displayContent}
                       {isLongContent && (
                         <button
