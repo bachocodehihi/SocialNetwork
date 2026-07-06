@@ -20,11 +20,17 @@ export default function SignIn() {
   
   const { showError, showSuccess, showWarning } = useAlert();
 
-  // Redirect to home if already logged in
+  // Redirect to home or saved redirect path if already logged in
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      router.replace('/home');
+      const redirectPath = localStorage.getItem('redirectAfterLogin');
+      if (redirectPath) {
+        localStorage.removeItem('redirectAfterLogin');
+        router.replace(redirectPath);
+      } else {
+        router.replace('/home');
+      }
     }
   }, [router]);
 
@@ -46,7 +52,13 @@ export default function SignIn() {
           localStorage.setItem('token', res.token);
           document.cookie = `token=${res.token}; path=/; max-age=604800; SameSite=Lax`;
           showSuccess('Đăng nhập thành công!');
-          router.replace('/home');
+          const redirectPath = localStorage.getItem('redirectAfterLogin');
+          if (redirectPath) {
+            localStorage.removeItem('redirectAfterLogin');
+            router.replace(redirectPath);
+          } else {
+            router.replace('/home');
+          }
         }
       } catch (err) {
         console.error('Lỗi check QR:', err);
@@ -103,7 +115,13 @@ export default function SignIn() {
         localStorage.setItem('token', loginRes.token);
         document.cookie = `token=${loginRes.token}; path=/; max-age=604800; SameSite=Lax`;
         showSuccess('Đăng nhập thành công!');
-        router.replace('/home');
+        const redirectPath = localStorage.getItem('redirectAfterLogin');
+        if (redirectPath) {
+          localStorage.removeItem('redirectAfterLogin');
+          router.replace(redirectPath);
+        } else {
+          router.replace('/home');
+        }
       } else {
         setFormError('Email hoặc mật khẩu không chính xác!');
       }
