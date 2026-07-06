@@ -42,7 +42,8 @@ const createGroup = async (req, res) => {
             exists = await Group.findOne({ inviteCode });
         }
 
-        const inviteLink = `${process.env.APP_URL}/join-group/${inviteCode}`;
+        const baseUrl = (process.env.APP_URL || '').replace(/\/+$/, '');
+        const inviteLink = `${baseUrl}/join-group/${inviteCode}`;
 
         const newGroup = new Group({
             name: name.trim(),
