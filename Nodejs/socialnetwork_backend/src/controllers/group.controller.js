@@ -42,6 +42,8 @@ const createGroup = async (req, res) => {
             exists = await Group.findOne({ inviteCode });
         }
 
+        const inviteLink = `${process.env.APP_URL}/join-group/${inviteCode}`;
+
         const newGroup = new Group({
             name: name.trim(),
             description: description?.trim() || '',
@@ -49,14 +51,13 @@ const createGroup = async (req, res) => {
             admin: adminId,
             members: [adminId, ...members],
             inviteCode,
+            inviteLink,
             isGroup: true
         });
 
         const savedGroup = await newGroup.save();
 
-        const qrDataUrl = await QRCode.toDataURL(
-            `${process.env.APP_URL}/join-group/${inviteCode}`
-        );
+        const qrDataUrl = await QRCode.toDataURL(inviteLink);
 
         const qrUploadResponse = await cloudinary.uploader.upload(qrDataUrl, {
             folder: 'socialnetwork/qrcodes',

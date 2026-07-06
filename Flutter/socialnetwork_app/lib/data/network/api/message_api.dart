@@ -184,4 +184,15 @@ class MessageApi {
     final data = res.data;
     return data is Map<String, dynamic> ? data : {};
   }
+
+  Future<Map<String, dynamic>> getLinkPreview(String url) async {
+    final token = await AuthLocal.getToken();
+    final res = await _dio.get(
+      '/api/message/link-preview',
+      queryParameters: {'url': url},
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+    final data = res.data;
+    return data is Map<String, dynamic> ? data : {};
+  }
 }

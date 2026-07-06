@@ -579,4 +579,13 @@ class ChatGroupController extends ChangeNotifier {
     result = result.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '');
     return result;
   }
+
+  Future<Map<String, dynamic>> getLinkPreview(String url) async {
+    try {
+      return await _usecase.getLinkPreview(url);
+    } catch (e) {
+      debugPrint('Error getting link preview: $e');
+      return {};
+    }
+  }
 }

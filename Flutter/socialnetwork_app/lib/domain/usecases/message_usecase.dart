@@ -78,4 +78,8 @@ class MessageUsecase {
   Future<Map<String, dynamic>> editMessage({required String messageId, required String content}) async {
     return await _repository.editMessage(messageId: messageId, content: content);
   }
+
+  Future<Map<String, dynamic>> getLinkPreview(String url) async {
+    return await _repository.getLinkPreview(url);
+  }
 }

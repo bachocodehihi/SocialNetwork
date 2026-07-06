@@ -15,6 +15,7 @@ const groupSchema = new mongoose.Schema({
     }],
     inviteCode: { type: String, unique: true, sparse: true, index: true },
     qrCode: { type: String },
+    inviteLink: { type: String },
     isGroup: { type: Boolean, default: true },
     settings: {
         onlyAdminCanPost: { type: Boolean, default: false },

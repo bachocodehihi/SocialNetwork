@@ -77,4 +77,8 @@ class MessageRepositoryImp implements MessageRepository {
   @override
   Future<Map<String, dynamic>> editMessage({required String messageId, required String content}) =>
       _api.editMessage(messageId: messageId, content: content);
+
+  @override
+  Future<Map<String, dynamic>> getLinkPreview(String url) =>
+      _api.getLinkPreview(url);
 }

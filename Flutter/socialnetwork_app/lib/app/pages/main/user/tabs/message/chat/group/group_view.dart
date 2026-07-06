@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -1299,13 +1300,10 @@ class _ChatGroupViewState extends State<ChatGroupView> {
                                                           fileName: content,
                                                           isMe: isMe,
                                                         )
-                                                      : Text(
-                                                          content,
-                                                          textAlign: TextAlign.justify,
-                                                          style: TextStyle(
-                                                            fontSize: 14.sp,
-                                                            color: isMe ? Colors.white : Colors.black,
-                                                          ),
+                                                      : _LinkTextMessageBubble(
+                                                          content: content,
+                                                          isMe: isMe,
+                                                          getPreviewFn: _controller.getLinkPreview,
                                                         ),
                                     ),
                                     SizedBox(height: 3.h),
@@ -2000,6 +1998,511 @@ class _FileMessageBubble extends StatelessWidget {
               Icons.download_outlined,
               color: isMe ? Colors.white.withValues(alpha: 0.8) : Colors.black54,
               size: 20.sp,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LinkTextMessageBubble extends StatelessWidget {
+  final String content;
+  final bool isMe;
+  final Future<Map<String, dynamic>> Function(String) getPreviewFn;
+
+  const _LinkTextMessageBubble({
+    required this.content,
+    required this.isMe,
+    required this.getPreviewFn,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final RegExp urlRegex = RegExp(
+      r'(https?:\/\/[^\s]+)',
+      caseSensitive: false,
+    );
+
+    final Iterable<RegExpMatch> matches = urlRegex.allMatches(content);
+    
+    if (matches.isEmpty) {
+      return Text(
+        content,
+        textAlign: TextAlign.justify,
+        style: TextStyle(
+          fontSize: 14.sp,
+          color: isMe ? Colors.white : Colors.black,
+        ),
+      );
+    }
+
+    final List<TextSpan> spans = [];
+    int lastMatchEnd = 0;
+    String? firstUrl;
+
+    for (final RegExpMatch match in matches) {
+      final String url = match.group(0)!;
+      if (firstUrl == null) {
+        firstUrl = url;
+      }
+
+      if (match.start > lastMatchEnd) {
+        spans.add(TextSpan(
+          text: content.substring(lastMatchEnd, match.start),
+          style: TextStyle(
+            color: isMe ? Colors.white : Colors.black,
+            fontSize: 14.sp,
+          ),
+        ));
+      }
+
+      spans.add(TextSpan(
+        text: url,
+        style: TextStyle(
+          color: isMe ? Colors.white : Colors.blue,
+          decoration: TextDecoration.underline,
+          fontWeight: FontWeight.w500,
+          fontSize: 14.sp,
+        ),
+        recognizer: TapGestureRecognizer()
+          ..onTap = () async {
+            try {
+              final Uri parsedUri = Uri.parse(url);
+              final bool isYoutube = url.toLowerCase().contains('youtube.com') || 
+                                     url.toLowerCase().contains('youtu.be');
+              if (isYoutube) {
+                try {
+                  await launchUrl(
+                    parsedUri,
+                    mode: LaunchMode.externalApplication,
+                  );
+                  return;
+                } catch (_) {
+                  // Fallback to browser
+                }
+              }
+              await launchUrl(
+                parsedUri,
+                mode: LaunchMode.platformDefault,
+              );
+            } catch (e) {
+              debugPrint('Could not launch URL: $e');
+            }
+          },
+      ));
+
+      lastMatchEnd = match.end;
+    }
+
+    if (lastMatchEnd < content.length) {
+      spans.add(TextSpan(
+        text: content.substring(lastMatchEnd),
+        style: TextStyle(
+          color: isMe ? Colors.white : Colors.black,
+          fontSize: 14.sp,
+        ),
+      ));
+    }
+
+    return Column(
+      crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        RichText(
+          textAlign: TextAlign.justify,
+          text: TextSpan(children: spans),
+        ),
+        if (firstUrl != null)
+          _LinkPreviewCard(
+            url: firstUrl,
+            isMe: isMe,
+            getPreviewFn: getPreviewFn,
+          ),
+      ],
+    );
+  }
+}
+
+class _LinkPreviewCard extends StatefulWidget {
+  final String url;
+  final bool isMe;
+  final Future<Map<String, dynamic>> Function(String) getPreviewFn;
+
+  const _LinkPreviewCard({
+    required this.url,
+    required this.isMe,
+    required this.getPreviewFn,
+  });
+
+  @override
+  State<_LinkPreviewCard> createState() => _LinkPreviewCardState();
+}
+
+class _LinkPreviewCardState extends State<_LinkPreviewCard> {
+  Map<String, dynamic>? _previewData;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPreview();
+  }
+
+  @override
+  void didUpdateWidget(_LinkPreviewCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url != widget.url) {
+      _fetchPreview();
+    }
+  }
+
+  Future<void> _fetchPreview() async {
+    if (!mounted) return;
+    setState(() {
+      _loading = true;
+    });
+    try {
+      final res = await widget.getPreviewFn(widget.url);
+      if (mounted) {
+        setState(() {
+          if (res['success'] == true) {
+            _previewData = res;
+          }
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _launchURL() async {
+    try {
+      final Uri parsedUri = Uri.parse(widget.url);
+      final bool isYoutube = widget.url.toLowerCase().contains('youtube.com') || 
+                             widget.url.toLowerCase().contains('youtu.be');
+      if (isYoutube) {
+        try {
+          await launchUrl(
+            parsedUri,
+            mode: LaunchMode.externalApplication,
+          );
+          return;
+        } catch (_) {
+          // Fallback to browser
+        }
+      }
+      await launchUrl(
+        parsedUri,
+        mode: LaunchMode.platformDefault,
+      );
+    } catch (e) {
+      debugPrint('Could not launch URL: $e');
+    }
+  }
+
+  String _getDomain() {
+    try {
+      return Uri.parse(widget.url).host;
+    } catch (_) {
+      return '';
+    }
+  }
+
+  String _getPlatformIcon() {
+    try {
+      final uri = Uri.parse(widget.url);
+      final host = uri.host.toLowerCase();
+      final path = uri.path.toLowerCase();
+
+      if (host.contains('youtube.com') || host.contains('youtu.be')) {
+        return 'assets/link/youtube.png';
+      }
+      if (host.contains('facebook.com') || host.contains('fb.com')) {
+        return 'assets/link/facebook.png';
+      }
+      if (host.contains('tiktok.com')) {
+        return 'assets/link/tiktok.png';
+      }
+      if (host.contains('zalo.me')) {
+        return 'assets/link/zalo.png';
+      }
+      if (host.contains('instagram.com')) {
+        return 'assets/link/instagram.png';
+      }
+      if (host.contains('linkedin.com')) {
+        return 'assets/link/linkedin.png';
+      }
+      if (host.contains('drive.google.com')) {
+        return 'assets/link/googledrive.png';
+      }
+      if (host.contains('google.com') && (path.contains('/maps') || host.contains('maps.google.com'))) {
+        return 'assets/link/googlemaps.png';
+      }
+      if (host.contains('steampowered.com') || host.contains('steamcommunity.com')) {
+        return 'assets/link/steam.png';
+      }
+      return '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final domain = _getDomain();
+    final localIcon = _getPlatformIcon();
+    final hasLocalIcon = localIcon.isNotEmpty;
+
+    if (_loading) {
+      return Container(
+        margin: EdgeInsets.only(top: 8.h),
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          color: widget.isMe ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: widget.isMe ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.08),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 24.w,
+              height: 24.h,
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 80.w,
+                    height: 10.h,
+                    color: Colors.grey.withOpacity(0.3),
+                  ),
+                  SizedBox(height: 4.h),
+                  Container(
+                    width: 120.w,
+                    height: 8.h,
+                    color: Colors.grey.withOpacity(0.3),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final hasRichPreview = _previewData != null &&
+        ((_previewData!['title'] as String?)?.isNotEmpty == true ||
+            (_previewData!['image'] as String?)?.isNotEmpty == true);
+
+    if (!hasRichPreview) {
+      return GestureDetector(
+        onTap: _launchURL,
+        child: Container(
+          margin: EdgeInsets.only(top: 8.h),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+          decoration: BoxDecoration(
+            color: widget.isMe ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: widget.isMe ? Colors.white.withOpacity(0.15) : Colors.black.withOpacity(0.1),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6.r),
+                child: Container(
+                  width: 24.w,
+                  height: 24.h,
+                  color: Colors.white,
+                  child: Center(
+                    child: hasLocalIcon
+                        ? Image.asset(
+                            localIcon,
+                            width: 18.w,
+                            height: 18.h,
+                            fit: BoxFit.contain,
+                          )
+                        : Image.network(
+                            'https://www.google.com/s2/favicons?domain=$domain&sz=64',
+                            width: 18.w,
+                            height: 18.h,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => Image.asset(
+                              'assets/link/chrome.png',
+                              width: 18.w,
+                              height: 18.h,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      domain,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        color: widget.isMe ? Colors.white : Colors.black,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      'Nhấp để truy cập trang web',
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        color: widget.isMe ? Colors.white70 : Colors.black54,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final title = _previewData!['title'] as String? ?? '';
+    final imageUrl = _previewData!['image'] as String? ?? '';
+    final description = _previewData!['description'] as String? ?? '';
+
+    return GestureDetector(
+      onTap: _launchURL,
+      child: Container(
+        margin: EdgeInsets.only(top: 8.h),
+        decoration: BoxDecoration(
+          color: widget.isMe ? Colors.white.withOpacity(0.12) : Colors.white,
+          borderRadius: BorderRadius.circular(14.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          border: Border.all(
+            color: widget.isMe ? Colors.white.withOpacity(0.15) : Colors.grey.withOpacity(0.2),
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (imageUrl.isNotEmpty)
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                ),
+              ),
+            Padding(
+              padding: EdgeInsets.all(10.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4.r),
+                        child: Container(
+                          width: 16.w,
+                          height: 16.h,
+                          color: Colors.white,
+                          child: Center(
+                            child: hasLocalIcon
+                                ? Image.asset(
+                                    localIcon,
+                                    width: 12.w,
+                                    height: 12.h,
+                                    fit: BoxFit.contain,
+                                  )
+                                : Image.network(
+                                    'https://www.google.com/s2/favicons?domain=$domain&sz=64',
+                                    width: 12.w,
+                                    height: 12.h,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (_, __, ___) => Image.asset(
+                                      'assets/link/chrome.png',
+                                      width: 12.w,
+                                      height: 12.h,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      Expanded(
+                        child: Text(
+                          domain.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                            color: widget.isMe ? Colors.white.withOpacity(0.8) : Colors.grey[700],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (title.isNotEmpty) ...[
+                    SizedBox(height: 6.h),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.bold,
+                        color: widget.isMe ? Colors.white : Colors.black,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  if (description.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: widget.isMe ? Colors.white.withOpacity(0.8) : Colors.grey[600],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
             ),
           ],
         ),
