@@ -72,6 +72,11 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     latestCallStateRef.current = callState;
   }, [callState]);
 
+  const currentCallRef = useRef(currentCall);
+  useEffect(() => {
+    currentCallRef.current = currentCall;
+  }, [currentCall]);
+
   // Dynamically import Agora Web SDK on client side
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -190,9 +195,10 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
         ringtoneCleanRef.current = null;
       }
       setCallState('calling');
-      if (currentCall) {
+      const targetCall = currentCallRef.current;
+      if (targetCall) {
         setCurrentCall(prev => prev ? { ...prev, callId: data.callId } : null);
-        await joinAgoraChannel(currentCall.conversationId, currentCall.callType);
+        await joinAgoraChannel(targetCall.conversationId, targetCall.callType);
       }
     });
 
