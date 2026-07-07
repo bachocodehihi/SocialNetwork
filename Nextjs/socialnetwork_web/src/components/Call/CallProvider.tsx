@@ -6,6 +6,7 @@ import { io, Socket } from 'socket.io-client';
 import { NETWORK } from '@/config/config';
 import { useAlert } from '@/components/Alert/alertcontext';
 import { Phone, PhoneOff, Video, VideoOff, Mic, MicOff, Volume2, VolumeX, User, ShieldAlert } from 'lucide-react';
+import api from '@/lib/axios';
 
 interface CallInfo {
   callId: string;
@@ -286,8 +287,21 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
         endCall();
       });
 
+      // Fetch Agora Token from Backend
+      let token = null;
+      try {
+        console.log('⚡ Fetching Agora Token for channel:', channelId);
+        const tokenRes = await api.get(`/calls/token?channelName=${channelId}`);
+        if (tokenRes.data?.success) {
+          token = tokenRes.data.data.token;
+          console.log('⚡ Successfully fetched Agora Token');
+        }
+      } catch (tokenErr) {
+        console.error('Failed to fetch Agora token from server:', tokenErr);
+      }
+
       // Join Agora
-      await client.join('63c3b289a0ad46fb90f74f68554f4a9f', channelId, null, null);
+      await client.join('63c3b289a0ad46fb90f74f68554f4a9f', channelId, token, null);
 
       // Create local tracks with resilient fallback
       let audioTrack;
