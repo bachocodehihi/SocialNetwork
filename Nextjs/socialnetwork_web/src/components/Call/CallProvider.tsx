@@ -280,11 +280,18 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       const client = sdk.createClient({ mode: 'rtc', codec: 'vp8' });
       agoraClientRef.current = client;
 
-      // Event handlers
+       // Event handlers
       client.on('user-published', async (user: any, mediaType: 'audio' | 'video') => {
-        await client.subscribe(user, mediaType);
-        if (mediaType === 'audio') {
-          user.audioTrack.play();
+        console.log(`🔊 Remote user [${user.uid}] published mediaType:`, mediaType);
+        try {
+          await client.subscribe(user, mediaType);
+          console.log(`🟢 Successfully subscribed to remote [${user.uid}] track`);
+          if (mediaType === 'audio') {
+            user.audioTrack.play();
+            console.log(`▶️ Playing remote audio track for user: [${user.uid}]`);
+          }
+        } catch (subErr) {
+          console.error(`❌ Error subscribing/playing track for user [${user.uid}]:`, subErr);
         }
         setRemoteUsers(prev => {
           if (prev.find(u => u.uid === user.uid)) return prev;
@@ -293,6 +300,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       client.on('user-unpublished', (user: any, mediaType: 'audio' | 'video') => {
+        console.log(`🔇 Remote user [${user.uid}] unpublished mediaType:`, mediaType);
         setRemoteUsers(prev => prev.filter(u => u.uid !== user.uid));
       });
 
