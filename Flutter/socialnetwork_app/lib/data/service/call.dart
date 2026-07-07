@@ -550,13 +550,21 @@ class CallService extends ChangeNotifier {
     });
   }
 
-  void _resetCall() {
+  Future<void> _resetCall() async {
     _autoCancelTimer?.cancel();
     _durationTimer?.cancel();
     
-    _engine?.leaveChannel();
-    _engine?.release();
+    final engineToRelease = _engine;
     _engine = null;
+    if (engineToRelease != null) {
+      try {
+        await engineToRelease.leaveChannel();
+        await engineToRelease.release();
+        debugPrint('🟢 Agora engine released successfully');
+      } catch (e) {
+        debugPrint('⚠️ Error releasing Agora engine: $e');
+      }
+    }
     
     _isJoined = false;
     _remoteUid = null;

@@ -81,7 +81,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       import('agora-rtc-sdk-ng').then((module) => {
-        setAgoraSdk(module.default);
+        setAgoraSdk(module.default || module);
       });
     }
   }, []);
