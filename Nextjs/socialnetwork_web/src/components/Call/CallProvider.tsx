@@ -452,10 +452,16 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    socket.emit('call_end', {
-      callId: currentCall.callId,
-      endedBy: socket.id
-    });
+    if (callState === 'calling' || callState === 'ringing') {
+      socket.emit('call_cancel', {
+        callId: currentCall.callId
+      });
+    } else {
+      socket.emit('call_end', {
+        callId: currentCall.callId,
+        endedBy: socket.id
+      });
+    }
     handleResetCall();
   };
 
