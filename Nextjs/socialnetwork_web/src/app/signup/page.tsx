@@ -86,9 +86,9 @@ export default function SignUp() {
         const redirectPath = localStorage.getItem('redirectAfterLogin');
         if (redirectPath) {
           localStorage.removeItem('redirectAfterLogin');
-          router.replace(redirectPath);
+          window.location.href = redirectPath;
         } else {
-          router.replace('/home');
+          window.location.href = '/home';
         }
       } else {
         showError('Đăng nhập bằng Google thất bại!');
