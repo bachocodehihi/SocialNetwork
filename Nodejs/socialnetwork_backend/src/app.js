@@ -16,6 +16,7 @@ const messageRoute = require('./routes/message.route');
 const groupRoute = require('./routes/group.route');
 const notificationRoute = require('./routes/notification.route');
 const adminRoute = require('./routes/admin.route');
+const callRoute = require('./routes/call.route');
 
 app.use('/api/auth', authRoute);
 app.use('/api/account', accountRoute);
@@ -25,6 +26,7 @@ app.use('/api/message', messageRoute);
 app.use('/api/groups', groupRoute);
 app.use('/api/notification', notificationRoute);
 app.use('/api/admin', adminRoute);
+app.use('/api', callRoute);
 
 app.get('/logo.png', (req, res) => {
     res.sendFile(path.join(__dirname, 'logo.png'));
