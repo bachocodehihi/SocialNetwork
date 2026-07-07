@@ -289,23 +289,52 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       // Join Agora
       await client.join('63c3b289a0ad46fb90f74f68554f4a9f', channelId, '', null);
 
-      // Create local tracks
-      const audioTrack = await agoraSdk.createMicrophoneAudioTrack();
-      localAudioTrackRef.current = audioTrack;
+      // Create local tracks with resilient fallback
+      let audioTrack;
+      try {
+        audioTrack = await agoraSdk.createMicrophoneAudioTrack();
+        localAudioTrackRef.current = audioTrack;
+      } catch (audioErr: any) {
+        console.error('Failed to create microphone track:', audioErr);
+        let msg = 'Không thể truy cập micrô.';
+        if (audioErr.code === 'PERMISSION_DENIED' || audioErr.message?.includes('Permission denied')) {
+          msg = 'Micrô bị chặn quyền truy cập. Hãy click vào biểu tượng ổ khóa ở góc trái thanh địa chỉ trình duyệt và bật quyền Cho phép sử dụng Micro (Microphone).';
+        } else if (audioErr.code === 'DEVICE_NOT_FOUND' || audioErr.message?.includes('Requested device not found')) {
+          msg = 'Không tìm thấy thiết bị thu âm (Micrô) trên máy tính của bạn. Vui lòng cắm Micro và thử lại.';
+        } else {
+          msg = `Lỗi kết nối micrô: ${audioErr.message || audioErr.code || audioErr}`;
+        }
+        throw new Error(msg);
+      }
 
       if (type === 'video') {
-        const videoTrack = await agoraSdk.createCameraVideoTrack();
-        localVideoTrackRef.current = videoTrack;
-        await client.publish([audioTrack, videoTrack]);
+        try {
+          const videoTrack = await agoraSdk.createCameraVideoTrack();
+          localVideoTrackRef.current = videoTrack;
+          await client.publish([audioTrack, videoTrack]);
+        } catch (videoErr: any) {
+          console.warn('Failed to create camera track, falling back to audio only:', videoErr);
+          let warningMsg = 'Không thể truy cập camera. Đang tự động chuyển sang cuộc gọi thoại.';
+          if (videoErr.code === 'PERMISSION_DENIED' || videoErr.message?.includes('Permission denied')) {
+            warningMsg = 'Không thể truy cập Camera do thiếu quyền. Đang chuyển sang cuộc gọi thoại.';
+          } else if (videoErr.code === 'DEVICE_NOT_FOUND' || videoErr.message?.includes('Requested device not found')) {
+            warningMsg = 'Không tìm thấy Webcam/Camera. Đang chuyển sang cuộc gọi thoại.';
+          }
+          showError(warningMsg);
+          
+          // Fallback to audio only
+          await client.publish([audioTrack]);
+          setCurrentCall(prev => prev ? { ...prev, callType: 'voice' } : null);
+        }
       } else {
         await client.publish([audioTrack]);
       }
 
       setCallState('connected');
       startDurationTimer();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Agora join error:', err);
-      showError('Không thể kết nối micrô hoặc camera của bạn.');
+      showError(err.message || 'Không thể kết nối micrô hoặc camera của bạn.');
       endCall();
     }
   };
