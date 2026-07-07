@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:socialnetwork/data/service/socket.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:socialnetwork/data/network/dio_client.dart';
 
 const String agoraAppId = '63c3b289a0ad46fb90f74f68554f4a9f';
 
@@ -493,6 +494,19 @@ class CallService extends ChangeNotifier {
 
     await _initAgoraEngine();
 
+    // Fetch Agora token from backend
+    String token = '';
+    try {
+      final dio = DioClient.createDio();
+      final response = await dio.get('/calls/token', queryParameters: {'channelName': channelId});
+      if (response.data != null && response.data['success'] == true) {
+        token = response.data['data']['token'] ?? '';
+        debugPrint('🟢 Successfully fetched Agora Token from backend');
+      }
+    } catch (e) {
+      debugPrint('⚠️ Error fetching Agora Token: $e');
+    }
+
     final isVideo = _currentCall?.callType == 'video';
     if (isVideo) {
       await _engine!.enableVideo();
@@ -503,7 +517,7 @@ class CallService extends ChangeNotifier {
     }
 
     await _engine!.joinChannel(
-      token: '',
+      token: token,
       channelId: channelId,
       uid: 0,
       options: ChannelMediaOptions(
