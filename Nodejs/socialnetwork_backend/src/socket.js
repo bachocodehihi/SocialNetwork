@@ -242,7 +242,8 @@ const initSocket = (server) => {
                     call.duration = Math.floor((new Date() - call.startedAt) / 1000);
                 }
                 call.status = 'ended';
-                call.endedBy = endedBy;
+                const mongoose = require('mongoose');
+                call.endedBy = mongoose.Types.ObjectId.isValid(endedBy) ? endedBy : userId;
                 call.endedAt = new Date();
                 await call.save();
                 _cleanupCall(callId);
