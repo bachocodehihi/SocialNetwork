@@ -100,7 +100,6 @@ class _AddPhoneViewState extends State<AddPhoneView> {
               TextFormField(
                 controller: controller.phoneController,
                 keyboardType: TextInputType.phone,
-                //maxLength: 10,
                 inputFormatters: [FormatPhone()],
                 style: TextStyle(
                   fontSize: 15.sp,

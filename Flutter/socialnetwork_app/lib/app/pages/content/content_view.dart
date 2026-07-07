@@ -48,7 +48,6 @@ class _ContentViewState extends State<ContentView> {
     if (_postState == null) return;
     final postId = _postState!['_id'] ?? '';
     try {
-      // Optimistic update
       setState(() {
         final List<dynamic> likes = List.from(_postState!['likes'] ?? []);
         if (likes.contains(_currentUserId)) {
@@ -780,7 +779,6 @@ class _ContentViewState extends State<ContentView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Author row
                 Row(
                   children: [
                     GestureDetector(
@@ -847,7 +845,6 @@ class _ContentViewState extends State<ContentView> {
                   ],
                 ),
                 SizedBox(height: 16.h),
-                // Post content text
                 SelectableText(
                   contentText,
                   textAlign: TextAlign.justify,
@@ -858,7 +855,6 @@ class _ContentViewState extends State<ContentView> {
                   ),
                 ),
                 SizedBox(height: 16.h),
-                // Vertical images list
                 if (images.isNotEmpty)
                   ListView.separated(
                     shrinkWrap: true,

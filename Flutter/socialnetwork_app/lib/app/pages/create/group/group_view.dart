@@ -107,7 +107,6 @@ class _CreateGroupViewState extends State<CreateGroupView> {
               padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 0 : 24.w),
               child: TextField(
                 controller: controller.groupNameController,
-                //onChanged: (_) => controller.notifyListeners(),
                 decoration: InputDecoration(
                   labelText: Language.of(context, 'group_name'),
                   hintText: Language.of(context, 'enter_group_name'),

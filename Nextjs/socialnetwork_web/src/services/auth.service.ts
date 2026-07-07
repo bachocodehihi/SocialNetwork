@@ -46,6 +46,11 @@ export const authService = {
     return res.data;
   },
 
+  googleLogin: async (idToken: string) => {
+    const res = await api.post('/auth/google-login', { idToken });
+    return res.data;
+  },
+
   getProfile: async () => {
     const res = await api.get('/account/profile');
     return res.data;

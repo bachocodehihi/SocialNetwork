@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:socialnetwork/app/app.dart';
 import 'package:socialnetwork/app/pages/signup/state/signup.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-//import 'package:socialnetwork/data/service/notification.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
