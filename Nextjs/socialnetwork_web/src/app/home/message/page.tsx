@@ -8,6 +8,7 @@ import { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { MessageSquare, Search, Send, User, Phone, Video, Info, Loader2, Smile, FileText, Download, Play, Pause, Paperclip, Image as ImageIcon } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
+import { useCall } from '@/components/Call/CallProvider';
 
 // Custom Audio Player Bubble matching Flutter's layout
 function AudioPlayerBubble({ url, isOwnMessage }: { url: string; isOwnMessage: boolean }) {
@@ -437,6 +438,8 @@ function MessageContent() {
   const directUserId = searchParams.get('userId');
   const { showSuccess, showError } = useAlert();
 
+  const { socket, startCall } = useCall();
+
   // Socket state ref
   const socketRef = useRef<Socket | null>(null);
 
@@ -608,27 +611,15 @@ function MessageContent() {
 
   // Connect Socket.io ONCE on mount
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (!token) return;
-
-    const socketUrl = NETWORK.wsUrl.replace('ws://', 'http://').replace('wss://', 'https://');
-    const socket = io(socketUrl, {
-      auth: { token },
-      transports: ['websocket', 'polling']
-    });
-
+    if (!socket) return;
     socketRef.current = socket;
 
-    socket.on('connect', () => {
-      console.log('⚡ Connected to socket server');
-      // Re-join active room if connection lost and recovered
-      if (selectedConvRef.current) {
-        socket.emit('join_room', selectedConvRef.current._id);
-      }
-    });
+    // Join room if already selected
+    if (selectedConvRef.current) {
+      socket.emit('join_room', selectedConvRef.current._id);
+    }
 
-    // Listen for new messages
-    socket.on('receive_message', (message: any) => {
+    const handleReceiveMessage = (message: any) => {
       setMessages(prev => {
         // Prevent duplicate messages
         if (prev.some(m => m._id === message._id)) return prev;
@@ -651,10 +642,9 @@ function MessageContent() {
           return c;
         }).sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime());
       });
-    });
+    };
 
-    // Listen for general conversation updates
-    socket.on('conversation_updated', (data: any) => {
+    const handleConversationUpdated = (data: any) => {
       setConversations(prev => {
         const index = prev.findIndex(c => c._id === data.conversationId);
         if (index !== -1) {
@@ -668,12 +658,16 @@ function MessageContent() {
         }
         return prev;
       });
-    });
+    };
+
+    socket.on('receive_message', handleReceiveMessage);
+    socket.on('conversation_updated', handleConversationUpdated);
 
     return () => {
-      socket.disconnect();
+      socket.off('receive_message', handleReceiveMessage);
+      socket.off('conversation_updated', handleConversationUpdated);
     };
-  }, []);
+  }, [socket]);
 
   // Join selected conversation room and fetch message history when selectedConv changes
   useEffect(() => {
@@ -868,12 +862,22 @@ function MessageContent() {
 
                     {/* Call controls */}
                     <div className="flex items-center gap-1">
-                      <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
-                        <Phone className="w-5 h-5" />
-                      </button>
-                      <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
-                        <Video className="w-5 h-5" />
-                      </button>
+                      {!selectedConv.isGroup && (
+                        <>
+                          <button 
+                            onClick={() => startCall(partner._id || partner.id, selectedConv._id, partner, 'voice')}
+                            className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer"
+                          >
+                            <Phone className="w-5 h-5" />
+                          </button>
+                          <button 
+                            onClick={() => startCall(partner._id || partner.id, selectedConv._id, partner, 'video')}
+                            className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer"
+                          >
+                            <Video className="w-5 h-5" />
+                          </button>
+                        </>
+                      )}
                       <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
                         <Info className="w-5 h-5" />
                       </button>
