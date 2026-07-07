@@ -4,6 +4,8 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:socialnetwork/data/service/socket.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:socialnetwork/data/network/dio_client.dart';
+import 'package:dio/dio.dart';
+import 'package:socialnetwork/data/local/auth_local.dart';
 
 const String agoraAppId = '63c3b289a0ad46fb90f74f68554f4a9f';
 
@@ -170,9 +172,16 @@ class CallService extends ChangeNotifier {
 
       _engine!.registerEventHandler(
         RtcEngineEventHandler(
-          onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+          onJoinChannelSuccess: (RtcConnection connection, int elapsed) async {
             debugPrint("🟢 Local user joined Agora channel: ${connection.channelId}");
             _isJoined = true;
+            try {
+              _isSpeakerOn = true;
+              await _engine?.setEnableSpeakerphone(true);
+              debugPrint("🔊 Automatically enabled speakerphone on channel join success");
+            } catch (e) {
+              debugPrint("⚠️ Failed to enable speakerphone: $e");
+            }
             notifyListeners();
           },
           onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
@@ -498,10 +507,15 @@ class CallService extends ChangeNotifier {
     String token = '';
     try {
       final dio = DioClient.createDio();
-      final response = await dio.get('/calls/token', queryParameters: {'channelName': channelId});
+      final authToken = await AuthLocal.getToken();
+      final response = await dio.get(
+        '/api/calls/token',
+        queryParameters: {'channelName': channelId},
+        options: Options(headers: {'Authorization': 'Bearer $authToken'}),
+      );
       if (response.data != null && response.data['success'] == true) {
         token = response.data['data']['token'] ?? '';
-        debugPrint('🟢 Successfully fetched Agora Token from backend');
+        debugPrint('🟢 Successfully fetched Agora Token from backend: $token');
       }
     } catch (e) {
       debugPrint('⚠️ Error fetching Agora Token: $e');

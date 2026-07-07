@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:socialnetwork/data/local/auth_local.dart';
 class CallApi {
   final Dio _dio;
   CallApi(this._dio);
@@ -8,12 +9,21 @@ class CallApi {
         ? {'since': since.millisecondsSinceEpoch.toString()} 
         : null;
     
-    final res = await _dio.get('/calls/missed/count', queryParameters: query);
+    final token = await AuthLocal.getToken();
+    final res = await _dio.get(
+      '/api/calls/missed/count',
+      queryParameters: query,
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
     return res.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> markMissedCallsRead() async {
-    final res = await _dio.post('/calls/missed/read');
+    final token = await AuthLocal.getToken();
+    final res = await _dio.post(
+      '/api/calls/missed/read',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
     return res.data as Map<String, dynamic>;
   }
 
@@ -32,7 +42,12 @@ class CallApi {
       if (onlyMissed) 'onlyMissed': 'true',
     };
     
-    final res = await _dio.get('/calls', queryParameters: params);
+    final token = await AuthLocal.getToken();
+    final res = await _dio.get(
+      '/api/calls',
+      queryParameters: params,
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
     return res.data as Map<String, dynamic>;
   }
 }
