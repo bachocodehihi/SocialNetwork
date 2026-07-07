@@ -176,11 +176,12 @@ class CallService extends ChangeNotifier {
             debugPrint("🟢 Local user joined Agora channel: ${connection.channelId}");
             _isJoined = true;
             try {
-              _isSpeakerOn = true;
-              await _engine?.setEnableSpeakerphone(true);
-              debugPrint("🔊 Automatically enabled speakerphone on channel join success");
+              final isVideo = _currentCall?.callType == 'video';
+              _isSpeakerOn = isVideo;
+              await _engine?.setEnableSpeakerphone(isVideo);
+              debugPrint("🔊 Set speakerphone to $isVideo by default on channel join success");
             } catch (e) {
-              debugPrint("⚠️ Failed to enable speakerphone: $e");
+              debugPrint("⚠️ Failed to configure speakerphone: $e");
             }
             notifyListeners();
           },
