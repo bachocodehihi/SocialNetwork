@@ -150,6 +150,7 @@ export default function SignIn() {
       if (res.success) {
         const { token, user } = res;
         localStorage.setItem('token', token);
+        document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax`;
         localStorage.setItem('user', JSON.stringify(user));
         
         showSuccess('Đăng nhập bằng Google thành công!');

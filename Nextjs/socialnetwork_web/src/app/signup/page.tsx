@@ -79,6 +79,7 @@ export default function SignUp() {
       if (res.success) {
         const { token, user } = res;
         localStorage.setItem('token', token);
+        document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax`;
         localStorage.setItem('user', JSON.stringify(user));
         
         showSuccess('Đăng ký và Đăng nhập bằng Google thành công!');
