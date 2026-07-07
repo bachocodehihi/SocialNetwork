@@ -287,7 +287,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       // Join Agora
-      await client.join('63c3b289a0ad46fb90f74f68554f4a9f', channelId, '', null);
+      await client.join('63c3b289a0ad46fb90f74f68554f4a9f', channelId, null, null);
 
       // Create local tracks with resilient fallback
       let audioTrack;
