@@ -261,14 +261,23 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Agora implementation
   const joinAgoraChannel = async (channelId: string, type: 'voice' | 'video') => {
-    if (!agoraSdk) {
-      showError('Agora Web SDK chưa được tải.');
-      handleResetCall();
-      return;
+    let sdk = agoraSdk;
+    if (!sdk) {
+      try {
+        console.log('⚡ Loading Agora Web SDK on-demand...');
+        const module = await import('agora-rtc-sdk-ng');
+        sdk = module.default || module;
+        setAgoraSdk(sdk);
+      } catch (err: any) {
+        console.error('❌ Failed to load Agora Web SDK on-demand:', err);
+        showError('Không thể tải bộ thư viện gọi điện (Agora Web SDK).');
+        handleResetCall();
+        return;
+      }
     }
 
     try {
-      const client = agoraSdk.createClient({ mode: 'rtc', codec: 'vp8' });
+      const client = sdk.createClient({ mode: 'rtc', codec: 'vp8' });
       agoraClientRef.current = client;
 
       // Event handlers
@@ -312,7 +321,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       // Create local tracks with resilient fallback
       let audioTrack;
       try {
-        audioTrack = await agoraSdk.createMicrophoneAudioTrack();
+        audioTrack = await sdk.createMicrophoneAudioTrack();
         localAudioTrackRef.current = audioTrack;
       } catch (audioErr: any) {
         console.error('Failed to create microphone track:', audioErr);
@@ -329,7 +338,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (type === 'video') {
         try {
-          const videoTrack = await agoraSdk.createCameraVideoTrack();
+          const videoTrack = await sdk.createCameraVideoTrack();
           localVideoTrackRef.current = videoTrack;
           await client.publish([audioTrack, videoTrack]);
         } catch (videoErr: any) {
