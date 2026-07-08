@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 interface NavbarProps {
-  activeTab: 'home' | 'message' | 'contact' | 'notification';
+  activeTab?: 'home' | 'message' | 'contact' | 'notification' | 'setting';
   onRefreshFeed?: () => void;
 }
 
