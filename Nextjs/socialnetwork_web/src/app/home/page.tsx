@@ -11,6 +11,7 @@ import {
   Gamepad2, 
   LogOut, 
   ChevronRight,
+  ChevronLeft,
   Search,
   Clock,
   X,
@@ -59,6 +60,17 @@ export default function HomePage() {
   const [isPosting, setIsPosting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Lightbox states
+  const [activeLightboxPost, setActiveLightboxPost] = useState<any | null>(null);
+  const [activeLightboxImageIdx, setActiveLightboxImageIdx] = useState<number>(0);
+  const [lightboxContentExpanded, setLightboxContentExpanded] = useState(false);
+
+  const openLightbox = (post: any, index: number) => {
+    setActiveLightboxPost(post);
+    setActiveLightboxImageIdx(index);
+    setLightboxContentExpanded(false);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -81,6 +93,17 @@ export default function HomePage() {
 
     fetchProfile();
   }, [router]);
+
+  useEffect(() => {
+    if (activeLightboxPost) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [activeLightboxPost]);
 
   // Fetch posts feed
   const fetchFeed = async () => {
@@ -352,12 +375,16 @@ export default function HomePage() {
     return count;
   };
 
-  const renderPostImages = (images: string[]) => {
+  const renderPostImages = (post: any) => {
+    const images = post.images || [];
     if (!images || images.length === 0) return null;
 
     if (images.length === 1) {
       return (
-        <div className="mt-3 overflow-hidden rounded-xl border border-grey/20 max-h-[500px]">
+        <div 
+          onClick={() => openLightbox(post, 0)}
+          className="mt-3 overflow-hidden rounded-xl border border-grey/20 max-h-[500px] cursor-pointer hover:opacity-95 transition"
+        >
           <img
             src={images[0]}
             alt="Post image"
@@ -371,14 +398,16 @@ export default function HomePage() {
       return (
         <div className="mt-3 grid grid-cols-2 gap-2 h-72 rounded-xl overflow-hidden">
           <img
+            onClick={() => openLightbox(post, 0)}
             src={images[0]}
             alt="Post attachment 1"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover cursor-pointer hover:opacity-95 transition"
           />
           <img
+            onClick={() => openLightbox(post, 1)}
             src={images[1]}
             alt="Post attachment 2"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover cursor-pointer hover:opacity-95 transition"
           />
         </div>
       );
@@ -389,27 +418,33 @@ export default function HomePage() {
       <div className="mt-3 grid grid-cols-3 gap-2 h-80 rounded-xl overflow-hidden">
         <div className="col-span-2 h-full">
           <img
+            onClick={() => openLightbox(post, 0)}
             src={images[0]}
             alt="Post attachment 1"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover cursor-pointer hover:opacity-95 transition"
           />
         </div>
         <div className="grid grid-rows-2 gap-2 h-full">
           <div className="h-full overflow-hidden">
             <img
+              onClick={() => openLightbox(post, 1)}
               src={images[1]}
               alt="Post attachment 2"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover cursor-pointer hover:opacity-95 transition"
             />
           </div>
           <div className="h-full relative overflow-hidden">
             <img
+              onClick={() => openLightbox(post, 2)}
               src={images[2]}
               alt="Post attachment 3"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover cursor-pointer hover:opacity-95 transition"
             />
             {remaining > 0 && (
-              <div className="absolute inset-0 bg-black/55 flex items-center justify-center text-white text-xl font-bold select-none">
+              <div 
+                onClick={() => openLightbox(post, 2)}
+                className="absolute inset-0 bg-black/55 flex items-center justify-center text-white text-xl font-bold select-none cursor-pointer hover:bg-black/65 transition"
+              >
                 +{remaining}
               </div>
             )}
@@ -585,7 +620,7 @@ export default function HomePage() {
                     </div>
 
                     {/* Images attachment */}
-                    {renderPostImages(post.images || [])}
+                    {renderPostImages(post)}
 
                     {/* Stats */}
                     <div className='flex items-center justify-between text-xs sm:text-sm text-grey py-3 mt-3 border-t border-b border-grey/10 select-none'>
@@ -976,6 +1011,435 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* LIGHTBOX MODAL */}
+      {activeLightboxPost && (() => {
+        const post = posts.find(p => p._id === activeLightboxPost._id) || activeLightboxPost;
+        const images = post.images || [];
+        const activeImageUrl = images[activeLightboxImageIdx] || '';
+
+        const author = post.author || {};
+        const authorName = author.username || 'Người dùng';
+        const authorAvatar = author.avatar || '';
+        const timeAgoStr = formatTimeAgo(post.createdAt);
+
+        const hasLiked = post.likes?.includes(currentUserId) || false;
+        const likesCount = post.likes?.length || 0;
+        const commentsCount = getCommentsCount(post);
+        const comments = post.comments || [];
+
+        // Caption / Content truncation & Readmore toggle
+        const content = post.content || '';
+        const isLong = content.length > 200 || content.split('\n').length > 4;
+        const displayContent = lightboxContentExpanded 
+          ? content 
+          : (content.split('\n').length > 4 
+              ? content.split('\n').slice(0, 4).join('\n') + '...' 
+              : content.substring(0, 200) + (isLong ? '...' : ''));
+
+        return (
+          <div className="fixed inset-0 z-50 flex flex-col md:flex-row bg-black/95 backdrop-blur-sm animate-in fade-in duration-200 select-none">
+            
+            {/* Left Column: Image Viewer */}
+            <div className="flex-1 relative flex items-center justify-center bg-black min-h-[40vh] md:h-full">
+              
+              {/* Close Button */}
+              <button
+                onClick={() => {
+                  setActiveLightboxPost(null);
+                  setReplyingTo(null);
+                }}
+                className="absolute top-4 left-4 z-50 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white transition border-0 cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              {/* Active Image */}
+              {activeImageUrl ? (
+                <img
+                  src={activeImageUrl}
+                  alt={`Post image ${activeLightboxImageIdx + 1}`}
+                  className="max-w-full max-h-[85vh] md:max-h-full object-contain select-none pointer-events-none"
+                />
+              ) : (
+                <div className="text-white text-sm">Không thể tải ảnh</div>
+              )}
+
+              {/* Navigation Arrows */}
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveLightboxImageIdx(prev => (prev > 0 ? prev - 1 : images.length - 1));
+                    }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white transition border-0 cursor-pointer"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveLightboxImageIdx(prev => (prev < images.length - 1 ? prev + 1 : 0));
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white transition border-0 cursor-pointer"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </>
+              )}
+
+              {/* Image indicator count */}
+              {images.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full select-none font-semibold">
+                  {activeLightboxImageIdx + 1} / {images.length}
+                </div>
+              )}
+            </div>
+
+            {/* Right Column: Post Info & Comments */}
+            <div className="w-full md:w-[450px] bg-white h-[60vh] md:h-full flex flex-col shadow-2xl border-t md:border-t-0 md:border-l border-grey/25 animate-in slide-in-from-bottom md:slide-in-from-right duration-300">
+              
+              {/* Header: Author & Options */}
+              <div className="p-4 border-b border-grey/15 flex items-center justify-between flex-shrink-0">
+                <div className="flex items-center gap-3">
+                  <div 
+                    onClick={() => {
+                      setActiveLightboxPost(null);
+                      router.push(`/user/${author._id || author.id}`);
+                    }}
+                    className="w-10 h-10 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer"
+                  >
+                    {authorAvatar ? (
+                      <img src={authorAvatar} alt={authorName} className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-5 h-5 text-grey" />
+                    )}
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <h3 
+                      onClick={() => {
+                        setActiveLightboxPost(null);
+                        router.push(`/user/${author._id || author.id}`);
+                      }}
+                      className="font-bold text-grey-hover hover:underline cursor-pointer text-sm sm:text-base"
+                    >
+                      {authorName}
+                    </h3>
+                    <span className="text-xs text-grey font-medium">{timeAgoStr}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setActiveLightboxPost(null);
+                    setReplyingTo(null);
+                  }}
+                  className="w-8 h-8 rounded-full hover:bg-grey/10 flex items-center justify-center text-grey hover:text-grey-hover transition border-0 bg-transparent cursor-pointer md:hidden"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Scrollable details view: Caption & Comments List */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 text-left">
+                
+                {/* Caption / Content */}
+                {content && (
+                  <div className="text-slate-800 text-sm leading-relaxed whitespace-pre-wrap pb-3 border-b border-grey/10">
+                    {displayContent}
+                    {isLong && (
+                      <button
+                        onClick={() => setLightboxContentExpanded(prev => !prev)}
+                        className="text-blue hover:text-blue-hover font-bold text-xs sm:text-sm ml-1.5 focus:outline-none bg-transparent border-0 cursor-pointer inline-block"
+                      >
+                        {lightboxContentExpanded ? 'Ẩn bớt' : 'Xem thêm'}
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* Stats */}
+                <div className="flex items-center justify-between text-xs text-grey py-1 select-none">
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <div className="w-5 h-5 rounded-full bg-blue/10 flex items-center justify-center text-blue">
+                      <ThumbsUp className="w-3 h-3 fill-blue" />
+                    </div>
+                    <span>{likesCount} lượt thích</span>
+                  </div>
+                  <div className="flex items-center gap-3 font-medium">
+                    <span>{commentsCount} bình luận</span>
+                    <span>0 chia sẻ</span>
+                  </div>
+                </div>
+
+                {/* Engagement Action Buttons */}
+                <div className="grid grid-cols-2 gap-1 py-1 border-t border-b border-grey/10 select-none">
+                  <button 
+                    onClick={() => handleLikePost(post._id)}
+                    className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${hasLiked ? 'text-blue' : 'text-grey-hover'}`}
+                  >
+                    <ThumbsUp className={`w-4 h-4 ${hasLiked ? 'fill-blue text-blue' : ''}`} />
+                    <span>Thích</span>
+                  </button>
+                  <button 
+                    onClick={() => {
+                      const el = document.getElementById(`lightbox-comment-input-${post._id}`);
+                      el?.focus();
+                    }}
+                    className="flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition text-grey-hover font-bold text-sm border-0 cursor-pointer bg-transparent"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Bình luận</span>
+                  </button>
+                </div>
+
+                {/* Comments List container */}
+                <div className="space-y-4 pt-2">
+                  <h4 className="text-xs font-bold text-grey-hover uppercase tracking-wider mb-2">Bình luận</h4>
+                  {comments.length === 0 ? (
+                    <div className="text-center py-8 text-grey text-xs sm:text-sm select-none">
+                      Chưa có bình luận nào. Hãy là người đầu tiên!
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {comments.map((comment: any) => {
+                        const cAuthor = comment.author || {};
+                        const cAuthorName = cAuthor.username || 'Người dùng';
+                        const cAuthorAvatar = cAuthor.avatar || '';
+                        
+                        const cHasLiked = comment.likes?.includes(currentUserId) || comment.hasLiked || false;
+                        const cLikesCount = comment.likes?.length || comment.likesCount || 0;
+                        const cTimeAgo = formatTimeAgo(comment.createdAt);
+
+                        const replies = comment.replies || [];
+                        const isRepliesExpanded = expandedComments[comment._id] || false;
+
+                        return (
+                          <div key={comment._id} className="space-y-2">
+                            
+                            {/* Individual Comment Box */}
+                            <div className="flex gap-2.5 items-start">
+                              <div 
+                                onClick={() => {
+                                  setActiveLightboxPost(null);
+                                  router.push(`/user/${cAuthor._id || cAuthor.id}`);
+                                }}
+                                className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer"
+                              >
+                                {cAuthorAvatar ? (
+                                  <img src={cAuthorAvatar} alt={cAuthorName} className="w-full h-full object-cover" />
+                                ) : (
+                                  <User className="w-4.5 h-4.5 text-grey" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="bg-grey/10 rounded-2xl px-3 py-1.5 inline-block max-w-full">
+                                  <h5 
+                                    onClick={() => {
+                                      setActiveLightboxPost(null);
+                                      router.push(`/user/${cAuthor._id || cAuthor.id}`);
+                                    }}
+                                    className="text-xs font-bold text-grey-hover hover:underline cursor-pointer truncate mb-0.5"
+                                  >
+                                    {cAuthorName}
+                                  </h5>
+                                  <p className="text-sm text-gray-800 break-words leading-normal">
+                                    {comment.content}
+                                  </p>
+                                </div>
+                                
+                                {/* Actions */}
+                                <div className="flex items-center gap-3.5 text-[10px] sm:text-xs text-grey mt-0.5 pl-2 select-none font-semibold">
+                                  <span>{cTimeAgo}</span>
+                                  <button 
+                                    onClick={() => {
+                                      setReplyingTo({
+                                        postId: post._id,
+                                        commentId: comment._id,
+                                        username: cAuthorName
+                                      });
+                                      const el = document.getElementById(`lightbox-comment-input-${post._id}`);
+                                      el?.focus();
+                                    }}
+                                    className="hover:text-blue hover:underline transition bg-transparent border-0 cursor-pointer font-bold"
+                                  >
+                                    Trả lời
+                                  </button>
+                                  <button 
+                                    onClick={() => handleLikeComment(post._id, comment._id)}
+                                    className={`hover:text-blue hover:underline flex items-center gap-1 transition bg-transparent border-0 cursor-pointer font-bold ${cHasLiked ? 'text-blue' : ''}`}
+                                  >
+                                    <ThumbsUp className={`w-3 h-3 ${cHasLiked ? 'fill-blue text-blue' : ''}`} />
+                                    <span>{cLikesCount > 0 ? cLikesCount : ''} Thích</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Replies block */}
+                            {replies.length > 0 && (
+                              <div className="pl-10">
+                                {!isRepliesExpanded ? (
+                                  <button 
+                                    onClick={() => setExpandedComments(prev => ({ ...prev, [comment._id]: true }))}
+                                    className="flex items-center gap-1 text-xs text-grey hover:text-blue font-bold py-1 bg-transparent border-0 cursor-pointer"
+                                  >
+                                    <ChevronRight className="w-3.5 h-3.5 rotate-90" />
+                                    <span>Xem tất cả {replies.length} phản hồi</span>
+                                  </button>
+                                ) : (
+                                  <div className="space-y-3 mt-2 border-l-2 border-grey/15 pl-4">
+                                    {replies.map((reply: any) => {
+                                      const rAuthor = reply.author || {};
+                                      const rAuthorName = rAuthor.username || 'Người dùng';
+                                      const rAuthorAvatar = rAuthor.avatar || '';
+                                      
+                                      const rHasLiked = reply.likes?.includes(currentUserId) || reply.hasLiked || false;
+                                      const rLikesCount = reply.likes?.length || reply.likesCount || 0;
+                                      const rTimeAgo = formatTimeAgo(reply.createdAt);
+
+                                      return (
+                                        <div key={reply._id} className="flex gap-2 items-start text-left">
+                                          <div 
+                                            onClick={() => {
+                                              setActiveLightboxPost(null);
+                                              router.push(`/user/${rAuthor._id || rAuthor.id}`);
+                                            }}
+                                            className="w-7 h-7 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer"
+                                          >
+                                            {rAuthorAvatar ? (
+                                              <img src={rAuthorAvatar} alt={rAuthorName} className="w-full h-full object-cover" />
+                                            ) : (
+                                              <User className="w-4 h-4 text-grey" />
+                                            )}
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <div className="bg-grey/10 rounded-2xl px-3 py-1.5 inline-block max-w-full">
+                                              <h5 
+                                                onClick={() => {
+                                                  setActiveLightboxPost(null);
+                                                  router.push(`/user/${rAuthor._id || rAuthor.id}`);
+                                                }}
+                                                className="text-xs font-bold text-grey-hover hover:underline cursor-pointer truncate mb-0.5"
+                                              >
+                                                {rAuthorName}
+                                              </h5>
+                                              <p className="text-sm text-gray-800 break-words leading-normal">
+                                                {reply.content}
+                                              </p>
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-3 text-[10px] sm:text-xs text-grey mt-0.5 pl-2 select-none font-semibold">
+                                              <span>{rTimeAgo}</span>
+                                              <button 
+                                                onClick={() => {
+                                                  setReplyingTo({
+                                                    postId: post._id,
+                                                    commentId: comment._id,
+                                                    username: rAuthorName
+                                                  });
+                                                  const el = document.getElementById(`lightbox-comment-input-${post._id}`);
+                                                  el?.focus();
+                                                }}
+                                                className="hover:text-blue hover:underline transition bg-transparent border-0 cursor-pointer font-bold"
+                                              >
+                                                Trả lời
+                                              </button>
+                                              <button 
+                                                onClick={() => handleLikeReply(post._id, comment._id, reply._id)}
+                                                className={`hover:text-blue hover:underline flex items-center gap-1 transition bg-transparent border-0 cursor-pointer font-bold ${rHasLiked ? 'text-blue' : ''}`}
+                                              >
+                                                <ThumbsUp className={`w-3 h-3 ${rHasLiked ? 'fill-blue text-blue' : ''}`} />
+                                                <span>{rLikesCount > 0 ? rLikesCount : ''} Thích</span>
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                    <button 
+                                      onClick={() => setExpandedComments(prev => ({ ...prev, [comment._id]: false }))}
+                                      className="flex items-center gap-1 text-xs text-grey hover:text-blue font-bold py-1 mt-1 bg-transparent border-0 cursor-pointer"
+                                    >
+                                      <ChevronRight className="w-3.5 h-3.5 -rotate-90" />
+                                      <span>Ẩn phản hồi</span>
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+              </div>
+
+              {/* Input section: Reply indicator and Comment form */}
+              <div className="p-4 border-t border-grey/15 bg-white flex-shrink-0">
+                
+                {replyingTo && replyingTo.postId === post._id && (
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-grey/10 rounded-xl text-xs sm:text-sm text-grey font-medium mb-2 animate-in slide-in-from-bottom-2 duration-150">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-blue">Đang phản hồi</span>
+                      <span className="font-bold text-grey-hover">@{replyingTo.username}</span>
+                    </div>
+                    <button 
+                      onClick={() => setReplyingTo(null)}
+                      className="w-5 h-5 rounded-full hover:bg-grey/25 flex items-center justify-center text-grey transition border-0 bg-transparent cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex gap-2 items-center">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center">
+                    <img src={user?.avatar || '/assets/avatar/avatar.jpg'} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 flex gap-2 relative">
+                    <input
+                      id={`lightbox-comment-input-${post._id}`}
+                      type="text"
+                      placeholder={replyingTo && replyingTo.postId === post._id ? `Phản hồi @${replyingTo.username}...` : "Viết bình luận công khai..."}
+                      value={commentInputs[post._id] || ''}
+                      onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          if (replyingTo && replyingTo.postId === post._id) {
+                            handleAddReply(post._id, replyingTo.commentId);
+                          } else {
+                            handleAddComment(post._id);
+                          }
+                        }
+                      }}
+                      className="flex-1 px-4 py-2 bg-grey/10 rounded-full border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-grey-hover font-medium placeholder-gray-500"
+                    />
+                    <button 
+                      onClick={() => {
+                        if (replyingTo && replyingTo.postId === post._id) {
+                          handleAddReply(post._id, replyingTo.commentId);
+                        } else {
+                          handleAddComment(post._id);
+                        }
+                      }}
+                      className="w-9 h-9 rounded-full bg-blue hover:bg-blue-hover text-white flex items-center justify-center shadow-md shadow-blue/20 transition cursor-pointer border-0 flex-shrink-0"
+                    >
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        );
+      })()}
 
       {/* Inline styles for modal scaleUp animation */}
       <style jsx global>{`
