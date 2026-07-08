@@ -7,6 +7,7 @@ import { contentService } from '../../services/content.service';
 import { contactService } from '../../services/contact.service';
 import { accountService } from '../../services/accout.service';
 import { useAlert } from '../Alert/alertcontext';
+import Navbar from '../Navbar';
 import { 
   User, 
   Settings, 
@@ -537,8 +538,10 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
 
   return (
     <div className="min-h-screen bg-grey/5 pb-12">
-      {/* Header Container without cover photo */}
-      <div className="bg-white border-b border-grey/10 shadow-sm pt-6 pb-6">
+      <Navbar />
+      <div className="pt-16">
+        {/* Header Container without cover photo */}
+        <div className="bg-white border-b border-grey/10 shadow-sm pt-6 pb-6">
         <div className="max-w-5xl mx-auto px-4">
           {/* Back button if viewing another user */}
           {!isSelf && (
@@ -1222,5 +1225,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
         </div>
       </div>
     </div>
+  </div>
   );
 }
