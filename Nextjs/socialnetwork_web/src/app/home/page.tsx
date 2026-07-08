@@ -1145,7 +1145,7 @@ export default function HomePage() {
                 
                 {/* Caption / Content */}
                 {content && (
-                  <div className="text-slate-800 text-sm leading-relaxed whitespace-pre-wrap pb-3 border-b border-grey/10">
+                  <div className="text-slate-800 text-sm leading-relaxed whitespace-pre-wrap text-justify pb-3 border-b border-grey/10">
                     {displayContent}
                     {isLong && (
                       <button
@@ -1243,7 +1243,7 @@ export default function HomePage() {
                                   >
                                     {cAuthorName}
                                   </h5>
-                                  <p className="text-sm text-gray-800 break-words leading-normal">
+                                  <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
                                     {comment.content}
                                   </p>
                                 </div>
@@ -1324,7 +1324,7 @@ export default function HomePage() {
                                               >
                                                 {rAuthorName}
                                               </h5>
-                                              <p className="text-sm text-gray-800 break-words leading-normal">
+                                              <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
                                                 {reply.content}
                                               </p>
                                             </div>
