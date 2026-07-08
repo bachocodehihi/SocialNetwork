@@ -12,5 +12,10 @@
   "english": "English",
   "confirm": "Confirm",
   "cancel": "Cancel",
-  "darkmode_desc": "Reduce eye strain, save your device battery, and improve visibility in low-light environments."
+  "darkmode_desc": "Reduce eye strain, save your device battery, and improve visibility in low-light environments.",
+  "settings_title": "Settings",
+  "interface_experience": "Interface & Experience",
+  "darkmode_menu_desc": "Change theme to light/dark to suit your eyes",
+  "language_menu_desc": "Select system display language",
+  "language_tab_title": "Select the language you want to use for system display:"
 }

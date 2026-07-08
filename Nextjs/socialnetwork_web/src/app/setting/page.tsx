@@ -432,18 +432,18 @@ export default function SettingPage() {
   // Settings Menu Structure
   const settingSections = [
     {
-      title: 'Giao diện & Trải nghiệm',
+      title: t('interface_experience'),
       items: [
         {
-          name: 'Chế độ tối',
-          description: 'Thay đổi giao diện sáng/tối phù hợp với mắt',
+          name: t('darkmode'),
+          description: t('darkmode_menu_desc'),
           icon: Moon,
           color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/30',
           section: 'darkmode'
         },
         {
-          name: 'Ngôn ngữ',
-          description: 'Chọn ngôn ngữ hiển thị hệ thống',
+          name: t('language'),
+          description: t('language_menu_desc'),
           icon: Globe,
           color: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-950/30',
           section: 'language'
@@ -505,16 +505,16 @@ export default function SettingPage() {
   // List of searchable setting options
   const searchableItems = [
     {
-      name: 'Chế độ tối (Dark mode)',
-      description: 'Thay đổi giao diện sáng/tối phù hợp với mắt',
+      name: `${t('darkmode')} (Dark mode)`,
+      description: t('darkmode_menu_desc'),
       keywords: 'tối sáng dark mode theme giao diện background màn hình',
       section: 'darkmode',
       icon: Moon,
       color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/30'
     },
     {
-      name: 'Ngôn ngữ (Language)',
-      description: 'Chọn ngôn ngữ hiển thị hệ thống (Tiếng Việt/English)',
+      name: `${t('language')} (Language)`,
+      description: t('language_menu_desc'),
       keywords: 'ngôn ngữ tiếng việt tiếng anh language english vietnamese',
       section: 'language',
       icon: Globe,
@@ -619,7 +619,7 @@ export default function SettingPage() {
             {/* Title Header (Visible on Desktop or when on Menu list) */}
             <div className="flex items-center gap-3 px-1 select-none">
               <Settings className="w-6 h-6 text-blue" />
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-black dark:text-white">Cài đặt</h1>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-black dark:text-white">{t('settings_title')}</h1>
             </div>
 
             {/* User Profile Card */}
@@ -877,11 +877,11 @@ export default function SettingPage() {
                     >
                       <ArrowLeft className="w-5 h-5" />
                     </button>
-                    <h2 className="text-lg font-bold text-black dark:text-white tracking-tight">Ngôn ngữ</h2>
+                    <h2 className="text-lg font-bold text-black dark:text-white tracking-tight">{t('language')}</h2>
                   </div>
 
                   <p className="text-sm font-semibold text-grey mb-4 px-1 text-left">
-                    Chọn ngôn ngữ bạn muốn sử dụng hiển thị trong hệ thống:
+                    {t('language_tab_title')}
                   </p>
 
                   <div className="space-y-3">
