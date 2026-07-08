@@ -855,14 +855,15 @@ export default function HomePage() {
                             <img src={user?.avatar || '/assets/avatar/avatar.jpg'} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1 flex gap-2 relative">
-                            <input
+                            <textarea
                               id={`comment-input-${post._id}`}
-                              type="text"
+                              rows={1}
                               placeholder={replyingTo && replyingTo.postId === post._id ? `Phản hồi @${replyingTo.username}...` : "Viết bình luận công khai..."}
                               value={commentInputs[post._id] || ''}
                               onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
                               onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  e.preventDefault();
                                   if (replyingTo && replyingTo.postId === post._id) {
                                     handleAddReply(post._id, replyingTo.commentId);
                                   } else {
@@ -870,7 +871,7 @@ export default function HomePage() {
                                   }
                                 }
                               }}
-                              className="flex-1 px-4 py-2 bg-grey/10 rounded-full border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-grey-hover font-medium placeholder-gray-500"
+                              className="flex-1 px-4 py-2 bg-grey/10 rounded-2xl border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-grey-hover font-medium placeholder-gray-500 resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
                             />
                             <button 
                               onClick={() => {
@@ -1401,23 +1402,24 @@ export default function HomePage() {
                     <img src={user?.avatar || '/assets/avatar/avatar.jpg'} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 flex gap-2 relative">
-                    <input
-                      id={`lightbox-comment-input-${post._id}`}
-                      type="text"
-                      placeholder={replyingTo && replyingTo.postId === post._id ? `Phản hồi @${replyingTo.username}...` : "Viết bình luận công khai..."}
-                      value={commentInputs[post._id] || ''}
-                      onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          if (replyingTo && replyingTo.postId === post._id) {
-                            handleAddReply(post._id, replyingTo.commentId);
-                          } else {
-                            handleAddComment(post._id);
-                          }
-                        }
-                      }}
-                      className="flex-1 px-4 py-2 bg-grey/10 rounded-full border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-grey-hover font-medium placeholder-gray-500"
-                    />
+                            <textarea
+                              id={`lightbox-comment-input-${post._id}`}
+                              rows={1}
+                              placeholder={replyingTo && replyingTo.postId === post._id ? `Phản hồi @${replyingTo.username}...` : "Viết bình luận công khai..."}
+                              value={commentInputs[post._id] || ''}
+                              onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  e.preventDefault();
+                                  if (replyingTo && replyingTo.postId === post._id) {
+                                    handleAddReply(post._id, replyingTo.commentId);
+                                  } else {
+                                    handleAddComment(post._id);
+                                  }
+                                }
+                              }}
+                              className="flex-1 px-4 py-2 bg-grey/10 rounded-2xl border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-grey-hover font-medium placeholder-gray-500 resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
+                            />
                     <button 
                       onClick={() => {
                         if (replyingTo && replyingTo.postId === post._id) {
