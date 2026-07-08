@@ -6,10 +6,11 @@
   "setting": "Settings",
   "search_placeholder": "Search users...",
   "logout": "Log out",
-  "dark_mode": "Dark Mode",
+  "darkmode": "Dark Mode",
   "language": "Language",
   "vietnamese": "Vietnamese",
   "english": "English",
   "confirm": "Confirm",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "darkmode_desc": "Reduce eye strain, save your device battery, and improve visibility in low-light environments."
 }

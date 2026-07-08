@@ -5,6 +5,7 @@ import { authService } from '../../services/auth.service';
 import { accountService } from '../../services/accout.service';
 import { useAlert } from '../../components/Alert/alertcontext';
 import Navbar from '../../components/Navbar';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   ArrowLeft,
   User, 
@@ -46,6 +47,7 @@ import {
 export default function SettingPage() {
   const router = useRouter();
   const { showSuccess, showError } = useAlert();
+  const { changeLanguage, t } = useLanguage();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -297,7 +299,7 @@ export default function SettingPage() {
   // Select Language
   const handleSelectLanguage = (code: string) => {
     setCurrentLang(code);
-    localStorage.setItem('language', code);
+    changeLanguage(code as 'vi' | 'en');
     showSuccess(code === 'vi' ? 'Đã đổi ngôn ngữ sang Tiếng Việt!' : 'Language changed to English!');
   };
 
@@ -835,7 +837,7 @@ export default function SettingPage() {
                     >
                       <ArrowLeft className="w-5 h-5" />
                     </button>
-                    <h2 className="text-lg font-bold text-black dark:text-white tracking-tight">Chế độ tối</h2>
+                    <h2 className="text-lg font-bold text-black dark:text-white tracking-tight">{t('darkmode')}</h2>
                   </div>
 
                   {/* Body Content */}
@@ -845,9 +847,9 @@ export default function SettingPage() {
                         <Moon className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-sm sm:text-base text-black dark:text-white">Chế độ tối</h3>
+                        <h3 className="font-bold text-sm sm:text-base text-black dark:text-white">{t('darkmode')}</h3>
                         <p className="text-xs sm:text-sm text-grey font-medium mt-1 text-justify leading-relaxed">
-                          Giảm mỏi mắt, tiết kiệm pin cho thiết bị của bạn và cải thiện khả năng hiển thị trong môi trường ánh sáng yếu.
+                          {t('darkmode_desc')}
                         </p>
                       </div>
                     </div>

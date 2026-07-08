@@ -6,10 +6,11 @@
   "setting": "Cài đặt",
   "search_placeholder": "Tìm kiếm người dùng...",
   "logout": "Đăng xuất",
-  "dark_mode": "Chế độ tối",
+  "darkmode": "Chế độ tối",
   "language": "Ngôn ngữ",
   "vietnamese": "Tiếng Việt",
   "english": "Tiếng Anh",
   "confirm": "Xác nhận",
-  "cancel": "Hủy"
+  "cancel": "Hủy",
+  "darkmode_desc": "Giảm mỏi mắt, tiết kiệm pin cho thiết bị của bạn và cải thiện khả năng hiển thị trong môi trường ánh sáng yếu."
 }
