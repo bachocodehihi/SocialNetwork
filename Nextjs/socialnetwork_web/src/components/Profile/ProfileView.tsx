@@ -1180,14 +1180,15 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                             </div>
                           )}
                           <div className="flex gap-2 items-center">
-                            <input
+                            <textarea
                               id={`comment-input-${post._id}`}
-                              type="text"
+                              rows={1}
                               placeholder={replyingTo ? "Viết phản hồi..." : "Viết bình luận..."}
                               value={commentInputs[post._id] || ''}
                               onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
                               onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  e.preventDefault();
                                   if (replyingTo) {
                                     handleAddReply(post._id, replyingTo.commentId);
                                   } else {
@@ -1195,7 +1196,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                   }
                                 }
                               }}
-                              className="flex-1 px-4 py-2 bg-grey/10 rounded-xl border-0 focus:bg-grey/15 transition outline-none text-sm text-grey-hover placeholder-gray-500 font-medium"
+                              className="flex-1 px-4 py-2 bg-grey/10 rounded-xl border-0 focus:bg-grey/15 transition outline-none text-sm text-grey-hover placeholder-gray-500 font-medium resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
                             />
                             <button 
                               onClick={() => {
