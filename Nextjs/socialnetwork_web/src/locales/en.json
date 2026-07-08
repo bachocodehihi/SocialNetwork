@@ -1,0 +1,15 @@
+{
+  "home": "Home",
+  "message": "Messages",
+  "contact": "Contacts",
+  "notification": "Notifications",
+  "setting": "Settings",
+  "search_placeholder": "Search users...",
+  "logout": "Log out",
+  "dark_mode": "Dark Mode",
+  "language": "Language",
+  "vietnamese": "Vietnamese",
+  "english": "English",
+  "confirm": "Confirm",
+  "cancel": "Cancel"
+}

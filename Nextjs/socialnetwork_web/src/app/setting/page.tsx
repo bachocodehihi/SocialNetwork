@@ -1624,10 +1624,8 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 11. SWITCH ACCOUNT ---------------- */}
               {activeSection === 'switch' && (
                 <div className="space-y-6">
-                  {/* Header */}
                   <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <button
                       onClick={() => handleSelectSection(getParentSection(activeSection))}
@@ -1652,7 +1650,7 @@ export default function SettingPage() {
                     </div>
 
                     <form onSubmit={handleSwitchAccount} className="space-y-5 text-left">
-                      {/* Email Input */}
+
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-grey uppercase tracking-wider">
                           Email đăng nhập
@@ -1667,7 +1665,6 @@ export default function SettingPage() {
                         />
                       </div>
 
-                      {/* Password Input */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-grey uppercase tracking-wider">
                           Mật khẩu
@@ -1691,7 +1688,6 @@ export default function SettingPage() {
                         </div>
                       </div>
 
-                      {/* Submit Button */}
                       <button
                         type="submit"
                         disabled={isSwitching}
@@ -1718,7 +1714,6 @@ export default function SettingPage() {
         </div>
       </main>
 
-      {/* Animation Style */}
       <style jsx global>{`
         @keyframes scaleUpDropdown {
           from { transform: scale(0.97); opacity: 0; }
