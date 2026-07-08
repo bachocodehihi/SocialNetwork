@@ -6,7 +6,7 @@ import { useAlert } from '@/components/Alert/alertcontext';
 import { NETWORK } from '@/config/config';
 import { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { MessageSquare, Search, Send, User, Phone, Video, Info, Loader2, Smile, FileText, Download, Play, Pause, Paperclip, Image as ImageIcon } from 'lucide-react';
+import { MessageSquare, Search, Send, User, Phone, Video, Info, Loader2, Smile, FileText, Download, Play, Pause, Paperclip, Image as ImageIcon, Bell, QrCode, Trash2, LogOut, Edit, AlertTriangle, Slash, Users } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
 import { useCall } from '@/components/Call/CallProvider';
 
@@ -452,6 +452,7 @@ function MessageContent() {
   const [loadingConv, setLoadingConv] = useState(true);
   const [loadingMsgs, setLoadingMsgs] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showInfoPanel, setShowInfoPanel] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -832,232 +833,411 @@ function MessageContent() {
         </div>
 
         {/* Right Panel: Chat Room Details */}
-        <div className="flex-1 bg-white flex flex-col min-w-0">
+        <div className="flex-1 bg-white flex min-w-0 relative">
           {selectedConv ? (
-            <>
-              {/* Chat Header */}
-              {(() => {
+            <div className="flex-1 flex h-full min-w-0 overflow-hidden">
+              {/* Main Chat Column */}
+              <div className="flex-1 flex flex-col h-full min-w-0">
+                {/* Chat Header */}
+                {(() => {
+                  const partner = getChatPartner(selectedConv);
+                  const partnerName = selectedConv.isGroup ? selectedConv.name : partner.username;
+                  const partnerAvatar = selectedConv.isGroup ? selectedConv.avatar : partner.avatar;
+                  const isOnline = !selectedConv.isGroup && partner.isOnline;
+
+                  return (
+                    <div className="h-16 px-6 border-b border-grey/20 flex items-center justify-between flex-shrink-0 bg-white">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center flex-shrink-0">
+                          {partnerAvatar ? (
+                            <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" />
+                          ) : (
+                            <User className="w-5 h-5 text-grey/60" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-grey-hover truncate text-base">{partnerName}</h3>
+                          <p className={`text-[11px] font-semibold ${isOnline ? 'text-green-500' : 'text-grey/50'}`}>
+                            {isOnline ? 'Đang hoạt động' : 'Ngoại tuyến'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Call controls */}
+                      <div className="flex items-center gap-1">
+                        {!selectedConv.isGroup && (
+                          <>
+                            <button 
+                              type="button"
+                              onClick={() => startCall(partner._id || partner.id, selectedConv._id, partner, 'voice')}
+                              className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer"
+                            >
+                              <Phone className="w-5 h-5" />
+                            </button>
+                            <button 
+                              type="button"
+                              onClick={() => startCall(partner._id || partner.id, selectedConv._id, partner, 'video')}
+                              className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer"
+                            >
+                              <Video className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+                        <button 
+                          type="button"
+                          onClick={() => setShowInfoPanel(!showInfoPanel)}
+                          className={`p-2 rounded-full hover:bg-grey/10 transition border-0 bg-transparent cursor-pointer ${showInfoPanel ? 'text-blue bg-blue/5' : 'text-grey'}`}
+                        >
+                          <Info className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Chat Room Messages List */}
+                <div className="flex-1 p-4 bg-grey/5 overflow-y-auto space-y-4">
+                  {loadingMsgs ? (
+                    <div className="flex items-center justify-center h-full">
+                      <Loader2 className="w-8 h-8 animate-spin text-blue mr-2" />
+                      <span className="text-grey font-bold">Đang tải tin nhắn...</span>
+                    </div>
+                  ) : messages.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-center p-6">
+                      <MessageSquare className="w-12 h-12 text-blue/30 mb-2" />
+                      <h4 className="font-bold text-grey-hover">Chưa có cuộc trò chuyện nào</h4>
+                      <p className="text-xs text-grey/50 mt-1">Hãy bắt đầu gửi tin nhắn đầu tiên cho họ!</p>
+                    </div>
+                  ) : (
+                    <>
+                      {messages.map((msg) => {
+                        const currentUserId = currentUser?._id || currentUser?.id;
+                        const senderId = typeof msg.sender === 'object' ? (msg.sender?._id || msg.sender?.id) : msg.sender;
+                        const isOwnMessage = senderId && currentUserId && (senderId === currentUserId);
+
+                        const senderName = msg.sender?.username || 'Bạn bè';
+                        const senderAvatar = msg.sender?.avatar;
+
+                        return (
+                          <div 
+                            key={msg._id} 
+                            className={`flex gap-3 max-w-[85%] ${
+                              isOwnMessage ? 'ml-auto flex-row-reverse' : ''
+                            }`}
+                          >
+                            {/* Avatar */}
+                            {!isOwnMessage && selectedConv.isGroup && (
+                              <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/25 bg-grey/10 flex items-center justify-center flex-shrink-0">
+                                {senderAvatar ? (
+                                  <img src={senderAvatar} alt={senderName} className="w-full h-full object-cover" />
+                                ) : (
+                                  <User className="w-4 h-4 text-grey/60" />
+                                )}
+                              </div>
+                            )}
+
+                            <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
+                              {/* Group sender name */}
+                              {!isOwnMessage && selectedConv.isGroup && (
+                                <span className="text-[10px] text-grey/60 font-semibold mb-1 ml-1">
+                                  {senderName}
+                                </span>
+                              )}
+
+                              {/* Bubble box */}
+                              <div 
+                                className={`rounded-2xl text-[14px] leading-relaxed break-words max-w-xs md:max-w-md shadow-sm ${
+                                  msg.type === 'image' && msg.attachments?.length > 0
+                                    ? 'bg-transparent text-black' 
+                                    : msg.type === 'audio'
+                                      ? 'p-2'
+                                      : 'p-3'
+                                } ${
+                                  isOwnMessage 
+                                    ? msg.type === 'image' && msg.attachments?.length > 0 ? '' : 'bg-blue text-white rounded-br-none' 
+                                    : msg.type === 'image' && msg.attachments?.length > 0 ? '' : 'bg-[#D6D6D6] text-black rounded-bl-none'
+                                }`}
+                              >
+                                {msg.type === 'image' && msg.attachments?.length > 0 ? (
+                                  <ImageBubble urls={msg.attachments} />
+                                ) : msg.type === 'audio' && msg.attachments?.length > 0 ? (
+                                  <AudioPlayerBubble url={msg.attachments[0]} isOwnMessage={isOwnMessage} />
+                                ) : msg.type === 'file' && msg.attachments?.length > 0 ? (
+                                  <FileBubble url={msg.attachments[0]} filename={msg.content || 'Tài liệu'} isOwnMessage={isOwnMessage} />
+                                ) : (
+                                  renderTextWithLinks(msg.content, isOwnMessage)
+                                )}
+                              </div>
+
+                              {/* Timestamp outside bubble */}
+                              <span className="block text-[10px] mt-1 text-grey/50 font-semibold px-1">
+                                {formatTime(msg.createdAt)}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {isUploading && (
+                        <div className="flex gap-3 max-w-[85%] ml-auto flex-row-reverse items-center">
+                          <div className="bg-blue/10 text-blue/70 p-3 rounded-2xl rounded-br-none flex items-center gap-2">
+                            <Loader2 className="w-4 h-4 animate-spin text-blue" />
+                            <span>Đang gửi tệp...</span>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Message Input Composer */}
+                <form onSubmit={handleSendMessage} className="p-4 border-t border-grey/20 bg-white flex items-center gap-3 relative">
+                  {/* Hidden File Inputs */}
+                  <input 
+                    type="file" 
+                    ref={imageInputRef} 
+                    onChange={handleImageSelect} 
+                    accept="image/*" 
+                    className="hidden" 
+                  />
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleFileSelect} 
+                    accept="*/*" 
+                    className="hidden" 
+                  />
+
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button 
+                      type="button" 
+                      onClick={() => imageInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
+                      title="Gửi hình ảnh"
+                    >
+                      <ImageIcon className="w-5 h-5" />
+                    </button>
+
+                    <button 
+                      type="button" 
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
+                      title="Gửi tài liệu hoặc âm thanh"
+                    >
+                      <Paperclip className="w-5 h-5" />
+                    </button>
+
+                    <button type="button" className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
+                      <Smile className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <textarea 
+                    ref={textareaRef}
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage(e);
+                      }
+                    }}
+                    disabled={isUploading}
+                    placeholder={isUploading ? "Đang tải tệp lên..." : "Nhập tin nhắn..."} 
+                    rows={1}
+                    className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle text-justify disabled:opacity-50"
+                  />
+
+                  <button 
+                    type="submit"
+                    disabled={!messageInput.trim() || isUploading}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition border-none flex-shrink-0 cursor-pointer ${
+                      messageInput.trim() && !isUploading
+                        ? 'bg-blue text-white hover:bg-blue-hover active:scale-95 shadow-sm' 
+                        : 'bg-grey/20 text-grey/40 cursor-not-allowed'
+                    }`}
+                  >
+                    {isUploading ? (
+                      <Loader2 className="w-4.5 h-4.5 animate-spin" />
+                    ) : (
+                      <Send className="w-4.5 h-4.5" />
+                    )}
+                  </button>
+                </form>
+              </div>
+
+              {/* Side Info Panel */}
+              {showInfoPanel && (() => {
                 const partner = getChatPartner(selectedConv);
                 const partnerName = selectedConv.isGroup ? selectedConv.name : partner.username;
                 const partnerAvatar = selectedConv.isGroup ? selectedConv.avatar : partner.avatar;
                 const isOnline = !selectedConv.isGroup && partner.isOnline;
 
                 return (
-                  <div className="h-16 px-6 border-b border-grey/20 flex items-center justify-between flex-shrink-0 bg-white">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center flex-shrink-0">
+                  <div className="w-80 border-l border-grey/20 bg-white flex flex-col h-full overflow-y-auto flex-shrink-0 animate-in slide-in-from-right duration-300">
+                    <div className="p-6 flex flex-col items-center border-b border-grey/10">
+                      <div className="w-20 h-20 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center mb-3.5 shadow-sm">
                         {partnerAvatar ? (
                           <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" />
                         ) : (
-                          <User className="w-5 h-5 text-grey/60" />
+                          <User className="w-10 h-10 text-grey/60" />
                         )}
                       </div>
-                      <div className="min-w-0">
-                        <h3 className="font-bold text-grey-hover truncate text-base">{partnerName}</h3>
+                      <h3 className="font-bold text-grey-hover text-base text-center mb-1 truncate w-full px-2">{partnerName}</h3>
+                      {!selectedConv.isGroup && (
                         <p className={`text-[11px] font-semibold ${isOnline ? 'text-green-500' : 'text-grey/50'}`}>
                           {isOnline ? 'Đang hoạt động' : 'Ngoại tuyến'}
                         </p>
-                      </div>
+                      )}
                     </div>
 
-                    {/* Call controls */}
-                    <div className="flex items-center gap-1">
-                      {!selectedConv.isGroup && (
+                    {/* Function row */}
+                    <div className="p-4 border-b border-grey/10 flex justify-around">
+                      {selectedConv.isGroup ? (
                         <>
                           <button 
-                            onClick={() => startCall(partner._id || partner.id, selectedConv._id, partner, 'voice')}
-                            className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer"
+                            type="button"
+                            onClick={() => {
+                              showSuccess('Xem danh sách thành viên');
+                            }}
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
                           >
-                            <Phone className="w-5 h-5" />
+                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                              <Users className="w-5 h-5" />
+                            </div>
+                            <span className="text-[10px] font-bold">Thành viên</span>
                           </button>
                           <button 
-                            onClick={() => startCall(partner._id || partner.id, selectedConv._id, partner, 'video')}
-                            className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer"
+                            type="button"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
                           >
-                            <Video className="w-5 h-5" />
+                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                              <Search className="w-5 h-5" />
+                            </div>
+                            <span className="text-[10px] font-bold">Tìm kiếm</span>
+                          </button>
+                          <button 
+                            type="button"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                          >
+                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                              <Bell className="w-5 h-5" />
+                            </div>
+                            <span className="text-[10px] font-bold">Thông báo</span>
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button 
+                            type="button"
+                            onClick={() => router.push(`/user/${partner._id || partner.id}`)}
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                          >
+                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                              <User className="w-5 h-5" />
+                            </div>
+                            <span className="text-[10px] font-bold">Cá nhân</span>
+                          </button>
+                          <button 
+                            type="button"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                          >
+                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                              <Edit className="w-5 h-5" />
+                            </div>
+                            <span className="text-[10px] font-bold">Biệt danh</span>
+                          </button>
+                          <button 
+                            type="button"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                          >
+                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                              <Bell className="w-5 h-5" />
+                            </div>
+                            <span className="text-[10px] font-bold">Thông báo</span>
                           </button>
                         </>
                       )}
-                      <button className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
-                        <Info className="w-5 h-5" />
+                    </div>
+
+                    {/* Settings list */}
+                    <div className="flex-1 p-2 space-y-1">
+                      <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                        <div className="flex items-center gap-3">
+                          <ImageIcon className="w-5 h-5 text-grey" />
+                          <span className="text-sm font-semibold">Ảnh, file & liên kết</span>
+                        </div>
                       </button>
+
+                      {selectedConv.isGroup && (
+                        <>
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              showSuccess('Xem danh sách thành viên');
+                            }}
+                            className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover"
+                          >
+                            <div className="flex items-center gap-3">
+                              <Users className="w-5 h-5 text-grey" />
+                              <span className="text-sm font-semibold">Thành viên nhóm</span>
+                            </div>
+                          </button>
+                          <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                            <div className="flex items-center gap-3">
+                              <QrCode className="w-5 h-5 text-grey" />
+                              <span className="text-sm font-semibold">QR Nhóm</span>
+                            </div>
+                          </button>
+                        </>
+                      )}
+
+                      <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                        <div className="flex items-center gap-3">
+                          <Phone className="w-5 h-5 text-grey" />
+                          <span className="text-sm font-semibold">Lịch sử cuộc gọi</span>
+                        </div>
+                      </button>
+
+                      {!selectedConv.isGroup && (
+                        <>
+                          <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                            <div className="flex items-center gap-3">
+                              <AlertTriangle className="w-5 h-5 text-grey" />
+                              <span className="text-sm font-semibold">Báo cáo</span>
+                            </div>
+                          </button>
+                          <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                            <div className="flex items-center gap-3">
+                              <Slash className="w-5 h-5 text-grey" />
+                              <span className="text-sm font-semibold">Chặn</span>
+                            </div>
+                          </button>
+                        </>
+                      )}
+
+                      <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-red-500 hover:bg-red-50/50">
+                        <div className="flex items-center gap-3">
+                          <Trash2 className="w-5 h-5" />
+                          <span className="text-sm font-semibold">Xóa lịch sử trò chuyện</span>
+                        </div>
+                      </button>
+
+                      {selectedConv.isGroup && (
+                        <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-red-500 hover:bg-red-50/50">
+                          <div className="flex items-center gap-3">
+                            <LogOut className="w-5 h-5" />
+                            <span className="text-sm font-semibold">Rời khỏi nhóm</span>
+                          </div>
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
               })()}
-
-              {/* Chat Room Messages List */}
-              <div className="flex-1 p-4 bg-grey/5 overflow-y-auto space-y-4">
-                {loadingMsgs ? (
-                  <div className="flex items-center justify-center h-full">
-                    <Loader2 className="w-8 h-8 animate-spin text-blue mr-2" />
-                    <span className="text-grey font-bold">Đang tải tin nhắn...</span>
-                  </div>
-                ) : messages.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                    <MessageSquare className="w-12 h-12 text-blue/30 mb-2" />
-                    <h4 className="font-bold text-grey-hover">Chưa có cuộc trò chuyện nào</h4>
-                    <p className="text-xs text-grey/50 mt-1">Hãy bắt đầu gửi tin nhắn đầu tiên cho họ!</p>
-                  </div>
-                ) : (
-                  <>
-                    {messages.map((msg) => {
-                      const currentUserId = currentUser?._id || currentUser?.id;
-                      const senderId = typeof msg.sender === 'object' ? (msg.sender?._id || msg.sender?.id) : msg.sender;
-                      const isOwnMessage = senderId && currentUserId && (senderId === currentUserId);
-
-                      const senderName = msg.sender?.username || 'Bạn bè';
-                      const senderAvatar = msg.sender?.avatar;
-
-                      return (
-                        <div 
-                          key={msg._id} 
-                          className={`flex gap-3 max-w-[85%] ${
-                            isOwnMessage ? 'ml-auto flex-row-reverse' : ''
-                          }`}
-                        >
-                          {/* Avatar */}
-                          {!isOwnMessage && selectedConv.isGroup && (
-                            <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/25 bg-grey/10 flex items-center justify-center flex-shrink-0">
-                              {senderAvatar ? (
-                                <img src={senderAvatar} alt={senderName} className="w-full h-full object-cover" />
-                              ) : (
-                                <User className="w-4 h-4 text-grey/60" />
-                              )}
-                            </div>
-                          )}
-
-                          <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
-                            {/* Group sender name */}
-                            {!isOwnMessage && selectedConv.isGroup && (
-                              <span className="text-[10px] text-grey/60 font-semibold mb-1 ml-1">
-                                {senderName}
-                              </span>
-                            )}
-
-                            {/* Bubble box */}
-                            <div 
-                              className={`rounded-2xl text-[14px] leading-relaxed break-words max-w-xs md:max-w-md shadow-sm ${
-                                msg.type === 'image' && msg.attachments?.length > 0
-                                  ? 'bg-transparent text-black' 
-                                  : msg.type === 'audio'
-                                    ? 'p-2'
-                                    : 'p-3'
-                              } ${
-                                isOwnMessage 
-                                  ? msg.type === 'image' && msg.attachments?.length > 0 ? '' : 'bg-blue text-white rounded-br-none' 
-                                  : msg.type === 'image' && msg.attachments?.length > 0 ? '' : 'bg-[#D6D6D6] text-black rounded-bl-none'
-                              }`}
-                            >
-                              {msg.type === 'image' && msg.attachments?.length > 0 ? (
-                                <ImageBubble urls={msg.attachments} />
-                              ) : msg.type === 'audio' && msg.attachments?.length > 0 ? (
-                                <AudioPlayerBubble url={msg.attachments[0]} isOwnMessage={isOwnMessage} />
-                              ) : msg.type === 'file' && msg.attachments?.length > 0 ? (
-                                <FileBubble url={msg.attachments[0]} filename={msg.content || 'Tài liệu'} isOwnMessage={isOwnMessage} />
-                              ) : (
-                                renderTextWithLinks(msg.content, isOwnMessage)
-                              )}
-                            </div>
-
-                            {/* Timestamp outside bubble */}
-                            <span className="block text-[10px] mt-1 text-grey/50 font-semibold px-1">
-                              {formatTime(msg.createdAt)}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {isUploading && (
-                      <div className="flex gap-3 max-w-[85%] ml-auto flex-row-reverse items-center">
-                        <div className="bg-blue/10 text-blue/70 p-3 rounded-2xl rounded-br-none flex items-center gap-2">
-                          <Loader2 className="w-4 h-4 animate-spin text-blue" />
-                          <span>Đang gửi tệp...</span>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Message Input Composer */}
-              <form onSubmit={handleSendMessage} className="p-4 border-t border-grey/20 bg-white flex items-center gap-3 relative">
-                {/* Hidden File Inputs */}
-                <input 
-                  type="file" 
-                  ref={imageInputRef} 
-                  onChange={handleImageSelect} 
-                  accept="image/*" 
-                  className="hidden" 
-                />
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleFileSelect} 
-                  accept="*/*" 
-                  className="hidden" 
-                />
-
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <button 
-                    type="button" 
-                    onClick={() => imageInputRef.current?.click()}
-                    disabled={isUploading}
-                    className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
-                    title="Gửi hình ảnh"
-                  >
-                    <ImageIcon className="w-5 h-5" />
-                  </button>
-
-                  <button 
-                    type="button" 
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploading}
-                    className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
-                    title="Gửi tài liệu hoặc âm thanh"
-                  >
-                    <Paperclip className="w-5 h-5" />
-                  </button>
-
-                  <button type="button" className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
-                    <Smile className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <textarea 
-                  ref={textareaRef}
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage(e);
-                    }
-                  }}
-                  disabled={isUploading}
-                  placeholder={isUploading ? "Đang tải tệp lên..." : "Nhập tin nhắn..."} 
-                  rows={1}
-                  className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle text-justify disabled:opacity-50"
-                />
-
-                <button 
-                  type="submit"
-                  disabled={!messageInput.trim() || isUploading}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition border-none flex-shrink-0 cursor-pointer ${
-                    messageInput.trim() && !isUploading
-                      ? 'bg-blue text-white hover:bg-blue-hover active:scale-95 shadow-sm' 
-                      : 'bg-grey/20 text-grey/40 cursor-not-allowed'
-                  }`}
-                >
-                  {isUploading ? (
-                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
-                  ) : (
-                    <Send className="w-4.5 h-4.5" />
-                  )}
-                </button>
-              </form>
-            </>
+            </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-grey/5">
               <div className="w-16 h-16 rounded-full bg-blue/10 text-blue flex items-center justify-center mb-4">
