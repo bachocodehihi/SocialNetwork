@@ -1188,7 +1188,7 @@ function MessageContent() {
                           <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
                             <div className="flex items-center gap-3">
                               <QrCode className="w-5 h-5 text-grey" />
-                              <span className="text-sm font-semibold">QR Nhóm</span>
+                              <span className="text-sm font-semibold">Mã QR nhóm</span>
                             </div>
                           </button>
                         </>
@@ -1197,7 +1197,7 @@ function MessageContent() {
                       <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
                         <div className="flex items-center gap-3">
                           <Phone className="w-5 h-5 text-grey" />
-                          <span className="text-sm font-semibold">Lịch sử cuộc gọi</span>
+                          <span className="text-sm font-semibold">Cuộc gọi</span>
                         </div>
                       </button>
 
