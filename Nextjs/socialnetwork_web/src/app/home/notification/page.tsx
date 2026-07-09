@@ -101,7 +101,7 @@ export default function NotificationPage() {
         );
       default:
         return (
-          <div className="w-8 h-8 rounded-full bg-grey/10 flex items-center justify-center text-grey">
+          <div className="w-8 h-8 rounded-full bg-grey/10 dark:bg-zinc-850 flex items-center justify-center text-grey dark:text-zinc-400">
             <Bell className="w-4 h-4" />
           </div>
         );
@@ -128,19 +128,19 @@ export default function NotificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-grey/5 flex flex-col font-sans">
+    <div className="min-h-screen bg-grey/5 dark:bg-zinc-950 flex flex-col font-sans transition-colors duration-200">
       <Navbar activeTab="notification" />
 
       {/* Main Container */}
       <main className="flex-1 pt-20 pb-12 px-4 max-w-2xl mx-auto w-full">
         
         {/* Header card */}
-        <div className="bg-white rounded-2xl border border-grey/20 p-5 shadow-sm mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-black text-grey-hover">Thông báo</h1>
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-5 shadow-sm mb-6 flex items-center justify-between transition-colors duration-200">
+          <h1 className="text-2xl font-black text-grey-hover dark:text-zinc-100">Thông báo</h1>
           {notifications.some(n => !n.isRead) && (
             <button
               onClick={handleMarkAllRead}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-blue hover:text-blue-hover bg-transparent border-0 outline-none cursor-pointer hover:underline transition"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-blue hover:text-blue-hover bg-transparent border-0 outline-none cursor-pointer hover:underline transition animate-in fade-in duration-255"
             >
               <Check className="w-4 h-4" />
               <span>Đánh dấu tất cả đã đọc</span>
@@ -150,33 +150,33 @@ export default function NotificationPage() {
 
         {/* Notifications list */}
         {loading ? (
-          <div className="flex justify-center items-center py-20 bg-white rounded-2xl border border-grey/20 shadow-sm">
+          <div className="flex justify-center items-center py-20 bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm transition-colors duration-200">
             <Loader2 className="w-8 h-8 animate-spin text-blue mr-2" />
-            <span className="text-grey font-bold">Đang tải thông báo...</span>
+            <span className="text-grey dark:text-zinc-400 font-bold">Đang tải thông báo...</span>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-grey/20 shadow-sm text-grey">
+          <div className="text-center py-20 bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm text-grey dark:text-zinc-400 transition-colors duration-200">
             <Bell className="w-12 h-12 mx-auto mb-3 opacity-40 animate-pulse" />
             <p className="font-semibold">Bạn không có thông báo nào mới.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-grey/20 overflow-hidden shadow-sm divide-y divide-grey/10">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 overflow-hidden shadow-sm divide-y divide-grey/10 dark:divide-zinc-800/80 transition-colors duration-200">
             {notifications.map((notif) => {
               const sender = notif.sender || {};
               return (
                 <div 
                   key={notif._id || notif.id}
                   className={`p-4 transition duration-150 flex gap-3.5 relative ${
-                    !notif.isRead ? 'bg-blue/5' : 'hover:bg-grey/5'
+                    !notif.isRead ? 'bg-blue/5 dark:bg-blue-500/10' : 'hover:bg-grey/5 dark:hover:bg-zinc-800/40'
                   }`}
                 >
                   {/* Left: Avatar with type icon badge */}
                   <div className="relative flex-shrink-0">
-                    <div className="w-11 h-11 rounded-full overflow-hidden border border-grey/20 bg-grey/5 flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-full overflow-hidden border border-grey/20 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex items-center justify-center">
                       {sender.avatar ? (
                         <img src={sender.avatar} alt={sender.username} className="w-full h-full object-cover" />
                       ) : (
-                        <User className="w-5 h-5 text-grey/60" />
+                        <User className="w-5 h-5 text-grey/60 dark:text-zinc-500" />
                       )}
                     </div>
                     <div className="absolute -bottom-1 -right-1">
@@ -185,16 +185,16 @@ export default function NotificationPage() {
                   </div>
 
                   {/* Middle: Content */}
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm text-black leading-relaxed">
-                      <span className="font-bold text-grey-hover cursor-pointer hover:underline" onClick={() => router.push(`/user/${sender._id || sender.id}`)}>
+                  <div className="flex-1 min-w-0 text-left">
+                    <h4 className="text-sm text-black dark:text-zinc-300 leading-relaxed">
+                      <span className="font-bold text-grey-hover dark:text-zinc-100 cursor-pointer hover:underline" onClick={() => router.push(`/user/${sender._id || sender.id}`)}>
                         {sender.username || 'Thành viên'}
                       </span>{' '}
                       {notif.body}
                     </h4>
 
                     {/* Timestamp */}
-                    <div className="flex items-center gap-1.5 mt-1 text-[11px] text-grey/60 font-semibold">
+                    <div className="flex items-center gap-1.5 mt-1 text-[11px] text-grey/60 dark:text-zinc-500 font-semibold">
                       <Calendar className="w-3.5 h-3.5" />
                       <span>{formatTime(notif.createdAt)}</span>
                     </div>
@@ -212,21 +212,21 @@ export default function NotificationPage() {
                             </button>
                             <button
                               onClick={() => handleRejectRequest(notif.relatedId)}
-                              className="px-4 py-1.5 bg-grey/25 hover:bg-grey/30 text-grey-hover text-xs font-bold rounded-lg border-none cursor-pointer transition"
+                              className="px-4 py-1.5 bg-grey/25 dark:bg-zinc-800 hover:bg-grey/30 dark:hover:bg-zinc-700 text-grey-hover dark:text-zinc-200 text-xs font-bold rounded-lg border-none cursor-pointer transition"
                             >
                               Từ chối
                             </button>
                           </>
                         ) : notif.requestStatus === 'accepted' ? (
-                          <span className="text-xs font-bold text-green-500 bg-green-500/10 px-2.5 py-1 rounded-md">
+                          <span className="text-xs font-bold text-green-500 bg-green-500/10 dark:bg-green-500/20 px-2.5 py-1 rounded-md">
                             Đã đồng ý kết bạn
                           </span>
                         ) : notif.requestStatus === 'rejected' ? (
-                          <span className="text-xs font-semibold text-grey/60 bg-grey/10 px-2.5 py-1 rounded-md">
+                          <span className="text-xs font-semibold text-grey/60 dark:text-zinc-400 bg-grey/10 dark:bg-zinc-800/80 px-2.5 py-1 rounded-md">
                             Đã từ chối kết bạn
                           </span>
                         ) : (
-                          <span className="text-xs text-grey/50 italic">
+                          <span className="text-xs text-grey/50 dark:text-zinc-500 italic">
                             Lời mời đã hết hạn
                           </span>
                         )}

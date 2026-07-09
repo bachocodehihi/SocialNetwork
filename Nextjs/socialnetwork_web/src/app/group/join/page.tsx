@@ -22,7 +22,6 @@ export default function JoinGroupPage() {
   useEffect(() => {
     if (!inviteCode) return;
 
-    // Check auth token
     const token = localStorage.getItem('token');
     if (!token) {
       localStorage.setItem('redirectAfterLogin', window.location.pathname);
@@ -120,7 +119,6 @@ export default function JoinGroupPage() {
           ) : (
             group && (
               <div className="w-full flex flex-col items-center gap-6">
-                {/* Group Avatar */}
                 <div className="relative">
                   {group.avatar ? (
                     <img
@@ -135,7 +133,6 @@ export default function JoinGroupPage() {
                   )}
                 </div>
 
-                {/* Group Details */}
                 <div className="space-y-2">
                   <span className="inline-block px-3 py-1 bg-blue/15 text-blue text-xs font-extrabold uppercase tracking-wider rounded-full">
                     Lời mời tham gia nhóm
@@ -150,7 +147,6 @@ export default function JoinGroupPage() {
                   )}
                 </div>
 
-                {/* Info Pills */}
                 <div className="w-full grid grid-cols-2 gap-3 py-2 border-y border-slate-100">
                   <div className="flex flex-col items-center p-2 rounded-xl bg-slate-50">
                     <span className="text-[10px] font-bold text-grey uppercase tracking-wider">
@@ -172,7 +168,6 @@ export default function JoinGroupPage() {
                   </div>
                 </div>
 
-                {/* Join / Go to Chat Button */}
                 <div className="w-full pt-2">
                   {group.isMember ? (
                     <button

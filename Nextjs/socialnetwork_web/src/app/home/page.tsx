@@ -36,12 +36,10 @@ export default function HomePage() {
   const [checking, setChecking] = useState(true);
   const [user, setUser] = useState<any>(null);
 
-  // Feed states
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoadingFeed, setIsLoadingFeed] = useState(true);
   const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
 
-  // Comments states
   const [commentSectionOpen, setCommentSectionOpen] = useState<Record<string, boolean>>({});
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
@@ -51,7 +49,6 @@ export default function HomePage() {
     username: string;
   } | null>(null);
 
-  // Create post states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostPrivacy, setNewPostPrivacy] = useState('public');
@@ -60,7 +57,6 @@ export default function HomePage() {
   const [isPosting, setIsPosting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Lightbox states
   const [activeLightboxPost, setActiveLightboxPost] = useState<any | null>(null);
   const [activeLightboxImageIdx, setActiveLightboxImageIdx] = useState<number>(0);
   const [lightboxContentExpanded, setLightboxContentExpanded] = useState(false);
@@ -105,7 +101,6 @@ export default function HomePage() {
     };
   }, [activeLightboxPost]);
 
-  // Fetch posts feed
   const fetchFeed = async () => {
     setIsLoadingFeed(true);
     try {
@@ -125,7 +120,6 @@ export default function HomePage() {
     }
   }, [checking]);
 
-  // Liking a post (Optimistic Update)
   const handleLikePost = async (postId: string) => {
     if (!user) return;
     const currentUserId = user._id || user.id;
@@ -155,12 +149,10 @@ export default function HomePage() {
       }
     } catch (err) {
       console.error('Error liking post:', err);
-      // Reload feed to revert state
       fetchFeed();
     }
   };
 
-  // Comment on a post
   const handleAddComment = async (postId: string) => {
     const text = commentInputs[postId]?.trim();
     if (!text) return;
@@ -180,7 +172,6 @@ export default function HomePage() {
     }
   };
 
-  // Reply to a comment
   const handleAddReply = async (postId: string, commentId: string) => {
     const text = commentInputs[postId]?.trim();
     if (!text) return;
@@ -202,7 +193,6 @@ export default function HomePage() {
     }
   };
 
-  // Like a comment (Optimistic Update)
   const handleLikeComment = async (postId: string, commentId: string) => {
     if (!user) return;
     const currentUserId = user._id || user.id;
@@ -241,7 +231,6 @@ export default function HomePage() {
     }
   };
 
-  // Like a reply (Optimistic Update)
   const handleLikeReply = async (postId: string, commentId: string, replyId: string) => {
     if (!user) return;
     const currentUserId = user._id || user.id;
@@ -286,7 +275,6 @@ export default function HomePage() {
     }
   };
 
-  // Handle post creation file attachments
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
@@ -320,7 +308,6 @@ export default function HomePage() {
       await contentService.createPost(formData);
       showSuccess('Đăng bài viết thành công!');
 
-      // Reset
       setNewPostContent('');
       setNewPostPrivacy('public');
       newPostPreviews.forEach(url => URL.revokeObjectURL(url));
@@ -328,7 +315,6 @@ export default function HomePage() {
       setNewPostPreviews([]);
       setIsCreateModalOpen(false);
 
-      // Reload
       fetchFeed();
     } catch (err) {
       console.error('Error creating post:', err);
@@ -338,7 +324,6 @@ export default function HomePage() {
     }
   };
 
-  // Helper formats
   const formatTimeAgo = (dateTimeStr?: string): string => {
     if (!dateTimeStr) return '';
     try {
@@ -456,7 +441,7 @@ export default function HomePage() {
 
   if (checking) {
     return (
-      <div className='flex h-screen items-center justify-center bg-grey/5'>
+      <div className='flex h-screen items-center justify-center bg-grey/5 dark:bg-zinc-950 transition-colors duration-200'>
         <div className='animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent'></div>
       </div>
     );
@@ -465,18 +450,16 @@ export default function HomePage() {
   const currentUserId = user?._id || user?.id;
 
   return (
-    <div className='min-h-screen bg-grey/5 font-sans pb-12'>
+    <div className='min-h-screen bg-grey/5 dark:bg-zinc-950 font-sans pb-12 transition-colors duration-200'>
       <Navbar activeTab='home' onRefreshFeed={fetchFeed} />
 
-      {/* Main Content */}
       <main className='pt-20 pb-8 px-4'>
         <div className='max-w-2xl mx-auto'>
-          {/* Create Post Box */}
-          <div className='bg-white rounded-2xl shadow-sm border border-grey/20 p-4 mb-6'>
+          <div className='bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-grey/20 dark:border-zinc-800 p-4 mb-6 transition-colors duration-200'>
             <div className='flex gap-3 items-center'>
               <div 
                 onClick={() => router.push('/profile')}
-                className='w-10 h-10 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer'
+                className='w-10 h-10 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center cursor-pointer'
               >
                 <img
                   src={user?.avatar || '/assets/avatar/avatar.jpg'}
@@ -490,7 +473,7 @@ export default function HomePage() {
                   onClick={() => setIsCreateModalOpen(true)}
                   readOnly
                   placeholder={`${user?.username || 'Bạn'} ơi, bạn đang nghĩ gì thế?`}
-                  className='flex-1 px-4 py-2.5 bg-grey/10 rounded-xl border-0 hover:bg-grey/15 transition outline-none text-sm text-grey-hover placeholder-gray-500 cursor-pointer font-medium'
+                  className='flex-1 px-4 py-2.5 bg-grey/10 dark:bg-zinc-850 hover:bg-grey/15 dark:hover:bg-zinc-800/80 rounded-xl border-0 transition outline-none text-sm text-grey-hover dark:text-zinc-200 placeholder-gray-500 dark:placeholder-zinc-500 cursor-pointer font-medium'
                 />
                 <button 
                   onClick={() => setIsCreateModalOpen(true)}
@@ -502,32 +485,30 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Loading Feed Skeleton */}
           {isLoadingFeed && posts.length === 0 ? (
             <div className="space-y-4">
               {[1, 2].map((s) => (
-                <div key={s} className="bg-white rounded-2xl border border-grey/20 p-5 animate-pulse">
+                <div key={s} className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-5 animate-pulse">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-grey/20"></div>
+                    <div className="w-10 h-10 rounded-full bg-grey/20 dark:bg-zinc-800"></div>
                     <div className="space-y-2">
-                      <div className="h-4 w-28 bg-grey/20 rounded"></div>
-                      <div className="h-3 w-16 bg-grey/20 rounded"></div>
+                      <div className="h-4 w-28 bg-grey/20 dark:bg-zinc-800 rounded"></div>
+                      <div className="h-3 w-16 bg-grey/20 dark:bg-zinc-800 rounded"></div>
                     </div>
                   </div>
-                  <div className="h-4 w-full bg-grey/20 rounded mb-3"></div>
-                  <div className="h-3 w-3/4 bg-grey/20 rounded mb-4"></div>
-                  <div className="h-52 w-full bg-grey/15 rounded-xl"></div>
+                  <div className="h-4 w-full bg-grey/20 dark:bg-zinc-800 rounded mb-3"></div>
+                  <div className="h-3 w-3/4 bg-grey/20 dark:bg-zinc-800 rounded mb-4"></div>
+                  <div className="h-52 w-full bg-grey/15 dark:bg-zinc-850 rounded-xl"></div>
                 </div>
               ))}
             </div>
           ) : posts.length === 0 ? (
-            /* Empty Feed View */
-            <div className='bg-white rounded-2xl border border-grey/20 p-12 text-center shadow-sm'>
+            <div className='bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-12 text-center shadow-sm'>
               <div className="w-16 h-16 mx-auto mb-4 bg-blue/10 rounded-full flex items-center justify-center text-blue">
                 <RefreshCw className="w-8 h-8" />
               </div>
-              <h3 className='text-lg font-bold text-grey-hover mb-1'>Chưa có bài viết nào</h3>
-              <p className='text-sm text-grey max-w-sm mx-auto mb-6'>Bảng tin hiện đang trống. Hãy đăng chia sẻ đầu tiên của bạn để kết nối với mọi người!</p>
+              <h3 className='text-lg font-bold text-grey-hover dark:text-zinc-150 mb-1'>Chưa có bài viết nào</h3>
+              <p className='text-sm text-grey dark:text-zinc-400 max-w-sm mx-auto mb-6'>Bảng tin hiện đang trống. Hãy đăng chia sẻ đầu tiên của bạn để kết nối với mọi người!</p>
               <button 
                 onClick={() => setIsCreateModalOpen(true)}
                 className="px-5 py-2.5 bg-blue hover:bg-blue-hover text-white font-bold rounded-xl transition shadow-md shadow-blue/15 border-0 cursor-pointer text-sm"
@@ -536,7 +517,6 @@ export default function HomePage() {
               </button>
             </div>
           ) : (
-            /* Real Posts Feed */
             <div className="space-y-4">
               {posts.map((post) => {
                 const author = post.author || {};
@@ -555,7 +535,6 @@ export default function HomePage() {
                 const comments = post.comments || [];
                 const isCommentsOpen = commentSectionOpen[post._id] || false;
 
-                // Handle post content expansion
                 const content = post.content || '';
                 const contentLines = content.split('\n');
                 const isLongContent = content.length > 250 || contentLines.length > 5;
@@ -568,46 +547,44 @@ export default function HomePage() {
                       : content.substring(0, 250) + (isLongContent ? '...' : ''));
 
                 return (
-                  <div key={post._id} className='bg-white rounded-2xl shadow-sm border border-grey/20 p-4 relative'>
+                  <div key={post._id} className='bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-grey/20 dark:border-zinc-800 p-4 relative transition-colors duration-200'>
                     
-                    {/* Header */}
                     <div className='flex items-center justify-between mb-3.5'>
                       <div className='flex items-center gap-3'>
                         <div 
                           onClick={() => router.push(`/user/${author._id || author.id}`)}
-                          className='w-10 h-10 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer'
+                          className='w-10 h-10 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center cursor-pointer'
                         >
                           {authorAvatar ? (
                             <img src={authorAvatar} alt={authorName} className='w-full h-full object-cover' />
                           ) : (
-                            <User className='w-5 h-5 text-grey' />
+                            <User className='w-5 h-5 text-grey dark:text-zinc-400' />
                           )}
                         </div>
                         <div className="flex flex-col">
                           <div className='flex items-center flex-wrap gap-1'>
                             <h3 
                               onClick={() => router.push(`/user/${author._id || author.id}`)}
-                              className='font-bold text-grey-hover hover:underline cursor-pointer text-sm sm:text-base'
+                              className='font-bold text-grey-hover dark:text-zinc-200 hover:underline cursor-pointer text-sm sm:text-base'
                             >
                               {authorName}
                             </h3>
                             {isGroupPost && groupName && (
-                              <div className='flex items-center gap-1 text-xs text-grey font-medium'>
+                              <div className='flex items-center gap-1 text-xs text-grey dark:text-zinc-400 font-medium'>
                                 <span className="text-grey/60">▸</span>
                                 <span className='text-blue font-semibold hover:underline cursor-pointer'>{groupName}</span>
                               </div>
                             )}
                           </div>
-                          <span className='text-xs text-grey font-medium'>{timeAgoStr}</span>
+                          <span className='text-xs text-grey dark:text-zinc-400 font-medium'>{timeAgoStr}</span>
                         </div>
                       </div>
-                      <button className='w-8 h-8 rounded-full hover:bg-grey/10 flex items-center justify-center text-grey hover:text-grey-hover transition border-0 bg-transparent cursor-pointer'>
+                      <button className='w-8 h-8 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 flex items-center justify-center text-grey hover:text-grey-hover dark:text-zinc-400 dark:hover:text-zinc-200 transition border-0 bg-transparent cursor-pointer'>
                         <MoreHorizontal className='w-5 h-5' />
                       </button>
                     </div>
 
-                    {/* Content */}
-                    <div className='text-slate-800 text-sm sm:text-[15px] leading-relaxed mb-3 whitespace-pre-wrap text-justify px-1'>
+                    <div className='text-slate-800 dark:text-zinc-200 text-sm sm:text-[15px] leading-relaxed mb-3 whitespace-pre-wrap text-justify px-1'>
                       {displayContent}
                       {isLongContent && (
                         <button
@@ -619,11 +596,9 @@ export default function HomePage() {
                       )}
                     </div>
 
-                    {/* Images attachment */}
                     {renderPostImages(post)}
 
-                    {/* Stats */}
-                    <div className='flex items-center justify-between text-xs sm:text-sm text-grey py-3 mt-3 border-t border-b border-grey/10 select-none'>
+                    <div className='flex items-center justify-between text-xs sm:text-sm text-grey dark:text-zinc-400 py-3 mt-3 border-t border-b border-grey/10 dark:border-zinc-800/60 select-none'>
                       <div className='flex items-center gap-1.5 font-medium'>
                         <div className="w-5 h-5 rounded-full bg-blue/10 flex items-center justify-center text-blue">
                           <ThumbsUp className="w-3.5 h-3.5 fill-blue" />
@@ -636,34 +611,32 @@ export default function HomePage() {
                       </div>
                     </div>
 
-                    {/* Action Bar */}
                     <div className='grid grid-cols-3 gap-1 pt-1.5 select-none'>
                       <button 
                         onClick={() => handleLikePost(post._id)}
-                        className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${hasLiked ? 'text-blue' : 'text-grey-hover'}`}
+                        className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${hasLiked ? 'text-blue' : 'text-grey-hover dark:text-zinc-300'}`}
                       >
                         <ThumbsUp className={`w-5 h-5 ${hasLiked ? 'fill-blue text-blue' : ''}`} />
                         <span>Thích</span>
                       </button>
                       <button 
                         onClick={() => setCommentSectionOpen(prev => ({ ...prev, [post._id]: !isCommentsOpen }))}
-                        className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${isCommentsOpen ? 'text-blue bg-blue/5' : 'text-grey-hover'}`}
+                        className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${isCommentsOpen ? 'text-blue bg-blue/5 dark:bg-blue-500/10' : 'text-grey-hover dark:text-zinc-300'}`}
                       >
                         <MessageCircle className="w-5 h-5" />
                         <span>Bình luận</span>
                       </button>
-                      <button className='flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition text-grey-hover font-bold text-sm border-0 cursor-pointer bg-transparent'>
+                      <button className='flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:scale-[0.98] transition text-grey-hover dark:text-zinc-300 font-bold text-sm border-0 cursor-pointer bg-transparent'>
                         <Share2 className="w-5 h-5" />
                         <span>Chia sẻ</span>
                       </button>
                     </div>
 
-                    {/* Comments Collapsible Section */}
                     {isCommentsOpen && (
-                      <div className="mt-4 border-t border-grey/10 pt-4 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200">
-                        {/* Comments List */}
+                      <div className="mt-4 border-t border-grey/10 dark:border-zinc-800 pt-4 space-y-4 animate-in fade-in slide-in-from-top-3 duration-200">
+
                         {comments.length === 0 ? (
-                          <div className="text-center py-5 text-grey text-xs sm:text-sm select-none">
+                          <div className="text-center py-5 text-grey dark:text-zinc-500 text-xs sm:text-sm select-none">
                             Chưa có bình luận nào. Hãy là người đầu tiên!
                           </div>
                         ) : (
@@ -682,33 +655,32 @@ export default function HomePage() {
 
                               return (
                                 <div key={comment._id} className="space-y-2">
-                                  {/* Comment Main Card */}
+
                                   <div className="flex gap-2.5 items-start text-left">
                                     <div 
                                       onClick={() => router.push(`/user/${cAuthor._id || cAuthor.id}`)}
-                                      className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer"
+                                      className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center cursor-pointer"
                                     >
                                       {cAuthorAvatar ? (
                                         <img src={cAuthorAvatar} alt={cAuthorName} className="w-full h-full object-cover" />
                                       ) : (
-                                        <User className="w-4.5 h-4.5 text-grey" />
+                                        <User className="w-4.5 h-4.5 text-grey dark:text-zinc-400" />
                                       )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <div className="bg-grey/10 rounded-2xl px-3.5 py-2 inline-block max-w-full">
+                                      <div className="bg-grey/10 dark:bg-zinc-800/80 rounded-2xl px-3.5 py-2 inline-block max-w-full">
                                         <h5 
                                           onClick={() => router.push(`/user/${cAuthor._id || cAuthor.id}`)}
-                                          className="text-xs font-bold text-grey-hover hover:underline cursor-pointer truncate mb-0.5"
+                                          className="text-xs font-bold text-grey-hover dark:text-zinc-200 hover:underline cursor-pointer truncate mb-0.5"
                                         >
                                           {cAuthorName}
                                         </h5>
-                                        <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
+                                        <p className="text-sm text-gray-800 dark:text-zinc-200 whitespace-pre-wrap break-words text-justify leading-normal">
                                           {comment.content}
                                         </p>
                                       </div>
                                       
-                                      {/* Comment Actions */}
-                                      <div className="flex items-center gap-3.5 text-[11px] sm:text-xs text-grey mt-1 pl-2 select-none font-semibold">
+                                      <div className="flex items-center gap-3.5 text-[11px] sm:text-xs text-grey dark:text-zinc-450 mt-1 pl-2 select-none font-semibold">
                                         <span>{cTimeAgo}</span>
                                         <button 
                                           onClick={() => {
@@ -717,7 +689,7 @@ export default function HomePage() {
                                               commentId: comment._id,
                                               username: cAuthorName
                                             });
-                                            // Focus input
+
                                             const el = document.getElementById(`comment-input-${post._id}`);
                                             el?.focus();
                                           }}
@@ -736,10 +708,10 @@ export default function HomePage() {
                                     </div>
                                   </div>
 
-                                  {/* Replies Section */}
+
                                   {replies.length > 0 && (
                                     <div className="pl-10">
-                                      {/* View Replies Toggle */}
+
                                       {!isRepliesExpanded ? (
                                         <button 
                                           onClick={() => setExpandedComments(prev => ({ ...prev, [comment._id]: true }))}
@@ -749,8 +721,8 @@ export default function HomePage() {
                                           <span>Xem tất cả {replies.length} phản hồi</span>
                                         </button>
                                       ) : (
-                                        <div className="space-y-3 mt-2 border-l-2 border-grey/15 pl-4">
-                                          {/* Replies List */}
+                                        <div className="space-y-3 mt-2 border-l-2 border-grey/15 dark:border-zinc-800 pl-4">
+
                                           {replies.map((reply: any) => {
                                             const rAuthor = reply.author || {};
                                             const rAuthorName = rAuthor.username || 'Người dùng';
@@ -764,29 +736,28 @@ export default function HomePage() {
                                               <div key={reply._id} className="flex gap-2 items-start text-left">
                                                 <div 
                                                   onClick={() => router.push(`/user/${rAuthor._id || rAuthor.id}`)}
-                                                  className="w-7 h-7 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer"
+                                                  className="w-7 h-7 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center cursor-pointer"
                                                 >
                                                   {rAuthorAvatar ? (
                                                     <img src={rAuthorAvatar} alt={rAuthorName} className="w-full h-full object-cover" />
                                                   ) : (
-                                                    <User className="w-4 h-4 text-grey" />
+                                                    <User className="w-4 h-4 text-grey dark:text-zinc-400" />
                                                   )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                  <div className="bg-grey/10 rounded-2xl px-3 py-1.5 inline-block max-w-full">
+                                                  <div className="bg-grey/10 dark:bg-zinc-800/80 rounded-2xl px-3 py-1.5 inline-block max-w-full">
                                                     <h5 
                                                       onClick={() => router.push(`/user/${rAuthor._id || rAuthor.id}`)}
-                                                      className="text-xs font-bold text-grey-hover hover:underline cursor-pointer truncate mb-0.5"
+                                                      className="text-xs font-bold text-grey-hover dark:text-zinc-200 hover:underline cursor-pointer truncate mb-0.5"
                                                     >
                                                       {rAuthorName}
                                                     </h5>
-                                                    <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
+                                                    <p className="text-sm text-gray-800 dark:text-zinc-200 whitespace-pre-wrap break-words text-justify leading-normal">
                                                       {reply.content}
                                                     </p>
                                                   </div>
-                                                  
-                                                  {/* Reply actions */}
-                                                  <div className="flex items-center gap-3 text-[10px] sm:text-xs text-grey mt-0.5 pl-2 select-none font-semibold">
+
+                                                  <div className="flex items-center gap-3 text-[10px] sm:text-xs text-grey dark:text-zinc-400 mt-0.5 pl-2 select-none font-semibold">
                                                     <span>{rTimeAgo}</span>
                                                     <button 
                                                       onClick={() => {
@@ -815,7 +786,6 @@ export default function HomePage() {
                                             );
                                           })}
 
-                                          {/* Collapse replies button */}
                                           <button 
                                             onClick={() => setExpandedComments(prev => ({ ...prev, [comment._id]: false }))}
                                             className="flex items-center gap-1 text-xs text-grey hover:text-blue font-bold py-1 mt-1 bg-transparent border-0 cursor-pointer"
@@ -833,25 +803,23 @@ export default function HomePage() {
                           </div>
                         )}
 
-                        {/* Reply Banner Notice */}
                         {replyingTo && replyingTo.postId === post._id && (
-                          <div className="flex items-center justify-between px-3 py-2 bg-grey/10 rounded-xl text-xs sm:text-sm text-grey font-medium animate-in slide-in-from-bottom-2 duration-150">
+                          <div className="flex items-center justify-between px-3 py-2 bg-grey/10 dark:bg-zinc-800 rounded-xl text-xs sm:text-sm text-grey dark:text-zinc-300 font-medium animate-in slide-in-from-bottom-2 duration-150">
                             <div className="flex items-center gap-1.5">
                               <span className="text-blue">Đang phản hồi</span>
-                              <span className="font-bold text-grey-hover">@{replyingTo.username}</span>
+                              <span className="font-bold text-grey-hover dark:text-zinc-200">@{replyingTo.username}</span>
                             </div>
                             <button 
                               onClick={() => setReplyingTo(null)}
-                              className="w-5 h-5 rounded-full hover:bg-grey/20 flex items-center justify-center text-grey transition border-0 bg-transparent cursor-pointer"
+                              className="w-5 h-5 rounded-full hover:bg-grey/25 dark:hover:bg-zinc-700 flex items-center justify-center text-grey dark:text-zinc-400 transition border-0 bg-transparent cursor-pointer"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         )}
 
-                        {/* Comment Input Box */}
                         <div className="flex gap-2 items-center pt-2">
-                          <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center select-none">
+                          <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center select-none">
                             <img src={user?.avatar || '/assets/avatar/avatar.jpg'} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1 flex gap-2 relative">
@@ -871,7 +839,7 @@ export default function HomePage() {
                                   }
                                 }
                               }}
-                              className="flex-1 px-4 py-2 bg-grey/10 rounded-2xl border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-grey-hover font-medium placeholder-gray-500 resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
+                              className="flex-1 px-4 py-2 bg-grey/10 dark:bg-zinc-800 rounded-2xl border-0 focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition outline-none text-sm text-grey-hover dark:text-zinc-200 font-medium placeholder-gray-500 dark:placeholder-zinc-500 resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
                             />
                             <button 
                               onClick={() => {
@@ -899,14 +867,12 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* CREATE POST MODAL */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-scale-up origin-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/85 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-transparent dark:border-zinc-800 animate-scale-up origin-center">
             
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-grey/20">
-              <h2 className="text-lg font-bold text-grey-hover mx-auto">Tạo bài viết</h2>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-grey/20 dark:border-zinc-800">
+              <h2 className="text-lg font-bold text-grey-hover dark:text-zinc-100 mx-auto">Tạo bài viết</h2>
               <button 
                 onClick={() => {
                   setIsCreateModalOpen(false);
@@ -915,51 +881,47 @@ export default function HomePage() {
                   setNewPostPreviews([]);
                   setNewPostContent('');
                 }}
-                className="w-8 h-8 rounded-full hover:bg-grey/10 flex items-center justify-center text-grey hover:text-grey-hover transition border-0 bg-transparent cursor-pointer"
+                className="w-8 h-8 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 flex items-center justify-center text-grey hover:text-grey-hover dark:text-zinc-400 dark:hover:text-zinc-200 transition border-0 bg-transparent cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Body */}
             <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto">
-              {/* User Profile Info */}
+
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full overflow-hidden border border-grey/10 bg-grey/5">
+                <div className="w-11 h-11 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800">
                   <img src={user?.avatar || '/assets/avatar/avatar.jpg'} alt="Avatar" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-grey-hover text-sm sm:text-base">{user?.username}</h4>
-                  
-                  {/* Privacy Selector */}
+                  <h4 className="font-bold text-grey-hover dark:text-zinc-150 text-sm sm:text-base">{user?.username}</h4>
+
                   <div className="relative mt-1">
                     <select
                       value={newPostPrivacy}
                       onChange={(e) => setNewPostPrivacy(e.target.value)}
-                      className="text-xs bg-grey/10 border-0 hover:bg-grey/15 rounded-lg px-2 py-1 font-semibold text-grey-hover outline-none cursor-pointer flex items-center gap-1"
+                      className="text-xs bg-grey/10 dark:bg-zinc-800 border-0 hover:bg-grey/15 dark:hover:bg-zinc-700/80 rounded-lg px-2 py-1 font-semibold text-grey-hover dark:text-zinc-350 outline-none cursor-pointer flex items-center gap-1"
                     >
-                      <option value="public">🌐 Công khai</option>
-                      <option value="friends">👥 Bạn bè</option>
-                      <option value="private">🔒 Chỉ mình tôi</option>
+                      <option value="public" className="dark:bg-zinc-900">🌐 Công khai</option>
+                      <option value="friends" className="dark:bg-zinc-900">👥 Bạn bè</option>
+                      <option value="private" className="dark:bg-zinc-900">🔒 Chỉ mình tôi</option>
                     </select>
                   </div>
                 </div>
               </div>
 
-              {/* Text Input */}
               <textarea
                 placeholder={`${user?.username || 'Bạn'} ơi, bạn đang nghĩ gì thế?`}
                 value={newPostContent}
                 onChange={(e) => setNewPostContent(e.target.value)}
                 rows={4}
-                className="w-full text-base sm:text-lg border-0 outline-none text-grey-hover placeholder-gray-400 font-medium resize-none whitespace-pre-wrap"
+                className="w-full text-base sm:text-lg border-0 bg-transparent outline-none text-grey-hover dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 font-medium resize-none whitespace-pre-wrap"
               />
 
-              {/* Image Previews list */}
               {newPostPreviews.length > 0 && (
-                <div className="grid grid-cols-2 gap-2 border border-grey/25 p-2 rounded-xl max-h-[300px] overflow-y-auto">
+                <div className="grid grid-cols-2 gap-2 border border-grey/25 dark:border-zinc-800 p-2 rounded-xl max-h-[300px] overflow-y-auto">
                   {newPostPreviews.map((previewUrl, index) => (
-                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-grey/10">
+                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-grey/10 dark:border-zinc-850">
                       <img src={previewUrl} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" />
                       <button
                         onClick={() => removeSelectedImage(index)}
@@ -972,9 +934,8 @@ export default function HomePage() {
                 </div>
               )}
 
-              {/* File Attachment Action */}
-              <div className="flex items-center justify-between border border-grey/20 rounded-xl p-3 bg-grey/5">
-                <span className="text-sm font-bold text-grey-hover">Thêm vào bài viết của bạn</span>
+              <div className="flex items-center justify-between border border-grey/20 dark:border-zinc-800 rounded-xl p-3 bg-grey/5 dark:bg-zinc-850/40">
+                <span className="text-sm font-bold text-grey-hover dark:text-zinc-200">Thêm vào bài viết của bạn</span>
                 <input
                   type="file"
                   multiple
@@ -985,7 +946,7 @@ export default function HomePage() {
                 />
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-10 h-10 rounded-full hover:bg-grey/15 flex items-center justify-center text-green hover:text-green-hover transition border-0 bg-transparent cursor-pointer"
+                  className="w-10 h-10 rounded-full hover:bg-grey/15 dark:hover:bg-zinc-800 flex items-center justify-center text-green hover:text-green-hover transition border-0 bg-transparent cursor-pointer"
                 >
                   <ImageIcon className="w-6 h-6" />
                 </button>
@@ -993,8 +954,7 @@ export default function HomePage() {
 
             </div>
 
-            {/* Modal Footer */}
-            <div className="p-4 border-t border-grey/20">
+            <div className="p-4 border-t border-grey/20 dark:border-zinc-800">
               <button
                 onClick={handleCreatePost}
                 disabled={isPosting || (!newPostContent.trim() && newPostImages.length === 0)}
@@ -1013,7 +973,6 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* LIGHTBOX MODAL */}
       {activeLightboxPost && (() => {
         const post = posts.find(p => p._id === activeLightboxPost._id) || activeLightboxPost;
         const images = post.images || [];
@@ -1029,7 +988,6 @@ export default function HomePage() {
         const commentsCount = getCommentsCount(post);
         const comments = post.comments || [];
 
-        // Caption / Content truncation & Readmore toggle
         const content = post.content || '';
         const isLong = content.length > 200 || content.split('\n').length > 4;
         const displayContent = lightboxContentExpanded 
@@ -1041,10 +999,8 @@ export default function HomePage() {
         return (
           <div className="fixed inset-0 z-50 flex flex-col md:flex-row bg-black/95 backdrop-blur-sm animate-in fade-in duration-200 select-none">
             
-            {/* Left Column: Image Viewer */}
             <div className="flex-1 relative flex items-center justify-center bg-black min-h-[40vh] md:h-full">
               
-              {/* Close Button */}
               <button
                 onClick={() => {
                   setActiveLightboxPost(null);
@@ -1055,7 +1011,6 @@ export default function HomePage() {
                 <X className="w-6 h-6" />
               </button>
 
-              {/* Active Image */}
               {activeImageUrl ? (
                 <img
                   src={activeImageUrl}
@@ -1066,7 +1021,6 @@ export default function HomePage() {
                 <div className="text-white text-sm">Không thể tải ảnh</div>
               )}
 
-              {/* Navigation Arrows */}
               {images.length > 1 && (
                 <>
                   <button
@@ -1090,7 +1044,6 @@ export default function HomePage() {
                 </>
               )}
 
-              {/* Image indicator count */}
               {images.length > 1 && (
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full select-none font-semibold">
                   {activeLightboxImageIdx + 1} / {images.length}
@@ -1098,23 +1051,21 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* Right Column: Post Info & Comments */}
-            <div className="w-full md:w-[450px] bg-white h-[60vh] md:h-full flex flex-col shadow-2xl border-t md:border-t-0 md:border-l border-grey/25 animate-in slide-in-from-bottom md:slide-in-from-right duration-300">
+            <div className="w-full md:w-[450px] bg-white dark:bg-zinc-900 h-[60vh] md:h-full flex flex-col shadow-2xl border-t md:border-t-0 md:border-l border-grey/25 dark:border-zinc-800 animate-in slide-in-from-bottom md:slide-in-from-right duration-300">
               
-              {/* Header: Author & Options */}
-              <div className="p-4 border-b border-grey/15 flex items-center justify-between flex-shrink-0">
+              <div className="p-4 border-b border-grey/15 dark:border-zinc-800 flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <div 
                     onClick={() => {
                       setActiveLightboxPost(null);
                       router.push(`/user/${author._id || author.id}`);
                     }}
-                    className="w-10 h-10 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer"
+                    className="w-10 h-10 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center cursor-pointer"
                   >
                     {authorAvatar ? (
                       <img src={authorAvatar} alt={authorName} className="w-full h-full object-cover" />
                     ) : (
-                      <User className="w-5 h-5 text-grey" />
+                      <User className="w-5 h-5 text-grey dark:text-zinc-400" />
                     )}
                   </div>
                   <div className="flex flex-col text-left">
@@ -1123,11 +1074,11 @@ export default function HomePage() {
                         setActiveLightboxPost(null);
                         router.push(`/user/${author._id || author.id}`);
                       }}
-                      className="font-bold text-grey-hover hover:underline cursor-pointer text-sm sm:text-base"
+                      className="font-bold text-grey-hover dark:text-zinc-150 hover:underline cursor-pointer text-sm sm:text-base"
                     >
                       {authorName}
                     </h3>
-                    <span className="text-xs text-grey font-medium">{timeAgoStr}</span>
+                    <span className="text-xs text-grey dark:text-zinc-400 font-medium">{timeAgoStr}</span>
                   </div>
                 </div>
                 <button
@@ -1135,18 +1086,16 @@ export default function HomePage() {
                     setActiveLightboxPost(null);
                     setReplyingTo(null);
                   }}
-                  className="w-8 h-8 rounded-full hover:bg-grey/10 flex items-center justify-center text-grey hover:text-grey-hover transition border-0 bg-transparent cursor-pointer md:hidden"
+                  className="w-8 h-8 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 flex items-center justify-center text-grey hover:text-grey-hover dark:text-zinc-400 dark:hover:text-zinc-200 transition border-0 bg-transparent cursor-pointer md:hidden"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Scrollable details view: Caption & Comments List */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 text-left">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 text-left scrollbar-none">
                 
-                {/* Caption / Content */}
                 {content && (
-                  <div className="text-slate-800 text-sm leading-relaxed whitespace-pre-wrap text-justify pb-3 border-b border-grey/10">
+                  <div className="text-slate-800 dark:text-zinc-250 text-sm leading-relaxed whitespace-pre-wrap text-justify pb-3 border-b border-grey/10 dark:border-zinc-800">
                     {displayContent}
                     {isLong && (
                       <button
@@ -1159,8 +1108,7 @@ export default function HomePage() {
                   </div>
                 )}
 
-                {/* Stats */}
-                <div className="flex items-center justify-between text-xs text-grey py-1 select-none">
+                <div className="flex items-center justify-between text-xs text-grey dark:text-zinc-400 py-1 select-none">
                   <div className="flex items-center gap-1.5 font-medium">
                     <div className="w-5 h-5 rounded-full bg-blue/10 flex items-center justify-center text-blue">
                       <ThumbsUp className="w-3 h-3 fill-blue" />
@@ -1173,11 +1121,10 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Engagement Action Buttons */}
-                <div className="grid grid-cols-2 gap-1 py-1 border-t border-b border-grey/10 select-none">
+                <div className="grid grid-cols-2 gap-1 py-1 border-t border-b border-grey/10 dark:border-zinc-800 select-none">
                   <button 
                     onClick={() => handleLikePost(post._id)}
-                    className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${hasLiked ? 'text-blue' : 'text-grey-hover'}`}
+                    className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${hasLiked ? 'text-blue' : 'text-grey-hover dark:text-zinc-300'}`}
                   >
                     <ThumbsUp className={`w-4 h-4 ${hasLiked ? 'fill-blue text-blue' : ''}`} />
                     <span>Thích</span>
@@ -1187,18 +1134,17 @@ export default function HomePage() {
                       const el = document.getElementById(`lightbox-comment-input-${post._id}`);
                       el?.focus();
                     }}
-                    className="flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition text-grey-hover font-bold text-sm border-0 cursor-pointer bg-transparent"
+                    className="flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:scale-[0.98] transition text-grey-hover dark:text-zinc-300 font-bold text-sm border-0 cursor-pointer bg-transparent"
                   >
                     <MessageCircle className="w-4 h-4" />
                     <span>Bình luận</span>
                   </button>
                 </div>
 
-                {/* Comments List container */}
                 <div className="space-y-4 pt-2">
-                  <h4 className="text-xs font-bold text-grey-hover uppercase tracking-wider mb-2">Bình luận</h4>
+                  <h4 className="text-xs font-bold text-grey-hover dark:text-zinc-300 uppercase tracking-wider mb-2">Bình luận</h4>
                   {comments.length === 0 ? (
-                    <div className="text-center py-8 text-grey text-xs sm:text-sm select-none">
+                    <div className="text-center py-8 text-grey dark:text-zinc-500 text-xs sm:text-sm select-none">
                       Chưa có bình luận nào. Hãy là người đầu tiên!
                     </div>
                   ) : (
@@ -1218,39 +1164,37 @@ export default function HomePage() {
                         return (
                           <div key={comment._id} className="space-y-2">
                             
-                            {/* Individual Comment Box */}
                             <div className="flex gap-2.5 items-start">
                               <div 
                                 onClick={() => {
                                   setActiveLightboxPost(null);
                                   router.push(`/user/${cAuthor._id || cAuthor.id}`);
                                 }}
-                                className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer"
+                                className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center cursor-pointer"
                               >
                                 {cAuthorAvatar ? (
                                   <img src={cAuthorAvatar} alt={cAuthorName} className="w-full h-full object-cover" />
                                 ) : (
-                                  <User className="w-4.5 h-4.5 text-grey" />
+                                  <User className="w-4.5 h-4.5 text-grey dark:text-zinc-400" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="bg-grey/10 rounded-2xl px-3 py-1.5 inline-block max-w-full">
+                                <div className="bg-grey/10 dark:bg-zinc-800/80 rounded-2xl px-3 py-1.5 inline-block max-w-full">
                                   <h5 
                                     onClick={() => {
                                       setActiveLightboxPost(null);
                                       router.push(`/user/${cAuthor._id || cAuthor.id}`);
                                     }}
-                                    className="text-xs font-bold text-grey-hover hover:underline cursor-pointer truncate mb-0.5"
+                                    className="text-xs font-bold text-grey-hover dark:text-zinc-200 hover:underline cursor-pointer truncate mb-0.5"
                                   >
                                     {cAuthorName}
                                   </h5>
-                                  <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
+                                  <p className="text-sm text-gray-800 dark:text-zinc-200 whitespace-pre-wrap break-words text-justify leading-normal">
                                     {comment.content}
                                   </p>
                                 </div>
                                 
-                                {/* Actions */}
-                                <div className="flex items-center gap-3.5 text-[10px] sm:text-xs text-grey mt-0.5 pl-2 select-none font-semibold">
+                                <div className="flex items-center gap-3.5 text-[10px] sm:text-xs text-grey dark:text-zinc-450 mt-0.5 pl-2 select-none font-semibold">
                                   <span>{cTimeAgo}</span>
                                   <button 
                                     onClick={() => {
@@ -1277,7 +1221,6 @@ export default function HomePage() {
                               </div>
                             </div>
 
-                            {/* Replies block */}
                             {replies.length > 0 && (
                               <div className="pl-10">
                                 {!isRepliesExpanded ? (
@@ -1289,7 +1232,7 @@ export default function HomePage() {
                                     <span>Xem tất cả {replies.length} phản hồi</span>
                                   </button>
                                 ) : (
-                                  <div className="space-y-3 mt-2 border-l-2 border-grey/15 pl-4">
+                                  <div className="space-y-3 mt-2 border-l-2 border-grey/15 dark:border-zinc-800 pl-4">
                                     {replies.map((reply: any) => {
                                       const rAuthor = reply.author || {};
                                       const rAuthorName = rAuthor.username || 'Người dùng';
@@ -1306,31 +1249,31 @@ export default function HomePage() {
                                               setActiveLightboxPost(null);
                                               router.push(`/user/${rAuthor._id || rAuthor.id}`);
                                             }}
-                                            className="w-7 h-7 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center cursor-pointer"
+                                            className="w-7 h-7 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center cursor-pointer"
                                           >
                                             {rAuthorAvatar ? (
                                               <img src={rAuthorAvatar} alt={rAuthorName} className="w-full h-full object-cover" />
                                             ) : (
-                                              <User className="w-4 h-4 text-grey" />
+                                              <User className="w-4 h-4 text-grey dark:text-zinc-400" />
                                             )}
                                           </div>
                                           <div className="flex-1 min-w-0">
-                                            <div className="bg-grey/10 rounded-2xl px-3 py-1.5 inline-block max-w-full">
+                                            <div className="bg-grey/10 dark:bg-zinc-800/80 rounded-2xl px-3 py-1.5 inline-block max-w-full">
                                               <h5 
                                                 onClick={() => {
                                                   setActiveLightboxPost(null);
                                                   router.push(`/user/${rAuthor._id || rAuthor.id}`);
                                                 }}
-                                                className="text-xs font-bold text-grey-hover hover:underline cursor-pointer truncate mb-0.5"
+                                                className="text-xs font-bold text-grey-hover dark:text-zinc-200 hover:underline cursor-pointer truncate mb-0.5"
                                               >
                                                 {rAuthorName}
                                               </h5>
-                                              <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
+                                              <p className="text-sm text-gray-800 dark:text-zinc-200 whitespace-pre-wrap break-words text-justify leading-normal">
                                                 {reply.content}
                                               </p>
                                             </div>
                                             
-                                            <div className="flex items-center gap-3 text-[10px] sm:text-xs text-grey mt-0.5 pl-2 select-none font-semibold">
+                                            <div className="flex items-center gap-3 text-[10px] sm:text-xs text-grey dark:text-zinc-400 mt-0.5 pl-2 select-none font-semibold">
                                               <span>{rTimeAgo}</span>
                                               <button 
                                                 onClick={() => {
@@ -1379,18 +1322,17 @@ export default function HomePage() {
 
               </div>
 
-              {/* Input section: Reply indicator and Comment form */}
-              <div className="p-4 border-t border-grey/15 bg-white flex-shrink-0">
+              <div className="p-4 border-t border-grey/15 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex-shrink-0">
                 
                 {replyingTo && replyingTo.postId === post._id && (
-                  <div className="flex items-center justify-between px-3 py-1.5 bg-grey/10 rounded-xl text-xs sm:text-sm text-grey font-medium mb-2 animate-in slide-in-from-bottom-2 duration-150">
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-grey/10 dark:bg-zinc-800 rounded-xl text-xs sm:text-sm text-grey dark:text-zinc-300 font-medium mb-2 animate-in slide-in-from-bottom-2 duration-150">
                     <div className="flex items-center gap-1.5">
                       <span className="text-blue">Đang phản hồi</span>
-                      <span className="font-bold text-grey-hover">@{replyingTo.username}</span>
+                      <span className="font-bold text-grey-hover dark:text-zinc-200">@{replyingTo.username}</span>
                     </div>
                     <button 
                       onClick={() => setReplyingTo(null)}
-                      className="w-5 h-5 rounded-full hover:bg-grey/25 flex items-center justify-center text-grey transition border-0 bg-transparent cursor-pointer"
+                      className="w-5 h-5 rounded-full hover:bg-grey/25 dark:hover:bg-zinc-700 flex items-center justify-center text-grey dark:text-zinc-400 transition border-0 bg-transparent cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -1398,28 +1340,28 @@ export default function HomePage() {
                 )}
 
                 <div className="flex gap-2 items-center">
-                  <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center">
                     <img src={user?.avatar || '/assets/avatar/avatar.jpg'} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 flex gap-2 relative">
-                            <textarea
-                              id={`lightbox-comment-input-${post._id}`}
-                              rows={1}
-                              placeholder={replyingTo && replyingTo.postId === post._id ? `Phản hồi @${replyingTo.username}...` : "Viết bình luận công khai..."}
-                              value={commentInputs[post._id] || ''}
-                              onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
-                                  e.preventDefault();
-                                  if (replyingTo && replyingTo.postId === post._id) {
-                                    handleAddReply(post._id, replyingTo.commentId);
-                                  } else {
-                                    handleAddComment(post._id);
-                                  }
-                                }
-                              }}
-                              className="flex-1 px-4 py-2 bg-grey/10 rounded-2xl border-0 focus:ring-2 focus:ring-blue focus:bg-white transition outline-none text-sm text-grey-hover font-medium placeholder-gray-500 resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
-                            />
+                    <textarea
+                      id={`lightbox-comment-input-${post._id}`}
+                      rows={1}
+                      placeholder={replyingTo && replyingTo.postId === post._id ? `Phản hồi @${replyingTo.username}...` : "Viết bình luận công khai..."}
+                      value={commentInputs[post._id] || ''}
+                      onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          if (replyingTo && replyingTo.postId === post._id) {
+                            handleAddReply(post._id, replyingTo.commentId);
+                          } else {
+                            handleAddComment(post._id);
+                          }
+                        }
+                      }}
+                      className="flex-1 px-4 py-2 bg-grey/10 dark:bg-zinc-800 rounded-2xl border-0 focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition outline-none text-sm text-grey-hover dark:text-zinc-200 font-medium placeholder-gray-500 dark:placeholder-zinc-500 resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
+                    />
                     <button 
                       onClick={() => {
                         if (replyingTo && replyingTo.postId === post._id) {
@@ -1443,7 +1385,6 @@ export default function HomePage() {
         );
       })()}
 
-      {/* Inline styles for modal scaleUp animation */}
       <style jsx global>{`
         @keyframes scaleUpDropdown {
           from { transform: scale(0.95); opacity: 0; }

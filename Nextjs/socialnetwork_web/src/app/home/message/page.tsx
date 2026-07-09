@@ -79,14 +79,14 @@ function AudioPlayerBubble({ url, isOwnMessage }: { url: string; isOwnMessage: b
 
       <div className="flex flex-col gap-1 min-w-[120px]">
         {/* Progress bar */}
-        <div className={`h-1 rounded-full relative w-full ${isOwnMessage ? 'bg-white/30' : 'bg-black/10'}`}>
+        <div className={`h-1 rounded-full relative w-full ${isOwnMessage ? 'bg-white/30' : 'bg-black/10 dark:bg-zinc-800'}`}>
           <div 
             className={`h-full rounded-full ${isOwnMessage ? 'bg-white' : 'bg-blue'}`}
             style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
           />
         </div>
         {/* Time info */}
-        <span className={`text-[10px] font-semibold ${isOwnMessage ? 'text-white/80' : 'text-grey/70'}`}>
+        <span className={`text-[10px] font-semibold ${isOwnMessage ? 'text-white/80' : 'text-grey/70 dark:text-zinc-400'}`}>
           {formatDuration(currentTime)} / {formatDuration(duration || 0)}
         </span>
       </div>
@@ -169,7 +169,7 @@ function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: st
       onClick={handleDownload}
       className="flex items-center gap-3 py-1 text-inherit no-underline cursor-pointer group"
     >
-      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-white p-1.5 shadow-sm`}>
+      <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-white dark:bg-zinc-900 border border-transparent dark:border-zinc-800 p-1.5 shadow-sm">
         <img 
           src={fileMeta.path} 
           alt={fileMeta.label} 
@@ -178,10 +178,10 @@ function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: st
       </div>
 
       <div className="flex-1 min-w-0 max-w-[200px]">
-        <p className={`text-sm font-semibold truncate ${isOwnMessage ? 'text-white' : 'text-black'}`}>
+        <p className={`text-sm font-semibold truncate ${isOwnMessage ? 'text-white' : 'text-black dark:text-zinc-200'}`}>
           {filename}
         </p>
-        <span className={`text-[10px] block ${isOwnMessage ? 'text-white/75' : 'text-grey/60'}`}>
+        <span className={`text-[10px] block ${isOwnMessage ? 'text-white/75' : 'text-grey/60 dark:text-zinc-400'}`}>
           {ext.toUpperCase()} • {fileMeta.label}
         </span>
       </div>
@@ -189,7 +189,7 @@ function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: st
       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition ${
         isOwnMessage 
           ? 'bg-white/10 hover:bg-white/20 text-white' 
-          : 'bg-grey/10 hover:bg-grey/25 text-grey-hover'
+          : 'bg-grey/10 hover:bg-grey/25 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-grey-hover dark:text-zinc-300'
       }`}>
         <Download className="w-4 h-4" />
       </div>
@@ -284,11 +284,11 @@ function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boo
 
   if (loading) {
     return (
-      <div className="mt-2 flex items-center gap-2 p-2 rounded-xl border bg-grey/5 border-grey/10 animate-pulse w-60">
-        <div className="w-6 h-6 rounded-md bg-grey/20 flex-shrink-0" />
+      <div className="mt-2 flex items-center gap-2 p-2 rounded-xl border bg-grey/5 border-grey/10 dark:bg-zinc-850 dark:border-zinc-800 animate-pulse w-60">
+        <div className="w-6 h-6 rounded-md bg-grey/20 dark:bg-zinc-800 flex-shrink-0" />
         <div className="flex-1 space-y-1">
-          <div className="h-3 bg-grey/20 rounded w-1/3" />
-          <div className="h-2.5 bg-grey/20 rounded w-1/2" />
+          <div className="h-3 bg-grey/20 dark:bg-zinc-800 rounded w-1/3" />
+          <div className="h-2.5 bg-grey/20 dark:bg-zinc-800 rounded w-1/2" />
         </div>
       </div>
     );
@@ -300,14 +300,14 @@ function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boo
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`mt-2 flex items-center gap-2.5 p-2 rounded-xl text-inherit no-underline border transition-all hover:bg-grey/10 cursor-pointer block ${
+        className={`mt-2 flex items-center gap-2.5 p-2 rounded-xl text-inherit no-underline border transition-all hover:bg-grey/10 dark:hover:bg-zinc-850/50 cursor-pointer block ${
           isOwnMessage 
             ? 'bg-white/10 border-white/10 hover:border-white/20' 
-            : 'bg-grey/5 border-grey/10 hover:border-grey/20'
+            : 'bg-grey/5 border-grey/10 dark:bg-zinc-900 dark:border-zinc-800 hover:border-grey/20 dark:hover:border-zinc-700'
         }`}
       >
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md overflow-hidden bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-grey/10">
+          <div className="w-6 h-6 rounded-md overflow-hidden bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-grey/10 dark:border-zinc-800">
             <img 
               src={iconUrl} 
               alt={domain} 
@@ -318,10 +318,10 @@ function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boo
             />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="text-xs font-semibold truncate block">
+            <span className="text-xs font-semibold truncate block text-grey-hover dark:text-zinc-250">
               {domain}
             </span>
-            <span className={`text-[9px] block ${isOwnMessage ? 'text-white/70' : 'text-grey/60'} truncate`}>
+            <span className={`text-[9px] block ${isOwnMessage ? 'text-white/70' : 'text-grey/60 dark:text-zinc-450'} truncate`}>
               Nhấp để truy cập trang web
             </span>
           </div>
@@ -335,14 +335,14 @@ function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boo
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`mt-2 flex flex-col rounded-xl overflow-hidden text-inherit no-underline border transition-all hover:bg-grey/10 cursor-pointer max-w-xs md:max-w-md ${
+      className={`mt-2 flex flex-col rounded-xl overflow-hidden text-inherit no-underline border transition-all hover:bg-grey/10 dark:hover:bg-zinc-850/50 cursor-pointer max-w-xs md:max-w-md ${
         isOwnMessage 
           ? 'bg-white/10 border-white/10 hover:border-white/20' 
-          : 'bg-white border-grey/15 hover:border-grey/30 text-black'
+          : 'bg-white dark:bg-zinc-900 border-grey/15 dark:border-zinc-800 hover:border-grey/30 dark:hover:border-zinc-700 text-black dark:text-zinc-250'
       }`}
     >
       {preview.image && (
-        <div className="w-full aspect-video relative overflow-hidden bg-grey/5 border-b border-grey/10">
+        <div className="w-full aspect-video relative overflow-hidden bg-grey/5 dark:bg-zinc-800 border-b border-grey/10 dark:border-zinc-800">
           <img 
             src={preview.image} 
             alt={preview.title || domain}
@@ -360,19 +360,19 @@ function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boo
               (e.target as HTMLImageElement).src = '/assets/link/chrome.png'; 
             }}
           />
-          <span className={`text-[10px] font-bold uppercase tracking-wider ${isOwnMessage ? 'text-white/80' : 'text-grey/70'}`}>
+          <span className={`text-[10px] font-bold uppercase tracking-wider ${isOwnMessage ? 'text-white/80' : 'text-grey/70 dark:text-zinc-450'}`}>
             {domain}
           </span>
         </div>
         
         {preview.title && (
-          <h4 className={`text-sm font-bold line-clamp-2 ${isOwnMessage ? 'text-white' : 'text-grey-hover'}`}>
+          <h4 className={`text-sm font-bold line-clamp-2 ${isOwnMessage ? 'text-white' : 'text-grey-hover dark:text-zinc-200'}`}>
             {preview.title}
           </h4>
         )}
         
         {preview.description && (
-          <p className={`text-xs line-clamp-2 mt-0.5 leading-normal ${isOwnMessage ? 'text-white/80' : 'text-grey'}`}>
+          <p className={`text-xs line-clamp-2 mt-0.5 leading-normal ${isOwnMessage ? 'text-white/80' : 'text-grey dark:text-zinc-400'}`}>
             {preview.description}
           </p>
         )}
@@ -742,38 +742,38 @@ function MessageContent() {
   });
 
   return (
-    <div className="h-screen overflow-hidden bg-grey/5 flex flex-col font-sans">
+    <div className="h-screen overflow-hidden bg-grey/5 dark:bg-zinc-950 flex flex-col font-sans transition-colors duration-200">
       <Navbar activeTab="message" />
 
       {/* Main Messaging Container */}
       <div className="flex-1 pt-16 flex overflow-hidden h-[calc(100vh-64px)]">
         
         {/* Left Panel: Conversations List */}
-        <div className="w-80 md:w-96 bg-white border-r border-grey/20 flex flex-col flex-shrink-0">
+        <div className="w-80 md:w-96 bg-white dark:bg-zinc-900 border-r border-grey/20 dark:border-zinc-800 flex flex-col flex-shrink-0 transition-colors duration-200">
           
           {/* Search bar inside messenger */}
-          <div className="p-4 border-b border-grey/10">
-            <div className="flex items-center bg-grey/10 hover:bg-grey/15 transition rounded-full px-3.5 py-2">
-              <Search className="w-4.5 h-4.5 text-grey mr-2 flex-shrink-0" />
+          <div className="p-4 border-b border-grey/10 dark:border-zinc-800/80">
+            <div className="flex items-center bg-grey/10 hover:bg-grey/15 dark:bg-zinc-800 dark:hover:bg-zinc-750 transition rounded-full px-3.5 py-2">
+              <Search className="w-4.5 h-4.5 text-grey dark:text-zinc-400 mr-2 flex-shrink-0" />
               <input 
                 type="text" 
                 placeholder="Tìm kiếm cuộc trò chuyện..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent border-none outline-none text-sm w-full placeholder-grey/60 text-grey-hover font-medium"
+                className="bg-transparent border-none outline-none text-sm w-full placeholder-grey/60 dark:placeholder-zinc-500 text-grey-hover dark:text-zinc-200 font-medium"
               />
             </div>
           </div>
 
           {/* Conversations list scrollable */}
-          <div className="flex-1 overflow-y-auto divide-y divide-grey/5">
+          <div className="flex-1 overflow-y-auto divide-y divide-grey/5 dark:divide-zinc-800/60">
             {loadingConv ? (
               <div className="flex items-center justify-center py-10">
                 <Loader2 className="w-6 h-6 animate-spin text-blue mr-2" />
-                <span className="text-sm text-grey font-bold">Đang tải cuộc trò chuyện...</span>
+                <span className="text-sm text-grey dark:text-zinc-400 font-bold">Đang tải cuộc trò chuyện...</span>
               </div>
             ) : filteredConversations.length === 0 ? (
-              <div className="text-center py-12 text-grey">
+              <div className="text-center py-12 text-grey dark:text-zinc-405">
                 <MessageSquare className="w-10 h-10 mx-auto mb-2 opacity-30" />
                 <p className="text-sm font-semibold">Không tìm thấy cuộc trò chuyện nào</p>
               </div>
@@ -793,35 +793,35 @@ function MessageContent() {
                     onClick={() => setSelectedConv(chat)}
                     className={`flex items-center gap-3.5 p-4 cursor-pointer transition duration-150 ${
                       isSelected 
-                        ? 'bg-blue/5 border-l-4 border-blue' 
-                        : 'hover:bg-grey/5'
+                        ? 'bg-blue/5 dark:bg-blue-500/10 border-l-4 border-blue' 
+                        : 'hover:bg-grey/5 dark:hover:bg-zinc-800/40'
                     }`}
                   >
                     {/* Avatar */}
                     <div className="relative flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-grey/10 dark:bg-zinc-800 border border-grey/25 dark:border-zinc-850 overflow-hidden flex items-center justify-center">
                         {partnerAvatar ? (
                           <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" />
                         ) : (
-                          <User className="w-6 h-6 text-grey/60" />
+                          <User className="w-6 h-6 text-grey/60 dark:text-zinc-400" />
                         )}
                       </div>
                       {isOnline && (
-                        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
+                        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-zinc-900 rounded-full" />
                       )}
                     </div>
 
                     {/* Chat Text Details */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 text-left">
                       <div className="flex justify-between items-baseline mb-1">
-                        <h4 className="font-bold text-grey-hover truncate text-[14.5px]">{partnerName}</h4>
+                        <h4 className="font-bold text-grey-hover dark:text-zinc-200 truncate text-[14.5px]">{partnerName}</h4>
                         {chat.lastMessage && (
-                          <span className="text-[10px] text-grey/60">
+                          <span className="text-[10px] text-grey/60 dark:text-zinc-500">
                             {formatTime(chat.lastMessage.createdAt)}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs truncate text-grey/70">
+                      <p className="text-xs truncate text-grey/70 dark:text-zinc-400">
                         {chat.lastMessage ? chat.lastMessage.content : 'Chưa có tin nhắn'}
                       </p>
                     </div>
@@ -833,7 +833,7 @@ function MessageContent() {
         </div>
 
         {/* Right Panel: Chat Room Details */}
-        <div className="flex-1 bg-white flex min-w-0 relative">
+        <div className="flex-1 bg-white dark:bg-zinc-900 flex min-w-0 relative transition-colors duration-200">
           {selectedConv ? (
             <div className="flex-1 flex h-full min-w-0 overflow-hidden">
               {/* Main Chat Column */}
@@ -846,18 +846,18 @@ function MessageContent() {
                   const isOnline = !selectedConv.isGroup && partner.isOnline;
 
                   return (
-                    <div className="h-16 px-6 border-b border-grey/20 flex items-center justify-between flex-shrink-0 bg-white">
+                    <div className="h-16 px-6 border-b border-grey/20 dark:border-zinc-800 flex items-center justify-between flex-shrink-0 bg-white dark:bg-zinc-900 transition-colors duration-200">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-grey/10 dark:bg-zinc-800 border border-grey/25 dark:border-zinc-850 overflow-hidden flex items-center justify-center flex-shrink-0">
                           {partnerAvatar ? (
                             <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" />
                           ) : (
-                            <User className="w-5 h-5 text-grey/60" />
+                            <User className="w-5 h-5 text-grey/60 dark:text-zinc-400" />
                           )}
                         </div>
-                        <div className="min-w-0">
-                          <h3 className="font-bold text-grey-hover truncate text-base">{partnerName}</h3>
-                          <p className={`text-[11px] font-semibold ${isOnline ? 'text-green-500' : 'text-grey/50'}`}>
+                        <div className="min-w-0 text-left">
+                          <h3 className="font-bold text-grey-hover dark:text-zinc-200 truncate text-base">{partnerName}</h3>
+                          <p className={`text-[11px] font-semibold ${isOnline ? 'text-green-500' : 'text-grey/50 dark:text-zinc-500'}`}>
                             {isOnline ? 'Đang hoạt động' : 'Ngoại tuyến'}
                           </p>
                         </div>
@@ -870,14 +870,14 @@ function MessageContent() {
                             <button 
                               type="button"
                               onClick={() => startCall(partner._id || partner.id, selectedConv._id, partner, 'voice')}
-                              className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer"
+                              className="p-2 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 text-grey dark:text-zinc-400 transition border-0 bg-transparent cursor-pointer"
                             >
                               <Phone className="w-5 h-5" />
                             </button>
                             <button 
                               type="button"
                               onClick={() => startCall(partner._id || partner.id, selectedConv._id, partner, 'video')}
-                              className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer"
+                              className="p-2 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 text-grey dark:text-zinc-400 transition border-0 bg-transparent cursor-pointer"
                             >
                               <Video className="w-5 h-5" />
                             </button>
@@ -886,7 +886,7 @@ function MessageContent() {
                         <button 
                           type="button"
                           onClick={() => setShowInfoPanel(!showInfoPanel)}
-                          className={`p-2 rounded-full hover:bg-grey/10 transition border-0 bg-transparent cursor-pointer ${showInfoPanel ? 'text-blue bg-blue/5' : 'text-grey'}`}
+                          className={`p-2 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 transition border-0 bg-transparent cursor-pointer ${showInfoPanel ? 'text-blue bg-blue/5 dark:bg-blue-500/10' : 'text-grey dark:text-zinc-400'}`}
                         >
                           <Info className="w-5 h-5" />
                         </button>
@@ -896,17 +896,17 @@ function MessageContent() {
                 })()}
 
                 {/* Chat Room Messages List */}
-                <div className="flex-1 p-4 bg-grey/5 overflow-y-auto space-y-4">
+                <div className="flex-1 p-4 bg-grey/5 dark:bg-zinc-950 overflow-y-auto space-y-4">
                   {loadingMsgs ? (
                     <div className="flex items-center justify-center h-full">
                       <Loader2 className="w-8 h-8 animate-spin text-blue mr-2" />
-                      <span className="text-grey font-bold">Đang tải tin nhắn...</span>
+                      <span className="text-grey dark:text-zinc-400 font-bold">Đang tải tin nhắn...</span>
                     </div>
                   ) : messages.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center p-6">
                       <MessageSquare className="w-12 h-12 text-blue/30 mb-2" />
-                      <h4 className="font-bold text-grey-hover">Chưa có cuộc trò chuyện nào</h4>
-                      <p className="text-xs text-grey/50 mt-1">Hãy bắt đầu gửi tin nhắn đầu tiên cho họ!</p>
+                      <h4 className="font-bold text-grey-hover dark:text-zinc-200">Chưa có cuộc trò chuyện nào</h4>
+                      <p className="text-xs text-grey/50 dark:text-zinc-500 mt-1">Hãy bắt đầu gửi tin nhắn đầu tiên cho họ!</p>
                     </div>
                   ) : (
                     <>
@@ -922,16 +922,16 @@ function MessageContent() {
                           <div 
                             key={msg._id} 
                             className={`flex gap-3 max-w-[85%] ${
-                              isOwnMessage ? 'ml-auto flex-row-reverse' : ''
+                              isOwnMessage ? 'ml-auto flex-row-reverse text-right' : 'text-left'
                             }`}
                           >
                             {/* Avatar */}
                             {!isOwnMessage && selectedConv.isGroup && (
-                              <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/25 bg-grey/10 flex items-center justify-center flex-shrink-0">
+                              <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/25 dark:border-zinc-850 bg-grey/10 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
                                 {senderAvatar ? (
                                   <img src={senderAvatar} alt={senderName} className="w-full h-full object-cover" />
                                 ) : (
-                                  <User className="w-4 h-4 text-grey/60" />
+                                  <User className="w-4 h-4 text-grey/60 dark:text-zinc-450" />
                                 )}
                               </div>
                             )}
@@ -939,23 +939,23 @@ function MessageContent() {
                             <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
                               {/* Group sender name */}
                               {!isOwnMessage && selectedConv.isGroup && (
-                                <span className="text-[10px] text-grey/60 font-semibold mb-1 ml-1">
+                                <span className="text-[10px] text-grey/60 dark:text-zinc-500 font-semibold mb-1 ml-1">
                                   {senderName}
                                 </span>
                               )}
 
                               {/* Bubble box */}
                               <div 
-                                className={`rounded-2xl text-[14px] leading-relaxed break-words max-w-xs md:max-w-md shadow-sm ${
+                                className={`rounded-2xl text-[14px] leading-relaxed break-words max-w-xs md:max-w-md shadow-sm transition-colors duration-150 ${
                                   msg.type === 'image' && msg.attachments?.length > 0
-                                    ? 'bg-transparent text-black' 
+                                    ? 'bg-transparent text-black dark:text-zinc-200' 
                                     : msg.type === 'audio'
                                       ? 'p-2'
                                       : 'p-3'
                                 } ${
                                   isOwnMessage 
                                     ? msg.type === 'image' && msg.attachments?.length > 0 ? '' : 'bg-blue text-white rounded-br-none' 
-                                    : msg.type === 'image' && msg.attachments?.length > 0 ? '' : 'bg-[#D6D6D6] text-black rounded-bl-none'
+                                    : msg.type === 'image' && msg.attachments?.length > 0 ? '' : 'bg-[#D6D6D6] dark:bg-zinc-800 text-black dark:text-zinc-200 rounded-bl-none'
                                 }`}
                               >
                                 {msg.type === 'image' && msg.attachments?.length > 0 ? (
@@ -970,7 +970,7 @@ function MessageContent() {
                               </div>
 
                               {/* Timestamp outside bubble */}
-                              <span className="block text-[10px] mt-1 text-grey/50 font-semibold px-1">
+                              <span className="block text-[10px] mt-1 text-grey/50 dark:text-zinc-550 font-semibold px-1">
                                 {formatTime(msg.createdAt)}
                               </span>
                             </div>
@@ -979,7 +979,7 @@ function MessageContent() {
                       })}
                       {isUploading && (
                         <div className="flex gap-3 max-w-[85%] ml-auto flex-row-reverse items-center">
-                          <div className="bg-blue/10 text-blue/70 p-3 rounded-2xl rounded-br-none flex items-center gap-2">
+                          <div className="bg-blue/10 dark:bg-blue-500/10 text-blue/70 p-3 rounded-2xl rounded-br-none flex items-center gap-2">
                             <Loader2 className="w-4 h-4 animate-spin text-blue" />
                             <span>Đang gửi tệp...</span>
                           </div>
@@ -991,7 +991,7 @@ function MessageContent() {
                 </div>
 
                 {/* Message Input Composer */}
-                <form onSubmit={handleSendMessage} className="p-4 border-t border-grey/20 bg-white flex items-center gap-3 relative">
+                <form onSubmit={handleSendMessage} className="p-4 border-t border-grey/20 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-3 relative transition-colors duration-200">
                   {/* Hidden File Inputs */}
                   <input 
                     type="file" 
@@ -1013,7 +1013,7 @@ function MessageContent() {
                       type="button" 
                       onClick={() => imageInputRef.current?.click()}
                       disabled={isUploading}
-                      className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
+                      className="p-2 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 text-grey dark:text-zinc-400 transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
                       title="Gửi hình ảnh"
                     >
                       <ImageIcon className="w-5 h-5" />
@@ -1023,13 +1023,13 @@ function MessageContent() {
                       type="button" 
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isUploading}
-                      className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
+                      className="p-2 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 text-grey dark:text-zinc-400 transition border-0 bg-transparent cursor-pointer disabled:opacity-50"
                       title="Gửi tài liệu hoặc âm thanh"
                     >
                       <Paperclip className="w-5 h-5" />
                     </button>
 
-                    <button type="button" className="p-2 rounded-full hover:bg-grey/10 text-grey transition border-0 bg-transparent cursor-pointer">
+                    <button type="button" className="p-2 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 text-grey dark:text-zinc-400 transition border-0 bg-transparent cursor-pointer">
                       <Smile className="w-5 h-5" />
                     </button>
                   </div>
@@ -1047,7 +1047,7 @@ function MessageContent() {
                     disabled={isUploading}
                     placeholder={isUploading ? "Đang tải tệp lên..." : "Nhập tin nhắn..."} 
                     rows={1}
-                    className="flex-1 bg-grey/10 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover focus:bg-white focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle text-justify disabled:opacity-50"
+                    className="flex-1 bg-grey/10 dark:bg-zinc-800 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover dark:text-zinc-200 focus:bg-white dark:focus:bg-zinc-850 focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle text-justify disabled:opacity-50 placeholder-grey/60 dark:placeholder-zinc-500"
                   />
 
                   <button 
@@ -1056,7 +1056,7 @@ function MessageContent() {
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition border-none flex-shrink-0 cursor-pointer ${
                       messageInput.trim() && !isUploading
                         ? 'bg-blue text-white hover:bg-blue-hover active:scale-95 shadow-sm' 
-                        : 'bg-grey/20 text-grey/40 cursor-not-allowed'
+                        : 'bg-grey/20 dark:bg-zinc-800 text-grey/40 dark:text-zinc-600 cursor-not-allowed'
                     }`}
                   >
                     {isUploading ? (
@@ -1076,25 +1076,25 @@ function MessageContent() {
                 const isOnline = !selectedConv.isGroup && partner.isOnline;
 
                 return (
-                  <div className="w-80 border-l border-grey/20 bg-white flex flex-col h-full overflow-y-auto flex-shrink-0 animate-in slide-in-from-right duration-300">
-                    <div className="p-6 flex flex-col items-center border-b border-grey/10">
-                      <div className="w-20 h-20 rounded-full bg-grey/10 border border-grey/25 overflow-hidden flex items-center justify-center mb-3.5 shadow-sm">
+                  <div className="w-80 border-l border-grey/20 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col h-full overflow-y-auto flex-shrink-0 animate-in slide-in-from-right duration-300 transition-colors duration-200">
+                    <div className="p-6 flex flex-col items-center border-b border-grey/10 dark:border-zinc-800/80">
+                      <div className="w-20 h-20 rounded-full bg-grey/10 dark:bg-zinc-800 border border-grey/25 dark:border-zinc-850 overflow-hidden flex items-center justify-center mb-3.5 shadow-sm">
                         {partnerAvatar ? (
                           <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" />
                         ) : (
-                          <User className="w-10 h-10 text-grey/60" />
+                          <User className="w-10 h-10 text-grey/60 dark:text-zinc-400" />
                         )}
                       </div>
-                      <h3 className="font-bold text-grey-hover text-base text-center mb-1 truncate w-full px-2">{partnerName}</h3>
+                      <h3 className="font-bold text-grey-hover dark:text-zinc-200 text-base text-center mb-1 truncate w-full px-2">{partnerName}</h3>
                       {!selectedConv.isGroup && (
-                        <p className={`text-[11px] font-semibold ${isOnline ? 'text-green-500' : 'text-grey/50'}`}>
+                        <p className={`text-[11px] font-semibold ${isOnline ? 'text-green-500' : 'text-grey/50 dark:text-zinc-500'}`}>
                           {isOnline ? 'Đang hoạt động' : 'Ngoại tuyến'}
                         </p>
                       )}
                     </div>
 
                     {/* Function row */}
-                    <div className="p-4 border-b border-grey/10 flex justify-around">
+                    <div className="p-4 border-b border-grey/10 dark:border-zinc-800/80 flex justify-around">
                       {selectedConv.isGroup ? (
                         <>
                           <button 
@@ -1102,27 +1102,27 @@ function MessageContent() {
                             onClick={() => {
                               showSuccess('Xem danh sách thành viên');
                             }}
-                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey dark:text-zinc-400 hover:text-blue dark:hover:text-blue transition"
                           >
-                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                            <div className="w-10 h-10 rounded-full bg-grey/10 dark:bg-zinc-800 hover:bg-grey/15 dark:hover:bg-zinc-700 flex items-center justify-center transition">
                               <Users className="w-5 h-5" />
                             </div>
                             <span className="text-[10px] font-bold">Thành viên</span>
                           </button>
                           <button 
                             type="button"
-                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey dark:text-zinc-400 hover:text-blue dark:hover:text-blue transition"
                           >
-                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                            <div className="w-10 h-10 rounded-full bg-grey/10 dark:bg-zinc-800 hover:bg-grey/15 dark:hover:bg-zinc-700 flex items-center justify-center transition">
                               <Search className="w-5 h-5" />
                             </div>
                             <span className="text-[10px] font-bold">Tìm kiếm</span>
                           </button>
                           <button 
                             type="button"
-                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey dark:text-zinc-400 hover:text-blue dark:hover:text-blue transition"
                           >
-                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                            <div className="w-10 h-10 rounded-full bg-grey/10 dark:bg-zinc-800 hover:bg-grey/15 dark:hover:bg-zinc-700 flex items-center justify-center transition">
                               <Bell className="w-5 h-5" />
                             </div>
                             <span className="text-[10px] font-bold">Thông báo</span>
@@ -1133,27 +1133,27 @@ function MessageContent() {
                           <button 
                             type="button"
                             onClick={() => router.push(`/user/${partner._id || partner.id}`)}
-                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey dark:text-zinc-400 hover:text-blue dark:hover:text-blue transition"
                           >
-                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                            <div className="w-10 h-10 rounded-full bg-grey/10 dark:bg-zinc-800 hover:bg-grey/15 dark:hover:bg-zinc-700 flex items-center justify-center transition">
                               <User className="w-5 h-5" />
                             </div>
                             <span className="text-[10px] font-bold">Cá nhân</span>
                           </button>
                           <button 
                             type="button"
-                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey dark:text-zinc-400 hover:text-blue dark:hover:text-blue transition"
                           >
-                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                            <div className="w-10 h-10 rounded-full bg-grey/10 dark:bg-zinc-800 hover:bg-grey/15 dark:hover:bg-zinc-700 flex items-center justify-center transition">
                               <Edit className="w-5 h-5" />
                             </div>
                             <span className="text-[10px] font-bold">Biệt danh</span>
                           </button>
                           <button 
                             type="button"
-                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey hover:text-blue transition"
+                            className="flex flex-col items-center gap-1.5 bg-transparent border-0 cursor-pointer text-grey dark:text-zinc-400 hover:text-blue dark:hover:text-blue transition"
                           >
-                            <div className="w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/15 flex items-center justify-center transition">
+                            <div className="w-10 h-10 rounded-full bg-grey/10 dark:bg-zinc-800 hover:bg-grey/15 dark:hover:bg-zinc-700 flex items-center justify-center transition">
                               <Bell className="w-5 h-5" />
                             </div>
                             <span className="text-[10px] font-bold">Thông báo</span>
@@ -1164,9 +1164,9 @@ function MessageContent() {
 
                     {/* Settings list */}
                     <div className="flex-1 p-2 space-y-1">
-                      <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                      <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover dark:text-zinc-200">
                         <div className="flex items-center gap-3">
-                          <ImageIcon className="w-5 h-5 text-grey" />
+                          <ImageIcon className="w-5 h-5 text-grey dark:text-zinc-400" />
                           <span className="text-sm font-semibold">Ảnh, file & liên kết</span>
                         </div>
                       </button>
@@ -1178,47 +1178,47 @@ function MessageContent() {
                             onClick={() => {
                               showSuccess('Xem danh sách thành viên');
                             }}
-                            className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover"
+                            className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover dark:text-zinc-200"
                           >
                             <div className="flex items-center gap-3">
-                              <Users className="w-5 h-5 text-grey" />
+                              <Users className="w-5 h-5 text-grey dark:text-zinc-400" />
                               <span className="text-sm font-semibold">Thành viên nhóm</span>
                             </div>
                           </button>
-                          <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                          <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover dark:text-zinc-200">
                             <div className="flex items-center gap-3">
-                              <QrCode className="w-5 h-5 text-grey" />
+                              <QrCode className="w-5 h-5 text-grey dark:text-zinc-400" />
                               <span className="text-sm font-semibold">Mã QR nhóm</span>
                             </div>
                           </button>
                         </>
                       )}
 
-                      <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                      <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover dark:text-zinc-200">
                         <div className="flex items-center gap-3">
-                          <Phone className="w-5 h-5 text-grey" />
+                          <Phone className="w-5 h-5 text-grey dark:text-zinc-400" />
                           <span className="text-sm font-semibold">Cuộc gọi</span>
                         </div>
                       </button>
 
                       {!selectedConv.isGroup && (
                         <>
-                          <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                          <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover dark:text-zinc-200">
                             <div className="flex items-center gap-3">
-                              <AlertTriangle className="w-5 h-5 text-grey" />
+                              <AlertTriangle className="w-5 h-5 text-grey dark:text-zinc-400" />
                               <span className="text-sm font-semibold">Báo cáo</span>
                             </div>
                           </button>
-                          <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover">
+                          <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover dark:text-zinc-200">
                             <div className="flex items-center gap-3">
-                              <Slash className="w-5 h-5 text-grey" />
+                              <Slash className="w-5 h-5 text-grey dark:text-zinc-400" />
                               <span className="text-sm font-semibold">Chặn</span>
                             </div>
                           </button>
                         </>
                       )}
 
-                      <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-red-500 hover:bg-red-50/50">
+                      <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 transition border-0 bg-transparent text-left cursor-pointer text-red-500 hover:bg-red-50/50 dark:hover:bg-red-500/10">
                         <div className="flex items-center gap-3">
                           <Trash2 className="w-5 h-5" />
                           <span className="text-sm font-semibold">Xóa lịch sử trò chuyện</span>
@@ -1226,7 +1226,7 @@ function MessageContent() {
                       </button>
 
                       {selectedConv.isGroup && (
-                        <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 transition border-0 bg-transparent text-left cursor-pointer text-red-500 hover:bg-red-50/50">
+                        <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 transition border-0 bg-transparent text-left cursor-pointer text-red-500 hover:bg-red-50/50 dark:hover:bg-red-500/10">
                           <div className="flex items-center gap-3">
                             <LogOut className="w-5 h-5" />
                             <span className="text-sm font-semibold">Rời khỏi nhóm</span>
@@ -1239,12 +1239,12 @@ function MessageContent() {
               })()}
             </div>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-grey/5">
-              <div className="w-16 h-16 rounded-full bg-blue/10 text-blue flex items-center justify-center mb-4">
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-grey/5 dark:bg-zinc-950">
+              <div className="w-16 h-16 rounded-full bg-blue/10 dark:bg-blue-500/20 text-blue flex items-center justify-center mb-4">
                 <MessageSquare className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-grey-hover mb-1">Chưa chọn hội thoại</h3>
-              <p className="text-sm text-grey/60">Chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu nhắn tin.</p>
+              <h3 className="text-lg font-bold text-grey-hover dark:text-zinc-200 mb-1">Chưa chọn hội thoại</h3>
+              <p className="text-sm text-grey/60 dark:text-zinc-400">Chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu nhắn tin.</p>
             </div>
           )}
         </div>
@@ -1257,7 +1257,7 @@ function MessageContent() {
 export default function MessagePage() {
   return (
     <Suspense fallback={
-      <div className="flex h-screen items-center justify-center bg-grey/5">
+      <div className="flex h-screen items-center justify-center bg-grey/5 dark:bg-zinc-950">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent"></div>
       </div>
     }>
