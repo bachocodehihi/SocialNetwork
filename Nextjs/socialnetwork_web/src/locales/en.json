@@ -6,7 +6,7 @@
   "setting": "Settings",
   "search_placeholder": "Search users...",
   "logout": "Log out",
-  "darkmode": "Dark Mode",
+  "darkmode": "Dark mode",
   "language": "Language",
   "vietnamese": "Vietnamese",
   "english": "English",
@@ -17,5 +17,6 @@
   "interface_experience": "Interface & Experience",
   "darkmode_menu_desc": "Change theme to light/dark to suit your eyes",
   "language_menu_desc": "Select system display language",
-  "language_tab_title": "Select the language you want to use for system display:"
+  "language_tab_title": "Select the language you want to use for system display:",
+  "search_results": "Search Results"
 }

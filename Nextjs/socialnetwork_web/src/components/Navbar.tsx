@@ -135,6 +135,8 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
         type: 'query',
         text: searchQuery.trim()
       });
+      setIsSearchFocused(false);
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -224,7 +226,8 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                                     router.push(`/user/${item.id}`);
                                     setIsSearchFocused(false);
                                   } else {
-                                    setSearchQuery(item.text);
+                                    setIsSearchFocused(false);
+                                    router.push(`/search?q=${encodeURIComponent(item.text)}`);
                                   }
                                 }}
                                 className='flex items-center justify-between p-2 hover:bg-grey/5 active:bg-grey/10 rounded-xl cursor-pointer transition group'
