@@ -1199,7 +1199,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                     }
                                   }
                                 }}
-                              className="flex-1 px-4 py-2 bg-grey/10 dark:bg-zinc-800 rounded-xl border-0 focus:bg-grey/15 dark:focus:bg-zinc-750 transition outline-none text-sm text-grey-hover dark:text-zinc-200 placeholder-gray-500 dark:placeholder-zinc-500 font-medium resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
+                              className="flex-1 px-4 py-2 bg-grey/10 dark:bg-zinc-800 rounded-xl border-0 focus:bg-grey/15 dark:focus:bg-zinc-750 transition outline-none text-sm text-zinc-900 dark:text-zinc-200 placeholder-gray-500 dark:placeholder-zinc-500 font-medium resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
                             />
                             <button 
                               onClick={() => {

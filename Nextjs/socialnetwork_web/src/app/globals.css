@@ -22,4 +22,9 @@
 
     --color-pink: rgb(233, 30, 99);
     --color-pink-hover: rgb(205, 26, 87);
+
+    --color-zinc-450: #888891;
+    --color-zinc-550: #62626a;
+    --color-zinc-750: #333338;
+    --color-zinc-850: #202023;
 }

@@ -760,7 +760,7 @@ function MessageContent() {
                 placeholder="Tìm kiếm cuộc trò chuyện..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent border-none outline-none text-sm w-full placeholder-grey/60 dark:placeholder-zinc-500 text-grey-hover dark:text-zinc-200 font-medium"
+                className="bg-transparent border-none outline-none text-sm w-full placeholder-grey/60 dark:placeholder-zinc-500 text-zinc-900 dark:text-zinc-200 font-medium"
               />
             </div>
           </div>
@@ -1047,7 +1047,7 @@ function MessageContent() {
                     disabled={isUploading}
                     placeholder={isUploading ? "Đang tải tệp lên..." : "Nhập tin nhắn..."} 
                     rows={1}
-                    className="flex-1 bg-grey/10 dark:bg-zinc-800 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-grey-hover dark:text-zinc-200 focus:bg-white dark:focus:bg-zinc-850 focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle text-justify disabled:opacity-50 placeholder-grey/60 dark:placeholder-zinc-500"
+                    className="flex-1 bg-grey/10 dark:bg-zinc-800 border-none outline-none text-sm rounded-2xl py-2.5 px-5 text-zinc-900 dark:text-zinc-200 focus:bg-white dark:focus:bg-zinc-850 focus:ring-1 focus:ring-blue transition-all resize-none max-h-32 overflow-y-auto align-middle text-justify disabled:opacity-50 placeholder-grey/60 dark:placeholder-zinc-500"
                   />
 
                   <button 

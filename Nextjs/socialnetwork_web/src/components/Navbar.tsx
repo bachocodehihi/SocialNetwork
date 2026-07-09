@@ -186,7 +186,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearchFocused(true)}
                     onKeyDown={handleKeyDown}
-                    className='bg-transparent border-none outline-none text-sm placeholder-gray-500 dark:placeholder-zinc-500 text-grey-hover dark:text-zinc-100 w-full font-medium'
+                    className='bg-transparent border-none outline-none text-sm placeholder-gray-500 dark:placeholder-zinc-500 text-zinc-900 dark:text-zinc-100 w-full font-medium'
                   />
                 </div>
                 <button 

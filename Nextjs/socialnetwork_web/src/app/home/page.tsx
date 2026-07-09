@@ -473,7 +473,7 @@ export default function HomePage() {
                   onClick={() => setIsCreateModalOpen(true)}
                   readOnly
                   placeholder={`${user?.username || 'Bạn'} ơi, bạn đang nghĩ gì thế?`}
-                  className='flex-1 px-4 py-2.5 bg-grey/10 dark:bg-zinc-850 hover:bg-grey/15 dark:hover:bg-zinc-800/80 rounded-xl border-0 transition outline-none text-sm text-grey-hover dark:text-zinc-200 placeholder-gray-500 dark:placeholder-zinc-500 cursor-pointer font-medium'
+                  className='flex-1 px-4 py-2.5 bg-grey/10 dark:bg-zinc-850 hover:bg-grey/15 dark:hover:bg-zinc-800/80 rounded-xl border-0 transition outline-none text-sm text-zinc-900 dark:text-zinc-200 placeholder-gray-500 dark:placeholder-zinc-500 cursor-pointer font-medium'
                 />
                 <button 
                   onClick={() => setIsCreateModalOpen(true)}
@@ -1360,7 +1360,7 @@ export default function HomePage() {
                           }
                         }
                       }}
-                      className="flex-1 px-4 py-2 bg-grey/10 dark:bg-zinc-800 rounded-2xl border-0 focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition outline-none text-sm text-grey-hover dark:text-zinc-200 font-medium placeholder-gray-500 dark:placeholder-zinc-500 resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
+                      className="flex-1 px-4 py-2 bg-grey/10 dark:bg-zinc-800 rounded-2xl border-0 focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition outline-none text-sm text-zinc-900 dark:text-zinc-200 font-medium placeholder-gray-500 dark:placeholder-zinc-500 resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
                     />
                     <button 
                       onClick={() => {
