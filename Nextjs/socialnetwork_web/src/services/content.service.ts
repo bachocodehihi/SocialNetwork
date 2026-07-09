@@ -44,5 +44,10 @@ export const contentService = {
     const res = await api.get(`/content/user/${userId}`);
     return res.data;
   },
+
+  getGroupPosts: async (groupId: string) => {
+    const res = await api.get(`/content/group/${groupId}`);
+    return res.data;
+  },
 };
 
