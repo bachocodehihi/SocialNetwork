@@ -1,6 +1,7 @@
 'use client';
 import Navbar from '@/components/Navbar';
 import { contactService } from '@/services/contact.service';
+import { groupService } from '@/services/group.service';
 import { useAlert } from '@/components/Alert/alertcontext';
 import { useEffect, useState } from 'react';
 import { User, UserCheck, UserPlus, UserMinus, MessageSquare, Users2, Loader2, Plus } from 'lucide-react';
@@ -14,6 +15,7 @@ export default function ContactFriendPage() {
   // Data states
   const [friends, setFriends] = useState<any[]>([]);
   const [requests, setRequests] = useState<any[]>([]);
+  const [groups, setGroups] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Fetch real data from APIs
@@ -43,11 +45,26 @@ export default function ContactFriendPage() {
     }
   };
 
+  const fetchGroups = async () => {
+    setLoading(true);
+    try {
+      const res = await groupService.getGroups();
+      setGroups(Array.isArray(res) ? res : (res.data || []));
+    } catch (err) {
+      console.error('Error fetching groups:', err);
+      showError('Không thể tải danh sách nhóm.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (activeSubTab === 'friends') {
       fetchFriends();
     } else if (activeSubTab === 'requests') {
       fetchRequests();
+    } else if (activeSubTab === 'groups') {
+      fetchGroups();
     }
   }, [activeSubTab]);
 
@@ -306,16 +323,62 @@ export default function ContactFriendPage() {
 
                 {/* Groups List */}
                 {activeSubTab === 'groups' && (
-                  <div className="text-center py-20 text-grey">
-                    <Users2 className="w-12 h-12 mx-auto mb-3 opacity-40" />
-                    <p className="font-semibold">Bạn chưa tham gia nhóm nào.</p>
-                    <p className="text-xs text-grey/60 mt-1">Các nhóm bạn tham gia hoặc quản trị sẽ xuất hiện tại đây.</p>
-                    <button
-                      onClick={() => router.push('/create/group')}
-                      className="mt-5 bg-blue hover:bg-blue-hover text-white text-sm font-bold px-6 py-2.5 rounded-full transition duration-150 border-0 cursor-pointer"
-                    >
-                      Tạo nhóm đầu tiên
-                    </button>
+                  <div>
+                    {groups.length === 0 ? (
+                      <div className="text-center py-20 text-grey">
+                        <Users2 className="w-12 h-12 mx-auto mb-3 opacity-40" />
+                        <p className="font-semibold">Bạn chưa tham gia nhóm nào.</p>
+                        <p className="text-xs text-grey/60 mt-1">Các nhóm bạn tham gia hoặc quản trị sẽ xuất hiện tại đây.</p>
+                        <button
+                          onClick={() => router.push('/create/group')}
+                          className="mt-5 bg-blue hover:bg-blue-hover text-white text-sm font-bold px-6 py-2.5 rounded-full transition duration-150 border-0 cursor-pointer"
+                        >
+                          Tạo nhóm đầu tiên
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {groups.map((group) => {
+                          return (
+                            <div 
+                              key={group._id || group.id}
+                              className="flex items-center justify-between p-4 rounded-xl border border-grey/10 dark:border-zinc-800/60 hover:border-grey/25 dark:hover:border-zinc-700/80 transition duration-150 bg-grey/5 dark:bg-zinc-800/30"
+                            >
+                              <div className="flex items-center gap-3.5 min-w-0">
+                                <div className="w-12 h-12 rounded-full overflow-hidden border border-grey/25 dark:border-zinc-800 bg-grey/10 flex-shrink-0 flex items-center justify-center">
+                                  {group.avatar ? (
+                                    <img src={group.avatar} alt={group.name} className="w-full h-full object-cover" />
+                                  ) : (
+                                    <Users2 className="w-6 h-6 text-grey/60 dark:text-zinc-500" />
+                                  )}
+                                </div>
+                                <div className="min-w-0 text-left">
+                                  <h4 
+                                    className="font-extrabold text-black dark:text-white truncate text-[15px] hover:text-blue cursor-pointer"
+                                    onClick={() => router.push(`/home/message?groupId=${group._id}`)}
+                                  >
+                                    {group.name}
+                                  </h4>
+                                  <p className="text-xs text-grey/60 dark:text-zinc-400 truncate">
+                                    {group.members?.length || 0} thành viên
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => router.push(`/home/message?groupId=${group._id}`)}
+                                  className="px-3.5 py-2 bg-blue hover:bg-blue-hover text-white text-xs font-bold rounded-lg border-0 cursor-pointer transition flex items-center gap-1.5"
+                                >
+                                  <MessageSquare className="w-3.5 h-3.5" />
+                                  <span>Trò chuyện</span>
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 )}
 

@@ -436,6 +436,7 @@ function MessageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const directUserId = searchParams.get('userId');
+  const directGroupId = searchParams.get('groupId');
   const { showSuccess, showError } = useAlert();
 
   const { socket, startCall } = useCall();
@@ -568,7 +569,7 @@ function MessageContent() {
   }, []);
 
   // Fetch conversations list
-  const fetchConversations = async (selectUserId?: string) => {
+  const fetchConversations = async (selectUserId?: string, selectGroupId?: string) => {
     setLoadingConv(true);
     try {
       const data = await messageService.getConversations();
@@ -594,6 +595,22 @@ function MessageContent() {
             showError('Không thể bắt đầu hội thoại.');
           }
         }
+      } else if (selectGroupId) {
+        // Look for an existing group conversation with this groupId
+        const existing = data.find((c: any) => 
+          c.isGroup && (c.meta?.groupId === selectGroupId || c.groupId === selectGroupId || c._id === selectGroupId)
+        );
+        if (existing) {
+          setSelectedConv(existing);
+        } else {
+          // Try to look for any group conversation in which meta.groupId matches selectGroupId
+          const fallback = data.find((c: any) => 
+            c.isGroup && c.meta && String(c.meta.groupId) === String(selectGroupId)
+          );
+          if (fallback) {
+            setSelectedConv(fallback);
+          }
+        }
       } else if (data.length > 0 && !selectedConv) {
         setSelectedConv(data[0]);
       }
@@ -607,8 +624,8 @@ function MessageContent() {
 
   // Initial load
   useEffect(() => {
-    fetchConversations(directUserId || undefined);
-  }, [directUserId]);
+    fetchConversations(directUserId || undefined, directGroupId || undefined);
+  }, [directUserId, directGroupId]);
 
   // Connect Socket.io ONCE on mount
   useEffect(() => {
