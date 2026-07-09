@@ -299,7 +299,7 @@ export default function GroupPage() {
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans dark:bg-zinc-950">
-      <Navbar activeTab="" />
+      <Navbar />
 
       <main className="flex-1 pt-16 pb-12">
         {/* Banner/Header */}
