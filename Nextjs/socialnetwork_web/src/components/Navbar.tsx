@@ -153,13 +153,13 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
       {/* Search overlay backdrop */}
       {isSearchFocused && (
         <div 
-          className='fixed inset-0 z-40 bg-black/5 backdrop-blur-[1px]' 
+          className='fixed inset-0 z-40 bg-black/5 dark:bg-black/40 backdrop-blur-[1px]' 
           onClick={() => setIsSearchFocused(false)} 
         />
       )}
 
       {/* Top Navigation Bar */}
-      <nav className='fixed top-0 left-0 right-0 bg-white border-b border-grey/20 z-50 shadow-sm'>
+      <nav className='fixed top-0 left-0 right-0 bg-white dark:bg-zinc-900 border-b border-grey/20 dark:border-zinc-800 z-50 shadow-sm transition-colors duration-200'>
         <div className='w-full px-4 sm:px-6 md:px-8'>
           <div className='flex items-center justify-between h-16 relative w-full'>
             {/* Logo & Search Bar */}
@@ -177,8 +177,8 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                 SocialNetwork
               </h1>
               <div className='relative'>
-                <div className={`hidden sm:flex items-center bg-grey/10 hover:bg-grey/20 focus-within:bg-white border focus-within:border-blue focus-within:shadow-sm transition-all duration-200 rounded-full pl-3 pr-4 py-2 h-10 ${isSearchFocused ? 'w-64 sm:w-72 lg:w-80 shadow-md' : 'w-40 lg:w-48'}`}>
-                  <Search className='w-4 h-4 text-grey mr-2 flex-shrink-0' />
+                <div className={`hidden sm:flex items-center bg-grey/10 dark:bg-zinc-800 hover:bg-grey/20 dark:hover:bg-zinc-700/80 focus-within:bg-white dark:focus-within:bg-zinc-900 border border-transparent dark:border-zinc-800 focus-within:border-blue focus-within:shadow-sm transition-all duration-200 rounded-full pl-3 pr-4 py-2 h-10 ${isSearchFocused ? 'w-64 sm:w-72 lg:w-80 shadow-md' : 'w-40 lg:w-48'}`}>
+                  <Search className='w-4 h-4 text-grey dark:text-zinc-400 mr-2 flex-shrink-0' />
                   <input
                     type='text'
                     placeholder='Tìm kiếm người dùng...'
@@ -186,22 +186,22 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearchFocused(true)}
                     onKeyDown={handleKeyDown}
-                    className='bg-transparent border-none outline-none text-sm placeholder-gray-500 text-grey-hover w-full font-medium'
+                    className='bg-transparent border-none outline-none text-sm placeholder-gray-500 dark:placeholder-zinc-500 text-grey-hover dark:text-zinc-100 w-full font-medium'
                   />
                 </div>
                 <button 
                   onClick={() => setIsSearchFocused(true)}
-                  className='flex sm:hidden w-10 h-10 rounded-full bg-grey/10 hover:bg-grey/20 items-center justify-center text-grey-hover transition duration-150 border-0 outline-none cursor-pointer'
+                  className='flex sm:hidden w-10 h-10 rounded-full bg-grey/10 dark:bg-zinc-800 hover:bg-grey/20 dark:hover:bg-zinc-750 items-center justify-center text-grey-hover dark:text-zinc-200 transition duration-150 border-0 outline-none cursor-pointer'
                 >
                   <Search className='w-5 h-5' />
                 </button>
 
                 {isSearchFocused && (
-                  <div className='absolute top-12 left-0 w-80 sm:w-96 bg-white border border-grey/10 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200'>
+                  <div className='absolute top-12 left-0 w-80 sm:w-96 bg-white dark:bg-zinc-900 border border-grey/10 dark:border-zinc-800 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200'>
                     {!searchQuery.trim() ? (
                       <>
                         <div className='flex items-center justify-between mb-3 px-1.5'>
-                          <span className='font-bold text-grey-hover text-sm sm:text-base'>Gần đây</span>
+                          <span className='font-bold text-grey-hover dark:text-zinc-100 text-sm sm:text-base'>Gần đây</span>
                           {searchHistory.length > 0 && (
                             <button 
                               onClick={clearHistory}
@@ -213,7 +213,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                         </div>
 
                         {searchHistory.length === 0 ? (
-                          <div className='text-center py-6 text-grey/60 text-xs sm:text-sm select-none'>
+                          <div className='text-center py-6 text-grey/60 dark:text-zinc-500 text-xs sm:text-sm select-none'>
                             Không có tìm kiếm gần đây
                           </div>
                         ) : (
@@ -230,29 +230,29 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                                     router.push(`/search?q=${encodeURIComponent(item.text)}`);
                                   }
                                 }}
-                                className='flex items-center justify-between p-2 hover:bg-grey/5 active:bg-grey/10 rounded-xl cursor-pointer transition group'
+                                className='flex items-center justify-between p-2 hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:bg-grey/10 dark:active:bg-zinc-700/60 rounded-xl cursor-pointer transition group'
                               >
                                 <div className='flex items-center gap-3'>
                                   {item.type === 'user' ? (
-                                    <div className='w-9 h-9 rounded-full bg-grey/10 border border-grey/20 overflow-hidden flex items-center justify-center flex-shrink-0'>
+                                    <div className='w-9 h-9 rounded-full bg-grey/10 dark:bg-zinc-800 border border-grey/20 dark:border-zinc-700 overflow-hidden flex items-center justify-center flex-shrink-0'>
                                       {item.avatar ? (
                                         <img src={item.avatar} alt={item.username} className='w-full h-full object-cover' />
                                       ) : (
-                                        <User className='w-5 h-5 text-grey' />
+                                        <User className='w-5 h-5 text-grey dark:text-zinc-500' />
                                       )}
                                     </div>
                                   ) : (
-                                    <div className='w-9 h-9 rounded-full bg-grey/10 flex items-center justify-center flex-shrink-0 text-grey group-hover:bg-grey/20 transition'>
+                                    <div className='w-9 h-9 rounded-full bg-grey/10 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 text-grey dark:text-zinc-400 group-hover:bg-grey/20 dark:group-hover:bg-zinc-750 transition'>
                                       <Clock className='w-4.5 h-4.5' />
                                     </div>
                                   )}
-                                  <span className='text-sm font-semibold text-grey-hover truncate max-w-[180px] sm:max-w-[240px]'>
+                                  <span className='text-sm font-semibold text-grey-hover dark:text-zinc-200 truncate max-w-[180px] sm:max-w-[240px]'>
                                     {item.type === 'user' ? item.username : item.text}
                                   </span>
                                 </div>
                                 <button 
                                   onClick={(e) => removeFromHistory(e, index)}
-                                  className='w-7 h-7 rounded-full hover:bg-grey/20 flex items-center justify-center text-grey/60 hover:text-grey-hover transition bg-transparent border-none'
+                                  className='w-7 h-7 rounded-full hover:bg-grey/20 dark:hover:bg-zinc-750 flex items-center justify-center text-grey/60 dark:text-zinc-500 hover:text-grey-hover dark:hover:text-zinc-200 transition bg-transparent border-none'
                                 >
                                   <X className='w-4 h-4' />
                                 </button>
@@ -264,16 +264,16 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                     ) : (
                       <>
                         <div className='mb-2 px-1.5'>
-                          <span className='font-bold text-grey-hover text-sm sm:text-base'>Kết quả tìm kiếm</span>
+                          <span className='font-bold text-grey-hover dark:text-zinc-100 text-sm sm:text-base'>Kết quả tìm kiếm</span>
                         </div>
 
                         {isSearching ? (
-                          <div className='flex items-center justify-center py-8 text-grey/60 text-sm gap-2 select-none'>
+                          <div className='flex items-center justify-center py-8 text-grey/60 dark:text-zinc-500 text-sm gap-2 select-none'>
                             <Loader2 className='w-4 h-4 animate-spin text-blue' />
                             <span>Đang tìm kiếm...</span>
                           </div>
                         ) : searchResults.length === 0 ? (
-                          <div className='text-center py-8 text-grey/60 text-xs sm:text-sm select-none'>
+                          <div className='text-center py-8 text-grey/60 dark:text-zinc-500 text-xs sm:text-sm select-none'>
                             Không tìm thấy người dùng
                           </div>
                         ) : (
@@ -282,28 +282,28 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                               <div 
                                 key={item._id}
                                 onClick={() => handleSelectUser(item)}
-                                className='flex items-center justify-between p-2 hover:bg-grey/5 active:bg-grey/10 rounded-xl cursor-pointer transition'
+                                className='flex items-center justify-between p-2 hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:bg-grey/10 dark:active:bg-zinc-750 rounded-xl cursor-pointer transition'
                               >
                                 <div className='flex items-center gap-3'>
-                                  <div className='w-9 h-9 rounded-full bg-grey/10 border border-grey/20 overflow-hidden flex items-center justify-center flex-shrink-0'>
+                                  <div className='w-9 h-9 rounded-full bg-grey/10 dark:bg-zinc-800 border border-grey/20 dark:border-zinc-700 overflow-hidden flex items-center justify-center flex-shrink-0'>
                                     {item.avatar ? (
                                       <img src={item.avatar} alt={item.username} className='w-full h-full object-cover' />
                                     ) : (
-                                      <User className='w-5 h-5 text-grey' />
+                                      <User className='w-5 h-5 text-grey dark:text-zinc-500' />
                                     )}
                                   </div>
                                   <div className='flex flex-col text-left'>
-                                    <span className='text-sm font-bold text-grey-hover truncate max-w-[200px] sm:max-w-[260px]'>
+                                    <span className='text-sm font-bold text-grey-hover dark:text-zinc-200 truncate max-w-[200px] sm:max-w-[260px]'>
                                       {item.username}
                                     </span>
                                     {item.email && (
-                                      <span className='text-xs text-grey/60 truncate max-w-[200px]'>
+                                      <span className='text-xs text-grey/60 dark:text-zinc-400 truncate max-w-[200px]'>
                                         {item.email}
                                       </span>
                                     )}
                                   </div>
                                 </div>
-                                <ChevronRight className='w-4 h-4 text-grey/60' />
+                                <ChevronRight className='w-4 h-4 text-grey/60 dark:text-zinc-400' />
                               </div>
                             ))}
                           </div>
@@ -330,7 +330,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                 className={`h-16 px-4 sm:px-6 flex items-center justify-center border-b-4 transition-all duration-150 cursor-pointer border-0 bg-transparent ${
                   activeTab === 'home'
                     ? 'text-blue border-blue'
-                    : 'text-grey hover:text-grey-hover border-transparent hover:bg-grey/5'
+                    : 'text-grey hover:text-grey-hover dark:text-zinc-400 dark:hover:text-zinc-200 border-transparent hover:bg-grey/5 dark:hover:bg-zinc-800/40'
                 }`}
               >
                 <Home 
@@ -350,7 +350,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                 className={`h-16 px-4 sm:px-6 flex items-center justify-center border-b-4 transition-all duration-150 cursor-pointer border-0 bg-transparent ${
                   activeTab === 'message'
                     ? 'text-blue border-blue'
-                    : 'text-grey hover:text-grey-hover border-transparent hover:bg-grey/5'
+                    : 'text-grey hover:text-grey-hover dark:text-zinc-400 dark:hover:text-zinc-200 border-transparent hover:bg-grey/5 dark:hover:bg-zinc-800/40'
                 }`}
               >
                 <MessageSquare 
@@ -370,7 +370,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                 className={`h-16 px-4 sm:px-6 flex items-center justify-center border-b-4 transition-all duration-150 cursor-pointer border-0 bg-transparent ${
                   activeTab === 'contact'
                     ? 'text-blue border-blue'
-                    : 'text-grey hover:text-grey-hover border-transparent hover:bg-grey/5'
+                    : 'text-grey hover:text-grey-hover dark:text-zinc-400 dark:hover:text-zinc-200 border-transparent hover:bg-grey/5 dark:hover:bg-zinc-800/40'
                 }`}
               >
                 <Users 
@@ -390,7 +390,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                 className={`h-16 px-4 sm:px-6 flex items-center justify-center border-b-4 transition-all duration-150 cursor-pointer border-0 bg-transparent ${
                   activeTab === 'notification'
                     ? 'text-blue border-blue'
-                    : 'text-grey hover:text-grey-hover border-transparent hover:bg-grey/5'
+                    : 'text-grey hover:text-grey-hover dark:text-zinc-400 dark:hover:text-zinc-200 border-transparent hover:bg-grey/5 dark:hover:bg-zinc-800/40'
                 }`}
               >
                 <Bell 
@@ -406,7 +406,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
             <div className='flex items-center gap-3 relative z-50'>
               <button 
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className='w-10 h-10 rounded-full overflow-hidden border border-grey/20 hover:ring-4 hover:ring-blue transition duration-200 flex items-center justify-center bg-grey/5 flex-shrink-0 cursor-pointer outline-none'
+                className='w-10 h-10 rounded-full overflow-hidden border border-grey/20 dark:border-zinc-800 hover:ring-4 hover:ring-blue transition duration-200 flex items-center justify-center bg-grey/5 dark:bg-zinc-800 flex-shrink-0 cursor-pointer outline-none'
               >
                 <img
                   src={user?.avatar || '/assets/avatar/avatar.jpg'}
@@ -421,7 +421,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                     className="fixed inset-0 z-40 cursor-default" 
                     onClick={() => setIsDropdownOpen(false)} 
                   />
-                  <div className='absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-black/5 p-4 z-50 animate-scale-up origin-top-right select-none'>
+                  <div className='absolute right-0 top-12 w-80 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-black/5 dark:border-zinc-800/80 p-4 z-50 animate-scale-up origin-top-right select-none'>
                     
                     {/* User Card */}
                     <div 
@@ -429,17 +429,17 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                         setIsDropdownOpen(false);
                         router.push('/profile');
                       }}
-                      className='bg-black/5 hover:bg-black/10 p-3.5 rounded-2xl border border-black/5 transition duration-200 cursor-pointer mb-3 flex items-center gap-3'
+                      className='bg-black/5 dark:bg-zinc-800/40 hover:bg-black/10 dark:hover:bg-zinc-800/80 p-3.5 rounded-2xl border border-black/5 dark:border-zinc-850/60 transition duration-200 cursor-pointer mb-3 flex items-center gap-3'
                     >
-                      <div className='w-11 h-11 rounded-full overflow-hidden border border-white shadow-sm bg-white flex-shrink-0'>
+                      <div className='w-11 h-11 rounded-full overflow-hidden border border-white dark:border-zinc-800 shadow-sm bg-white dark:bg-zinc-900 flex-shrink-0'>
                         <img
                           src={user?.avatar || '/assets/avatar/avatar.jpg'}
                           alt='Profile Avatar'
                           className='w-full h-full object-cover'
                         />
                       </div>
-                      <div className='flex-1 min-w-0'>
-                        <h4 className='font-bold text-black truncate text-[15px]'>
+                      <div className='flex-1 min-w-0 text-left'>
+                        <h4 className='font-bold text-black dark:text-white truncate text-[15px]'>
                           {user?.username || 'Hồ sơ người dùng'}
                         </h4>
                       </div>
@@ -451,13 +451,13 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                         setIsDropdownOpen(false);
                         router.push('/profile');
                       }}
-                      className='w-full py-2.5 px-4 bg-black/5 hover:bg-black/10 text-black font-bold rounded-xl transition duration-200 flex items-center justify-center gap-2 text-sm shadow-sm border-0 cursor-pointer'
+                      className='w-full py-2.5 px-4 bg-black/5 dark:bg-zinc-800/50 hover:bg-black/10 dark:hover:bg-zinc-800 text-black dark:text-white font-bold rounded-xl transition duration-200 flex items-center justify-center gap-2 text-sm shadow-sm border-0 cursor-pointer'
                     >
-                      <User className='w-4 h-4 text-black/60' />
+                      <User className='w-4 h-4 text-black/60 dark:text-zinc-400' />
                       <span>Xem tất cả trang cá nhân</span>
                     </button>
 
-                    <div className='border-t border-black/5 my-3' />
+                    <div className='border-t border-black/5 dark:border-zinc-800/80 my-3' />
 
                     {/* Options List */}
                     <div className='space-y-1'>
@@ -467,17 +467,17 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                           setIsDropdownOpen(false);
                           router.push('/setting');
                         }}
-                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-black/5 active:scale-[0.98] transition group border-0 bg-transparent cursor-pointer text-left'
+                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-black/5 dark:hover:bg-zinc-800/50 active:scale-[0.98] transition group border-0 bg-transparent cursor-pointer text-left'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-black/5 rounded-full flex items-center justify-center text-black/80 group-hover:bg-blue/10 group-hover:text-blue transition duration-200'>
+                          <div className='w-9 h-9 bg-black/5 dark:bg-zinc-800 rounded-full flex items-center justify-center text-black/80 dark:text-zinc-300 group-hover:bg-blue/10 group-hover:text-blue transition duration-200'>
                             <Settings className='w-5 h-5' />
                           </div>
-                          <span className='text-sm font-semibold text-black/80 group-hover:text-black transition-colors'>
+                          <span className='text-sm font-semibold text-black/80 dark:text-zinc-300 group-hover:text-black dark:group-hover:text-white transition-colors'>
                             Cài đặt
                           </span>
                         </div>
-                        <ChevronRight className='w-5 h-5 text-black/40 group-hover:text-black transition-colors' />
+                        <ChevronRight className='w-5 h-5 text-black/40 dark:text-zinc-550 group-hover:text-black dark:group-hover:text-white transition-colors' />
                       </button>
 
                       {/* Game */}
@@ -486,26 +486,26 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                           setIsDropdownOpen(false);
                           router.push('/game');
                         }}
-                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-black/5 active:scale-[0.98] transition group border-0 bg-transparent cursor-pointer text-left'
+                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-black/5 dark:hover:bg-zinc-800/50 active:scale-[0.98] transition group border-0 bg-transparent cursor-pointer text-left'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-black/5 rounded-full flex items-center justify-center text-black/80 group-hover:bg-blue/10 group-hover:text-blue transition duration-200'>
+                          <div className='w-9 h-9 bg-black/5 dark:bg-zinc-800 rounded-full flex items-center justify-center text-black/80 dark:text-zinc-300 group-hover:bg-blue/10 group-hover:text-blue transition duration-200'>
                             <Gamepad2 className='w-5 h-5' />
                           </div>
-                          <span className='text-sm font-semibold text-black/80 group-hover:text-black transition-colors'>
+                          <span className='text-sm font-semibold text-black/80 dark:text-zinc-300 group-hover:text-black dark:group-hover:text-white transition-colors'>
                             Trò chơi
                           </span>
                         </div>
-                        <ChevronRight className='w-5 h-5 text-black/40 group-hover:text-black transition-colors' />
+                        <ChevronRight className='w-5 h-5 text-black/40 dark:text-zinc-550 group-hover:text-black dark:group-hover:text-white transition-colors' />
                       </button>
 
                       {/* Logout */}
                       <button
                         onClick={handleLogOut}
-                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-red/10 active:scale-[0.98] transition group border-0 bg-transparent cursor-pointer text-left'
+                        className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-red/10 dark:hover:bg-red-500/10 active:scale-[0.98] transition group border-0 bg-transparent cursor-pointer text-left'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-9 h-9 bg-red/10 rounded-full flex items-center justify-center text-red group-hover:bg-red/20 transition duration-200'>
+                          <div className='w-9 h-9 bg-red/10 dark:bg-red-500/20 rounded-full flex items-center justify-center text-red group-hover:bg-red/20 transition duration-200'>
                             <LogOut className='w-5 h-5' />
                           </div>
                           <span className='text-sm font-bold text-red group-hover:text-red-hover transition-colors'>
