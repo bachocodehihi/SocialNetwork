@@ -775,10 +775,10 @@ export default function GroupPage() {
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[#b0b3b8]" />
                     <input
                       type="text"
-                      placeholder="Tìm kiếm thành viên..."
+                      placeholder="Tìm thành viên"
                       value={memberSearchQuery}
                       onChange={(e) => setMemberSearchQuery(e.target.value)}
-                      className="w-full bg-[#18191a] border border-[#3e4042] rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue placeholder-[#b0b3b8] font-semibold"
+                      className="w-full bg-[#18191a] border border-[#3e4042] rounded-full pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue placeholder-[#b0b3b8] font-semibold"
                     />
                   </div>
 
