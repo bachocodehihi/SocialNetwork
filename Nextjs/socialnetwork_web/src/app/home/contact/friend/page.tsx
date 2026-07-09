@@ -104,23 +104,14 @@ export default function ContactFriendPage() {
             <div className="space-y-1">
               <button
                 onClick={() => setActiveSubTab('friends')}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-extrabold transition-all duration-200 border-0 cursor-pointer text-left ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-extrabold transition-all duration-200 border-0 cursor-pointer text-left ${
                   activeSubTab === 'friends'
                     ? 'bg-blue text-white shadow-sm shadow-blue/20'
                     : 'text-grey-hover hover:bg-grey/5 dark:text-zinc-400 dark:hover:bg-zinc-800/50 bg-transparent'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <User className={`w-5 h-5 flex-shrink-0 ${activeSubTab === 'friends' ? 'text-white' : 'text-grey'}`} />
-                  <span>Bạn bè</span>
-                </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                  activeSubTab === 'friends' 
-                    ? 'bg-white/20 text-white' 
-                    : 'bg-grey/10 dark:bg-zinc-800 text-grey-hover dark:text-zinc-400'
-                }`}>
-                  {friends.length}
-                </span>
+                <User className={`w-5 h-5 flex-shrink-0 ${activeSubTab === 'friends' ? 'text-white' : 'text-grey'}`} />
+                <span>Bạn bè</span>
               </button>
 
               <button
