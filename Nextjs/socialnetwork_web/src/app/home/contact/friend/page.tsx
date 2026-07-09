@@ -251,14 +251,6 @@ export default function ContactFriendPage() {
                                   <MessageSquare className="w-4 h-4" />
                                   <span className="hidden sm:inline">Nhắn tin</span>
                                 </button>
-
-                                <button
-                                  onClick={() => handleRemoveFriend(friendInfo._id || friendInfo.id)}
-                                  className="p-2 sm:px-4 sm:py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-1.5 border-0 cursor-pointer bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400"
-                                >
-                                  <UserCheck className="w-4 h-4" />
-                                  <span className="hidden sm:inline">Bạn bè</span>
-                                </button>
                               </div>
                             </div>
                           );
