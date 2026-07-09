@@ -505,7 +505,7 @@ export default function SettingPage() {
   // List of searchable setting options
   const searchableItems = [
     {
-      name: `${t('darkmode')} (Dark mode)`,
+      name: t('darkmode'),
       description: t('darkmode_menu_desc'),
       keywords: 'tối sáng dark mode theme giao diện background màn hình',
       section: 'darkmode',
@@ -513,7 +513,7 @@ export default function SettingPage() {
       color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/30'
     },
     {
-      name: `${t('language')} (Language)`,
+      name: t('language'),
       description: t('language_menu_desc'),
       keywords: 'ngôn ngữ tiếng việt tiếng anh language english vietnamese',
       section: 'language',
