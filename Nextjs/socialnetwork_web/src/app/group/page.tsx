@@ -28,6 +28,7 @@ export default function GroupPage() {
 
   // Tabs state: 'discussion' | 'about' | 'members'
   const [activeTab, setActiveTab] = useState<'discussion' | 'about' | 'members'>('discussion');
+  const [memberSearchQuery, setMemberSearchQuery] = useState('');
 
   // Edit settings state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -769,10 +770,24 @@ export default function GroupPage() {
                     <h2 className="text-xl font-black text-white">Thành viên ({group.members?.length || 0})</h2>
                   </div>
 
+                  {/* Search Member input */}
+                  <div className="relative">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[#b0b3b8]" />
+                    <input
+                      type="text"
+                      placeholder="Tìm kiếm thành viên..."
+                      value={memberSearchQuery}
+                      onChange={(e) => setMemberSearchQuery(e.target.value)}
+                      className="w-full bg-[#18191a] border border-[#3e4042] rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue placeholder-[#b0b3b8] font-semibold"
+                    />
+                  </div>
+
                   <div className="divide-y divide-[#3e4042]/40">
-                    {group.members?.map((m: any) => {
-                      const isMemberAdmin = m._id === group.admin?._id;
-                      const isSelf = m._id === currentUser?._id;
+                    {group.members
+                      ?.filter((m: any) => m.username?.toLowerCase().includes(memberSearchQuery.toLowerCase()))
+                      .map((m: any) => {
+                        const isMemberAdmin = m._id === group.admin?._id;
+                        const isSelf = m._id === currentUser?._id;
 
                       return (
                         <div key={m._id} className="py-4 flex items-center justify-between gap-4">
