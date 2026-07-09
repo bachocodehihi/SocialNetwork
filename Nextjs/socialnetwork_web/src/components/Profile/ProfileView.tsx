@@ -528,7 +528,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
 
   if (checking) {
     return (
-      <div className='flex h-screen items-center justify-center bg-grey/5'>
+      <div className='flex h-screen items-center justify-center bg-grey/5 dark:bg-zinc-950 transition-colors duration-200'>
         <div className='animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent'></div>
       </div>
     );
@@ -537,17 +537,17 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
   const currentUserId = currentUser?._id || currentUser?.id;
 
   return (
-    <div className="min-h-screen bg-grey/5 pb-12">
+    <div className="min-h-screen bg-grey/5 dark:bg-zinc-950 pb-12 transition-colors duration-200">
       <Navbar />
       <div className="pt-16">
         {/* Header Container without cover photo */}
-        <div className="bg-white border-b border-grey/10 shadow-sm pt-6 pb-6">
+        <div className="bg-white dark:bg-zinc-900 border-b border-grey/10 dark:border-zinc-800 shadow-sm pt-6 pb-6 transition-colors duration-200">
         <div className="max-w-5xl mx-auto px-4">
           {/* Back button if viewing another user */}
           {!isSelf && (
             <button
               onClick={() => router.back()}
-              className="flex items-center gap-1.5 text-grey hover:text-grey-hover transition border-0 bg-transparent cursor-pointer font-bold text-sm mb-4"
+              className="flex items-center gap-1.5 text-grey dark:text-zinc-450 hover:text-grey-hover dark:hover:text-zinc-200 transition border-0 bg-transparent cursor-pointer font-bold text-sm mb-4"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Quay lại</span>
@@ -557,7 +557,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             {/* Avatar & Username details */}
             <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-grey/25 bg-grey/5 flex-shrink-0 flex items-center justify-center relative shadow-sm">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-grey/25 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center relative shadow-sm">
                 {profileUser?.avatar ? (
                   <img
                     src={profileUser.avatar}
@@ -565,15 +565,15 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <User className="w-12 h-12 text-grey" />
+                  <User className="w-12 h-12 text-grey dark:text-zinc-400" />
                 )}
               </div>
 
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 flex items-center gap-2 justify-center sm:justify-start">
+              <div className="text-left">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-zinc-100 flex items-center gap-2 justify-center sm:justify-start">
                   {profileUser?.username || 'Hồ sơ người dùng'}
                 </h1>
-                <p className="text-sm text-grey font-medium mt-1">
+                <p className="text-sm text-grey dark:text-zinc-400 font-medium mt-1">
                   {profileUser?.email}
                 </p>
               </div>
@@ -594,7 +594,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                   {/* Messages Button */}
                   <button
                     onClick={() => router.push(`/home/message?userId=${targetId}`)}
-                    className="flex items-center gap-2 bg-grey hover:bg-grey-hover text-white px-4 py-2.5 rounded-xl font-bold transition cursor-pointer border-0 text-sm active:scale-[0.98]"
+                    className="flex items-center gap-2 bg-grey hover:bg-grey-hover dark:bg-zinc-850 dark:hover:bg-zinc-800 text-white dark:text-zinc-200 px-4 py-2.5 rounded-xl font-bold transition cursor-pointer border-0 text-sm active:scale-[0.98]"
                   >
                     <MessageSquare className="w-4 h-4" />
                     <span>Nhắn tin</span>
@@ -643,13 +643,13 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                       </button>
 
                       {isDropdownOpen && (
-                        <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-grey/15 py-1 z-50 animate-in fade-in duration-100">
+                        <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-zinc-800 rounded-xl shadow-lg border border-grey/15 dark:border-zinc-700 py-1 z-50 animate-in fade-in duration-100">
                           <button
                             onClick={() => {
                               setIsDropdownOpen(false);
                               handleAcceptRequest();
                             }}
-                            className="w-full text-left px-4 py-2 text-sm text-green hover:bg-green/5 hover:font-bold border-0 bg-transparent cursor-pointer"
+                            className="w-full text-left px-4 py-2 text-sm text-green hover:bg-green/5 dark:hover:bg-green-500/10 hover:font-bold border-0 bg-transparent cursor-pointer"
                           >
                             Đồng ý
                           </button>
@@ -658,7 +658,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                               setIsDropdownOpen(false);
                               handleRejectRequest();
                             }}
-                            className="w-full text-left px-4 py-2 text-sm text-red hover:bg-red/5 hover:font-bold border-0 bg-transparent cursor-pointer"
+                            className="w-full text-left px-4 py-2 text-sm text-red hover:bg-red/5 dark:hover:bg-red-500/10 hover:font-bold border-0 bg-transparent cursor-pointer"
                           >
                             Từ chối
                           </button>
@@ -671,7 +671,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                     <button
                       onClick={handleUnfriend}
                       disabled={isActionLoading}
-                      className="flex items-center gap-2 bg-grey/15 hover:bg-red/10 hover:text-red text-grey-hover px-4 py-2.5 rounded-xl font-bold transition cursor-pointer border-0 text-sm active:scale-[0.98] disabled:opacity-50"
+                      className="flex items-center gap-2 bg-grey/15 dark:bg-zinc-850 hover:bg-red/10 hover:text-red dark:hover:text-red-400 text-grey-hover dark:text-zinc-200 px-4 py-2.5 rounded-xl font-bold transition cursor-pointer border-0 text-sm active:scale-[0.98] disabled:opacity-50"
                     >
                       {isActionLoading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -687,37 +687,37 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
           </div>
 
           {/* Bio info */}
-          <div className="border-t border-grey/10 pt-4 mt-6">
-            <p className="text-sm text-gray-600 max-w-2xl text-center sm:text-left leading-relaxed">
+          <div className="border-t border-grey/10 dark:border-zinc-800 pt-4 mt-6">
+            <p className="text-sm text-gray-600 dark:text-zinc-400 max-w-2xl text-left leading-relaxed">
               {profileUser?.bio || 'Xin chào! Chào mừng đến với trang cá nhân của tôi. Hãy kết nối và chia sẻ những khoảnh khắc tuyệt vời cùng tôi nhé! ✨'}
             </p>
           </div>
 
           {/* Stats Bar */}
-          <div className="grid grid-cols-4 gap-2 bg-grey/5 rounded-2xl p-4 mt-6 text-center divide-x divide-grey/10 max-w-2xl">
+          <div className="grid grid-cols-4 gap-2 bg-grey/5 dark:bg-zinc-850/50 rounded-2xl p-4 mt-6 text-center divide-x divide-grey/10 dark:divide-zinc-800 max-w-2xl">
             <div>
-              <span className="block text-base sm:text-lg font-bold text-grey-hover">
+              <span className="block text-base sm:text-lg font-bold text-grey-hover dark:text-zinc-100">
                 {posts.length}
               </span>
-              <span className="text-xs text-grey font-medium">Bài viết</span>
+              <span className="text-xs text-grey dark:text-zinc-400 font-medium">Bài viết</span>
             </div>
             <div>
-              <span className="block text-base sm:text-lg font-bold text-grey-hover">
+              <span className="block text-base sm:text-lg font-bold text-grey-hover dark:text-zinc-100">
                 {profileUser?.friendsCount || 0}
               </span>
-              <span className="text-xs text-grey font-medium">Bạn bè</span>
+              <span className="text-xs text-grey dark:text-zinc-400 font-medium">Bạn bè</span>
             </div>
             <div>
-              <span className="block text-base sm:text-lg font-bold text-grey-hover">
+              <span className="block text-base sm:text-lg font-bold text-grey-hover dark:text-zinc-100">
                 {profileUser?.followersCount || 0}
               </span>
-              <span className="text-xs text-grey font-medium">Người theo dõi</span>
+              <span className="text-xs text-grey dark:text-zinc-400 font-medium">Người theo dõi</span>
             </div>
             <div>
-              <span className="block text-base sm:text-lg font-bold text-grey-hover">
+              <span className="block text-base sm:text-lg font-bold text-grey-hover dark:text-zinc-100">
                 {profileUser?.followingCount || 0}
               </span>
-              <span className="text-xs text-grey font-medium">Đang theo dõi</span>
+              <span className="text-xs text-grey dark:text-zinc-400 font-medium">Đang theo dõi</span>
             </div>
           </div>
         </div>
@@ -728,8 +728,8 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
         
         {/* Left Column: Personal Information */}
         <div className="md:col-span-5 space-y-6">
-          <div className="bg-white rounded-2xl border border-grey/20 p-5 shadow-sm">
-            <h3 className="font-bold text-grey-hover text-base mb-4 flex items-center gap-2">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-5 shadow-sm transition-colors duration-200">
+            <h3 className="font-bold text-grey-hover dark:text-zinc-200 text-base mb-4 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue" />
               <span>Thông tin cá nhân</span>
             </h3>
@@ -738,12 +738,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
               {/* Birthday */}
               {profileUser?.birthday && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue/10 flex items-center justify-center text-blue flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-blue/10 dark:bg-blue-500/20 flex items-center justify-center text-blue flex-shrink-0">
                     <Cake className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <span className="block text-xs text-grey">Ngày sinh</span>
-                    <span className="text-sm font-semibold text-grey-hover">
+                    <span className="block text-xs text-grey dark:text-zinc-405">Ngày sinh</span>
+                    <span className="text-sm font-semibold text-grey-hover dark:text-zinc-200">
                       {formatDate(profileUser.birthday)}
                     </span>
                   </div>
@@ -753,12 +753,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
               {/* Gender */}
               {profileUser?.gender && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-pink/10 flex items-center justify-center text-pink flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-pink/10 dark:bg-pink-500/20 flex items-center justify-center text-pink flex-shrink-0">
                     <User className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <span className="block text-xs text-grey">Giới tính</span>
-                    <span className="text-sm font-semibold text-grey-hover">
+                    <span className="block text-xs text-grey dark:text-zinc-405">Giới tính</span>
+                    <span className="text-sm font-semibold text-grey-hover dark:text-zinc-200">
                       {getGenderText(profileUser.gender)}
                     </span>
                   </div>
@@ -768,12 +768,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
               {/* Email */}
               {profileUser?.email && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-green/10 flex items-center justify-center text-green flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-green/10 dark:bg-green-500/20 flex items-center justify-center text-green flex-shrink-0">
                     <Mail className="w-4.5 h-4.5" />
                   </div>
                   <div className="min-w-0">
-                    <span className="block text-xs text-grey">Email</span>
-                    <span className="text-sm font-semibold text-grey-hover block truncate">
+                    <span className="block text-xs text-grey dark:text-zinc-405">Email</span>
+                    <span className="text-sm font-semibold text-grey-hover dark:text-zinc-200 block truncate">
                       {profileUser.email}
                     </span>
                   </div>
@@ -783,12 +783,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
               {/* Address */}
               {profileUser?.address && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-red/10 flex items-center justify-center text-red flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-red/10 dark:bg-red-500/20 flex items-center justify-center text-red flex-shrink-0">
                     <MapPin className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <span className="block text-xs text-grey">Địa chỉ</span>
-                    <span className="text-sm font-semibold text-grey-hover">
+                    <span className="block text-xs text-grey dark:text-zinc-405">Địa chỉ</span>
+                    <span className="text-sm font-semibold text-grey-hover dark:text-zinc-200">
                       {profileUser.address}
                     </span>
                   </div>
@@ -798,12 +798,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
               {/* Phone */}
               {(profileUser?.phone || profileUser?.phone_number) && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-600 flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-600 dark:text-yellow-550 flex-shrink-0">
                     <Phone className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <span className="block text-xs text-grey">Số điện thoại</span>
-                    <span className="text-sm font-semibold text-grey-hover">
+                    <span className="block text-xs text-grey dark:text-zinc-405">Số điện thoại</span>
+                    <span className="text-sm font-semibold text-grey-hover dark:text-zinc-200">
                       {profileUser.phone || profileUser.phone_number}
                     </span>
                   </div>
@@ -813,12 +813,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
               {/* Job */}
               {(profileUser?.job || profileUser?.occupation) && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-indigo/10 flex items-center justify-center text-indigo-600 flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-indigo/10 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 flex-shrink-0">
                     <Briefcase className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <span className="block text-xs text-grey">Công việc</span>
-                    <span className="text-sm font-semibold text-grey-hover">
+                    <span className="block text-xs text-grey dark:text-zinc-405">Công việc</span>
+                    <span className="text-sm font-semibold text-grey-hover dark:text-zinc-200">
                       {profileUser.job || profileUser.occupation}
                     </span>
                   </div>
@@ -828,12 +828,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
               {/* Nationality */}
               {profileUser?.nationality && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-600 flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400 flex-shrink-0">
                     <Flag className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <span className="block text-xs text-grey">Quốc tịch</span>
-                    <span className="text-sm font-semibold text-grey-hover">
+                    <span className="block text-xs text-grey dark:text-zinc-405">Quốc tịch</span>
+                    <span className="text-sm font-semibold text-grey-hover dark:text-zinc-200">
                       {profileUser.nationality}
                     </span>
                   </div>
@@ -842,7 +842,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
 
               {/* Empty state details */}
               {!profileUser?.birthday && !profileUser?.gender && !profileUser?.address && !profileUser?.phone && !profileUser?.job && (
-                <div className="text-center py-4 text-xs text-grey">
+                <div className="text-center py-4 text-xs text-grey dark:text-zinc-500">
                   Chưa có thêm thông tin cá nhân.
                 </div>
               )}
@@ -853,13 +853,13 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
         {/* Right Column: User's Posts Feed */}
         <div className="md:col-span-7 space-y-4">
           
-          <div className="bg-white rounded-2xl border border-grey/20 p-4 shadow-sm flex items-center justify-between">
-            <h3 className="font-extrabold text-grey-hover text-base">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-4 shadow-sm flex items-center justify-between transition-colors duration-200">
+            <h3 className="font-extrabold text-grey-hover dark:text-zinc-200 text-base">
               Bài viết của {isSelf ? 'bạn' : profileUser?.username}
             </h3>
             <button
               onClick={fetchUserPosts}
-              className="p-2 rounded-xl hover:bg-grey/10 text-grey transition cursor-pointer border-0 bg-transparent"
+              className="p-2 rounded-xl hover:bg-grey/10 dark:hover:bg-zinc-800 text-grey dark:text-zinc-400 transition cursor-pointer border-0 bg-transparent"
               title="Làm mới bài viết"
             >
               <RefreshCw className="w-4 h-4" />
@@ -869,27 +869,27 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
           {isLoadingFeed ? (
             <div className="space-y-4">
               {[1, 2].map((s) => (
-                <div key={s} className="bg-white rounded-2xl border border-grey/20 p-5 animate-pulse">
+                <div key={s} className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-5 animate-pulse">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-grey/20"></div>
+                    <div className="w-10 h-10 rounded-full bg-grey/20 dark:bg-zinc-800"></div>
                     <div className="space-y-2">
-                      <div className="h-4 w-28 bg-grey/20 rounded"></div>
-                      <div className="h-3 w-16 bg-grey/20 rounded"></div>
+                      <div className="h-4 w-28 bg-grey/20 dark:bg-zinc-800 rounded"></div>
+                      <div className="h-3 w-16 bg-grey/20 dark:bg-zinc-800 rounded"></div>
                     </div>
                   </div>
-                  <div className="h-4 w-full bg-grey/20 rounded mb-3"></div>
-                  <div className="h-3 w-3/4 bg-grey/20 rounded mb-4"></div>
-                  <div className="h-52 w-full bg-grey/15 rounded-xl"></div>
+                  <div className="h-4 w-full bg-grey/20 dark:bg-zinc-800 rounded mb-3"></div>
+                  <div className="h-3 w-3/4 bg-grey/20 dark:bg-zinc-800 rounded mb-4"></div>
+                  <div className="h-52 w-full bg-grey/15 dark:bg-zinc-850 rounded-xl"></div>
                 </div>
               ))}
             </div>
           ) : posts.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-grey/20 p-12 text-center shadow-sm">
-              <div className="w-16 h-16 mx-auto mb-4 bg-blue/10 rounded-full flex items-center justify-center text-blue">
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-12 text-center shadow-sm transition-colors duration-200">
+              <div className="w-16 h-16 mx-auto mb-4 bg-blue/10 dark:bg-blue-500/20 rounded-full flex items-center justify-center text-blue">
                 <RefreshCw className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-grey-hover mb-1">Chưa có bài viết nào</h3>
-              <p className="text-sm text-grey max-w-sm mx-auto">
+              <h3 className="text-lg font-bold text-grey-hover dark:text-zinc-200 mb-1">Chưa có bài viết nào</h3>
+              <p className="text-sm text-grey dark:text-zinc-400 max-w-sm mx-auto">
                 {isSelf ? 'Hãy đăng chia sẻ đầu tiên của bạn trên bảng tin để gắn kết với bạn bè nhé!' : 'Người dùng này chưa đăng tải bài viết nào.'}
               </p>
             </div>
@@ -925,42 +925,42 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                       : content.substring(0, 250) + (isLongContent ? '...' : ''));
 
                 return (
-                  <div key={post._id} className="bg-white rounded-2xl shadow-sm border border-grey/20 p-4 relative">
+                  <div key={post._id} className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-grey/20 dark:border-zinc-800 p-4 relative transition-colors duration-200">
                     
                     {/* Post Header */}
                     <div className="flex items-center justify-between mb-3.5">
                       <div className="flex items-center gap-3">
                         <div 
-                          className="w-10 h-10 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center"
+                          className="w-10 h-10 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center"
                         >
                           {authorAvatar ? (
                             <img src={authorAvatar} alt={authorName} className="w-full h-full object-cover" />
                           ) : (
-                            <User className="w-5 h-5 text-grey" />
+                            <User className="w-5 h-5 text-grey dark:text-zinc-400" />
                           )}
                         </div>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col text-left">
                           <div className="flex items-center flex-wrap gap-1">
-                            <h3 className="font-bold text-grey-hover text-sm sm:text-base">
+                            <h3 className="font-bold text-grey-hover dark:text-zinc-200 text-sm sm:text-base">
                               {authorName}
                             </h3>
                             {isGroupPost && groupName && (
-                              <div className="flex items-center gap-1 text-xs text-grey font-medium">
+                              <div className="flex items-center gap-1 text-xs text-grey dark:text-zinc-400 font-medium">
                                 <span className="text-grey/60">▸</span>
                                 <span className="text-blue font-semibold hover:underline cursor-pointer">{groupName}</span>
                               </div>
                             )}
                           </div>
-                          <span className="text-xs text-grey font-medium">{timeAgoStr}</span>
+                          <span className="text-xs text-grey dark:text-zinc-400 font-medium">{timeAgoStr}</span>
                         </div>
                       </div>
-                      <button className="w-8 h-8 rounded-full hover:bg-grey/10 flex items-center justify-center text-grey hover:text-grey-hover transition border-0 bg-transparent cursor-pointer">
+                      <button className="w-8 h-8 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 flex items-center justify-center text-grey dark:text-zinc-400 hover:text-grey-hover dark:hover:text-zinc-200 transition border-0 bg-transparent cursor-pointer">
                         <MoreHorizontal className="w-5 h-5" />
                       </button>
                     </div>
 
                     {/* Post Content */}
-                    <div className="text-slate-800 text-sm sm:text-[15px] leading-relaxed mb-3 whitespace-pre-wrap text-justify px-1">
+                    <div className="text-slate-800 dark:text-zinc-200 text-sm sm:text-[15px] leading-relaxed mb-3 whitespace-pre-wrap text-justify px-1">
                       {displayContent}
                       {isLongContent && (
                         <button
@@ -976,9 +976,9 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                     {renderPostImages(post.images || [])}
 
                     {/* Stats summary */}
-                    <div className="flex items-center justify-between text-xs sm:text-sm text-grey py-3 mt-3 border-t border-b border-grey/10 select-none">
+                    <div className="flex items-center justify-between text-xs sm:text-sm text-grey dark:text-zinc-400 py-3 mt-3 border-t border-b border-grey/10 dark:border-zinc-800 select-none">
                       <div className="flex items-center gap-1.5 font-medium">
-                        <div className="w-5 h-5 rounded-full bg-blue/10 flex items-center justify-center text-blue">
+                        <div className="w-5 h-5 rounded-full bg-blue/10 dark:bg-blue-500/20 flex items-center justify-center text-blue">
                           <ThumbsUp className="w-3.5 h-3.5 fill-blue" />
                         </div>
                         <span>{likesCount} lượt thích</span>
@@ -993,19 +993,19 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                     <div className="grid grid-cols-3 gap-1 pt-1.5 select-none">
                       <button 
                         onClick={() => handleLikePost(post._id)}
-                        className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${hasLiked ? 'text-blue' : 'text-grey-hover'}`}
+                        className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${hasLiked ? 'text-blue' : 'text-grey-hover dark:text-zinc-300'}`}
                       >
                         <ThumbsUp className={`w-5 h-5 ${hasLiked ? 'fill-blue text-blue' : ''}`} />
                         <span>Thích</span>
                       </button>
                       <button 
                         onClick={() => setCommentSectionOpen(prev => ({ ...prev, [post._id]: !isCommentsOpen }))}
-                        className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${isCommentsOpen ? 'text-blue bg-blue/5' : 'text-grey-hover'}`}
+                        className={`flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 active:scale-[0.98] transition font-bold text-sm border-0 cursor-pointer bg-transparent ${isCommentsOpen ? 'text-blue bg-blue/5 dark:bg-blue-500/10' : 'text-grey-hover dark:text-zinc-300'}`}
                       >
                         <MessageCircle className="w-5 h-5" />
                         <span>Bình luận</span>
                       </button>
-                      <button className="flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 active:scale-[0.98] transition text-grey-hover font-bold text-sm border-0 cursor-pointer bg-transparent">
+                      <button className="flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 active:scale-[0.98] transition text-grey-hover dark:text-zinc-300 font-bold text-sm border-0 cursor-pointer bg-transparent">
                         <Share2 className="w-5 h-5" />
                         <span>Chia sẻ</span>
                       </button>
@@ -1013,9 +1013,9 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
 
                     {/* Comments section */}
                     {isCommentsOpen && (
-                      <div className="mt-4 border-t border-grey/10 pt-4 space-y-4 animate-in fade-in duration-200">
+                      <div className="mt-4 border-t border-grey/10 dark:border-zinc-800 pt-4 space-y-4 animate-in fade-in duration-200">
                         {comments.length === 0 ? (
-                          <div className="text-center py-5 text-grey text-xs sm:text-sm select-none">
+                          <div className="text-center py-5 text-grey dark:text-zinc-400 text-xs sm:text-sm select-none">
                             Chưa có bình luận nào. Hãy là người đầu tiên!
                           </div>
                         ) : (
@@ -1036,25 +1036,25 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                 <div key={comment._id} className="space-y-2">
                                   <div className="flex gap-2.5 items-start text-left">
                                     <div 
-                                      className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center"
+                                      className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center"
                                     >
                                       {cAuthorAvatar ? (
                                         <img src={cAuthorAvatar} alt={cAuthorName} className="w-full h-full object-cover" />
                                       ) : (
-                                        <User className="w-4.5 h-4.5 text-grey" />
+                                        <User className="w-4.5 h-4.5 text-grey dark:text-zinc-400" />
                                       )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <div className="bg-grey/10 rounded-2xl px-3.5 py-2 inline-block max-w-full">
-                                        <h5 className="text-xs font-bold text-grey-hover truncate mb-0.5">
+                                      <div className="bg-grey/10 dark:bg-zinc-850 rounded-2xl px-3.5 py-2 inline-block max-w-full">
+                                        <h5 className="text-xs font-bold text-grey-hover dark:text-zinc-200 truncate mb-0.5">
                                           {cAuthorName}
                                         </h5>
-                                        <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
+                                        <p className="text-sm text-gray-800 dark:text-zinc-255 whitespace-pre-wrap break-words text-justify leading-normal">
                                           {comment.content}
                                         </p>
                                       </div>
                                       
-                                      <div className="flex items-center gap-3.5 text-[11px] sm:text-xs text-grey mt-1 pl-2 select-none font-semibold">
+                                      <div className="flex items-center gap-3.5 text-[11px] sm:text-xs text-grey dark:text-zinc-400 mt-1 pl-2 select-none font-semibold">
                                         <span>{cTimeAgo}</span>
                                         <button 
                                           onClick={() => {
@@ -1066,13 +1066,13 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                             const el = document.getElementById(`comment-input-${post._id}`);
                                             el?.focus();
                                           }}
-                                          className="hover:text-blue hover:underline transition bg-transparent border-0 cursor-pointer font-bold"
+                                          className="hover:text-blue dark:hover:text-blue-400 hover:underline transition bg-transparent border-0 cursor-pointer font-bold"
                                         >
                                           Trả lời
                                         </button>
                                         <button 
                                           onClick={() => handleLikeComment(post._id, comment._id)}
-                                          className={`hover:text-blue hover:underline flex items-center gap-1 transition bg-transparent border-0 cursor-pointer font-bold ${cHasLiked ? 'text-blue' : ''}`}
+                                          className={`hover:text-blue dark:hover:text-blue-400 hover:underline flex items-center gap-1 transition bg-transparent border-0 cursor-pointer font-bold ${cHasLiked ? 'text-blue' : 'text-grey dark:text-zinc-400'}`}
                                         >
                                           <ThumbsUp className={`w-3 h-3 ${cHasLiked ? 'fill-blue text-blue' : ''}`} />
                                           <span>{cLikesCount > 0 ? cLikesCount : ''} Thích</span>
@@ -1087,13 +1087,13 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                       {!isRepliesExpanded ? (
                                         <button 
                                           onClick={() => setExpandedComments(prev => ({ ...prev, [comment._id]: true }))}
-                                          className="flex items-center gap-1 text-xs text-grey hover:text-blue font-bold py-1 bg-transparent border-0 cursor-pointer"
+                                          className="flex items-center gap-1 text-xs text-grey dark:text-zinc-400 hover:text-blue dark:hover:text-blue-400 font-bold py-1 bg-transparent border-0 cursor-pointer"
                                         >
                                           <ChevronRight className="w-3.5 h-3.5 rotate-90" />
                                           <span>Xem tất cả {replies.length} phản hồi</span>
                                         </button>
                                       ) : (
-                                        <div className="space-y-3 mt-2 border-l-2 border-grey/15 pl-4">
+                                        <div className="space-y-3 mt-2 border-l-2 border-grey/15 dark:border-zinc-800 pl-4">
                                           {replies.map((reply: any) => {
                                             const rAuthor = reply.author || {};
                                             const rAuthorName = rAuthor.username || 'Người dùng';
@@ -1106,25 +1106,25 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                             return (
                                               <div key={reply._id} className="flex gap-2 items-start text-left">
                                                 <div 
-                                                  className="w-7 h-7 rounded-full overflow-hidden border border-grey/10 bg-grey/5 flex-shrink-0 flex items-center justify-center"
+                                                  className="w-7 h-7 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-850 flex-shrink-0 flex items-center justify-center"
                                                 >
                                                   {rAuthorAvatar ? (
                                                     <img src={rAuthorAvatar} alt={rAuthorName} className="w-full h-full object-cover" />
                                                   ) : (
-                                                    <User className="w-4 h-4 text-grey" />
+                                                    <User className="w-4 h-4 text-grey dark:text-zinc-400" />
                                                   )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                  <div className="bg-grey/10 rounded-2xl px-3 py-1.5 inline-block max-w-full">
-                                                    <h5 className="text-[11px] font-bold text-grey-hover truncate mb-0.5">
+                                                  <div className="bg-grey/10 dark:bg-zinc-850 rounded-2xl px-3 py-1.5 inline-block max-w-full">
+                                                    <h5 className="text-[11px] font-bold text-grey-hover dark:text-zinc-200 truncate mb-0.5">
                                                       {rAuthorName}
                                                     </h5>
-                                                    <p className="text-sm text-gray-800 whitespace-pre-wrap break-words text-justify leading-normal">
+                                                    <p className="text-sm text-gray-800 dark:text-zinc-255 whitespace-pre-wrap break-words text-justify leading-normal">
                                                       {reply.content}
                                                     </p>
                                                   </div>
                                                   
-                                                  <div className="flex items-center gap-3.5 text-[10px] sm:text-[11px] text-grey mt-0.5 pl-2 select-none font-semibold">
+                                                  <div className="flex items-center gap-3.5 text-[10px] sm:text-[11px] text-grey dark:text-zinc-400 mt-0.5 pl-2 select-none font-semibold">
                                                     <span>{rTimeAgo}</span>
                                                     <button 
                                                       onClick={() => {
@@ -1136,13 +1136,13 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                                         const el = document.getElementById(`comment-input-${post._id}`);
                                                         el?.focus();
                                                       }}
-                                                      className="hover:text-blue hover:underline transition bg-transparent border-0 cursor-pointer font-bold"
+                                                      className="hover:text-blue dark:hover:text-blue-400 hover:underline transition bg-transparent border-0 cursor-pointer font-bold"
                                                     >
                                                       Trả lời
                                                     </button>
                                                     <button 
                                                       onClick={() => handleLikeReply(post._id, comment._id, reply._id)}
-                                                      className={`hover:text-blue hover:underline flex items-center gap-1 transition bg-transparent border-0 cursor-pointer font-bold ${rHasLiked ? 'text-blue' : ''}`}
+                                                      className={`hover:text-blue dark:hover:text-blue-400 hover:underline flex items-center gap-1 transition bg-transparent border-0 cursor-pointer font-bold ${rHasLiked ? 'text-blue' : 'text-grey dark:text-zinc-400'}`}
                                                     >
                                                       <ThumbsUp className={`w-2.5 h-2.5 ${rHasLiked ? 'fill-blue text-blue' : ''}`} />
                                                       <span>{rLikesCount > 0 ? rLikesCount : ''} Thích</span>
@@ -1172,7 +1172,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                         {/* Comment input form */}
                         <div className="space-y-2 mt-2">
                           {replyingTo && (
-                            <div className="flex items-center justify-between bg-blue/5 px-3 py-1.5 rounded-lg text-xs text-blue font-semibold">
+                            <div className="flex items-center justify-between bg-blue/5 dark:bg-blue-500/10 px-3 py-1.5 rounded-lg text-xs text-blue font-semibold">
                               <span>Đang trả lời @{replyingTo.username}</span>
                               <button 
                                 onClick={() => setReplyingTo(null)}
@@ -1190,16 +1190,16 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                               value={commentInputs[post._id] || ''}
                               onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
                               onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
-                                  e.preventDefault();
-                                  if (replyingTo) {
-                                    handleAddReply(post._id, replyingTo.commentId);
-                                  } else {
-                                    handleAddComment(post._id);
+                                  if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    if (replyingTo) {
+                                      handleAddReply(post._id, replyingTo.commentId);
+                                    } else {
+                                      handleAddComment(post._id);
+                                    }
                                   }
-                                }
-                              }}
-                              className="flex-1 px-4 py-2 bg-grey/10 rounded-xl border-0 focus:bg-grey/15 transition outline-none text-sm text-grey-hover placeholder-gray-500 font-medium resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
+                                }}
+                              className="flex-1 px-4 py-2 bg-grey/10 dark:bg-zinc-800 rounded-xl border-0 focus:bg-grey/15 dark:focus:bg-zinc-750 transition outline-none text-sm text-grey-hover dark:text-zinc-200 placeholder-gray-500 dark:placeholder-zinc-500 font-medium resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
                             />
                             <button 
                               onClick={() => {

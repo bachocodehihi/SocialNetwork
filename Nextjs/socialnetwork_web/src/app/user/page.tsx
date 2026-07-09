@@ -11,7 +11,7 @@ export default function UserIndexPage() {
   }, [router]);
 
   return (
-    <div className='flex h-screen items-center justify-center bg-grey/5'>
+    <div className='flex h-screen items-center justify-center bg-grey/5 dark:bg-zinc-950 transition-colors duration-200'>
       <div className='animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent'></div>
     </div>
   );
