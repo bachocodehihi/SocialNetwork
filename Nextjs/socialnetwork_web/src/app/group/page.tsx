@@ -334,21 +334,7 @@ export default function GroupPage() {
         <div className="w-full bg-[#242526] border-b border-[#3e4042]/40 flex justify-center shadow-md">
           <div className="w-full max-w-6xl flex flex-col">
             
-            {/* Cover Gradient/Photo */}
-            <div className="relative w-full h-48 md:h-72 bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 rounded-b-lg overflow-hidden flex items-end">
-              <div className="absolute inset-0 bg-black/20"></div>
-              
 
-              {isAdmin && (
-                <button
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="absolute bottom-4 right-4 z-10 px-4 py-2 bg-black/50 hover:bg-black/75 backdrop-blur-md rounded-lg border border-white/20 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Camera className="w-4 h-4" />
-                  <span>Chỉnh sửa ảnh bìa</span>
-                </button>
-              )}
-            </div>
 
             {/* Header Content */}
             <div className="px-4 py-6 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 border-b border-[#3e4042]/50">
