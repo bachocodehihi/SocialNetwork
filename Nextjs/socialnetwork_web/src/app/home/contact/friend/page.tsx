@@ -253,7 +253,7 @@ export default function ContactFriendPage() {
                               <div className="flex items-center gap-2 flex-shrink-0">
                                 <button
                                   onClick={() => router.push(`/home/message?userId=${friendInfo._id || friendInfo.id}`)}
-                                  className="p-2 sm:px-4 sm:py-2.5 rounded-xl bg-grey/10 hover:bg-grey/20 dark:bg-zinc-800/60 dark:hover:bg-zinc-800 text-black dark:text-white font-bold text-sm transition flex items-center gap-1.5 border-0 cursor-pointer"
+                                  className="p-2 sm:px-4 sm:py-2.5 rounded-xl bg-blue hover:bg-blue-hover text-white font-bold text-sm transition flex items-center gap-1.5 border-0 cursor-pointer shadow-sm shadow-blue/20"
                                   title="Nhắn tin"
                                 >
                                   <MessageSquare className="w-4 h-4" />
@@ -337,41 +337,44 @@ export default function ContactFriendPage() {
                         </button>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="divide-y divide-grey/10 dark:divide-zinc-800/60 text-left">
                         {groups.map((group) => {
                           return (
                             <div 
                               key={group._id || group.id}
-                              className="flex items-center justify-between p-4 rounded-xl border border-grey/10 dark:border-zinc-800/60 hover:border-grey/25 dark:hover:border-zinc-700/80 transition duration-150 bg-grey/5 dark:bg-zinc-800/30"
+                              className="py-4 first:pt-0 last:pb-0 flex items-center justify-between gap-4"
                             >
-                              <div className="flex items-center gap-3.5 min-w-0">
-                                <div className="w-12 h-12 rounded-full overflow-hidden border border-grey/25 dark:border-zinc-800 bg-grey/10 flex-shrink-0 flex items-center justify-center">
+                              {/* Group Card Info */}
+                              <div 
+                                onClick={() => router.push(`/home/message?groupId=${group._id}`)}
+                                className="flex items-center gap-4 cursor-pointer min-w-0 flex-1 hover:opacity-90 group text-left"
+                              >
+                                <div className="w-14 h-14 rounded-full border border-grey/25 dark:border-zinc-800 bg-grey/10 overflow-hidden flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition duration-200">
                                   {group.avatar ? (
                                     <img src={group.avatar} alt={group.name} className="w-full h-full object-cover" />
                                   ) : (
-                                    <Users2 className="w-6 h-6 text-grey/60 dark:text-zinc-500" />
+                                    <Users2 className="w-7 h-7 text-grey dark:text-zinc-550" />
                                   )}
                                 </div>
-                                <div className="min-w-0 text-left">
-                                  <h4 
-                                    className="font-extrabold text-black dark:text-white truncate text-[15px] hover:text-blue cursor-pointer"
-                                    onClick={() => router.push(`/home/message?groupId=${group._id}`)}
-                                  >
+                                <div className="min-w-0">
+                                  <h3 className="font-extrabold text-base text-black dark:text-white group-hover:text-blue transition-colors truncate">
                                     {group.name}
-                                  </h4>
-                                  <p className="text-xs text-grey/60 dark:text-zinc-400 truncate">
+                                  </h3>
+                                  <p className="text-sm text-grey dark:text-zinc-400 font-medium truncate">
                                     {group.members?.length || 0} thành viên
                                   </p>
                                 </div>
                               </div>
 
-                              <div className="flex items-center gap-2">
+                              {/* Actions */}
+                              <div className="flex items-center gap-2 flex-shrink-0">
                                 <button
                                   onClick={() => router.push(`/home/message?groupId=${group._id}`)}
-                                  className="px-3.5 py-2 bg-blue hover:bg-blue-hover text-white text-xs font-bold rounded-lg border-0 cursor-pointer transition flex items-center gap-1.5"
+                                  className="p-2 sm:px-4 sm:py-2.5 rounded-xl bg-blue hover:bg-blue-hover text-white font-bold text-sm transition flex items-center gap-1.5 border-0 cursor-pointer shadow-sm shadow-blue/20"
+                                  title="Trò chuyện"
                                 >
-                                  <MessageSquare className="w-3.5 h-3.5" />
-                                  <span>Trò chuyện</span>
+                                  <MessageSquare className="w-4 h-4" />
+                                  <span className="hidden sm:inline">Trò chuyện</span>
                                 </button>
                               </div>
                             </div>
