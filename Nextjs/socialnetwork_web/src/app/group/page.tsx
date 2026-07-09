@@ -337,13 +337,6 @@ export default function GroupPage() {
             <div className="relative w-full h-48 md:h-72 bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 rounded-b-lg overflow-hidden flex items-end">
               <div className="absolute inset-0 bg-black/20"></div>
               
-              <button 
-                onClick={() => router.push('/home/contact/friend')}
-                className="absolute top-4 left-4 z-10 p-2 bg-black/40 hover:bg-black/60 rounded-full border border-[#3e4042] text-white transition cursor-pointer"
-                title="Quay lại"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
 
               {isAdmin && (
                 <button
@@ -499,7 +492,6 @@ export default function GroupPage() {
             <div className="px-4 flex items-center gap-1 overflow-x-auto text-[#b0b3b8]">
               {[
                 { id: 'discussion', label: 'Thảo luận' },
-                { id: 'about', label: 'Giới thiệu' },
                 { id: 'members', label: 'Mọi người' }
               ].map((tab) => {
                 const isActive = activeTab === tab.id;
@@ -530,7 +522,7 @@ export default function GroupPage() {
             {activeTab === 'discussion' && (
               <>
                 {/* Left Column - Main Feed */}
-                <div className="lg:col-span-8 space-y-5">
+                <div className={`${recentPhotos.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12 max-w-3xl mx-auto'} w-full space-y-5`}>
                   
                   {/* Create Post Card (FB style) */}
                   <div className="bg-[#242526] rounded-xl border border-[#3e4042]/30 shadow-md p-4">
@@ -748,44 +740,6 @@ export default function GroupPage() {
                 {/* Right Column - Sidebar Widgets */}
                 <div className="lg:col-span-4 space-y-5">
                   
-                  {/* About Widget */}
-                  <div className="bg-[#242526] rounded-xl border border-[#3e4042]/30 shadow-md p-4 text-left space-y-4">
-                    <h3 className="font-extrabold text-sm text-white tracking-wide uppercase">
-                      Giới thiệu
-                    </h3>
-                    
-                    {group.description && (
-                      <p className="text-xs text-[#e4e6eb] font-semibold leading-relaxed">
-                        {group.description}
-                      </p>
-                    )}
-
-                    <div className="space-y-3 pt-2 text-xs font-bold text-[#b0b3b8]">
-                      <div className="flex items-start gap-2.5">
-                        <Globe className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-white">Công khai</p>
-                          <p className="text-[10px] text-[#b0b3b8] font-medium leading-relaxed mt-0.5">
-                            Bất kỳ ai cũng có thể nhìn thấy mọi người trong nhóm và những gì họ đăng.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2.5">
-                        <Eye className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-white">Hiển thị</p>
-                          <p className="text-[10px] text-[#b0b3b8] font-medium leading-relaxed mt-0.5">
-                            Ai cũng có thể tìm thấy nhóm này.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2.5">
-                        <MapPin className="w-4 h-4 text-white flex-shrink-0" />
-                        <span className="text-white">Đà Nẵng</span>
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Recent Media Widget */}
                   {recentPhotos.length > 0 && (
                     <div className="bg-[#242526] rounded-xl border border-[#3e4042]/30 shadow-md p-4 text-left space-y-4">
@@ -806,57 +760,6 @@ export default function GroupPage() {
               </>
             )}
 
-            {/* About Tab view */}
-            {activeTab === 'about' && (
-              <div className="lg:col-span-12">
-                <div className="bg-[#242526] rounded-xl border border-[#3e4042]/30 shadow-md p-6 text-left max-w-2xl mx-auto space-y-6">
-                  <h2 className="text-xl font-black text-white">Giới thiệu về nhóm này</h2>
-                  
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-extrabold text-[#b0b3b8] uppercase tracking-wider">Mô tả nhóm</h3>
-                    <p className="text-sm text-[#e4e6eb] font-semibold whitespace-pre-line leading-relaxed">
-                      {group.description || 'Không có mô tả cho nhóm này.'}
-                    </p>
-                  </div>
-
-                  <hr className="border-[#3e4042]/50" />
-
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-extrabold text-[#b0b3b8] uppercase tracking-wider">Thông tin bảo mật & Khám phá</h3>
-                    
-                    <div className="flex gap-3">
-                      <Globe className="w-6 h-6 text-white flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="text-sm font-bold text-white">Nhóm Công khai</h4>
-                        <p className="text-xs text-[#b0b3b8] font-medium leading-relaxed mt-0.5">
-                          Bất kỳ ai cũng có thể tìm thấy nhóm này, xem thành viên nhóm và nội dung bài viết đăng tải công khai.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <Eye className="w-6 h-6 text-white flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="text-sm font-bold text-white">Có thể hiển thị</h4>
-                        <p className="text-xs text-[#b0b3b8] font-medium leading-relaxed mt-0.5">
-                          Bất kỳ ai trên hệ thống cũng có thể nhìn thấy và tìm kiếm nhóm này bằng ô tìm kiếm.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <FileText className="w-6 h-6 text-white flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="text-sm font-bold text-white">Mã mời tham gia nhóm</h4>
-                        <p className="text-xs text-[#b0b3b8] font-mono leading-relaxed mt-1 bg-[#18191a] px-2 py-1 rounded inline-block text-blue border border-[#3e4042]/40 font-extrabold">
-                          {group.inviteCode}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Members tab view */}
             {activeTab === 'members' && (
@@ -864,12 +767,6 @@ export default function GroupPage() {
                 <div className="bg-[#242526] rounded-xl border border-[#3e4042]/30 shadow-md p-6 text-left max-w-2xl mx-auto space-y-6">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-black text-white">Thành viên ({group.members?.length || 0})</h2>
-                    <button
-                      onClick={() => router.push(`/group/invite?groupId=${group._id}`)}
-                      className="px-4 py-2 bg-[#1877f2] hover:bg-[#156bec] text-white text-xs font-bold rounded-lg border-none cursor-pointer transition"
-                    >
-                      Mời bạn bè +
-                    </button>
                   </div>
 
                   <div className="divide-y divide-[#3e4042]/40">
