@@ -1,8 +1,8 @@
 'use client';
-import Navbar from '@/components/Navbar';
-import { contactService } from '@/services/contact.service';
-import { groupService } from '@/services/group.service';
-import { useAlert } from '@/components/Alert/alertcontext';
+import Navbar from '../../../../components/Navbar';
+import { contactService } from '../../../../services/contact.service';
+import { groupService } from '../../../../services/group.service';
+import { useAlert } from '../../../../components/Alert/alertcontext';
 import { useEffect, useState } from 'react';
 import { User, UserCheck, UserPlus, UserMinus, MessageSquare, Users2, Loader2, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -346,7 +346,7 @@ export default function ContactFriendPage() {
                             >
                               {/* Group Card Info */}
                               <div 
-                                onClick={() => router.push(`/home/message?groupId=${group._id}`)}
+                                onClick={() => router.push(`/group/join?inviteCode=${group.inviteCode}`)}
                                 className="flex items-center gap-4 cursor-pointer min-w-0 flex-1 hover:opacity-90 group text-left"
                               >
                                 <div className="w-14 h-14 rounded-full border border-grey/25 dark:border-zinc-800 bg-grey/10 overflow-hidden flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition duration-200">
@@ -371,10 +371,10 @@ export default function ContactFriendPage() {
                                 <button
                                   onClick={() => router.push(`/home/message?groupId=${group._id}`)}
                                   className="p-2 sm:px-4 sm:py-2.5 rounded-xl bg-blue hover:bg-blue-hover text-white font-bold text-sm transition flex items-center gap-1.5 border-0 cursor-pointer shadow-sm shadow-blue/20"
-                                  title="Trò chuyện"
+                                  title="Nhắn tin"
                                 >
                                   <MessageSquare className="w-4 h-4" />
-                                  <span className="hidden sm:inline">Trò chuyện</span>
+                                  <span className="hidden sm:inline">Nhắn tin</span>
                                 </button>
                               </div>
                             </div>

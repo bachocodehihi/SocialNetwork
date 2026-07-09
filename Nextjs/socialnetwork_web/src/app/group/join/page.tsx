@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { groupService } from '@/services/group.service';
-import { useAlert } from '@/components/Alert/alertcontext';
+import { groupService } from '../../../services/group.service';
+import { useAlert } from '../../../components/Alert/alertcontext';
 import { Loader2, Users, User, MessageSquare, AlertTriangle, ArrowRight } from 'lucide-react';
-import Navbar from '@/components/Navbar';
+import Navbar from '../../../components/Navbar';
 import { motion } from 'framer-motion';
 
 export default function JoinGroupPage() {
   const params = useParams();
   const router = useRouter();
-  const inviteCode = params.inviteCode as string;
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
   const { showError, showSuccess } = useAlert();
 
   const [group, setGroup] = useState<any>(null);
@@ -20,7 +20,15 @@ export default function JoinGroupPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!inviteCode) return;
+    const code = (params.inviteCode as string) || new URLSearchParams(window.location.search).get('inviteCode');
+    setInviteCode(code);
+  }, [params]);
+
+  useEffect(() => {
+    if (!inviteCode) {
+      // If we are loading and have no code yet, wait until the useEffect above sets it.
+      return;
+    }
 
     const token = localStorage.getItem('token');
     if (!token) {
