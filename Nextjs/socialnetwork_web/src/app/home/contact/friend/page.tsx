@@ -346,7 +346,7 @@ export default function ContactFriendPage() {
                             >
                               {/* Group Card Info */}
                               <div 
-                                onClick={() => router.push(`/group/join?inviteCode=${group.inviteCode}`)}
+                                onClick={() => router.push(`/group?groupId=${group._id}`)}
                                 className="flex items-center gap-4 cursor-pointer min-w-0 flex-1 hover:opacity-90 group text-left"
                               >
                                 <div className="w-14 h-14 rounded-full border border-grey/25 dark:border-zinc-800 bg-grey/10 overflow-hidden flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition duration-200">
