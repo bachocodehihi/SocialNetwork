@@ -209,42 +209,55 @@ export default function ContactFriendPage() {
                         <p className="text-xs text-grey/60 mt-1">Sử dụng thanh tìm kiếm để tìm và kết bạn mới!</p>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="divide-y divide-grey/10 dark:divide-zinc-800/60 text-left">
                         {friends.map((item) => {
                           const friendInfo = item.friend || item;
                           return (
                             <div 
                               key={friendInfo._id || friendInfo.id}
-                              className="flex items-center justify-between p-4 rounded-xl border border-grey/10 dark:border-zinc-800/60 hover:border-grey/25 dark:hover:border-zinc-700/80 transition duration-150 bg-grey/5 dark:bg-zinc-800/30"
+                              className="py-4 first:pt-0 last:pb-0 flex items-center justify-between gap-4"
                             >
-                              <div className="flex items-center gap-3.5 min-w-0">
-                                <div className="w-12 h-12 rounded-full overflow-hidden border border-grey/20 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex-shrink-0 flex items-center justify-center">
+                              {/* User Card Info */}
+                              <div 
+                                onClick={() => router.push(`/user/${friendInfo._id || friendInfo.id}`)}
+                                className="flex items-center gap-4 cursor-pointer min-w-0 flex-1 hover:opacity-90 group text-left"
+                              >
+                                <div className="w-14 h-14 rounded-full border border-grey/25 dark:border-zinc-800 bg-grey/10 overflow-hidden flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition duration-200">
                                   {friendInfo.avatar ? (
                                     <img src={friendInfo.avatar} alt={friendInfo.username} className="w-full h-full object-cover" />
                                   ) : (
-                                    <User className="w-6 h-6 text-grey/60 dark:text-zinc-500" />
+                                    <User className="w-7 h-7 text-grey dark:text-zinc-550" />
                                   )}
                                 </div>
-                                <div className="min-w-0 text-left">
-                                  <h4 className="font-extrabold text-black dark:text-white truncate text-[15px]">{friendInfo.username}</h4>
-                                  <p className="text-xs text-grey/60 dark:text-zinc-400 truncate">{friendInfo.email || 'Thành viên mạng xã hội'}</p>
+                                <div className="min-w-0">
+                                  <h3 className="font-extrabold text-base text-black dark:text-white group-hover:text-blue transition-colors truncate">
+                                    {friendInfo.username}
+                                  </h3>
+                                  {friendInfo.email && (
+                                    <p className="text-sm text-grey dark:text-zinc-400 font-medium truncate">
+                                      {friendInfo.email}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
 
-                              <div className="flex items-center gap-2">
+                              {/* Actions */}
+                              <div className="flex items-center gap-2 flex-shrink-0">
                                 <button
                                   onClick={() => router.push(`/home/message?userId=${friendInfo._id || friendInfo.id}`)}
+                                  className="p-2 sm:px-4 sm:py-2.5 rounded-xl bg-grey/10 hover:bg-grey/20 dark:bg-zinc-800/60 dark:hover:bg-zinc-800 text-black dark:text-white font-bold text-sm transition flex items-center gap-1.5 border-0 cursor-pointer"
                                   title="Nhắn tin"
-                                  className="p-2.5 rounded-xl bg-blue/10 hover:bg-blue/20 dark:bg-blue/20 dark:hover:bg-blue/30 text-blue border-0 cursor-pointer transition"
                                 >
-                                  <MessageSquare className="w-4.5 h-4.5" />
+                                  <MessageSquare className="w-4 h-4" />
+                                  <span className="hidden sm:inline">Nhắn tin</span>
                                 </button>
+
                                 <button
                                   onClick={() => handleRemoveFriend(friendInfo._id || friendInfo.id)}
-                                  title="Hủy kết bạn"
-                                  className="p-2.5 rounded-xl bg-red/10 hover:bg-red/20 dark:bg-red/20 dark:hover:bg-red/30 text-red border-0 cursor-pointer transition"
+                                  className="p-2 sm:px-4 sm:py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-1.5 border-0 cursor-pointer bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400"
                                 >
-                                  <UserMinus className="w-4.5 h-4.5" />
+                                  <UserCheck className="w-4 h-4" />
+                                  <span className="hidden sm:inline">Bạn bè</span>
                                 </button>
                               </div>
                             </div>

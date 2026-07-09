@@ -218,7 +218,7 @@ function SearchResultsContent() {
                       {/* Actions */}
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <button
-                          onClick={() => router.push(`/home/message?to=${userId}`)}
+                          onClick={() => router.push(`/home/message?userId=${userId}`)}
                           className="p-2 sm:px-4 sm:py-2.5 rounded-xl bg-grey/10 hover:bg-grey/20 dark:bg-zinc-800/60 dark:hover:bg-zinc-800 text-black dark:text-white font-bold text-sm transition flex items-center gap-1.5 border-0 cursor-pointer"
                           title="Nhắn tin"
                         >
