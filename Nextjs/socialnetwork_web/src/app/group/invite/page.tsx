@@ -109,13 +109,13 @@ export default function GroupInvitePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="w-full max-w-xl bg-white dark:bg-[#242526] rounded-3xl shadow-xl overflow-hidden border border-slate-200/80 dark:border-[#3e4042]/40 p-6 flex flex-col relative text-left"
+          className="w-full max-w-xl bg-white dark:bg-zinc-900 rounded-2xl shadow-sm overflow-hidden border border-grey/20 dark:border-zinc-800 p-6 flex flex-col relative text-left"
         >
           {/* Header */}
-          <div className="flex items-center gap-4 border-b border-slate-100 dark:border-[#3e4042]/40 pb-5 mb-5">
+          <div className="flex items-center gap-4 border-b border-grey/10 dark:border-zinc-800 pb-5 mb-5">
             <button
               onClick={() => router.push(`/group?groupId=${groupId}`)}
-              className="p-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] rounded-full text-slate-600 dark:text-[#b0b3b8] transition cursor-pointer border-none"
+              className="p-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/80 rounded-full text-slate-600 dark:text-zinc-300 transition cursor-pointer border-none"
               title="Quay lại trang nhóm"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -124,7 +124,7 @@ export default function GroupInvitePage() {
               <h2 className="text-xl font-black text-black dark:text-white">
                 Mời bạn bè vào nhóm
               </h2>
-              <p className="text-xs text-grey dark:text-[#b0b3b8] font-semibold mt-0.5 truncate max-w-sm">
+              <p className="text-xs text-grey dark:text-zinc-400 font-semibold mt-0.5 truncate max-w-sm">
                 Nhóm: <span className="text-blue font-extrabold">{group?.name}</span>
               </p>
             </div>
@@ -138,7 +138,7 @@ export default function GroupInvitePage() {
               placeholder="Tìm kiếm bạn bè..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/40 rounded-full text-sm font-semibold text-black placeholder-[#b0b3b8] dark:bg-[#3a3b3c] dark:border-[#3e4042] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-[#242526] transition"
+              className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/40 rounded-full text-sm font-semibold text-black placeholder-[#b0b3b8] dark:bg-zinc-800 dark:border-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition"
             />
           </div>
 
@@ -157,7 +157,7 @@ export default function GroupInvitePage() {
                 <p className="text-xs text-grey mt-1">Không tìm thấy kết quả phù hợp với từ khóa tìm kiếm của bạn.</p>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100 dark:divide-[#3e4042]/50">
+              <div className="divide-y divide-grey/10 dark:divide-zinc-800">
                 {filteredFriends.map((friend) => {
                   const isInvited = invitedUserIds[friend._id];
                   const isInviting = invitingState[friend._id];

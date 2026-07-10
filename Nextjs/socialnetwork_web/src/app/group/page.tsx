@@ -325,13 +325,13 @@ export default function GroupPage() {
       <div className="flex-1 pt-14 pb-12 flex flex-col items-center">
         
         {/* Cover + Header Area */}
-        <div className="w-full bg-white dark:bg-[#242526] border-b border-slate-200 dark:border-[#3e4042]/40 flex justify-center shadow-md">
+        <div className="w-full bg-white dark:bg-zinc-900 border-b border-grey/10 dark:border-zinc-800 flex justify-center shadow-sm">
           <div className="w-full max-w-6xl flex flex-col">
             
 
 
             {/* Header Content */}
-            <div className="px-4 py-6 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 border-b border-slate-200 dark:border-[#3e4042]/50">
+            <div className="px-4 py-6 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 border-b border-grey/10 dark:border-zinc-800">
               
               {/* Group Metadata */}
               <div className="flex flex-col items-center md:items-start text-center md:text-left min-w-0">
@@ -506,7 +506,7 @@ export default function GroupPage() {
                 <div className={`${recentPhotos.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12 max-w-3xl mx-auto'} w-full space-y-5`}>
                   
                   {/* Create Post Card (FB style) */}
-                  <div className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 shadow-md p-4">
+                  <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm p-4">
                     <div className="flex gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 flex-shrink-0">
                         {currentUser?.avatar ? (
@@ -527,7 +527,7 @@ export default function GroupPage() {
                       </div>
                     </div>
 
-                    <div className="border-t border-slate-100 dark:border-[#3e4042]/50 mt-4 pt-3 flex gap-2">
+                    <div className="border-t border-grey/10 dark:border-zinc-800 mt-4 pt-3 flex gap-2">
                       <button
                         onClick={() => {
                           setIsCreateModalOpen(true);
@@ -556,10 +556,10 @@ export default function GroupPage() {
                       <p className="text-xs text-slate-500 dark:text-[#b0b3b8] font-bold">Đang tải bài viết...</p>
                     </div>
                   ) : posts.length === 0 ? (
-                    <div className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 p-12 text-center text-slate-500 dark:text-[#b0b3b8]">
-                      <Users className="w-12 h-12 mx-auto mb-3 opacity-30 text-slate-500 dark:text-[#b0b3b8]" />
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-12 text-center text-slate-500 dark:text-zinc-400">
+                      <Users className="w-12 h-12 mx-auto mb-3 opacity-30 text-slate-500 dark:text-zinc-400" />
                       <h3 className="font-bold text-slate-850 dark:text-white text-base">Chưa có bài viết nào</h3>
-                      <p className="text-xs text-slate-500 dark:text-[#b0b3b8] mt-1 max-w-sm mx-auto">Hãy là người đầu tiên chia sẻ thông tin hoặc hình ảnh trong nhóm này!</p>
+                      <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 max-w-sm mx-auto">Hãy là người đầu tiên chia sẻ thông tin hoặc hình ảnh trong nhóm này!</p>
                     </div>
                   ) : (
                     <div className="space-y-5">
@@ -570,7 +570,7 @@ export default function GroupPage() {
                         return (
                           <div 
                             key={post._id} 
-                            className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 shadow-md p-4 space-y-4 text-left"
+                            className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm p-4 space-y-4 text-left"
                           >
                             {/* Author Info */}
                             <div className="flex items-center justify-between">
@@ -616,7 +616,7 @@ export default function GroupPage() {
                             )}
 
                             {/* Stats */}
-                            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-[#b0b3b8] font-bold border-y border-slate-100 dark:border-[#3e4042]/50 py-3">
+                            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 font-bold border-y border-grey/10 dark:border-zinc-800 py-3">
                               <span className="flex items-center gap-1.5">
                                 <ThumbsUp className={`w-4 h-4 ${hasLiked ? 'text-[#1877f2] fill-[#1877f2]' : 'text-slate-500 dark:text-[#b0b3b8]'}`} />
                                 {post.likes?.length || 0} lượt thích
@@ -628,7 +628,7 @@ export default function GroupPage() {
                             </div>
 
                             {/* Actions */}
-                            <div className="flex gap-4 border-b border-slate-100 dark:border-[#3e4042]/50 pb-2">
+                            <div className="flex gap-4 border-b border-grey/10 dark:border-zinc-800 pb-2">
                               <button
                                 onClick={() => handleLikePost(post._id)}
                                 className={`flex-1 py-2 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] rounded-lg transition text-xs font-bold flex items-center justify-center gap-2 border-0 cursor-pointer bg-transparent ${
@@ -723,7 +723,7 @@ export default function GroupPage() {
                   
                   {/* Recent Media Widget */}
                   {recentPhotos.length > 0 && (
-                    <div className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 shadow-md p-4 text-left space-y-4">
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm p-4 text-left space-y-4">
                       <h3 className="font-extrabold text-sm text-slate-850 dark:text-white tracking-wide uppercase">
                         File phương tiện mới đây
                       </h3>
@@ -744,7 +744,7 @@ export default function GroupPage() {
             {/* Members tab view */}
             {activeTab === 'members' && (
               <div className="lg:col-span-12">
-                <div className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 shadow-md p-6 text-left max-w-2xl mx-auto space-y-6">
+                <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm p-6 text-left max-w-2xl mx-auto space-y-6">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-black text-slate-850 dark:text-white">Thành viên ({group.members?.length || 0})</h2>
                   </div>
@@ -761,7 +761,7 @@ export default function GroupPage() {
                     />
                   </div>
 
-                  <div className="divide-y divide-slate-100 dark:divide-[#3e4042]/40">
+                  <div className="divide-y divide-grey/10 dark:divide-zinc-800">
                     {group.members
                       ?.filter((m: any) => m.username?.toLowerCase().includes(memberSearchQuery.toLowerCase()))
                       .map((m: any) => {
@@ -841,10 +841,10 @@ export default function GroupPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-white dark:bg-[#242526] rounded-xl overflow-hidden shadow-2xl relative z-10 border border-slate-200 dark:border-[#3e4042]/60 flex flex-col max-h-[90vh]"
+              className="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-2xl relative z-10 border border-grey/20 dark:border-zinc-800 flex flex-col max-h-[90vh]"
             >
               {/* Modal Header */}
-              <div className="p-4 border-b border-slate-100 dark:border-[#3e4042]/60 flex items-center justify-between text-center">
+              <div className="p-4 border-b border-grey/10 dark:border-zinc-800 flex items-center justify-between text-center">
                 <div className="w-8"></div>
                 <h3 className="text-base font-extrabold text-slate-850 dark:text-white">Tạo bài viết</h3>
                 <button
@@ -904,7 +904,7 @@ export default function GroupPage() {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-4 border-t border-slate-100 dark:border-[#3e4042]/60 space-y-3">
+              <div className="p-4 border-t border-grey/10 dark:border-zinc-800 space-y-3">
                 {/* Actions widget */}
                 <div className="border border-slate-200 dark:border-[#3e4042] rounded-lg p-3 flex items-center justify-between bg-slate-50 dark:bg-[#18191a]">
                   <span className="text-xs font-extrabold text-slate-850 dark:text-white">Thêm vào bài viết của bạn</span>
@@ -958,7 +958,7 @@ export default function GroupPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white dark:bg-[#242526] rounded-xl overflow-hidden shadow-2xl relative z-10 border border-slate-200 dark:border-[#3e4042] p-5 space-y-5 text-left"
+              className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-2xl relative z-10 border border-grey/20 dark:border-zinc-800 p-5 space-y-5 text-left"
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-black text-slate-850 dark:text-white flex items-center gap-2">
@@ -1014,7 +1014,7 @@ export default function GroupPage() {
                   />
                 </div>
 
-                <div className="flex gap-2 pt-4 border-t border-slate-100 dark:border-[#3e4042]/50">
+                <div className="flex gap-2 pt-4 border-t border-grey/10 dark:border-zinc-800">
                   <button
                     type="button"
                     onClick={handleDeleteGroup}
