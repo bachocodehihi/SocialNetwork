@@ -18,7 +18,6 @@ export default function GroupInvitePage() {
   const [groupId, setGroupId] = useState<string | null>(null);
   const [group, setGroup] = useState<any>(null);
   const [friends, setFriends] = useState<any[]>([]);
-  const [inviteableFriends, setInviteableFriends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -53,11 +52,6 @@ export default function GroupInvitePage() {
           const friendsRes = await contactService.getFriends();
           const friendsList = Array.isArray(friendsRes) ? friendsRes : (friendsRes.data || []);
           setFriends(friendsList);
-
-          // Filter friends who are NOT already in the group members list
-          const memberIds = (groupRes.data.members || []).map((m: any) => m._id || m.id);
-          const inviteable = friendsList.filter((f: any) => !memberIds.includes(f._id || f.id));
-          setInviteableFriends(inviteable);
         } else {
           showError('Không tìm thấy thông tin nhóm.');
           router.push('/home/contact/friend');
@@ -94,8 +88,10 @@ export default function GroupInvitePage() {
     }
   };
 
-  // Filter inviteable friends list by search query
-  const filteredFriends = inviteableFriends.filter((f: any) => 
+  const memberIds = (group?.members || []).map((m: any) => m._id || m.id);
+
+  // Filter friends list by search query
+  const filteredFriends = friends.filter((f: any) => 
     f.username?.toLowerCase().includes(searchQuery.toLowerCase()) || 
     f.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -149,17 +145,17 @@ export default function GroupInvitePage() {
               placeholder="Tìm kiếm bạn bè theo tên hoặc email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/40 rounded-xl text-sm font-semibold text-black placeholder-slate-400 dark:bg-zinc-850 dark:border-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition"
+              className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/40 rounded-full text-sm font-semibold text-black placeholder-slate-400 dark:bg-zinc-850 dark:border-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition"
             />
           </div>
 
           {/* Friends List */}
           <div className="flex-1 min-h-[300px] max-h-[400px] overflow-y-auto pr-1">
-            {inviteableFriends.length === 0 ? (
+            {friends.length === 0 ? (
               <div className="py-16 text-center text-grey">
                 <Users className="w-12 h-12 mx-auto mb-3 opacity-30 text-slate-400" />
-                <h4 className="font-bold text-slate-800 dark:text-white">Tất cả bạn bè đã ở trong nhóm</h4>
-                <p className="text-xs text-grey mt-1 max-w-xs mx-auto">Không còn người bạn nào để gửi lời mời tham gia nhóm này.</p>
+                <h4 className="font-bold text-slate-800 dark:text-white">Chưa có bạn bè nào</h4>
+                <p className="text-xs text-grey mt-1 max-w-xs mx-auto">Hãy kết bạn để có thể mời họ tham gia nhóm.</p>
               </div>
             ) : filteredFriends.length === 0 ? (
               <div className="py-16 text-center text-grey">
@@ -172,6 +168,7 @@ export default function GroupInvitePage() {
                 {filteredFriends.map((friend) => {
                   const isInvited = invitedUserIds[friend._id];
                   const isInviting = invitingState[friend._id];
+                  const isJoined = memberIds.includes(friend._id || friend.id);
 
                   return (
                     <div key={friend._id} className="py-3.5 flex items-center justify-between gap-4 text-left">
@@ -196,7 +193,12 @@ export default function GroupInvitePage() {
                       </div>
 
                       {/* Action Button */}
-                      {isInvited ? (
+                      {isJoined ? (
+                        <span className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-zinc-800 text-grey dark:text-zinc-500 font-extrabold text-xs flex items-center gap-1.5 border border-slate-200/20">
+                          <Check className="w-3.5 h-3.5 text-emerald-500" />
+                          <span>Đã tham gia</span>
+                        </span>
+                      ) : isInvited ? (
                         <span className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-zinc-800 text-grey dark:text-zinc-500 font-extrabold text-xs flex items-center gap-1.5 border border-slate-200/20">
                           <Check className="w-3.5 h-3.5 text-slate-400" />
                           <span>Đã mời</span>
