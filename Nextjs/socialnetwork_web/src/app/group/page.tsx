@@ -307,10 +307,10 @@ export default function GroupPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#18191a] flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#18191a] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-10 h-10 text-blue animate-spin" />
-          <p className="text-[#b0b3b8] font-bold text-sm">Đang tải trang nhóm...</p>
+          <p className="text-slate-500 dark:text-[#b0b3b8] font-bold text-sm">Đang tải trang nhóm...</p>
         </div>
       </div>
     );
