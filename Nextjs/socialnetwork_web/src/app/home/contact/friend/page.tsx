@@ -104,7 +104,7 @@ export default function ContactFriendPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-100 dark:bg-zinc-950 flex flex-col font-sans">
       <Navbar activeTab="contact" />
 
       {/* Main Content Area */}

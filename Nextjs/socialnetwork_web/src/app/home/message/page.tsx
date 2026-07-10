@@ -78,14 +78,12 @@ function AudioPlayerBubble({ url, isOwnMessage }: { url: string; isOwnMessage: b
       </button>
 
       <div className="flex flex-col gap-1 min-w-[120px]">
-        {/* Progress bar */}
         <div className={`h-1 rounded-full relative w-full ${isOwnMessage ? 'bg-white/30' : 'bg-black/10 dark:bg-zinc-800'}`}>
           <div 
             className={`h-full rounded-full ${isOwnMessage ? 'bg-white' : 'bg-blue'}`}
             style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
           />
         </div>
-        {/* Time info */}
         <span className={`text-[10px] font-semibold ${isOwnMessage ? 'text-white/80' : 'text-grey/70 dark:text-zinc-400'}`}>
           {formatDuration(currentTime)} / {formatDuration(duration || 0)}
         </span>
@@ -94,7 +92,6 @@ function AudioPlayerBubble({ url, isOwnMessage }: { url: string; isOwnMessage: b
   );
 }
 
-// Custom File Bubble matching Flutter's layout and icon mappings
 function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: string; isOwnMessage: boolean }) {
   const ext = filename.split('.').pop()?.toLowerCase() || '';
 
@@ -759,7 +756,7 @@ function MessageContent() {
   });
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 flex flex-col font-sans transition-colors duration-200">
+    <div className="h-screen overflow-hidden bg-slate-100 dark:bg-zinc-950 flex flex-col font-sans transition-colors duration-200">
       <Navbar activeTab="message" />
 
       {/* Main Messaging Container */}
@@ -1274,7 +1271,7 @@ function MessageContent() {
 export default function MessagePage() {
   return (
     <Suspense fallback={
-      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-zinc-950">
+      <div className="flex h-screen items-center justify-center bg-slate-100 dark:bg-zinc-950">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent"></div>
       </div>
     }>

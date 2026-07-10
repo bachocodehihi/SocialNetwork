@@ -599,14 +599,14 @@ export default function SettingPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-zinc-950">
+      <div className="flex h-screen items-center justify-center bg-slate-100 dark:bg-zinc-950">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 font-sans text-grey-hover transition-colors duration-300">
+    <div className="min-h-screen bg-slate-100 dark:bg-zinc-950 font-sans text-grey-hover transition-colors duration-300">
       <Navbar activeTab="setting" />
 
       {/* Main Container */}
