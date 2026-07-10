@@ -59,7 +59,7 @@ export default function ForgotPassword() {
 
   return (
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-zinc-950 dark:to-zinc-900 p-4 font-sans'>
-      <div className='w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-zinc-800 backdrop-blur-sm animate-in fade-in zoom-in-95 duration-200'>
+      <div className='w-full max-w-md bg-white dark:bg-zinc-900 rounded-[32px] shadow-sm p-8 border border-grey/20 dark:border-zinc-800 animate-in fade-in zoom-in-95 duration-200'>
 
         <div className='text-center mb-8'>
           <div className='w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mx-auto mb-4 border border-grey/10 dark:border-zinc-800 shadow-sm bg-white dark:bg-zinc-800 p-1'>

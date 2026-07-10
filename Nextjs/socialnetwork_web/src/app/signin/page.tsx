@@ -238,7 +238,7 @@ export default function SignIn() {
 
   return (
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-zinc-950 dark:to-zinc-900 p-4 font-sans'>
-      <div className='w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl overflow-hidden border border-white/20 dark:border-zinc-800 backdrop-blur-sm'>
+      <div className='w-full max-w-md bg-white dark:bg-zinc-900 rounded-[32px] shadow-sm overflow-hidden border border-grey/20 dark:border-zinc-800'>
 
         <div className='flex border-b border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-900/50'>
           <button

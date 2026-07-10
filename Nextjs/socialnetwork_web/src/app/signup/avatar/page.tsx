@@ -123,7 +123,7 @@ function SignUpAvatarContent() {
 
   return (
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-zinc-950 dark:to-zinc-900 p-4 font-sans relative overflow-hidden'>
-      <div className='w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-zinc-800 backdrop-blur-sm'>
+      <div className='w-full max-w-md bg-white dark:bg-zinc-900 rounded-[32px] shadow-sm p-8 border border-grey/20 dark:border-zinc-800'>
         
         <div className='text-center mb-6'>
           <h2 className='text-2xl font-extrabold text-grey-hover dark:text-zinc-100 tracking-tight select-none'>
