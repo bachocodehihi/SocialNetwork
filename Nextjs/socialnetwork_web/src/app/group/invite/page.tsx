@@ -9,6 +9,7 @@ import {
   ArrowLeft, Search, User, Loader2, UserPlus, Check, Users 
 } from 'lucide-react';
 import Navbar from '../../../components/Navbar';
+import Loading from '../../../components/Loading';
 import { motion } from 'framer-motion';
 
 export default function GroupInvitePage() {
@@ -96,14 +97,7 @@ export default function GroupInvitePage() {
   );
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-10 h-10 text-blue animate-spin" />
-          <p className="text-slate-500 dark:text-zinc-400 font-bold text-sm">Đang tải danh sách bạn bè...</p>
-        </div>
-      </div>
-    );
+    return <Loading message="Đang tải danh sách bạn bè..." />;
   }
 
   return (
