@@ -324,32 +324,32 @@ export default function GroupPage() {
     .slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-[#18191a] text-white flex flex-col font-sans selection:bg-blue selection:text-white">
+    <div className="min-h-screen bg-slate-100 dark:bg-[#18191a] text-slate-800 dark:text-white flex flex-col font-sans selection:bg-blue selection:text-white">
       <Navbar />
 
       {/* Main Wrapper */}
       <div className="flex-1 pt-14 pb-12 flex flex-col items-center">
         
         {/* Cover + Header Area */}
-        <div className="w-full bg-[#242526] border-b border-[#3e4042]/40 flex justify-center shadow-md">
+        <div className="w-full bg-white dark:bg-[#242526] border-b border-slate-200 dark:border-[#3e4042]/40 flex justify-center shadow-md">
           <div className="w-full max-w-6xl flex flex-col">
             
 
 
             {/* Header Content */}
-            <div className="px-4 py-6 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 border-b border-[#3e4042]/50">
+            <div className="px-4 py-6 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 border-b border-slate-200 dark:border-[#3e4042]/50">
               
               {/* Group Metadata */}
               <div className="flex flex-col items-center md:items-start text-center md:text-left min-w-0">
-                <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white mb-2">
+                <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2">
                   {group.name}
                 </h1>
                 
-                <p className="text-sm text-[#b0b3b8] font-semibold flex items-center gap-1">
-                  <Globe className="w-4 h-4 text-[#b0b3b8]" />
+                <p className="text-sm text-slate-500 dark:text-[#b0b3b8] font-semibold flex items-center gap-1">
+                  <Globe className="w-4 h-4 text-slate-500 dark:text-[#b0b3b8]" />
                   <span>Nhóm Công khai</span>
                   <span>·</span>
-                  <span className="text-white font-bold">{group.members?.length || 0} thành viên</span>
+                  <span className="text-slate-900 dark:text-white font-bold">{group.members?.length || 0} thành viên</span>
                 </p>
 
                 {/* Overlapping Members Avatars */}
@@ -358,7 +358,7 @@ export default function GroupPage() {
                     {group.members.slice(0, 8).map((m: any, idx: number) => (
                       <div 
                         key={m._id || idx} 
-                        className="w-8 h-8 rounded-full border-2 border-[#242526] bg-[#18191a] overflow-hidden flex-shrink-0 flex items-center justify-center text-xs font-bold"
+                        className="w-8 h-8 rounded-full border-2 border-white dark:border-[#242526] bg-slate-100 dark:bg-[#18191a] overflow-hidden flex-shrink-0 flex items-center justify-center text-xs font-bold"
                         title={m.username}
                       >
                         {m.avatar ? (
@@ -371,7 +371,7 @@ export default function GroupPage() {
                       </div>
                     ))}
                     {group.members.length > 8 && (
-                      <div className="w-8 h-8 rounded-full border-2 border-[#242526] bg-[#3a3b3c] flex items-center justify-center text-[10px] font-black text-[#b0b3b8] flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full border-2 border-white dark:border-[#242526] bg-slate-200 dark:bg-[#3a3b3c] flex items-center justify-center text-[10px] font-black text-slate-600 dark:text-[#b0b3b8] flex-shrink-0">
                         +{group.members.length - 8}
                       </div>
                     )}
@@ -394,7 +394,7 @@ export default function GroupPage() {
                 {/* Share Button (Grey) */}
                 <button
                   onClick={copyInviteLink}
-                  className="px-5 py-2.5 rounded-lg bg-[#3a3b3c] hover:bg-[#4e4f50] text-white font-extrabold text-sm flex items-center gap-2 transition cursor-pointer border-none"
+                  className="px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] dark:text-white font-extrabold text-sm flex items-center gap-2 transition cursor-pointer border-none"
                 >
                   <Share2 className="w-4 h-4" />
                   <span>Chia sẻ</span>
@@ -403,7 +403,7 @@ export default function GroupPage() {
                 {/* Chat Button (Grey) */}
                 <button
                   onClick={() => router.push(`/home/message?groupId=${group._id}`)}
-                  className="px-5 py-2.5 rounded-lg bg-[#3a3b3c] hover:bg-[#4e4f50] text-white font-extrabold text-sm flex items-center gap-2 transition cursor-pointer border-none"
+                  className="px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] dark:text-white font-extrabold text-sm flex items-center gap-2 transition cursor-pointer border-none"
                 >
                   <MessageSquare className="w-4 h-4" />
                   <span>Nhắn tin</span>
@@ -413,10 +413,10 @@ export default function GroupPage() {
                 <div className="relative">
                   <button
                     onClick={() => setIsJoinedDropdownOpen(!isJoinedDropdownOpen)}
-                    className="px-4 py-2.5 rounded-lg bg-[#3a3b3c] hover:bg-[#4e4f50] text-white font-extrabold text-sm flex items-center gap-1.5 transition cursor-pointer border-none"
+                    className="px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] dark:text-white font-extrabold text-sm flex items-center gap-1.5 transition cursor-pointer border-none"
                   >
                     <span>{isAdmin ? 'Quản trị viên' : 'Đã tham gia'}</span>
-                    <ChevronDown className="w-4 h-4 text-white" />
+                    <ChevronDown className="w-4 h-4 text-slate-800 dark:text-white" />
                   </button>
 
                   <AnimatePresence>
@@ -427,7 +427,7 @@ export default function GroupPage() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 10 }}
-                          className="absolute right-0 mt-2 w-48 bg-[#242526] border border-[#3e4042] rounded-xl overflow-hidden shadow-2xl z-20"
+                          className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 dark:bg-[#242526] dark:border-[#3e4042] rounded-xl overflow-hidden shadow-2xl z-20"
                         >
                           {isAdmin && (
                             <button
@@ -435,7 +435,7 @@ export default function GroupPage() {
                                 setIsJoinedDropdownOpen(false);
                                 setIsEditModalOpen(true);
                               }}
-                              className="w-full text-left px-4 py-3 hover:bg-[#3a3b3c] text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                              className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
                             >
                               <Settings className="w-4 h-4" />
                               <span>Cài đặt nhóm</span>
@@ -476,7 +476,7 @@ export default function GroupPage() {
             </div>
 
             {/* Navigation Tabs (Facebook Style) */}
-            <div className="px-4 flex items-center gap-1 overflow-x-auto text-[#b0b3b8]">
+            <div className="px-4 flex items-center gap-1 overflow-x-auto text-slate-500 dark:text-[#b0b3b8]">
               {[
                 { id: 'discussion', label: 'Thảo luận' },
                 { id: 'members', label: 'Mọi người' }
@@ -489,7 +489,7 @@ export default function GroupPage() {
                     className={`px-4 py-4 text-sm font-bold border-b-4 transition cursor-pointer bg-transparent border-none ${
                       isActive 
                         ? 'border-[#1877f2] text-[#1877f2]' 
-                        : 'border-transparent text-[#b0b3b8] hover:bg-[#3a3b3c]/50 rounded-t-lg'
+                        : 'border-transparent text-slate-500 dark:text-[#b0b3b8] hover:bg-slate-100 dark:hover:bg-[#3a3b3c]/50 rounded-t-lg'
                     }`}
                   >
                     {tab.label}
@@ -512,7 +512,7 @@ export default function GroupPage() {
                 <div className={`${recentPhotos.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12 max-w-3xl mx-auto'} w-full space-y-5`}>
                   
                   {/* Create Post Card (FB style) */}
-                  <div className="bg-[#242526] rounded-xl border border-[#3e4042]/30 shadow-md p-4">
+                  <div className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 shadow-md p-4">
                     <div className="flex gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 flex-shrink-0">
                         {currentUser?.avatar ? (
@@ -527,19 +527,19 @@ export default function GroupPage() {
                       {/* Fake Input trigger */}
                       <div 
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="flex-1 bg-[#3a3b3c] hover:bg-[#4e4f50] rounded-full px-5 py-2.5 text-[#b0b3b8] text-sm font-semibold cursor-pointer transition flex items-center justify-start"
+                        className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-500 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] dark:text-[#b0b3b8] rounded-full px-5 py-2.5 text-sm font-semibold cursor-pointer transition flex items-center justify-start"
                       >
                         Bạn viết gì đi...
                       </div>
                     </div>
 
-                    <div className="border-t border-[#3e4042]/50 mt-4 pt-3 flex gap-2">
+                    <div className="border-t border-slate-100 dark:border-[#3e4042]/50 mt-4 pt-3 flex gap-2">
                       <button
                         onClick={() => {
                           setIsCreateModalOpen(true);
                           setTimeout(() => fileInputRef.current?.click(), 100);
                         }}
-                        className="flex-1 py-2 hover:bg-[#3a3b3c] rounded-lg transition text-xs font-bold text-[#b0b3b8] flex items-center justify-center gap-2 border-0 bg-transparent cursor-pointer"
+                        className="flex-1 py-2 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] rounded-lg transition text-xs font-bold text-slate-600 dark:text-[#b0b3b8] flex items-center justify-center gap-2 border-0 bg-transparent cursor-pointer"
                       >
                         <ImageIcon className="w-5 h-5 text-[#45bd62]" />
                         <span>Ảnh/video</span>
@@ -547,7 +547,7 @@ export default function GroupPage() {
                       
                       <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="flex-1 py-2 hover:bg-[#3a3b3c] rounded-lg transition text-xs font-bold text-[#b0b3b8] flex items-center justify-center gap-2 border-0 bg-transparent cursor-pointer"
+                        className="flex-1 py-2 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] rounded-lg transition text-xs font-bold text-slate-600 dark:text-[#b0b3b8] flex items-center justify-center gap-2 border-0 bg-transparent cursor-pointer"
                       >
                         <Smile className="w-5 h-5 text-[#f7b928]" />
                         <span>Cảm xúc/hoạt động</span>
@@ -559,13 +559,13 @@ export default function GroupPage() {
                   {loadingPosts ? (
                     <div className="py-16 flex flex-col items-center gap-3">
                       <Loader2 className="w-8 h-8 text-blue animate-spin" />
-                      <p className="text-xs text-[#b0b3b8] font-bold">Đang tải bài viết...</p>
+                      <p className="text-xs text-slate-500 dark:text-[#b0b3b8] font-bold">Đang tải bài viết...</p>
                     </div>
                   ) : posts.length === 0 ? (
-                    <div className="bg-[#242526] rounded-xl border border-[#3e4042]/30 p-12 text-center text-[#b0b3b8]">
-                      <Users className="w-12 h-12 mx-auto mb-3 opacity-30 text-[#b0b3b8]" />
-                      <h3 className="font-bold text-white text-base">Chưa có bài viết nào</h3>
-                      <p className="text-xs text-[#b0b3b8] mt-1 max-w-sm mx-auto">Hãy là người đầu tiên chia sẻ thông tin hoặc hình ảnh trong nhóm này!</p>
+                    <div className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 p-12 text-center text-slate-500 dark:text-[#b0b3b8]">
+                      <Users className="w-12 h-12 mx-auto mb-3 opacity-30 text-slate-500 dark:text-[#b0b3b8]" />
+                      <h3 className="font-bold text-slate-850 dark:text-white text-base">Chưa có bài viết nào</h3>
+                      <p className="text-xs text-slate-500 dark:text-[#b0b3b8] mt-1 max-w-sm mx-auto">Hãy là người đầu tiên chia sẻ thông tin hoặc hình ảnh trong nhóm này!</p>
                     </div>
                   ) : (
                     <div className="space-y-5">
@@ -576,12 +576,12 @@ export default function GroupPage() {
                         return (
                           <div 
                             key={post._id} 
-                            className="bg-[#242526] rounded-xl border border-[#3e4042]/30 shadow-md p-4 space-y-4 text-left"
+                            className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 shadow-md p-4 space-y-4 text-left"
                           >
                             {/* Author Info */}
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex-shrink-0 border border-[#3e4042]">
+                                <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200 dark:border-[#3e4042]">
                                   {post.author?.avatar ? (
                                     <img src={post.author.avatar} alt="Author" className="w-full h-full object-cover" />
                                   ) : (
@@ -591,10 +591,10 @@ export default function GroupPage() {
                                   )}
                                 </div>
                                 <div>
-                                  <h4 className="font-extrabold text-sm text-white hover:underline cursor-pointer">
+                                  <h4 className="font-extrabold text-sm text-slate-850 dark:text-white hover:underline cursor-pointer">
                                     {post.author?.username || 'Ẩn danh'}
                                   </h4>
-                                  <span className="text-[11px] text-[#b0b3b8] font-medium">
+                                  <span className="text-[11px] text-slate-500 dark:text-[#b0b3b8] font-medium">
                                     {new Date(post.createdAt).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}
                                   </span>
                                 </div>
@@ -603,7 +603,7 @@ export default function GroupPage() {
 
                             {/* Content */}
                             {post.content && (
-                              <p className="text-sm text-[#e4e6eb] leading-relaxed font-semibold whitespace-pre-line">
+                              <p className="text-sm text-slate-800 dark:text-[#e4e6eb] leading-relaxed font-semibold whitespace-pre-line">
                                 {post.content}
                               </p>
                             )}
@@ -614,7 +614,7 @@ export default function GroupPage() {
                                 post.images.length === 1 ? 'grid-cols-1' : post.images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'
                               }`}>
                                 {post.images.map((img: string, idx: number) => (
-                                  <div key={idx} className="relative aspect-video bg-[#18191a] border border-[#3e4042]/20 overflow-hidden">
+                                  <div key={idx} className="relative aspect-video bg-slate-100 dark:bg-[#18191a] border border-slate-200 dark:border-[#3e4042]/20 overflow-hidden">
                                     <img src={img} alt="Post content" className="w-full h-full object-cover" />
                                   </div>
                                 ))}
@@ -622,23 +622,23 @@ export default function GroupPage() {
                             )}
 
                             {/* Stats */}
-                            <div className="flex items-center justify-between text-xs text-[#b0b3b8] font-bold border-y border-[#3e4042]/50 py-3">
+                            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-[#b0b3b8] font-bold border-y border-slate-100 dark:border-[#3e4042]/50 py-3">
                               <span className="flex items-center gap-1.5">
-                                <ThumbsUp className={`w-4 h-4 ${hasLiked ? 'text-[#1877f2] fill-[#1877f2]' : 'text-[#b0b3b8]'}`} />
+                                <ThumbsUp className={`w-4 h-4 ${hasLiked ? 'text-[#1877f2] fill-[#1877f2]' : 'text-slate-500 dark:text-[#b0b3b8]'}`} />
                                 {post.likes?.length || 0} lượt thích
                               </span>
                               <span className="cursor-pointer hover:underline flex items-center gap-1.5" onClick={() => setCommentSectionOpen(p => ({ ...p, [post._id]: !p[post._id] }))}>
-                                <MessageCircle className="w-4 h-4 text-[#b0b3b8]" />
+                                <MessageCircle className="w-4 h-4 text-slate-500 dark:text-[#b0b3b8]" />
                                 {post.comments?.length || 0} bình luận
                               </span>
                             </div>
 
                             {/* Actions */}
-                            <div className="flex gap-4 border-b border-[#3e4042]/50 pb-2">
+                            <div className="flex gap-4 border-b border-slate-100 dark:border-[#3e4042]/50 pb-2">
                               <button
                                 onClick={() => handleLikePost(post._id)}
-                                className={`flex-1 py-2 hover:bg-[#3a3b3c] rounded-lg transition text-xs font-bold flex items-center justify-center gap-2 border-0 cursor-pointer bg-transparent ${
-                                  hasLiked ? 'text-[#1877f2]' : 'text-[#b0b3b8]'
+                                className={`flex-1 py-2 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] rounded-lg transition text-xs font-bold flex items-center justify-center gap-2 border-0 cursor-pointer bg-transparent ${
+                                  hasLiked ? 'text-[#1877f2]' : 'text-slate-600 dark:text-[#b0b3b8]'
                                 }`}
                               >
                                 <ThumbsUp className="w-4 h-4" />
@@ -646,7 +646,7 @@ export default function GroupPage() {
                               </button>
                               <button
                                 onClick={() => setCommentSectionOpen(p => ({ ...p, [post._id]: !p[post._id] }))}
-                                className="flex-1 py-2 hover:bg-[#3a3b3c] rounded-lg transition text-xs font-bold text-[#b0b3b8] flex items-center justify-center gap-2 border-0 cursor-pointer bg-transparent"
+                                className="flex-1 py-2 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] rounded-lg transition text-xs font-bold text-slate-600 dark:text-[#b0b3b8] flex items-center justify-center gap-2 border-0 cursor-pointer bg-transparent"
                               >
                                 <MessageCircle className="w-4 h-4" />
                                 <span>Bình luận</span>
@@ -676,7 +676,7 @@ export default function GroupPage() {
                                       onKeyDown={(e) => {
                                         if (e.key === 'Enter') handleAddComment(post._id);
                                       }}
-                                      className="flex-1 bg-[#3a3b3c] border-0 rounded-xl px-4 py-2 text-xs font-medium text-white focus:outline-none placeholder-[#b0b3b8] focus:ring-1 focus:ring-blue"
+                                      className="flex-1 bg-slate-100 dark:bg-[#3a3b3c] border-0 rounded-xl px-4 py-2 text-xs font-medium text-slate-850 dark:text-white focus:outline-none placeholder-slate-400 dark:placeholder-[#b0b3b8] focus:ring-1 focus:ring-blue"
                                     />
                                     <button
                                       onClick={() => handleAddComment(post._id)}
@@ -701,13 +701,13 @@ export default function GroupPage() {
                                             </div>
                                           )}
                                         </div>
-                                        <div className="flex-1 bg-[#3a3b3c] rounded-2xl px-4 py-2.5 max-w-max">
+                                        <div className="flex-1 bg-slate-100 dark:bg-[#3a3b3c] rounded-2xl px-4 py-2.5 max-w-max">
                                           <div className="flex items-center gap-2">
-                                            <span className="font-extrabold text-xs text-white hover:underline cursor-pointer">
+                                            <span className="font-extrabold text-xs text-slate-850 dark:text-white hover:underline cursor-pointer">
                                               {c.author?.username || 'Ẩn danh'}
                                             </span>
                                           </div>
-                                          <p className="text-xs text-[#e4e6eb] mt-1 font-semibold leading-relaxed">
+                                          <p className="text-xs text-slate-750 dark:text-[#e4e6eb] mt-1 font-semibold leading-relaxed">
                                             {c.content}
                                           </p>
                                         </div>
@@ -729,13 +729,13 @@ export default function GroupPage() {
                   
                   {/* Recent Media Widget */}
                   {recentPhotos.length > 0 && (
-                    <div className="bg-[#242526] rounded-xl border border-[#3e4042]/30 shadow-md p-4 text-left space-y-4">
-                      <h3 className="font-extrabold text-sm text-white tracking-wide uppercase">
+                    <div className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 shadow-md p-4 text-left space-y-4">
+                      <h3 className="font-extrabold text-sm text-slate-850 dark:text-white tracking-wide uppercase">
                         File phương tiện mới đây
                       </h3>
                       <div className="grid grid-cols-2 gap-2">
                         {recentPhotos.map((photo, index) => (
-                          <div key={index} className="aspect-square bg-[#18191a] rounded-lg overflow-hidden border border-[#3e4042]/40 relative group">
+                          <div key={index} className="aspect-square bg-slate-100 dark:bg-[#18191a] rounded-lg overflow-hidden border border-slate-200 dark:border-[#3e4042]/40 relative group">
                             <img src={photo} alt="Recent media" className="w-full h-full object-cover group-hover:scale-105 transition duration-200" />
                           </div>
                         ))}
@@ -747,28 +747,27 @@ export default function GroupPage() {
               </>
             )}
 
-
             {/* Members tab view */}
             {activeTab === 'members' && (
               <div className="lg:col-span-12">
-                <div className="bg-[#242526] rounded-xl border border-[#3e4042]/30 shadow-md p-6 text-left max-w-2xl mx-auto space-y-6">
+                <div className="bg-white dark:bg-[#242526] rounded-xl border border-slate-200/60 dark:border-[#3e4042]/30 shadow-md p-6 text-left max-w-2xl mx-auto space-y-6">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-black text-white">Thành viên ({group.members?.length || 0})</h2>
+                    <h2 className="text-xl font-black text-slate-850 dark:text-white">Thành viên ({group.members?.length || 0})</h2>
                   </div>
 
                   {/* Search Member input */}
                   <div className="relative">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[#b0b3b8]" />
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 dark:text-[#b0b3b8]" />
                     <input
                       type="text"
                       placeholder="Tìm thành viên"
                       value={memberSearchQuery}
                       onChange={(e) => setMemberSearchQuery(e.target.value)}
-                      className="w-full bg-[#18191a] border border-[#3e4042] rounded-full pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue placeholder-[#b0b3b8] font-semibold"
+                      className="w-full bg-slate-50 dark:bg-[#18191a] border border-slate-200 dark:border-[#3e4042] rounded-full pl-10 pr-4 py-2.5 text-sm text-slate-850 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue placeholder-slate-400 dark:placeholder-[#b0b3b8] font-semibold"
                     />
                   </div>
 
-                  <div className="divide-y divide-[#3e4042]/40">
+                  <div className="divide-y divide-slate-100 dark:divide-[#3e4042]/40">
                     {group.members
                       ?.filter((m: any) => m.username?.toLowerCase().includes(memberSearchQuery.toLowerCase()))
                       .map((m: any) => {
@@ -779,7 +778,7 @@ export default function GroupPage() {
                         <div key={m._id} className="py-4 flex items-center justify-between gap-4">
                           <div className="flex items-center gap-3">
                             <div className="relative">
-                              <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 border border-[#3e4042]/60">
+                              <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 border border-slate-200 dark:border-[#3e4042]/60">
                                 {m.avatar ? (
                                   <img src={m.avatar} alt={m.username} className="w-full h-full object-cover" />
                                 ) : (
@@ -789,21 +788,21 @@ export default function GroupPage() {
                                 )}
                               </div>
                               {m.isOnline && (
-                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green border-2 border-[#242526] rounded-full"></span>
+                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green border-2 border-white dark:border-[#242526] rounded-full"></span>
                               )}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-extrabold text-sm text-white hover:underline cursor-pointer">
+                                <span className="font-extrabold text-sm text-slate-850 dark:text-white hover:underline cursor-pointer">
                                   {m.username}
                                 </span>
                                 {isSelf && (
-                                  <span className="text-[9px] bg-[#3a3b3c] text-[#b0b3b8] font-bold px-1.5 py-0.5 rounded">
+                                  <span className="text-[9px] bg-slate-100 dark:bg-[#3a3b3c] text-slate-600 dark:text-[#b0b3b8] font-bold px-1.5 py-0.5 rounded">
                                     BẠN
                                   </span>
                                 )}
                               </div>
-                              <span className="text-[11px] text-[#b0b3b8] font-semibold">
+                              <span className="text-[11px] text-slate-500 dark:text-[#b0b3b8] font-semibold">
                                 {isMemberAdmin ? 'Trưởng nhóm' : 'Thành viên'}
                               </span>
                             </div>
@@ -848,15 +847,15 @@ export default function GroupPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-[#242526] rounded-xl overflow-hidden shadow-2xl relative z-10 border border-[#3e4042]/60 flex flex-col max-h-[90vh]"
+              className="w-full max-w-lg bg-white dark:bg-[#242526] rounded-xl overflow-hidden shadow-2xl relative z-10 border border-slate-200 dark:border-[#3e4042]/60 flex flex-col max-h-[90vh]"
             >
               {/* Modal Header */}
-              <div className="p-4 border-b border-[#3e4042]/60 flex items-center justify-between text-center">
+              <div className="p-4 border-b border-slate-100 dark:border-[#3e4042]/60 flex items-center justify-between text-center">
                 <div className="w-8"></div>
-                <h3 className="text-base font-extrabold text-white">Tạo bài viết</h3>
+                <h3 className="text-base font-extrabold text-slate-850 dark:text-white">Tạo bài viết</h3>
                 <button
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="p-1.5 hover:bg-[#3a3b3c] rounded-full text-[#b0b3b8] transition border-none cursor-pointer bg-transparent"
+                  className="p-1.5 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] rounded-full text-slate-500 dark:text-[#b0b3b8] transition border-none cursor-pointer bg-transparent"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -876,8 +875,8 @@ export default function GroupPage() {
                     )}
                   </div>
                   <div>
-                    <h4 className="font-extrabold text-sm text-white">{currentUser?.username}</h4>
-                    <span className="inline-block mt-0.5 px-2 py-0.5 bg-[#3a3b3c] text-[#b0b3b8] text-[10px] font-bold rounded">
+                    <h4 className="font-extrabold text-sm text-slate-850 dark:text-white">{currentUser?.username}</h4>
+                    <span className="inline-block mt-0.5 px-2 py-0.5 bg-slate-100 dark:bg-[#3a3b3c] text-slate-600 dark:text-[#b0b3b8] text-[10px] font-bold rounded">
                       Đăng trong: {group?.name}
                     </span>
                   </div>
@@ -889,14 +888,14 @@ export default function GroupPage() {
                   value={newPostContent}
                   onChange={(e) => setNewPostContent(e.target.value)}
                   placeholder={`Bạn đang nghĩ gì trong nhóm ${group?.name}?`}
-                  className="w-full border-0 focus:ring-0 resize-none font-semibold text-sm text-white bg-transparent placeholder-slate-400 focus:outline-none"
+                  className="w-full border-0 focus:ring-0 resize-none font-semibold text-sm text-slate-850 dark:text-white bg-transparent placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none"
                 />
 
                 {/* Image Previews */}
                 {newPostPreviews.length > 0 && (
                   <div className="grid grid-cols-2 gap-2">
                     {newPostPreviews.map((preview, idx) => (
-                      <div key={idx} className="relative aspect-video rounded-xl overflow-hidden bg-[#18191a] border border-[#3e4042]/50">
+                      <div key={idx} className="relative aspect-video rounded-xl overflow-hidden bg-slate-50 dark:bg-[#18191a] border border-slate-200 dark:border-[#3e4042]/50">
                         <img src={preview} alt="preview" className="w-full h-full object-cover" />
                         <button
                           onClick={() => handleRemovePreview(idx)}
@@ -911,14 +910,14 @@ export default function GroupPage() {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-4 border-t border-[#3e4042]/60 space-y-3">
+              <div className="p-4 border-t border-slate-100 dark:border-[#3e4042]/60 space-y-3">
                 {/* Actions widget */}
-                <div className="border border-[#3e4042] rounded-lg p-3 flex items-center justify-between bg-[#18191a]">
-                  <span className="text-xs font-extrabold text-white">Thêm vào bài viết của bạn</span>
+                <div className="border border-slate-200 dark:border-[#3e4042] rounded-lg p-3 flex items-center justify-between bg-slate-50 dark:bg-[#18191a]">
+                  <span className="text-xs font-extrabold text-slate-850 dark:text-white">Thêm vào bài viết của bạn</span>
                   <div className="flex gap-2">
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="p-2 hover:bg-[#3a3b3c] rounded-full transition bg-transparent border-0 cursor-pointer text-[#45bd62]"
+                      className="p-2 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] rounded-full transition bg-transparent border-0 cursor-pointer text-[#45bd62]"
                       title="Ảnh/Video"
                     >
                       <ImageIcon className="w-5 h-5" />
@@ -965,16 +964,16 @@ export default function GroupPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-[#242526] rounded-xl overflow-hidden shadow-2xl relative z-10 border border-[#3e4042] p-5 space-y-5 text-left"
+              className="w-full max-w-md bg-white dark:bg-[#242526] rounded-xl overflow-hidden shadow-2xl relative z-10 border border-slate-200 dark:border-[#3e4042] p-5 space-y-5 text-left"
             >
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-black text-white flex items-center gap-2">
+                <h3 className="text-base font-black text-slate-850 dark:text-white flex items-center gap-2">
                   <Settings className="w-5 h-5 text-blue" />
                   Cài đặt nhóm
                 </h3>
                 <button
                   onClick={() => setIsEditModalOpen(false)}
-                  className="p-1.5 hover:bg-[#3a3b3c] rounded-full text-[#b0b3b8] transition border-none cursor-pointer bg-transparent"
+                  className="p-1.5 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] rounded-full text-slate-500 dark:text-[#b0b3b8] transition border-none cursor-pointer bg-transparent"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -982,7 +981,7 @@ export default function GroupPage() {
 
               <form onSubmit={handleUpdateGroup} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-extrabold text-[#b0b3b8] uppercase tracking-wider block">
+                  <label className="text-xs font-extrabold text-slate-500 dark:text-[#b0b3b8] uppercase tracking-wider block">
                     Tên nhóm
                   </label>
                   <input
@@ -991,12 +990,12 @@ export default function GroupPage() {
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     placeholder="Nhập tên nhóm mới"
-                    className="w-full bg-[#18191a] border border-[#3e4042] rounded-lg px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:ring-1 focus:ring-blue"
+                    className="w-full bg-slate-50 dark:bg-[#18191a] border border-slate-200 dark:border-[#3e4042] rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-850 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-extrabold text-[#b0b3b8] uppercase tracking-wider block">
+                  <label className="text-xs font-extrabold text-slate-500 dark:text-[#b0b3b8] uppercase tracking-wider block">
                     Mô tả nhóm
                   </label>
                   <textarea
@@ -1004,12 +1003,12 @@ export default function GroupPage() {
                     value={editDescription}
                     onChange={(e) => setEditDescription(e.target.value)}
                     placeholder="Mô tả nhóm hoạt động"
-                    className="w-full bg-[#18191a] border border-[#3e4042] rounded-lg px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:ring-1 focus:ring-blue resize-none"
+                    className="w-full bg-slate-50 dark:bg-[#18191a] border border-slate-200 dark:border-[#3e4042] rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-850 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue resize-none"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-extrabold text-[#b0b3b8] uppercase tracking-wider block">
+                  <label className="text-xs font-extrabold text-slate-500 dark:text-[#b0b3b8] uppercase tracking-wider block">
                     URL Ảnh đại diện
                   </label>
                   <input
@@ -1017,11 +1016,11 @@ export default function GroupPage() {
                     value={editAvatar}
                     onChange={(e) => setEditAvatar(e.target.value)}
                     placeholder="https://example.com/avatar.jpg"
-                    className="w-full bg-[#18191a] border border-[#3e4042] rounded-lg px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:ring-1 focus:ring-blue"
+                    className="w-full bg-slate-50 dark:bg-[#18191a] border border-slate-200 dark:border-[#3e4042] rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-850 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue"
                   />
                 </div>
 
-                <div className="flex gap-2 pt-4 border-t border-[#3e4042]/50">
+                <div className="flex gap-2 pt-4 border-t border-slate-100 dark:border-[#3e4042]/50">
                   <button
                     type="button"
                     onClick={handleDeleteGroup}
@@ -1035,7 +1034,7 @@ export default function GroupPage() {
                     <button
                       type="button"
                       onClick={() => setIsEditModalOpen(false)}
-                      className="px-4 py-2.5 bg-[#3a3b3c] hover:bg-[#4e4f50] text-white font-bold text-xs rounded-lg transition border-none cursor-pointer"
+                      className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] dark:text-white font-bold text-xs rounded-lg transition border-none cursor-pointer"
                     >
                       Hủy
                     </button>
