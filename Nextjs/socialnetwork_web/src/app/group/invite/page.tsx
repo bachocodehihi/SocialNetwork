@@ -101,7 +101,7 @@ export default function GroupInvitePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-[#18191a] flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex flex-col font-sans">
       <Navbar />
 
       <main className="flex-1 pt-24 pb-12 flex items-center justify-center px-4">

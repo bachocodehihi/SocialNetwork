@@ -759,7 +759,7 @@ function MessageContent() {
   });
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-100 dark:bg-[#18191a] flex flex-col font-sans transition-colors duration-200">
+    <div className="h-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 flex flex-col font-sans transition-colors duration-200">
       <Navbar activeTab="message" />
 
       {/* Main Messaging Container */}
@@ -1274,7 +1274,7 @@ function MessageContent() {
 export default function MessagePage() {
   return (
     <Suspense fallback={
-      <div className="flex h-screen items-center justify-center bg-slate-100 dark:bg-[#18191a]">
+      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-zinc-950">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent"></div>
       </div>
     }>

@@ -128,7 +128,7 @@ export default function NotificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-[#18191a] flex flex-col font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex flex-col font-sans transition-colors duration-200">
       <Navbar activeTab="notification" />
 
       {/* Main Container */}

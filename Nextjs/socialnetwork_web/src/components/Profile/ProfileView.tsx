@@ -528,7 +528,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
 
   if (checking) {
     return (
-      <div className='flex h-screen items-center justify-center bg-slate-100 dark:bg-[#18191a] transition-colors duration-200'>
+      <div className='flex h-screen items-center justify-center bg-slate-50 dark:bg-zinc-950 transition-colors duration-200'>
         <div className='animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent'></div>
       </div>
     );
@@ -537,7 +537,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
   const currentUserId = currentUser?._id || currentUser?.id;
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-[#18191a] pb-12 transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 pb-12 transition-colors duration-200">
       <Navbar />
       <div className="pt-16">
         {/* Header Container without cover photo */}

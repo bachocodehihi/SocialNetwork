@@ -318,7 +318,7 @@ export default function GroupPage() {
     .slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-[#18191a] text-slate-800 dark:text-white flex flex-col font-sans selection:bg-blue selection:text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-white flex flex-col font-sans selection:bg-blue selection:text-white">
       <Navbar />
 
       {/* Main Wrapper */}

@@ -441,7 +441,7 @@ export default function HomePage() {
 
   if (checking) {
     return (
-      <div className='flex h-screen items-center justify-center bg-slate-100 dark:bg-[#18191a] transition-colors duration-200'>
+      <div className='flex h-screen items-center justify-center bg-slate-50 dark:bg-zinc-950 transition-colors duration-200'>
         <div className='animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent'></div>
       </div>
     );
@@ -450,7 +450,7 @@ export default function HomePage() {
   const currentUserId = user?._id || user?.id;
 
   return (
-    <div className='min-h-screen bg-slate-100 dark:bg-[#18191a] font-sans pb-12 transition-colors duration-200'>
+    <div className='min-h-screen bg-slate-50 dark:bg-zinc-950 font-sans pb-12 transition-colors duration-200'>
       <Navbar activeTab='home' onRefreshFeed={fetchFeed} />
 
       <main className='pt-20 pb-8 px-4'>
