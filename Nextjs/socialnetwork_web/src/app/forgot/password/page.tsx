@@ -3,7 +3,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { authService } from '../../../services/auth.service';
 import { useAlert } from '../../../components/Alert/alertcontext';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import Alert from '../../../components/Alert/alert';
 
 function ForgotPasswordContent() {
@@ -17,6 +17,8 @@ function ForgotPasswordContent() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     const isVerified = sessionStorage.getItem('forgot_otp_verified');
@@ -97,38 +99,56 @@ function ForgotPasswordContent() {
             <label htmlFor='newPassword' className='block text-sm font-bold text-black dark:text-zinc-200 tracking-wider mb-2 ml-1'>
               Mật khẩu mới
             </label>
-            <input
-              id='newPassword'
-              type='password'
-              value={newPassword}
-              onChange={(e) => {
-                setNewPassword(e.target.value);
-                if (formError) setFormError(null);
-              }}
-              className={`w-full px-4 py-3 bg-grey/5 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 outline-none transition-all text-black dark:text-zinc-100 ${
-                formError && !newPassword ? 'border-red focus:ring-red/20' : 'border-grey/20 dark:border-zinc-700/60 focus:ring-blue/20 focus:border-blue'
-              }`}
-              placeholder='Nhập mật khẩu mới (ít nhất 6 ký tự)'
-            />
+            <div className='relative'>
+              <input
+                id='newPassword'
+                type={showNewPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  if (formError) setFormError(null);
+                }}
+                className={`w-full pl-4 pr-12 py-3 bg-grey/5 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 outline-none transition-all text-black dark:text-zinc-100 ${
+                  formError && !newPassword ? 'border-red focus:ring-red/20' : 'border-grey/20 dark:border-zinc-700/60 focus:ring-blue/20 focus:border-blue'
+                }`}
+                placeholder='Nhập mật khẩu mới (ít nhất 6 ký tự)'
+              />
+              <button
+                type='button'
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className='absolute right-4 top-1/2 -translate-y-1/2 text-grey dark:text-zinc-400 hover:text-grey-hover dark:hover:text-zinc-200 transition-colors'
+              >
+                {showNewPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
+              </button>
+            </div>
           </div>
 
           <div>
             <label htmlFor='confirmPassword' className='block text-sm font-bold text-black dark:text-zinc-200 tracking-wider mb-2 ml-1'>
               Nhập lại mật khẩu mới
             </label>
-            <input
-              id='confirmPassword'
-              type='password'
-              value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-                if (formError) setFormError(null);
-              }}
-              className={`w-full px-4 py-3 bg-grey/5 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 outline-none transition-all text-black dark:text-zinc-100 ${
-                formError && newPassword !== confirmPassword ? 'border-red focus:ring-red/20' : 'border-grey/20 dark:border-zinc-700/60 focus:ring-blue/20 focus:border-blue'
-              }`}
-              placeholder='Nhập lại mật khẩu mới'
-            />
+            <div className='relative'>
+              <input
+                id='confirmPassword'
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  if (formError) setFormError(null);
+                }}
+                className={`w-full px-4 pr-12 py-3 bg-grey/5 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 outline-none transition-all text-black dark:text-zinc-100 ${
+                  formError && newPassword !== confirmPassword ? 'border-red focus:ring-red/20' : 'border-grey/20 dark:border-zinc-700/60 focus:ring-blue/20 focus:border-blue'
+                }`}
+                placeholder='Nhập lại mật khẩu mới'
+              />
+              <button
+                type='button'
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className='absolute right-4 top-1/2 -translate-y-1/2 text-grey dark:text-zinc-400 hover:text-grey-hover dark:hover:text-zinc-200 transition-colors'
+              >
+                {showConfirmPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
+              </button>
+            </div>
           </div>
 
           {formError && (

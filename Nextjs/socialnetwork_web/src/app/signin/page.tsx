@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '../../services/auth.service';
 import { useAlert } from '../../components/Alert/alertcontext';
-import { Loader2, RefreshCw, Mail, QrCode } from 'lucide-react';
+import { Loader2, RefreshCw, Mail, QrCode, Eye, EyeOff } from 'lucide-react';
 import Alert from '../../components/Alert/alert';
 
 export default function SignIn() {
@@ -13,6 +13,7 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   
   const [qrSessionId, setQrSessionId] = useState('');
   const [qrCodeImage, setQrCodeImage] = useState('');
@@ -295,19 +296,28 @@ export default function SignIn() {
                 <label htmlFor='password' className='block text-sm font-bold text-black dark:text-zinc-200 tracking-wider mb-2 ml-1'>
                   Password
                 </label>
-                <input
-                  id='password'
-                  type='password'
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (formError && email) setFormError(null);
-                  }}
-                  className={`w-full px-4 py-3 bg-grey/5 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 outline-none transition-all text-black dark:text-zinc-100 ${
-                    formError && email && !password ? 'border-red focus:ring-red/20' : 'border-grey/20 dark:border-zinc-700/60 focus:ring-blue/20 focus:border-blue'
-                  }`}
-                  placeholder='Password'
-                />
+                <div className='relative'>
+                  <input
+                    id='password'
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (formError && email) setFormError(null);
+                    }}
+                    className={`w-full pl-4 pr-12 py-3 bg-grey/5 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 outline-none transition-all text-black dark:text-zinc-100 ${
+                      formError && email && !password ? 'border-red focus:ring-red/20' : 'border-grey/20 dark:border-zinc-700/60 focus:ring-blue/20 focus:border-blue'
+                    }`}
+                    placeholder='Password'
+                  />
+                  <button
+                    type='button'
+                    onClick={() => setShowPassword(!showPassword)}
+                    className='absolute right-4 top-1/2 -translate-y-1/2 text-grey dark:text-zinc-400 hover:text-grey-hover dark:hover:text-zinc-200 transition-colors'
+                  >
+                    {showPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
+                  </button>
+                </div>
               </div>
               
               <div className='flex justify-end text-sm px-1'>
