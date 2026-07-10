@@ -92,8 +92,7 @@ export default function GroupInvitePage() {
 
   // Filter friends list by search query
   const filteredFriends = friends.filter((f: any) => 
-    f.username?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    f.email?.toLowerCase().includes(searchQuery.toLowerCase())
+    f.username?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -142,10 +141,10 @@ export default function GroupInvitePage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-grey" />
             <input
               type="text"
-              placeholder="Tìm kiếm bạn bè theo tên hoặc email..."
+              placeholder="Tìm kiếm bạn bè..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/40 rounded-full text-sm font-semibold text-black placeholder-slate-400 dark:bg-zinc-850 dark:border-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition"
+              className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/40 rounded-full text-sm font-semibold text-black placeholder-[#b0b3b8] dark:bg-zinc-850 dark:border-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition"
             />
           </div>
 
