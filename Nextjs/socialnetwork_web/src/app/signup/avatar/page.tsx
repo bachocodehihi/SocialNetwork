@@ -122,14 +122,14 @@ function SignUpAvatarContent() {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 p-4 font-sans relative overflow-hidden'>
-      <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-zinc-950 dark:to-zinc-900 p-4 font-sans relative overflow-hidden'>
+      <div className='w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-zinc-800 backdrop-blur-sm'>
         
         <div className='text-center mb-6'>
-          <h2 className='text-2xl font-extrabold text-grey-hover tracking-tight select-none'>
+          <h2 className='text-2xl font-extrabold text-grey-hover dark:text-zinc-100 tracking-tight select-none'>
             Choose your avatar
           </h2>
-          <p className='text-grey mt-2 text-sm px-4 select-none'>
+          <p className='text-grey dark:text-zinc-400 mt-2 text-sm px-4 select-none'>
             Confirm your profile avatar or upload a new photo from your device
           </p>
         </div>
@@ -138,7 +138,7 @@ function SignUpAvatarContent() {
 
           {/* Main Avatar Preview */}
           <div className='flex flex-col items-center justify-center'>
-            <div className='relative w-36 h-36 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-blue/10 ring-4 ring-blue/20 bg-grey/5 flex items-center justify-center'>
+            <div className='relative w-36 h-36 rounded-full overflow-hidden border-4 border-white dark:border-zinc-800 shadow-xl shadow-blue/10 ring-4 ring-blue/20 bg-grey/5 dark:bg-zinc-800 flex items-center justify-center'>
               <img
                 src={selectedAvatarUrl}
                 alt='Profile Avatar'
@@ -152,10 +152,10 @@ function SignUpAvatarContent() {
 
           {/* Custom Avatar Upload */}
           <div>
-            <span className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1 select-none'>
+            <span className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1 select-none'>
               Custom photo
             </span>
-            <label className='flex items-center justify-center gap-2.5 w-full px-4 py-3 border-2 border-dashed border-grey/20 hover:border-blue rounded-xl bg-grey/5 hover:bg-blue-hover/10 cursor-pointer transition-all duration-200 group text-grey hover:text-blue-hover'>
+            <label className='flex items-center justify-center gap-2.5 w-full px-4 py-3 border-2 border-dashed border-grey/20 dark:border-zinc-700/60 hover:border-blue rounded-xl bg-grey/5 dark:bg-zinc-800/30 hover:bg-blue-hover/10 cursor-pointer transition-all duration-200 group text-grey dark:text-zinc-400 hover:text-blue-hover'>
               <Upload className='w-5 h-5 group-hover:scale-110 transition-transform' />
               <span className='text-sm font-bold tracking-wide'>
                 {customAvatarBase64 ? 'Change custom photo' : 'Upload photo'}
@@ -183,7 +183,7 @@ function SignUpAvatarContent() {
             <button
               type='button'
               onClick={() => router.back()}
-              className='flex-1 border border-grey/20 hover:bg-grey/5 active:scale-[0.98] text-grey hover:text-grey-hover font-bold py-3.5 rounded-xl transition-all duration-200'
+              className='flex-1 border border-grey/20 dark:border-zinc-750 hover:bg-grey/5 dark:hover:bg-zinc-800 active:scale-[0.98] text-grey dark:text-zinc-400 hover:text-grey-hover dark:hover:text-zinc-200 font-bold py-3.5 rounded-xl transition-all duration-200'
             >
               Back
             </button>
@@ -204,7 +204,7 @@ function SignUpAvatarContent() {
       {/* Success Dialog Modal - Replicating Flutter AppAlertDialog */}
       {isSuccessDialogOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in'>
-          <div className='bg-white rounded-3xl p-8 max-w-xs w-full mx-4 shadow-2xl flex flex-col items-center text-center animate-scale-up border border-gray-50 select-none'>
+          <div className='bg-white dark:bg-zinc-900 rounded-3xl p-8 max-w-xs w-full mx-4 shadow-2xl flex flex-col items-center text-center animate-scale-up border border-gray-50 dark:border-zinc-800 select-none'>
             
             {/* Green Check Icon with Glowing Ring */}
             <div className='w-16 h-16 bg-green text-green rounded-full flex items-center justify-center mb-5 ring-8 ring-green/50 shadow-sm'>
@@ -212,10 +212,10 @@ function SignUpAvatarContent() {
             </div>
 
             {/* Message */}
-            <h3 className='text-lg font-bold text-grey-hover mb-1.5'>
+            <h3 className='text-lg font-bold text-grey-hover dark:text-zinc-100 mb-1.5'>
               Đăng ký thành công!
             </h3>
-            <p className='text-grey text-sm font-medium leading-relaxed px-1'>
+            <p className='text-grey dark:text-zinc-400 text-sm font-medium leading-relaxed px-1'>
               Tài khoản của bạn đã được khởi tạo thành công. Đang chuyển hướng...
             </p>
 
@@ -248,7 +248,7 @@ function SignUpAvatarContent() {
 export default function SignUpAvatar() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-zinc-950 dark:to-zinc-900">
         <Loader2 className="animate-spin h-10 w-10 text-blue" />
       </div>
     }>

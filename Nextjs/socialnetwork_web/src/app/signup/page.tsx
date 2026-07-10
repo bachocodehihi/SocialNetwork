@@ -166,27 +166,27 @@ export default function SignUp() {
   }, []);
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 p-4 font-sans'>
-      <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-zinc-950 dark:to-zinc-900 p-4 font-sans'>
+      <div className='w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-zinc-800 backdrop-blur-sm'>
 
         <div className='text-center mb-8'>
-          <div className='w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mx-auto mb-4 border border-grey/10 shadow-sm'>
+          <div className='w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mx-auto mb-4 border border-grey/10 dark:border-zinc-800 shadow-sm bg-white dark:bg-zinc-800 p-1'>
             <img
               src='/assets/logo/logo.png'
               alt='SocialNetwork Logo'
-              className='w-full h-full object-cover'
+              className='w-full h-full object-cover rounded-xl'
             />
           </div>
-          <h2 className='text-xl font-bold text-black tracking-tight'>
+          <h2 className='text-xl font-bold text-black dark:text-zinc-100 tracking-tight'>
             Create account
           </h2>
-          <p className='text-grey mt-2'>Join our community today</p>
+          <p className='text-grey dark:text-zinc-400 mt-2'>Join our community today</p>
         </div>
 
         <form onSubmit={handleSubmit} className='space-y-6' noValidate>
 
           <div>
-            <label htmlFor='email' className='block text-sm font-bold text-black tracking-wider mb-2 ml-1'>
+            <label htmlFor='email' className='block text-sm font-bold text-black dark:text-zinc-200 tracking-wider mb-2 ml-1'>
               Email
             </label>
             <input
@@ -197,7 +197,7 @@ export default function SignUp() {
                 setEmail(e.target.value);
                 if (formError) setFormError(null);
               }}
-              className={`w-full px-4 py-3 bg-grey/5 border rounded-xl focus:ring-2 outline-none transition-all ${formError && !email ? 'border-red focus:ring-red/20' : 'border-grey/20 focus:ring-blue/20 focus:border-blue'
+              className={`w-full px-4 py-3 bg-grey/5 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 outline-none transition-all text-black dark:text-zinc-100 ${formError && !email ? 'border-red focus:ring-red/20' : 'border-grey/20 dark:border-zinc-700/60 focus:ring-blue/20 focus:border-blue'
                 }`}
               placeholder='Email@example.com'
             />
@@ -222,17 +222,17 @@ export default function SignUp() {
 
           <div className='relative py-4'>
             <div className='absolute inset-0 flex items-center'>
-              <div className='w-full border-t border-grey'></div>
+              <div className='w-full border-t border-grey/20 dark:border-zinc-800'></div>
             </div>
             <div className='relative flex justify-center text-sm tracking-widest'>
-              <span className='px-4 bg-white text-grey font-medium'>Or continue with</span>
+              <span className='px-4 bg-white dark:bg-zinc-900 text-grey dark:text-zinc-400 font-medium'>Or continue with</span>
             </div>
           </div>
 
           <div className='relative w-full h-[50px]'>
             <button
               type='button'
-              className='absolute inset-0 w-full h-full bg-white border border-grey/20 hover:bg-black/5 hover:border-black/20 active:scale-[0.98] text-black font-bold py-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center gap-3 pointer-events-none'
+              className='absolute inset-0 w-full h-full bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-700 hover:bg-black/5 dark:hover:bg-white/5 hover:border-black/20 dark:hover:border-zinc-600 active:scale-[0.98] text-black dark:text-zinc-200 font-bold py-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center gap-3 pointer-events-none'
             >
               <svg className='w-5 h-5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
                 <path d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z' fill='#4285F4' />
@@ -250,7 +250,7 @@ export default function SignUp() {
 
         </form>
 
-        <div className='mt-8 text-center text-sm text-grey'>
+        <div className='mt-8 text-center text-sm text-grey dark:text-zinc-400'>
           Already have an account?{' '}
           <a href='/signin' className='text-blue hover:text-blue-hover font-bold transition-colors'>
             Sign in

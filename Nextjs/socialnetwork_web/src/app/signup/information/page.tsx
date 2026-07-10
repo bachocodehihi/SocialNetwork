@@ -128,11 +128,11 @@ function SignUpInformationContent() {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 p-4 font-sans relative overflow-hidden'>
-      <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm'>
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-zinc-950 dark:to-zinc-900 p-4 font-sans relative overflow-hidden'>
+      <div className='w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-zinc-800 backdrop-blur-sm'>
         
         <div className='text-center mb-8'>
-          <h2 className='text-2xl font-extrabold text-grey-hover tracking-tight'>
+          <h2 className='text-2xl font-extrabold text-grey-hover dark:text-zinc-100 tracking-tight'>
             Personal information
           </h2>
         </div>
@@ -141,7 +141,7 @@ function SignUpInformationContent() {
 
           {/* Username */}
           <div>
-            <label htmlFor='username' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
+            <label htmlFor='username' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Username
             </label>
             <input
@@ -152,7 +152,7 @@ function SignUpInformationContent() {
                 setUsername(e.target.value);
                 if (formError) setFormError(null);
               }}
-              className='w-full px-4 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-grey-hover'
+              className='w-full px-4 py-3 bg-grey/5 dark:bg-zinc-800/50 border border-grey/20 dark:border-zinc-700/60 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-black dark:text-zinc-100'
               placeholder='Username'
               required
             />
@@ -160,7 +160,7 @@ function SignUpInformationContent() {
 
           {/* Gender Trigger Input */}
           <div>
-            <label htmlFor='gender' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
+            <label htmlFor='gender' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Gender
             </label>
             <div className='relative'>
@@ -170,7 +170,7 @@ function SignUpInformationContent() {
                 readOnly
                 value={gender}
                 onClick={() => setIsGenderOpen(true)}
-                className='w-full px-4 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-grey-hover select-none'
+                className='w-full px-4 py-3 bg-grey/5 dark:bg-zinc-800/50 border border-grey/20 dark:border-zinc-700/60 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-black dark:text-zinc-100 select-none'
                 placeholder='Gender'
                 required
               />
@@ -184,7 +184,7 @@ function SignUpInformationContent() {
 
           {/* Birthday Trigger Input */}
           <div>
-            <label htmlFor='birthday' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
+            <label htmlFor='birthday' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Birthday
             </label>
             <div className='relative'>
@@ -194,7 +194,7 @@ function SignUpInformationContent() {
                 readOnly
                 value={formatDateDisplay(birthday)}
                 onClick={() => setIsBirthdayOpen(true)}
-                className='w-full px-4 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-grey-hover select-none'
+                className='w-full px-4 py-3 bg-grey/5 dark:bg-zinc-800/50 border border-grey/20 dark:border-zinc-700/60 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all cursor-pointer text-black dark:text-zinc-100 select-none'
                 placeholder='Birthday'
                 required
               />
@@ -208,7 +208,7 @@ function SignUpInformationContent() {
 
           {/* Password */}
           <div>
-            <label htmlFor='password' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
+            <label htmlFor='password' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Password
             </label>
             <div className='relative'>
@@ -220,7 +220,7 @@ function SignUpInformationContent() {
                   setPassword(e.target.value);
                   if (formError) setFormError(null);
                 }}
-                className='w-full pl-4 pr-12 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-grey-hover'
+                className='w-full pl-4 pr-12 py-3 bg-grey/5 dark:bg-zinc-800/50 border border-grey/20 dark:border-zinc-700/60 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-black dark:text-zinc-100'
                 placeholder='Tối thiểu 6 ký tự'
                 required
               />
@@ -236,7 +236,7 @@ function SignUpInformationContent() {
 
           {/* Confirm Password */}
           <div>
-            <label htmlFor='confirmPassword' className='block text-sm font-bold text-grey tracking-wider mb-2 ml-1'>
+            <label htmlFor='confirmPassword' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Confirm password
             </label>
             <div className='relative'>
@@ -248,7 +248,7 @@ function SignUpInformationContent() {
                   setConfirmPassword(e.target.value);
                   if (formError) setFormError(null);
                 }}
-                className='w-full pl-4 pr-12 py-3 bg-grey/5 border border-grey/20 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-grey-hover'
+                className='w-full pl-4 pr-12 py-3 bg-grey/5 dark:bg-zinc-800/50 border border-grey/20 dark:border-zinc-700/60 rounded-xl focus:ring-2 focus:ring-blue/20 focus:border-blue outline-none transition-all text-black dark:text-zinc-100'
                 placeholder='Tối thiểu 6 ký tự'
                 required
               />
@@ -279,7 +279,7 @@ function SignUpInformationContent() {
                 sessionStorage.removeItem('otp_verified');
                 router.replace('/signup');
               }}
-              className='flex-1 border border-grey/20 hover:bg-grey/5 active:scale-[0.98] text-grey hover:text-grey-hover font-bold py-3.5 rounded-xl transition-all duration-200'
+              className='flex-1 border border-grey/20 dark:border-zinc-750 hover:bg-grey/5 dark:hover:bg-zinc-800 active:scale-[0.98] text-grey dark:text-zinc-400 hover:text-grey-hover dark:hover:text-zinc-200 font-bold py-3.5 rounded-xl transition-all duration-200'
             >
               Back
             </button>
@@ -354,7 +354,7 @@ function SignUpInformationContent() {
 export default function SignUpInformation() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-zinc-950 dark:to-zinc-900">
         <Loader2 className="animate-spin h-10 w-10 text-blue" />
       </div>
     }>

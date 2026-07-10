@@ -166,9 +166,9 @@ export default function BirthdayDialog({
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[1px] p-4 animate-fade-in'>
-      <div className='bg-white w-full max-w-sm rounded-[24px] shadow-2xl p-6 border border-grey/10 flex flex-col items-center animate-scale-up'>
+      <div className='bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[24px] shadow-2xl p-6 border border-grey/10 dark:border-zinc-800 flex flex-col items-center animate-scale-up'>
         
-        <h3 className='text-lg font-bold text-grey-hover text-center mb-4'>
+        <h3 className='text-lg font-bold text-grey-hover dark:text-zinc-100 text-center mb-4'>
           Select birthday
         </h3>
 
@@ -180,7 +180,7 @@ export default function BirthdayDialog({
         </div>
 
         {/* Custom 3D Column Selectors with Center Active Highlight */}
-        <div className='w-full h-40 bg-grey/5 rounded-2xl relative flex overflow-hidden border border-grey/10 mb-6 select-none'>
+        <div className='w-full h-40 bg-grey/5 dark:bg-zinc-800/40 rounded-2xl relative flex overflow-hidden border border-grey/10 dark:border-zinc-800 mb-6 select-none'>
           
           {/* Highlight bar overlay for center selection */}
           <div className='absolute inset-x-2 top-[60px] h-10 bg-blue/10 border-t border-b border-blue/20 rounded-xl pointer-events-none' />
@@ -199,7 +199,7 @@ export default function BirthdayDialog({
                 type='button'
                 onClick={() => selectDayClick(d, idx)}
                 className={`h-10 w-full flex items-center justify-center snap-center shrink-0 text-sm transition-all focus:outline-none ${
-                  localDay === d ? 'text-blue font-bold text-[16px]' : 'text-grey/60 font-medium'
+                  localDay === d ? 'text-blue font-bold text-[16px]' : 'text-grey/60 dark:text-zinc-400 font-medium'
                 }`}
               >
                 {String(d).padStart(2, '0')}
@@ -212,7 +212,7 @@ export default function BirthdayDialog({
           <div
             ref={monthScrollRef}
             onScroll={(e) => handleScroll(e, 'month')}
-            className='flex-1 overflow-y-auto scrollbar-none snap-y snap-mandatory py-[60px] flex flex-col items-center border-l border-r border-grey/10 cursor-ns-resize scroll-smooth overscroll-contain'
+            className='flex-1 overflow-y-auto scrollbar-none snap-y snap-mandatory py-[60px] flex flex-col items-center border-l border-r border-grey/10 dark:border-zinc-800/60 cursor-ns-resize scroll-smooth overscroll-contain'
             style={{ WebkitOverflowScrolling: 'touch' }}
           >
             <div className='h-[60px] shrink-0 pointer-events-none' />
@@ -224,7 +224,7 @@ export default function BirthdayDialog({
                   type='button'
                   onClick={() => selectMonthClick(mNum, idx)}
                   className={`h-10 w-full flex items-center justify-center snap-center shrink-0 text-sm transition-all focus:outline-none ${
-                    localMonth === mNum ? 'text-blue font-bold text-[16px]' : 'text-grey/60 font-medium'
+                    localMonth === mNum ? 'text-blue font-bold text-[16px]' : 'text-grey/60 dark:text-zinc-400 font-medium'
                   }`}
                 >
                   {m}
@@ -248,7 +248,7 @@ export default function BirthdayDialog({
                 type='button'
                 onClick={() => selectYearClick(y, idx)}
                 className={`h-10 w-full flex items-center justify-center snap-center shrink-0 text-sm transition-all focus:outline-none ${
-                  localYear === y ? 'text-blue font-bold text-[16px]' : 'text-grey/60 font-medium'
+                  localYear === y ? 'text-blue font-bold text-[16px]' : 'text-grey/60 dark:text-zinc-400 font-medium'
                 }`}
               >
                 {y}
@@ -264,7 +264,7 @@ export default function BirthdayDialog({
           <button
             type='button'
             onClick={onClose}
-            className='flex-1 border border-grey/20 hover:bg-grey/5 active:scale-95 text-grey-hover font-medium py-3 rounded-full text-sm transition-all'
+            className='flex-1 border border-grey/20 dark:border-zinc-700 hover:bg-grey/5 dark:hover:bg-zinc-800 active:scale-95 text-grey-hover dark:text-zinc-300 font-medium py-3 rounded-full text-sm transition-all'
           >
             Cancel
           </button>
