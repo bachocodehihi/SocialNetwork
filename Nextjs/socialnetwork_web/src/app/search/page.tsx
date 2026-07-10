@@ -120,7 +120,7 @@ function SearchResultsContent() {
   };
 
   return (
-    <div className="min-h-screen bg-grey/5 dark:bg-zinc-950 flex flex-col">
+    <div className="min-h-screen bg-slate-100 dark:bg-[#18191a] flex flex-col">
       <Navbar />
 
       <main className="pt-24 pb-12 px-4 max-w-6xl mx-auto w-full flex-grow">
@@ -279,7 +279,7 @@ function SearchResultsContent() {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-grey/5 dark:bg-zinc-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-100 dark:bg-[#18191a] flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-blue" />
       </div>
     }>
