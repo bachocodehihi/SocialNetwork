@@ -318,7 +318,7 @@ function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boo
             />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="text-xs font-semibold truncate block text-grey-hover dark:text-zinc-250">
+            <span className="text-xs font-semibold truncate block text-grey-hover dark:text-zinc-300">
               {domain}
             </span>
             <span className={`text-[9px] block ${isOwnMessage ? 'text-white/70' : 'text-grey/60 dark:text-zinc-450'} truncate`}>
@@ -338,7 +338,7 @@ function LinkPreviewCard({ url, isOwnMessage }: { url: string; isOwnMessage: boo
       className={`mt-2 flex flex-col rounded-xl overflow-hidden text-inherit no-underline border transition-all hover:bg-grey/10 dark:hover:bg-zinc-850/50 cursor-pointer max-w-xs md:max-w-md ${
         isOwnMessage 
           ? 'bg-white/10 border-white/10 hover:border-white/20' 
-          : 'bg-white dark:bg-zinc-900 border-grey/15 dark:border-zinc-800 hover:border-grey/30 dark:hover:border-zinc-700 text-black dark:text-zinc-250'
+          : 'bg-white dark:bg-zinc-900 border-grey/15 dark:border-zinc-800 hover:border-grey/30 dark:hover:border-zinc-700 text-black dark:text-zinc-300'
       }`}
     >
       {preview.image && (

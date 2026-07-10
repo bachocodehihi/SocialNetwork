@@ -507,7 +507,7 @@ export default function HomePage() {
               <div className="w-16 h-16 mx-auto mb-4 bg-blue/10 rounded-full flex items-center justify-center text-blue">
                 <RefreshCw className="w-8 h-8" />
               </div>
-              <h3 className='text-lg font-bold text-grey-hover dark:text-zinc-150 mb-1'>Chưa có bài viết nào</h3>
+              <h3 className='text-lg font-bold text-grey-hover dark:text-zinc-200 mb-1'>Chưa có bài viết nào</h3>
               <p className='text-sm text-grey dark:text-zinc-400 max-w-sm mx-auto mb-6'>Bảng tin hiện đang trống. Hãy đăng chia sẻ đầu tiên của bạn để kết nối với mọi người!</p>
               <button 
                 onClick={() => setIsCreateModalOpen(true)}
@@ -894,13 +894,13 @@ export default function HomePage() {
                   <img src={user?.avatar || '/assets/avatar/avatar.jpg'} alt="Avatar" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-grey-hover dark:text-zinc-150 text-sm sm:text-base">{user?.username}</h4>
+                  <h4 className="font-bold text-grey-hover dark:text-zinc-200 text-sm sm:text-base">{user?.username}</h4>
 
                   <div className="relative mt-1">
                     <select
                       value={newPostPrivacy}
                       onChange={(e) => setNewPostPrivacy(e.target.value)}
-                      className="text-xs bg-grey/10 dark:bg-zinc-800 border-0 hover:bg-grey/15 dark:hover:bg-zinc-700/80 rounded-lg px-2 py-1 font-semibold text-grey-hover dark:text-zinc-350 outline-none cursor-pointer flex items-center gap-1"
+                      className="text-xs bg-grey/10 dark:bg-zinc-800 border-0 hover:bg-grey/15 dark:hover:bg-zinc-700/80 rounded-lg px-2 py-1 font-semibold text-grey-hover dark:text-zinc-400 outline-none cursor-pointer flex items-center gap-1"
                     >
                       <option value="public" className="dark:bg-zinc-900">🌐 Công khai</option>
                       <option value="friends" className="dark:bg-zinc-900">👥 Bạn bè</option>
@@ -1074,7 +1074,7 @@ export default function HomePage() {
                         setActiveLightboxPost(null);
                         router.push(`/user/${author._id || author.id}`);
                       }}
-                      className="font-bold text-grey-hover dark:text-zinc-150 hover:underline cursor-pointer text-sm sm:text-base"
+                      className="font-bold text-grey-hover dark:text-zinc-200 hover:underline cursor-pointer text-sm sm:text-base"
                     >
                       {authorName}
                     </h3>
@@ -1095,7 +1095,7 @@ export default function HomePage() {
               <div className="flex-1 overflow-y-auto p-4 space-y-4 text-left scrollbar-none">
                 
                 {content && (
-                  <div className="text-slate-800 dark:text-zinc-250 text-sm leading-relaxed whitespace-pre-wrap text-justify pb-3 border-b border-grey/10 dark:border-zinc-800">
+                  <div className="text-slate-800 dark:text-zinc-200 text-sm leading-relaxed whitespace-pre-wrap text-justify pb-3 border-b border-grey/10 dark:border-zinc-800">
                     {displayContent}
                     {isLong && (
                       <button
