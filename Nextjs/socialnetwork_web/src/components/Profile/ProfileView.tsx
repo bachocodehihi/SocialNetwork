@@ -36,7 +36,8 @@ import {
   UserMinus,
   UserCheck,
   MessageSquare,
-  Sparkles
+  Sparkles,
+  Heart
 } from 'lucide-react';
 
 interface ProfileViewProps {
@@ -878,13 +879,85 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </div>
               )}
 
+              {/* Relationship Status */}
+              {profileUser?.relationship && profileUser.relationship.status !== 'none' && (
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-pink-500/10 dark:bg-pink-500/20 flex items-center justify-center text-pink-500 flex-shrink-0">
+                    <Heart className="w-4.5 h-4.5 fill-pink-500" />
+                  </div>
+                  <div>
+                    <span className="block text-xs text-grey dark:text-zinc-405">Mối quan hệ</span>
+                    <span className="text-sm font-semibold text-grey-hover dark:text-zinc-200">
+                      {profileUser.relationship.status === 'single' && 'Độc thân'}
+                      {profileUser.relationship.status === 'dating' && (
+                        profileUser.relationship.partner ? (
+                          <>
+                            Đang hẹn hò với{' '}
+                            <span 
+                              onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
+                              className="text-blue hover:underline cursor-pointer font-bold"
+                            >
+                              {profileUser.relationship.partner.username || 'đối tác'}
+                            </span>
+                          </>
+                        ) : 'Đang hẹn hò'
+                      )}
+                      {profileUser.relationship.status === 'engaged' && (
+                        profileUser.relationship.partner ? (
+                          <>
+                            Đã đính hôn với{' '}
+                            <span 
+                              onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
+                              className="text-blue hover:underline cursor-pointer font-bold"
+                            >
+                              {profileUser.relationship.partner.username || 'đối tác'}
+                            </span>
+                          </>
+                        ) : 'Đã đính hôn'
+                      )}
+                      {profileUser.relationship.status === 'married' && (
+                        profileUser.relationship.partner ? (
+                          <>
+                            Đã kết hôn với{' '}
+                            <span 
+                              onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
+                              className="text-blue hover:underline cursor-pointer font-bold"
+                            >
+                              {profileUser.relationship.partner.username || 'đối tác'}
+                            </span>
+                          </>
+                        ) : 'Đã kết hôn'
+                      )}
+                      {profileUser.relationship.status === 'complicated' && (
+                        profileUser.relationship.partner ? (
+                          <>
+                            Có mối quan hệ phức tạp với{' '}
+                            <span 
+                              onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
+                              className="text-blue hover:underline cursor-pointer font-bold"
+                            >
+                              {profileUser.relationship.partner.username || 'đối tác'}
+                            </span>
+                          </>
+                        ) : 'Mối quan hệ phức tạp'
+                      )}
+                      {isSelf && profileUser.relationship.isPending && (
+                        <span className="text-xs text-grey italic font-normal block mt-0.5">
+                          (Đang chờ phản hồi)
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {isPrivateAccount ? (
                 <div className="flex flex-col items-center justify-center py-6 text-center text-xs text-grey dark:text-zinc-500 gap-2">
                   <Lock className="w-5 h-5 text-grey/60" />
                   <span>Thông tin cá nhân ẩn do tài khoản riêng tư</span>
                 </div>
               ) : (
-                !profileUser?.birthday && !profileUser?.gender && !profileUser?.address && !profileUser?.phone && !profileUser?.job && (
+                !profileUser?.birthday && !profileUser?.gender && !profileUser?.address && !profileUser?.phone && !profileUser?.job && !profileUser?.nationality && (!profileUser?.relationship || profileUser.relationship.status === 'none') && (
                   <div className="text-center py-4 text-xs text-grey dark:text-zinc-500">
                     Chưa có thêm thông tin cá nhân.
                   </div>
