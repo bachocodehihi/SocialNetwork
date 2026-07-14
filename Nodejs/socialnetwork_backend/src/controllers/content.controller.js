@@ -335,6 +335,17 @@ const getUserPosts = async (req, res) => {
 
         const friendIds = currentUser.friends || [];
         const isFriend = friendIds.some(id => id.toString() === userId);
+        const isSelf = userId === req.userId.toString();
+
+        const targetUser = await Account.findById(userId);
+        if (!targetUser) {
+            return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+        }
+
+        const targetPrivacy = targetUser.privacy || {};
+        if (targetPrivacy.isPrivate && !isSelf && !isFriend) {
+            return res.status(200).json([]);
+        }
 
         const query = {
             author: userId,

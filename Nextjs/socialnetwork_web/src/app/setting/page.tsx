@@ -70,7 +70,8 @@ export default function SettingPage() {
     birthday: true,
     gender: true,
     job: true,
-    nationality: true
+    nationality: true,
+    isPrivate: false
   });
 
   // Activity states
@@ -171,7 +172,8 @@ export default function SettingPage() {
               birthday: data.birthday ?? true,
               gender: data.gender ?? true,
               job: data.job ?? true,
-              nationality: data.nationality ?? true
+              nationality: data.nationality ?? true,
+              isPrivate: data.isPrivate ?? false
             });
           }
         } catch (err) {
@@ -1432,16 +1434,18 @@ export default function SettingPage() {
                             <div>
                               <h4 className="font-bold text-sm sm:text-base text-black dark:text-white">Tài khoản riêng tư</h4>
                               <p className="text-xs text-grey font-medium mt-0.5 max-w-[280px] sm:max-w-md">
-                                Chỉ cho phép những người bạn phê duyệt xem ảnh và video của bạn. (Tính năng đang phát triển)
+                                Chỉ cho phép những người bạn phê duyệt xem ảnh, video và bài viết của bạn.
                               </p>
                             </div>
                           </div>
 
                           <button 
-                            disabled
-                            className="flex-shrink-0 w-12 h-7 flex items-center rounded-full p-0.5 cursor-not-allowed bg-grey/30 border-0"
+                            onClick={() => handleTogglePrivacy('isPrivate', privacySettings.isPrivate || false)}
+                            className={`flex-shrink-0 w-12 h-7 flex items-center rounded-full p-0.5 cursor-pointer transition-colors duration-300 focus:outline-none border-0 ${privacySettings.isPrivate ? 'bg-blue' : 'bg-grey/30'}`}
                           >
-                            <div className="bg-white w-6 h-6 rounded-full shadow-md" />
+                            <div 
+                              className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${privacySettings.isPrivate ? 'translate-x-5' : 'translate-x-0'}`}
+                            />
                           </button>
                         </div>
                       </div>

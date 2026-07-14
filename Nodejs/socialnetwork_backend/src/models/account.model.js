@@ -35,6 +35,7 @@ const accountSchema = new mongoose.Schema({
         gender: { type: Boolean, default: true },
         job: { type: Boolean, default: true },
         nationality: { type: Boolean, default: true },
+        isPrivate: { type: Boolean, default: false },
     },
 }, { timestamps: true });
 

@@ -118,13 +118,26 @@ const getUserById = async (req, res) => {
 
         if (req.userId.toString() !== id.toString()) {
             const privacy = user.privacy || {};
-            if (privacy.email === false) delete user.email;
-            if (privacy.phone === false) delete user.phone;
-            if (privacy.address === false) delete user.address;
-            if (privacy.birthday === false) delete user.birthday;
-            if (privacy.gender === false) delete user.gender;
-            if (privacy.job === false) delete user.job;
-            if (privacy.nationality === false) delete user.nationality;
+            const friendIds = user.friends || [];
+            const isFriend = friendIds.some(fid => fid.toString() === req.userId.toString());
+
+            if (privacy.isPrivate && !isFriend) {
+                delete user.email;
+                delete user.phone;
+                delete user.address;
+                delete user.birthday;
+                delete user.gender;
+                delete user.job;
+                delete user.nationality;
+            } else {
+                if (privacy.email === false) delete user.email;
+                if (privacy.phone === false) delete user.phone;
+                if (privacy.address === false) delete user.address;
+                if (privacy.birthday === false) delete user.birthday;
+                if (privacy.gender === false) delete user.gender;
+                if (privacy.job === false) delete user.job;
+                if (privacy.nationality === false) delete user.nationality;
+            }
         }
 
         return res.status(200).json({
@@ -432,6 +445,7 @@ const getPrivacy = async (req, res) => {
                 gender: true,
                 job: true,
                 nationality: true,
+                isPrivate: false,
             }
         });
     } catch (error) {
@@ -442,7 +456,7 @@ const getPrivacy = async (req, res) => {
 
 const updatePrivacy = async (req, res) => {
     try {
-        const { email, phone, address, birthday, gender, job, nationality } = req.body;
+        const { email, phone, address, birthday, gender, job, nationality, isPrivate } = req.body;
         
         const user = await Account.findById(req.userId);
         if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
@@ -458,6 +472,7 @@ const updatePrivacy = async (req, res) => {
         if (gender !== undefined) user.privacy.gender = gender;
         if (job !== undefined) user.privacy.job = job;
         if (nationality !== undefined) user.privacy.nationality = nationality;
+        if (isPrivate !== undefined) user.privacy.isPrivate = isPrivate;
 
         await user.save();
 

@@ -73,6 +73,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
   } | null>(null);
 
   const isSelf = !targetId || targetId === currentUser?._id || targetId === currentUser?.id;
+  const isPrivateAccount = !isSelf && profileUser?.privacy?.isPrivate && friendshipStatus !== 'friend';
 
   // Lightbox states
   const [activeLightboxPost, setActiveLightboxPost] = useState<any | null>(null);
@@ -877,11 +878,17 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </div>
               )}
 
-              {/* Empty state details */}
-              {!profileUser?.birthday && !profileUser?.gender && !profileUser?.address && !profileUser?.phone && !profileUser?.job && (
-                <div className="text-center py-4 text-xs text-grey dark:text-zinc-500">
-                  Chưa có thêm thông tin cá nhân.
+              {isPrivateAccount ? (
+                <div className="flex flex-col items-center justify-center py-6 text-center text-xs text-grey dark:text-zinc-500 gap-2">
+                  <Lock className="w-5 h-5 text-grey/60" />
+                  <span>Thông tin cá nhân ẩn do tài khoản riêng tư</span>
                 </div>
+              ) : (
+                !profileUser?.birthday && !profileUser?.gender && !profileUser?.address && !profileUser?.phone && !profileUser?.job && (
+                  <div className="text-center py-4 text-xs text-grey dark:text-zinc-500">
+                    Chưa có thêm thông tin cá nhân.
+                  </div>
+                )
               )}
             </div>
           </div>
@@ -903,7 +910,17 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
             </button>
           </div>
 
-          {isLoadingFeed ? (
+          {isPrivateAccount ? (
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-12 text-center shadow-sm transition-colors duration-200">
+              <div className="w-16 h-16 mx-auto mb-4 bg-red/10 dark:bg-red-500/20 rounded-full flex items-center justify-center text-red">
+                <Lock className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-bold text-grey-hover dark:text-zinc-200 mb-1">Tài khoản này là riêng tư</h3>
+              <p className="text-sm text-grey dark:text-zinc-400 max-w-sm mx-auto">
+                Hãy kết bạn để xem ảnh, video và bài viết của {profileUser?.username || 'người dùng này'}.
+              </p>
+            </div>
+          ) : isLoadingFeed ? (
             <div className="space-y-4">
               {[1, 2].map((s) => (
                 <div key={s} className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-5 animate-pulse">
