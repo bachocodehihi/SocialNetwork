@@ -1125,15 +1125,9 @@ export default function SettingPage() {
                             <button
                               onClick={() => handleSaveField('address', address)}
                               disabled={isSaving['address']}
-                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
+                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
-                              {isSaving['address'] ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <Save className="w-4 h-4" /> Lưu
-                                </>
-                              )}
+                              {isSaving['address'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu'}
                             </button>
                           </div>
                         </div>
@@ -1154,15 +1148,9 @@ export default function SettingPage() {
                             <button
                               onClick={() => handleSaveField('phone', phone)}
                               disabled={isSaving['phone']}
-                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
+                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
-                              {isSaving['phone'] ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <Save className="w-4 h-4" /> Lưu
-                                </>
-                              )}
+                              {isSaving['phone'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu'}
                             </button>
                           </div>
                         </div>
@@ -1183,15 +1171,9 @@ export default function SettingPage() {
                             <button
                               onClick={() => handleSaveField('job', job)}
                               disabled={isSaving['job']}
-                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
+                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
-                              {isSaving['job'] ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <Save className="w-4 h-4" /> Lưu
-                                </>
-                              )}
+                              {isSaving['job'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu'}
                             </button>
                           </div>
                         </div>
@@ -1212,15 +1194,9 @@ export default function SettingPage() {
                             <button
                               onClick={() => handleSaveField('nationality', nationality)}
                               disabled={isSaving['nationality']}
-                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
+                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
-                              {isSaving['nationality'] ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <Save className="w-4 h-4" /> Lưu
-                                </>
-                              )}
+                              {isSaving['nationality'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu'}
                             </button>
                           </div>
                         </div>
@@ -1249,7 +1225,7 @@ export default function SettingPage() {
                             <button
                               type="button"
                               onClick={() => router.push('/setting/relationship')}
-                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
+                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
                               Thiết lập
                             </button>
