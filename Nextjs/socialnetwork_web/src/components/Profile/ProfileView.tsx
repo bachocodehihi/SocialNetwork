@@ -1228,13 +1228,17 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                             </div>
                           )}
                           <div className="flex gap-2 items-center">
-                            <textarea
-                              id={`comment-input-${post._id}`}
-                              rows={1}
-                              placeholder={replyingTo ? "Viết phản hồi..." : "Viết bình luận..."}
-                              value={commentInputs[post._id] || ''}
-                              onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
-                              onKeyDown={(e) => {
+                            <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center">
+                              <img src={currentUser?.avatar || '/assets/avatar/avatar.jpg'} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex-1 flex gap-2 relative">
+                              <textarea
+                                id={`comment-input-${post._id}`}
+                                rows={1}
+                                placeholder={replyingTo ? `Phản hồi @${replyingTo.username}...` : "Viết bình luận công khai..."}
+                                value={commentInputs[post._id] || ''}
+                                onChange={(e) => setCommentInputs(prev => ({ ...prev, [post._id]: e.target.value }))}
+                                onKeyDown={(e) => {
                                   if (e.key === 'Enter' && !e.shiftKey) {
                                     e.preventDefault();
                                     if (replyingTo) {
@@ -1244,20 +1248,21 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                     }
                                   }
                                 }}
-                              className="flex-1 px-4 py-2 bg-grey/10 dark:bg-zinc-800 rounded-xl border-0 focus:bg-grey/15 dark:focus:bg-zinc-750 transition outline-none text-sm text-zinc-900 dark:text-zinc-200 placeholder-gray-500 dark:placeholder-zinc-500 font-medium resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
-                            />
-                            <button 
-                              onClick={() => {
-                                if (replyingTo) {
-                                  handleAddReply(post._id, replyingTo.commentId);
-                                } else {
-                                  handleAddComment(post._id);
-                                }
-                              }}
-                              className="p-2.5 bg-blue hover:bg-blue-hover text-white rounded-xl transition cursor-pointer border-0 flex items-center justify-center active:scale-95"
-                            >
-                              <ThumbsUp className="w-4 h-4 fill-white" />
-                            </button>
+                                className="flex-1 px-4 py-2 bg-grey/10 dark:bg-zinc-800 rounded-2xl border-0 focus:ring-2 focus:ring-blue focus:bg-white dark:focus:bg-zinc-900 transition outline-none text-sm text-zinc-900 dark:text-zinc-200 font-medium placeholder-gray-500 dark:placeholder-zinc-500 resize-none h-[38px] max-h-[120px] overflow-y-auto leading-normal py-2"
+                              />
+                              <button 
+                                onClick={() => {
+                                  if (replyingTo) {
+                                    handleAddReply(post._id, replyingTo.commentId);
+                                  } else {
+                                    handleAddComment(post._id);
+                                  }
+                                }}
+                                className="w-9 h-9 rounded-full bg-blue hover:bg-blue-hover text-white flex items-center justify-center shadow-md shadow-blue/20 transition cursor-pointer border-0 flex-shrink-0"
+                              >
+                                <Send className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
