@@ -381,7 +381,7 @@ export default function SettingPage() {
         partner: relStatus === 'none' || relStatus === 'single' ? null : relPartner
       };
       
-      const res = await authService.updateProfile({
+      const res = await accountService.updateProfile({
         relationship: JSON.stringify(payload)
       });
       

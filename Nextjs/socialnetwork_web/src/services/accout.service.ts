@@ -6,6 +6,11 @@ export const accountService = {
     return res.data;
   },
 
+  updateProfile: async (data: any) => {
+    const res = await api.put('/account/profile', data);
+    return res.data;
+  },
+
   addAddress: async (address: string) => {
     const res = await api.post('/account/add-address', { address });
     return res.data;
