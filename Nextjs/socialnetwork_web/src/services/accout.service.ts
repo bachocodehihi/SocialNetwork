@@ -55,5 +55,20 @@ export const accountService = {
     const res = await api.get(`/account/user/${id}`);
     return res.data;
   },
+
+  acceptRelationship: async (requesterId: string) => {
+    const res = await api.post('/account/relationship/accept', { requesterId });
+    return res.data;
+  },
+
+  rejectRelationship: async (requesterId: string) => {
+    const res = await api.post('/account/relationship/reject', { requesterId });
+    return res.data;
+  },
+
+  cancelRelationshipRequest: async () => {
+    const res = await api.post('/account/relationship/cancel');
+    return res.data;
+  },
 };
 

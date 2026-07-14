@@ -21,6 +21,13 @@ const getProfile = async (req, res) => {
             postCount: postCount
         };
 
+        const relationshipRequests = await Account.find({
+            "relationship.pendingPartner": req.userId,
+            "relationship.isPending": true
+        }).select('username avatar relationship.status').lean();
+
+        user.relationshipRequests = relationshipRequests;
+
         res.status(200).json({ success: true, code: 'GET_PROFILE_SUCCESS', ...user });
     } catch (error) {
         res.status(500).json({ success: false, code: 'SERVER_ERROR' });
