@@ -40,6 +40,7 @@ const accountSchema = new mongoose.Schema({
         job: { type: Boolean, default: true },
         nationality: { type: Boolean, default: true },
         isPrivate: { type: Boolean, default: false },
+        relationship: { type: Boolean, default: true },
     },
 }, { timestamps: true });
 

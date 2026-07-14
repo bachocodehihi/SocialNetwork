@@ -43,14 +43,134 @@ const updateProfile = async (req, res) => {
         if (relationship) {
             try {
                 const rel = typeof relationship === 'string' ? JSON.parse(relationship) : relationship;
-                updateData.relationship = {
-                    status: rel.status || 'none',
-                    partner: (rel.partner && rel.partner !== 'none' && rel.partner !== '') ? rel.partner : null
-                };
+                const status = rel.status || 'none';
+                const partnerId = (rel.partner && rel.partner !== 'none' && rel.partner !== '') ? rel.partner : null;
+
+                const oldUser = await Account.findById(req.userId);
+                // 1. If changing to single/none or removing partner link
+                if (status === 'none' || status === 'single' || !partnerId) {
+                    if (oldUser && oldUser.relationship && oldUser.relationship.partner) {
+                        const formerPartnerId = oldUser.relationship.partner;
+                        await Account.findByIdAndUpdate(formerPartnerId, {
+                            $set: {
+                                "relationship.status": "single",
+                                "relationship.partner": null,
+                                "relationship.pendingPartner": null,
+                                "relationship.isPending": false
+                            }
+                        });
+                    }
+                    updateData.relationship = {
+                        status: status,
+                        partner: null,
+                        pendingPartner: null,
+                        isPending: false
+                    };
+                } else {
+                    // 2. Setting relationship with a partner
+                    const target = await Account.findById(partnerId);
+                    if (!target) {
+                        return res.status(404).json({ success: false, code: 'PARTNER_NOT_FOUND', message: 'Không tìm thấy tài khoản đối tác.' });
+                    }
+
+                    if (target.relationship && target.relationship.partner && target.relationship.partner.toString() !== req.userId.toString()) {
+                        const isHidden = target.privacy?.relationship === false || target.privacy?.isPrivate === true;
+                        if (isHidden) {
+                            return res.status(400).json({
+                                success: false,
+                                code: 'PARTNER_ALREADY_TAKEN',
+                                message: "Tài khoản này đang ở trong một mối quan hệ."
+                            });
+                        } else {
+                            const partnerOfTarget = await Account.findById(target.relationship.partner);
+                            const partnerName = partnerOfTarget ? partnerOfTarget.username : 'người khác';
+                            return res.status(400).json({
+                                success: false,
+                                code: 'PARTNER_ALREADY_TAKEN',
+                                message: `Tài khoản này đang ở trong mối quan hệ với ${partnerName}.`
+                            });
+                        }
+                    }
+
+                    // Check if target already sent relationship request to req.userId (auto-match)
+                    if (target.relationship && target.relationship.pendingPartner && target.relationship.pendingPartner.toString() === req.userId.toString() && target.relationship.isPending) {
+                        updateData.relationship = {
+                            status: status,
+                            partner: target._id,
+                            pendingPartner: null,
+                            isPending: false
+                        };
+                        
+                        await Account.findByIdAndUpdate(target._id, {
+                            $set: {
+                                "relationship.status": status,
+                                "relationship.partner": req.userId,
+                                "relationship.pendingPartner": null,
+                                "relationship.isPending": false
+                            }
+                        });
+
+                        // Automatically reject other incoming requests
+                        await Account.updateMany(
+                            { 
+                                _id: { $ne: req.userId }, 
+                                "relationship.pendingPartner": req.userId, 
+                                "relationship.isPending": true 
+                            },
+                            {
+                                $set: {
+                                    "relationship.status": "single",
+                                    "relationship.partner": null,
+                                    "relationship.pendingPartner": null,
+                                    "relationship.isPending": false
+                                }
+                            }
+                        );
+                        await Account.updateMany(
+                            { 
+                                _id: { $ne: target._id }, 
+                                "relationship.pendingPartner": target._id, 
+                                "relationship.isPending": true 
+                            },
+                            {
+                                $set: {
+                                    "relationship.status": "single",
+                                    "relationship.partner": null,
+                                    "relationship.pendingPartner": null,
+                                    "relationship.isPending": false
+                                }
+                            }
+                        );
+                    } else {
+                        // Pending request
+                        updateData.relationship = {
+                            status: status,
+                            partner: null,
+                            pendingPartner: target._id,
+                            isPending: true
+                        };
+                    }
+                }
             } catch (e) {
+                const status = typeof relationship === 'string' ? relationship : 'none';
+                const oldUser = await Account.findById(req.userId);
+                if (oldUser && oldUser.relationship && oldUser.relationship.partner) {
+                    const formerPartnerId = oldUser.relationship.partner;
+                    await Account.findByIdAndUpdate(formerPartnerId, {
+                        $set: {
+                            "relationship.status": "single",
+                            "relationship.partner": null,
+                            "relationship.pendingPartner": null,
+                            "relationship.isPending": false
+                        }
+                    });
+                }
+
                 updateData.relationship = {
-                    status: relationship,
-                    partner: null
+                    status: status,
+                    partner: null,
+                    pendingPartner: null,
+                    isPending: false
                 };
             }
         }
@@ -153,6 +273,7 @@ const getUserById = async (req, res) => {
                 delete user.gender;
                 delete user.job;
                 delete user.nationality;
+                delete user.relationship;
             } else {
                 if (privacy.email === false) delete user.email;
                 if (privacy.phone === false) delete user.phone;
@@ -161,6 +282,7 @@ const getUserById = async (req, res) => {
                 if (privacy.gender === false) delete user.gender;
                 if (privacy.job === false) delete user.job;
                 if (privacy.nationality === false) delete user.nationality;
+                if (privacy.relationship === false) delete user.relationship;
             }
         }
 
@@ -470,6 +592,7 @@ const getPrivacy = async (req, res) => {
                 job: true,
                 nationality: true,
                 isPrivate: false,
+                relationship: true,
             }
         });
     } catch (error) {
@@ -480,7 +603,7 @@ const getPrivacy = async (req, res) => {
 
 const updatePrivacy = async (req, res) => {
     try {
-        const { email, phone, address, birthday, gender, job, nationality, isPrivate } = req.body;
+        const { email, phone, address, birthday, gender, job, nationality, isPrivate, relationship } = req.body;
         
         const user = await Account.findById(req.userId);
         if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
@@ -497,6 +620,7 @@ const updatePrivacy = async (req, res) => {
         if (job !== undefined) user.privacy.job = job;
         if (nationality !== undefined) user.privacy.nationality = nationality;
         if (isPrivate !== undefined) user.privacy.isPrivate = isPrivate;
+        if (relationship !== undefined) user.privacy.relationship = relationship;
 
         await user.save();
 
@@ -596,6 +720,121 @@ const clearSearchHistory = async (req, res) => {
     }
 };
 
+const acceptRelationship = async (req, res) => {
+    try {
+        const { requesterId } = req.body;
+        if (!requesterId) {
+            return res.status(400).json({ success: false, message: 'Thiếu thông tin người gửi lời mời.' });
+        }
+
+        const requester = await Account.findById(requesterId);
+        if (!requester || requester.relationship?.pendingPartner?.toString() !== req.userId.toString() || !requester.relationship?.isPending) {
+            return res.status(400).json({ success: false, message: 'Không tìm thấy lời mời kết đôi hợp lệ.' });
+        }
+
+        const status = requester.relationship.status || 'dating';
+
+        await Account.findByIdAndUpdate(req.userId, {
+            $set: {
+                "relationship.status": status,
+                "relationship.partner": requester._id,
+                "relationship.pendingPartner": null,
+                "relationship.isPending": false
+            }
+        });
+
+        await Account.findByIdAndUpdate(requester._id, {
+            $set: {
+                "relationship.status": status,
+                "relationship.partner": req.userId,
+                "relationship.pendingPartner": null,
+                "relationship.isPending": false
+            }
+        });
+
+        await Account.updateMany(
+            { 
+                _id: { $ne: req.userId }, 
+                "relationship.pendingPartner": req.userId, 
+                "relationship.isPending": true 
+            },
+            {
+                $set: {
+                    "relationship.status": "single",
+                    "relationship.partner": null,
+                    "relationship.pendingPartner": null,
+                    "relationship.isPending": false
+                }
+            }
+        );
+        await Account.updateMany(
+            { 
+                _id: { $ne: requester._id }, 
+                "relationship.pendingPartner": requester._id, 
+                "relationship.isPending": true 
+            },
+            {
+                $set: {
+                    "relationship.status": "single",
+                    "relationship.partner": null,
+                    "relationship.pendingPartner": null,
+                    "relationship.isPending": false
+                }
+            }
+        );
+
+        res.status(200).json({ success: true, code: 'ACCEPT_RELATIONSHIP_SUCCESS' });
+    } catch (error) {
+        console.error('Error in acceptRelationship:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const rejectRelationship = async (req, res) => {
+    try {
+        const { requesterId } = req.body;
+        if (!requesterId) {
+            return res.status(400).json({ success: false, message: 'Thiếu thông tin người gửi lời mời.' });
+        }
+
+        const requester = await Account.findById(requesterId);
+        if (!requester || requester.relationship?.pendingPartner?.toString() !== req.userId.toString() || !requester.relationship?.isPending) {
+            return res.status(400).json({ success: false, message: 'Không tìm thấy lời mời kết đôi hợp lệ.' });
+        }
+
+        await Account.findByIdAndUpdate(requester._id, {
+            $set: {
+                "relationship.status": "single",
+                "relationship.partner": null,
+                "relationship.pendingPartner": null,
+                "relationship.isPending": false
+            }
+        });
+
+        res.status(200).json({ success: true, code: 'REJECT_RELATIONSHIP_SUCCESS' });
+    } catch (error) {
+        console.error('Error in rejectRelationship:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
+const cancelRelationshipRequest = async (req, res) => {
+    try {
+        await Account.findByIdAndUpdate(req.userId, {
+            $set: {
+                "relationship.status": "none",
+                "relationship.partner": null,
+                "relationship.pendingPartner": null,
+                "relationship.isPending": false
+            }
+        });
+        res.status(200).json({ success: true, code: 'CANCEL_RELATIONSHIP_REQUEST_SUCCESS' });
+    } catch (error) {
+        console.error('Error in cancelRelationshipRequest:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     getProfile, 
     updateProfile, 
@@ -617,5 +856,8 @@ module.exports = {
     saveSearchHistory,
     getSearchHistory,
     deleteSearchHistory,
-    clearSearchHistory
+    clearSearchHistory,
+    acceptRelationship,
+    rejectRelationship,
+    cancelRelationshipRequest
 };

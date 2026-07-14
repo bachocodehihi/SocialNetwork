@@ -21,6 +21,9 @@ const {
     saveSearchHistory,
     deleteSearchHistory,
     clearSearchHistory,
+    acceptRelationship,
+    rejectRelationship,
+    cancelRelationshipRequest,
 } = require('../controllers/account.controller');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { upload } = require('../config/cloudinary');
@@ -28,6 +31,10 @@ const { upload } = require('../config/cloudinary');
 router.get('/profile', verifyToken, getProfile);
 router.put('/profile', verifyToken, upload.single('avatar'), updateProfile);
 router.get('/search', verifyToken, searchUsers);
+
+router.post('/relationship/accept', verifyToken, acceptRelationship);
+router.post('/relationship/reject', verifyToken, rejectRelationship);
+router.post('/relationship/cancel', verifyToken, cancelRelationshipRequest);
 router.get('/user/:id', verifyToken, getUserById);
 router.post('/fcm-token', verifyToken, saveFcmToken);
 router.post('/remove-fcm-token', verifyToken, removeFcmToken);
