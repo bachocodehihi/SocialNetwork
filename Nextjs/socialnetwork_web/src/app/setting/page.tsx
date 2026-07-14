@@ -1125,7 +1125,7 @@ export default function SettingPage() {
                             <button
                               onClick={() => handleSaveField('address', address)}
                               disabled={isSaving['address']}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
+                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
                             >
                               {isSaving['address'] ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -1154,7 +1154,7 @@ export default function SettingPage() {
                             <button
                               onClick={() => handleSaveField('phone', phone)}
                               disabled={isSaving['phone']}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
+                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
                             >
                               {isSaving['phone'] ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -1183,7 +1183,7 @@ export default function SettingPage() {
                             <button
                               onClick={() => handleSaveField('job', job)}
                               disabled={isSaving['job']}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
+                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
                             >
                               {isSaving['job'] ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -1212,7 +1212,7 @@ export default function SettingPage() {
                             <button
                               onClick={() => handleSaveField('nationality', nationality)}
                               disabled={isSaving['nationality']}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
+                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
                             >
                               {isSaving['nationality'] ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
