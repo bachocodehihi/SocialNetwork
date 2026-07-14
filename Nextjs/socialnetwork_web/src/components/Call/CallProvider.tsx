@@ -233,11 +233,28 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       handleResetCall();
     });
 
+    newSocket.on('receive_message', (message: any) => {
+      try {
+        const userStr = localStorage.getItem('user');
+        const currentUser = userStr ? JSON.parse(userStr) : null;
+        const currentUserId = currentUser?._id || currentUser?.id;
+        const senderId = message.sender?._id || message.sender;
+
+        if (senderId && currentUserId && senderId !== currentUserId) {
+          if (window.location.pathname !== '/home/message') {
+            const audio = new Audio('/assets/sounds/receive.mp3');
+            audio.play().catch((e) => console.log('Audio play blocked or failed:', e));
+          }
+        }
+      } catch (e) {}
+    });
+
     setSocket(newSocket);
   };
 
   const disconnectSocket = () => {
     if (socket) {
+      socket.off('receive_message');
       socket.disconnect();
       setSocket(null);
     }
