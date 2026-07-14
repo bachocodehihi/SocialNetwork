@@ -1228,12 +1228,12 @@ export default function SettingPage() {
                         {/* Relationship Section Link */}
                         <div className="space-y-3 border-t border-grey/10 dark:border-zinc-800 pt-5 mt-5">
                           <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
-                            <Heart className="w-3.5 h-3.5 text-pink-500 fill-pink-500" /> Mối quan hệ
+                            <Heart className="w-3.5 h-3.5 text-blue fill-blue" /> Mối quan hệ
                           </label>
-                          <div className="p-4 bg-pink-500/5 dark:bg-pink-500/10 border border-pink-500/10 dark:border-pink-500/20 rounded-2xl flex items-center justify-between">
+                          <div className="p-4 bg-slate-50 dark:bg-zinc-800/40 border border-grey/25 dark:border-zinc-850 rounded-2xl flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-full bg-pink-500/10 dark:bg-pink-500/20 flex items-center justify-center text-pink-500">
-                                <Heart className="w-4.5 h-4.5 fill-pink-500" />
+                              <div className="w-9 h-9 rounded-full bg-blue/10 dark:bg-blue-950/20 flex items-center justify-center text-blue">
+                                <Heart className="w-4.5 h-4.5 fill-blue" />
                               </div>
                               <div className="text-left">
                                 <h4 className="text-sm font-bold text-black dark:text-white">Trạng thái hẹn hò / Hôn nhân</h4>
@@ -1243,7 +1243,7 @@ export default function SettingPage() {
                             <button
                               type="button"
                               onClick={() => router.push('/setting/relationship')}
-                              className="px-4 py-2 text-xs font-bold text-white bg-pink-500 hover:bg-pink-600 rounded-xl shadow-sm transition duration-150 cursor-pointer border-0"
+                              className="px-4 py-2 text-xs font-bold text-white bg-blue hover:bg-blue-hover rounded-xl shadow-sm transition duration-150 cursor-pointer border-0"
                             >
                               Thiết lập
                             </button>

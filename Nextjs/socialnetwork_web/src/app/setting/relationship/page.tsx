@@ -251,8 +251,8 @@ export default function RelationshipSettingPage() {
           
           {/* Header Title */}
           <div className="flex items-center gap-3.5 border-b border-grey/10 dark:border-zinc-800 pb-5">
-            <div className="w-11 h-11 rounded-full bg-pink-500/10 dark:bg-pink-500/20 flex items-center justify-center text-pink-500">
-              <Heart className="w-5.5 h-5.5 fill-pink-500" />
+            <div className="w-11 h-11 rounded-full bg-blue/10 dark:bg-blue-950/20 flex items-center justify-center text-blue">
+              <Heart className="w-5.5 h-5.5 fill-blue" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-black dark:text-white">Thiết lập mối quan hệ</h1>
@@ -262,13 +262,13 @@ export default function RelationshipSettingPage() {
 
           {/* 1. CURRENT ACTIVE RELATIONSHIP CARD */}
           {hasActivePartner && (
-            <div className="p-4 bg-pink-50 dark:bg-pink-950/20 border border-pink-100 dark:border-pink-900/30 rounded-2xl flex items-center justify-between">
+            <div className="p-4 bg-blue-50/50 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/20 rounded-2xl flex items-center justify-between">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-full overflow-hidden border border-pink-200 dark:border-pink-900 flex-shrink-0">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-blue-200 dark:border-blue-900/30 flex-shrink-0">
                   <img src={activePartnerAvatar} alt="Partner Avatar" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-pink-600 dark:text-pink-400">
+                  <h4 className="font-bold text-sm text-blue dark:text-blue-400">
                     {activePartnerStatus} với {activePartnerName}
                   </h4>
                   <p className="text-xs text-grey font-medium mt-0.5">Hai bạn đã liên kết tài khoản mối quan hệ</p>
@@ -322,8 +322,8 @@ export default function RelationshipSettingPage() {
                         <h4 className="font-bold text-sm text-black dark:text-white">
                           {req.username}
                         </h4>
-                        <p className="text-xs text-pink-500 font-semibold flex items-center gap-1 mt-0.5">
-                          <Heart className="w-3 h-3 fill-pink-500" />
+                        <p className="text-xs text-blue font-semibold flex items-center gap-1 mt-0.5">
+                          <Heart className="w-3 h-3 fill-blue" />
                           Muốn thiết lập mối quan hệ với bạn
                         </p>
                       </div>
@@ -378,7 +378,7 @@ export default function RelationshipSettingPage() {
                   className="w-full flex items-center justify-between bg-grey/5 dark:bg-zinc-800/50 border border-grey/20 dark:border-zinc-800 rounded-2xl px-4 py-3.5 text-sm font-semibold text-black dark:text-white text-left focus:outline-none focus:border-blue transition cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <Heart className="w-4 h-4 text-pink-500 fill-pink-500" />
+                    <Heart className="w-4 h-4 text-blue fill-blue" />
                     {STATUS_LABELS[relStatus] || 'Độc thân'}
                   </span>
                   <ChevronDown className={`w-4 h-4 text-grey transition-transform duration-200 ${showStatusDropdown ? 'rotate-180' : ''}`} />
