@@ -9,7 +9,8 @@ const {
     getGroupPosts,
     likeComment,
     likeReply,
-    replyComment
+    replyComment,
+    toggleComments
 } = require('../controllers/content.controller');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { upload } = require('../config/cloudinary');
@@ -20,6 +21,7 @@ router.get('/user/:userId', verifyToken, getUserPosts);
 router.get('/group/:groupId', verifyToken, getGroupPosts);
 router.put('/:id/like', verifyToken, likePost);
 router.post('/:id/comment', verifyToken, commentPost);
+router.put('/:id/toggle-comments', verifyToken, toggleComments);
 
 // Comment routes
 router.put('/comment/:commentId/like', verifyToken, likeComment);

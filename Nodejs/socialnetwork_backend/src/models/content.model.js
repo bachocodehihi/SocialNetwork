@@ -23,7 +23,8 @@ const postSchema = new mongoose.Schema({
     privacy: { type: String, enum: ['public', 'friends', 'private', 'friends_except', 'specific_friends'], default: 'public' },
     allowedFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: [] }],
     exceptedFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: [] }],
-    group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group', default: null }
+    group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group', default: null },
+    commentsDisabled: { type: Boolean, default: false }
 }, { timestamps: true });
 
 const Post = mongoose.model('Post', postSchema);

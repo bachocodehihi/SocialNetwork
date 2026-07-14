@@ -273,6 +273,10 @@ const commentPost = async (req, res) => {
         const post = await Post.findById(postId);
         if (!post) return res.status(404).json({ success: false, code: 'POST_NOT_FOUND' });
 
+        if (post.commentsDisabled) {
+            return res.status(400).json({ success: false, message: 'Tính năng bình luận đã bị tắt cho bài viết này.' });
+        }
+
         const newComment = new Comment({
             author: req.userId,
             post: postId,
@@ -507,6 +511,13 @@ const replyComment = async (req, res) => {
         const { content } = req.body;
         const { id: postId, commentId } = req.params;
 
+        const post = await Post.findById(postId);
+        if (!post) return res.status(404).json({ success: false, code: 'POST_NOT_FOUND' });
+
+        if (post.commentsDisabled) {
+            return res.status(400).json({ success: false, message: 'Tính năng bình luận đã bị tắt cho bài viết này.' });
+        }
+
         const comment = await Comment.findById(commentId);
         if (!comment) return res.status(404).json({ success: false, code: 'COMMENT_NOT_FOUND' });
 
@@ -539,6 +550,61 @@ const replyComment = async (req, res) => {
     }
 };
 
+const toggleComments = async (req, res) => {
+    try {
+        const { id: postId } = req.params;
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy bài viết.' });
+        }
+
+        // Check permission
+        if (post.postType === 'group') {
+            const group = await Group.findById(post.group);
+            const isGroupAdmin = group && group.admin.toString() === req.userId.toString();
+            const isAuthor = post.author.toString() === req.userId.toString();
+
+            if (!isGroupAdmin && !isAuthor) {
+                return res.status(403).json({ success: false, message: 'Bạn không có quyền thực hiện thao tác này.' });
+            }
+        } else {
+            if (post.author.toString() !== req.userId.toString()) {
+                return res.status(403).json({ success: false, message: 'Bạn không có quyền thực hiện thao tác này.' });
+            }
+        }
+
+        post.commentsDisabled = !post.commentsDisabled;
+        await post.save();
+
+        const updatedPost = await Post.findById(postId)
+            .populate('author', 'username avatar')
+            .populate({
+                path: 'comments',
+                populate: [
+                    {
+                        path: 'author',
+                        select: 'username avatar'
+                    },
+                    {
+                        path: 'replies.author',
+                        select: 'username avatar'
+                    }
+                ]
+            })
+            .populate('group', 'name avatar');
+
+        res.status(200).json({
+            success: true,
+            commentsDisabled: post.commentsDisabled,
+            message: post.commentsDisabled ? 'Đã tắt bình luận.' : 'Đã bật bình luận.',
+            post: updatedPost
+        });
+    } catch (error) {
+        console.error('Error in toggleComments:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     createPost, 
     getFeed, 
@@ -548,5 +614,6 @@ module.exports = {
     getGroupPosts,
     likeComment,
     likeReply,
-    replyComment
+    replyComment,
+    toggleComments
 };
