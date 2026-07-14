@@ -1073,7 +1073,8 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                 <div key={comment._id} className="space-y-2">
                                   <div className="flex gap-2.5 items-start text-left">
                                     <div 
-                                      className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center"
+                                      onClick={() => router.push(`/user/${cAuthor._id || cAuthor.id}`)}
+                                      className="w-8 h-8 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center cursor-pointer"
                                     >
                                       {cAuthorAvatar ? (
                                         <img src={cAuthorAvatar} alt={cAuthorName} className="w-full h-full object-cover" />
@@ -1083,10 +1084,13 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <div className="bg-grey/10 dark:bg-zinc-850 rounded-2xl px-3.5 py-2 inline-block max-w-full">
-                                        <h5 className="text-xs font-bold text-grey-hover dark:text-zinc-200 truncate mb-0.5">
+                                        <h5 
+                                          onClick={() => router.push(`/user/${cAuthor._id || cAuthor.id}`)}
+                                          className="text-xs font-bold text-grey-hover dark:text-zinc-200 hover:underline cursor-pointer truncate mb-0.5"
+                                        >
                                           {cAuthorName}
                                         </h5>
-                                        <p className="text-sm text-gray-800 dark:text-zinc-255 whitespace-pre-wrap break-words text-justify leading-normal">
+                                        <p className="text-sm text-gray-800 dark:text-zinc-200 whitespace-pre-wrap break-words text-justify leading-normal">
                                           {comment.content}
                                         </p>
                                       </div>
@@ -1143,7 +1147,8 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                             return (
                                               <div key={reply._id} className="flex gap-2 items-start text-left">
                                                 <div 
-                                                  className="w-7 h-7 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-850 flex-shrink-0 flex items-center justify-center"
+                                                  onClick={() => router.push(`/user/${rAuthor._id || rAuthor.id}`)}
+                                                  className="w-7 h-7 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-850 flex-shrink-0 flex items-center justify-center cursor-pointer"
                                                 >
                                                   {rAuthorAvatar ? (
                                                     <img src={rAuthorAvatar} alt={rAuthorName} className="w-full h-full object-cover" />
@@ -1153,10 +1158,13 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                   <div className="bg-grey/10 dark:bg-zinc-850 rounded-2xl px-3 py-1.5 inline-block max-w-full">
-                                                    <h5 className="text-[11px] font-bold text-grey-hover dark:text-zinc-200 truncate mb-0.5">
+                                                    <h5 
+                                                      onClick={() => router.push(`/user/${rAuthor._id || rAuthor.id}`)}
+                                                      className="text-[11px] font-bold text-grey-hover dark:text-zinc-200 hover:underline cursor-pointer truncate mb-0.5"
+                                                    >
                                                       {rAuthorName}
                                                     </h5>
-                                                    <p className="text-sm text-gray-800 dark:text-zinc-255 whitespace-pre-wrap break-words text-justify leading-normal">
+                                                    <p className="text-sm text-gray-800 dark:text-zinc-200 whitespace-pre-wrap break-words text-justify leading-normal">
                                                       {reply.content}
                                                     </p>
                                                   </div>
