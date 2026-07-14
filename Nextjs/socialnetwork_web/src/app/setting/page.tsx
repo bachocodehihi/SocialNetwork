@@ -1225,142 +1225,28 @@ export default function SettingPage() {
                           </div>
                         </div>
 
-                        {/* Relationship Status */}
-                        <div className="space-y-3 border-t border-grey/10 dark:border-zinc-800 pt-4 mt-4">
+                        {/* Relationship Section Link */}
+                        <div className="space-y-3 border-t border-grey/10 dark:border-zinc-800 pt-5 mt-5">
                           <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
                             <Heart className="w-3.5 h-3.5 text-pink-500 fill-pink-500" /> Mối quan hệ
                           </label>
-                          <div className="space-y-3">
-                            <div className="flex flex-col sm:flex-row gap-2">
-                              <select
-                                value={relStatus}
-                                onChange={(e) => {
-                                  setRelStatus(e.target.value);
-                                  if (e.target.value === 'none' || e.target.value === 'single') {
-                                    setRelPartner('');
-                                  }
-                                }}
-                                className="bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white min-w-[200px]"
-                              >
-                                <option value="none">Không hiển thị / Không đặt</option>
-                                <option value="single">Độc thân</option>
-                                <option value="dating">Đang hẹn hò</option>
-                                <option value="engaged">Đã đính hôn</option>
-                                <option value="married">Đã kết hôn</option>
-                                <option value="complicated">Mối quan hệ phức tạp</option>
-                              </select>
-
-                              {relStatus !== 'none' && relStatus !== 'single' && (
-                                <select
-                                  value={relPartner}
-                                  onChange={(e) => setRelPartner(e.target.value)}
-                                  className="flex-1 bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
-                                >
-                                  <option value="">Chọn đối tác (Không bắt buộc)</option>
-                                  {friends.map((friend: any) => {
-                                    const friendInfo = friend.friend || friend;
-                                    return (
-                                      <option key={friendInfo._id} value={friendInfo._id}>
-                                        {friendInfo.username}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              )}
-
-                              <button
-                                onClick={handleSaveRelationship}
-                                disabled={isSavingRel}
-                                className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
-                              >
-                                {isSavingRel ? (
-                                  <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : (
-                                  <>
-                                    <Save className="w-4 h-4" /> Lưu
-                                  </>
-                                )}
-                              </button>
+                          <div className="p-4 bg-pink-500/5 dark:bg-pink-500/10 border border-pink-500/10 dark:border-pink-500/20 rounded-2xl flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-full bg-pink-500/10 dark:bg-pink-500/20 flex items-center justify-center text-pink-500">
+                                <Heart className="w-4.5 h-4.5 fill-pink-500" />
+                              </div>
+                              <div className="text-left">
+                                <h4 className="text-sm font-bold text-black dark:text-white">Trạng thái hẹn hò / Hôn nhân</h4>
+                                <p className="text-xs text-grey font-medium mt-0.5">Đặt mối quan hệ của bạn để hiển thị trên trang cá nhân</p>
+                              </div>
                             </div>
-
-                            {profile?.relationship && profile.relationship.status !== 'none' && (
-                              <div className="text-xs bg-pink-500/5 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 p-3 rounded-xl border border-pink-500/10 flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <Heart className="w-4 h-4 fill-current text-pink-500" />
-                                  <span className="font-semibold">
-                                    {profile.relationship.status === 'single' && 'Độc thân'}
-                                    {profile.relationship.status === 'dating' && (profile.relationship.partner ? `Đang hẹn hò với ${profile.relationship.partner.username}` : 'Đang hẹn hò')}
-                                    {profile.relationship.status === 'engaged' && (profile.relationship.partner ? `Đã đính hôn với ${profile.relationship.partner.username}` : 'Đã đính hôn')}
-                                    {profile.relationship.status === 'married' && (profile.relationship.partner ? `Đã kết hôn với ${profile.relationship.partner.username}` : 'Đã kết hôn')}
-                                    {profile.relationship.status === 'complicated' && (profile.relationship.partner ? `Mối quan hệ phức tạp với ${profile.relationship.partner.username}` : 'Mối quan hệ phức tạp')}
-                                    {profile.relationship.isPending && ' (Chờ đối phương xác nhận)'}
-                                  </span>
-                                </div>
-                                {profile.relationship.isPending && (
-                                  <button
-                                    onClick={async () => {
-                                      try {
-                                        await accountService.cancelRelationshipRequest();
-                                        showSuccess('Đã hủy yêu cầu kết đôi.');
-                                        const updated = await accountService.getProfile();
-                                        setProfile(updated);
-                                        setRelStatus(updated.relationship?.status || 'none');
-                                        setRelPartner(updated.relationship?.partner?._id || updated.relationship?.partner || '');
-                                      } catch (err: any) {
-                                        showError(err.response?.data?.message || 'Có lỗi xảy ra');
-                                      }
-                                    }}
-                                    className="text-[10px] bg-red hover:bg-red-hover text-white px-2.5 py-1 rounded-lg font-bold transition border-0 cursor-pointer"
-                                  >
-                                    Hủy yêu cầu
-                                  </button>
-                                )}
-                              </div>
-                            )}
-
-                            {relationshipRequests.length > 0 && (
-                              <div className="space-y-2 mt-2">
-                                <span className="text-xs font-bold text-grey block uppercase tracking-wider">
-                                  Lời mời kết đôi đang chờ:
-                                </span>
-                                {relationshipRequests.map((reqUser: any) => (
-                                  <div key={reqUser._id} className="flex items-center justify-between bg-white dark:bg-zinc-900 border border-grey/10 dark:border-zinc-800 p-3 rounded-xl shadow-sm">
-                                    <div className="flex items-center gap-3">
-                                      <img
-                                        src={reqUser.avatar || '/default-avatar.png'}
-                                        alt={reqUser.username}
-                                        className="w-9 h-9 rounded-full object-cover border border-grey/10"
-                                      />
-                                      <div className="text-left">
-                                        <h4 className="text-sm font-bold text-black dark:text-white">
-                                          {reqUser.username}
-                                        </h4>
-                                        <span className="text-[11px] text-grey font-medium">
-                                          {reqUser.relationship.status === 'dating' && 'Muốn kết đôi hẹn hò với bạn'}
-                                          {reqUser.relationship.status === 'engaged' && 'Muốn kết đôi đính hôn với bạn'}
-                                          {reqUser.relationship.status === 'married' && 'Muốn kết đôi kết hôn với bạn'}
-                                          {reqUser.relationship.status === 'complicated' && 'Muốn kết đôi mối quan hệ phức tạp với bạn'}
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <div className="flex gap-2">
-                                      <button
-                                        onClick={() => handleAcceptRelationshipRequest(reqUser._id)}
-                                        className="bg-blue hover:bg-blue-hover text-white text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95 transition border-0 cursor-pointer"
-                                      >
-                                        Đồng ý
-                                      </button>
-                                      <button
-                                        onClick={() => handleRejectRelationshipRequest(reqUser._id)}
-                                        className="bg-grey/10 hover:bg-grey/25 text-grey-hover text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95 transition border-0 cursor-pointer"
-                                      >
-                                        Từ chối
-                                      </button>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => router.push('/setting/relationship')}
+                              className="px-4 py-2 text-xs font-bold text-white bg-pink-500 hover:bg-pink-600 rounded-xl shadow-sm transition duration-150 cursor-pointer border-0"
+                            >
+                              Thiết lập
+                            </button>
                           </div>
                         </div>
                       </div>
