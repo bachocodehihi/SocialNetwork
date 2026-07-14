@@ -80,6 +80,11 @@ const updateProfile = async (req, res) => {
                         return res.status(404).json({ success: false, code: 'PARTNER_NOT_FOUND', message: 'Không tìm thấy tài khoản đối tác.' });
                     }
 
+                    const isFriend = oldUser.friends && oldUser.friends.some(f => f.toString() === partnerId.toString());
+                    if (!isFriend) {
+                        return res.status(400).json({ success: false, message: 'Bạn chỉ có thể thiết lập mối quan hệ với người đã kết bạn.' });
+                    }
+
                     if (target.relationship && target.relationship.partner && target.relationship.partner.toString() !== req.userId.toString()) {
                         const isHidden = target.privacy?.relationship === false || target.privacy?.isPrivate === true;
                         if (isHidden) {
@@ -737,6 +742,12 @@ const acceptRelationship = async (req, res) => {
         const requester = await Account.findById(requesterId);
         if (!requester || requester.relationship?.pendingPartner?.toString() !== req.userId.toString() || !requester.relationship?.isPending) {
             return res.status(400).json({ success: false, message: 'Không tìm thấy lời mời kết đôi hợp lệ.' });
+        }
+
+        const user = await Account.findById(req.userId);
+        const isFriend = user && user.friends && user.friends.some(f => f.toString() === requesterId.toString());
+        if (!isFriend) {
+            return res.status(400).json({ success: false, message: 'Bạn chỉ có thể thiết lập mối quan hệ với người đã kết bạn.' });
         }
 
         const status = requester.relationship.status || 'dating';
