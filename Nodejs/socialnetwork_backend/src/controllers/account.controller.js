@@ -6,7 +6,10 @@ const bcrypt = require('bcrypt');
 
 const getProfile = async (req, res) => {
     try {
-        const user = await Account.findById(req.userId).select('-password').lean();
+        const user = await Account.findById(req.userId)
+            .select('-password')
+            .populate('relationship.partner', 'username avatar')
+            .lean();
         if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
 
         const postCount = await Post.countDocuments({ author: req.userId });
@@ -26,7 +29,7 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        const { username, birthday, gender, email, password, address, phone, job } = req.body;
+        const { username, birthday, gender, email, password, address, phone, job, relationship } = req.body;
         
         const updateData = {};
         if (username) updateData.username = username;
@@ -37,6 +40,21 @@ const updateProfile = async (req, res) => {
         if (phone) updateData.phone = phone;
         if (job) updateData.job = job;
 
+        if (relationship) {
+            try {
+                const rel = typeof relationship === 'string' ? JSON.parse(relationship) : relationship;
+                updateData.relationship = {
+                    status: rel.status || 'none',
+                    partner: (rel.partner && rel.partner !== 'none' && rel.partner !== '') ? rel.partner : null
+                };
+            } catch (e) {
+                updateData.relationship = {
+                    status: relationship,
+                    partner: null
+                };
+            }
+        }
+
         if (password) {
             updateData.password = await bcrypt.hash(password, 10);
         }
@@ -45,7 +63,10 @@ const updateProfile = async (req, res) => {
             updateData.avatar = req.file.path;
         }
 
-        const updatedUser = await Account.findByIdAndUpdate(req.userId, updateData, { returnDocument: 'after' }).select('-password').lean();
+        const updatedUser = await Account.findByIdAndUpdate(req.userId, updateData, { returnDocument: 'after' })
+            .select('-password')
+            .populate('relationship.partner', 'username avatar')
+            .lean();
         
         const postCount = await Post.countDocuments({ author: req.userId });
 
@@ -111,7 +132,10 @@ const searchUsers = async (req, res) => {
 const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await Account.findById(id).select('-password').lean();
+        const user = await Account.findById(id)
+            .select('-password')
+            .populate('relationship.partner', 'username avatar')
+            .lean();
         if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
 
         const postCount = await Post.countDocuments({ author: id });

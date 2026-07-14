@@ -27,6 +27,10 @@ const accountSchema = new mongoose.Schema({
     reportsCount: { type: Number, default: 0 },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     qrCode: { type: String, default: '' },
+    relationship: {
+        status: { type: String, enum: ['none', 'single', 'dating', 'engaged', 'married', 'complicated'], default: 'none' },
+        partner: { type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: null }
+    },
     privacy: {
         email: { type: Boolean, default: true },
         phone: { type: Boolean, default: true },
