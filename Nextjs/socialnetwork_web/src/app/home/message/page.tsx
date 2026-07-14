@@ -454,12 +454,25 @@ function MessageContent() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const receiveSoundRef = useRef<HTMLAudioElement | null>(null);
+
+  // Preload receive sound
+  useEffect(() => {
+    receiveSoundRef.current = new Audio('/assets/sounds/receive.mp3');
+    receiveSoundRef.current.preload = 'auto';
+  }, []);
 
   // Ref to always have the latest selectedConv in the socket listener without reconnecting
   const selectedConvRef = useRef(selectedConv);
   useEffect(() => {
     selectedConvRef.current = selectedConv;
   }, [selectedConv]);
+
+  // Ref to always have the latest currentUser in the socket listener
+  const currentUserRef = useRef(currentUser);
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -643,6 +656,13 @@ function MessageContent() {
         }
         return prev;
       });
+
+      // Play notification sound only when message is from someone else
+      const senderId = message.sender?._id || message.sender;
+      const currentUserId = currentUserRef.current?._id || currentUserRef.current?.id;
+      if (senderId && currentUserId && senderId !== currentUserId) {
+        receiveSoundRef.current?.play().catch(() => {});
+      }
 
       // Update last message in conversations list
       setConversations(prev => {
