@@ -1307,6 +1307,7 @@ export default function SettingPage() {
                               {editingField === 'phone' && 'Cập nhật Số điện thoại'}
                               {editingField === 'job' && 'Cập nhật Công việc'}
                               {editingField === 'nationality' && 'Cập nhật Quốc tịch'}
+                              {editingField === 'relationship' && 'Cập nhật mối quan hệ'}
                             </h3>
                           </div>
 
