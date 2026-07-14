@@ -1226,24 +1226,30 @@ export default function SettingPage() {
                         </div>
 
                         {/* Relationship Section Link */}
-                        <div className="space-y-3 border-t border-grey/10 dark:border-zinc-800 pt-5 mt-5">
+                        <div className="space-y-1.5 border-t border-grey/10 dark:border-zinc-800 pt-5 mt-5">
                           <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
-                            <Heart className="w-3.5 h-3.5 text-blue fill-blue" /> Mối quan hệ
+                            <Heart className="w-3.5 h-3.5" /> Mối quan hệ
                           </label>
-                          <div className="p-4 bg-slate-50 dark:bg-zinc-800/40 border border-grey/25 dark:border-zinc-850 rounded-2xl flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-full bg-blue/10 dark:bg-blue-950/20 flex items-center justify-center text-blue">
-                                <Heart className="w-4.5 h-4.5 fill-blue" />
-                              </div>
-                              <div className="text-left">
-                                <h4 className="text-sm font-bold text-black dark:text-white">Trạng thái hẹn hò / Hôn nhân</h4>
-                                <p className="text-xs text-grey font-medium mt-0.5">Đặt mối quan hệ của bạn để hiển thị trên trang cá nhân</p>
-                              </div>
+                          <div className="flex gap-2">
+                            <div
+                              onClick={() => router.push('/setting/relationship')}
+                              className="flex-1 bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-semibold text-grey cursor-pointer hover:border-blue transition select-none"
+                            >
+                              {profile?.relationship?.status && profile.relationship.status !== 'none' && profile.relationship.status !== 'single'
+                                ? (() => {
+                                    const labels: Record<string, string> = { dating: 'Đang hẹn hò', engaged: 'Đã đính hôn', married: 'Đã kết hôn' };
+                                    const partnerName = profile.relationship.partner?.username;
+                                    const statusLabel = labels[profile.relationship.status] || profile.relationship.status;
+                                    return partnerName ? `${statusLabel} với ${partnerName}` : statusLabel;
+                                  })()
+                                : profile?.relationship?.status === 'single'
+                                  ? 'Độc thân'
+                                  : 'Thiết lập mối quan hệ của bạn'}
                             </div>
                             <button
                               type="button"
                               onClick={() => router.push('/setting/relationship')}
-                              className="px-4 py-2 text-xs font-bold text-white bg-blue hover:bg-blue-hover rounded-xl shadow-sm transition duration-150 cursor-pointer border-0"
+                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
                               Thiết lập
                             </button>
