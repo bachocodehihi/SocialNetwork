@@ -29,7 +29,9 @@ const accountSchema = new mongoose.Schema({
     qrCode: { type: String, default: '' },
     relationship: {
         status: { type: String, enum: ['none', 'single', 'dating', 'engaged', 'married', 'complicated'], default: 'none' },
-        partner: { type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: null }
+        partner: { type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: null },
+        pendingPartner: { type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: null },
+        isPending: { type: Boolean, default: false }
     },
     privacy: {
         email: { type: Boolean, default: true },
