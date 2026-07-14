@@ -13,7 +13,8 @@ import {
   Check, 
   User, 
   Circle,
-  Calendar
+  Calendar,
+  Heart
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -78,7 +79,14 @@ export default function NotificationPage() {
     }
   };
 
-  const getNotifIcon = (type: string) => {
+  const getNotifIcon = (type: string, title?: string) => {
+    if (title && (title.includes('kết đôi') || title.includes('mối quan hệ'))) {
+      return (
+        <div className="w-8 h-8 rounded-full bg-red/10 flex items-center justify-center text-red">
+          <Heart className="w-4 h-4 fill-current" />
+        </div>
+      );
+    }
     switch (type) {
       case 'like':
         return (
@@ -180,7 +188,7 @@ export default function NotificationPage() {
                       )}
                     </div>
                     <div className="absolute -bottom-1 -right-1">
-                      {getNotifIcon(notif.type)}
+                      {getNotifIcon(notif.type, notif.title)}
                     </div>
                   </div>
 

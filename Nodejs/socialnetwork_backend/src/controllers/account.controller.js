@@ -55,7 +55,7 @@ const updateProfile = async (req, res) => {
 
                 const oldUser = await Account.findById(req.userId);
                 // 1. If changing to single/none or removing partner link
-                if (status === 'none' || status === 'single' || !partnerId) {
+                 if (status === 'none' || status === 'single' || !partnerId) {
                     if (oldUser && oldUser.relationship && oldUser.relationship.partner) {
                         const formerPartnerId = oldUser.relationship.partner;
                         await Account.findByIdAndUpdate(formerPartnerId, {
@@ -66,6 +66,20 @@ const updateProfile = async (req, res) => {
                                 "relationship.isPending": false
                             }
                         });
+                        
+                        try {
+                            const { createNotification } = require('./notification.controller');
+                            await createNotification({
+                                recipient: formerPartnerId,
+                                sender: req.userId,
+                                type: 'general',
+                                title: 'Mối quan hệ đã kết thúc',
+                                body: `đã hủy liên kết mối quan hệ với bạn.`,
+                                relatedId: req.userId
+                            });
+                        } catch (notifErr) {
+                            console.error('Error creating unlink notification:', notifErr);
+                        }
                     }
                     updateData.relationship = {
                         status: status,
@@ -122,6 +136,22 @@ const updateProfile = async (req, res) => {
                             }
                         });
 
+                        try {
+                            const { createNotification } = require('./notification.controller');
+                            const labels = { dating: 'Đang hẹn hò', engaged: 'Đã đính hôn', married: 'Đã kết hôn' };
+                            const statusLabel = labels[status] || status;
+                            await createNotification({
+                                recipient: target._id,
+                                sender: req.userId,
+                                type: 'general',
+                                title: 'Mối quan hệ đã được liên kết',
+                                body: `đã đồng ý thiết lập mối quan hệ "${statusLabel}" với bạn.`,
+                                relatedId: req.userId
+                            });
+                        } catch (notifErr) {
+                            console.error('Error creating auto-match notification:', notifErr);
+                        }
+
                         // Automatically reject other incoming requests
                         await Account.updateMany(
                             { 
@@ -161,6 +191,22 @@ const updateProfile = async (req, res) => {
                             pendingPartner: target._id,
                             isPending: true
                         };
+
+                        try {
+                            const { createNotification } = require('./notification.controller');
+                            const labels = { dating: 'Đang hẹn hò', engaged: 'Đã đính hôn', married: 'Đã kết hôn' };
+                            const statusLabel = labels[status] || status;
+                            await createNotification({
+                                recipient: target._id,
+                                sender: req.userId,
+                                type: 'general',
+                                title: 'Yêu cầu kết đôi mới',
+                                body: `muốn thiết lập mối quan hệ "${statusLabel}" với bạn.`,
+                                relatedId: req.userId
+                            });
+                        } catch (notifErr) {
+                            console.error('Error creating pending relationship notification:', notifErr);
+                        }
                     }
                 }
             } catch (e) {
@@ -801,6 +847,22 @@ const acceptRelationship = async (req, res) => {
             }
         );
 
+        try {
+            const { createNotification } = require('./notification.controller');
+            const labels = { dating: 'Đang hẹn hò', engaged: 'Đã đính hôn', married: 'Đã kết hôn' };
+            const statusLabel = labels[status] || status;
+            await createNotification({
+                recipient: requesterId,
+                sender: req.userId,
+                type: 'general',
+                title: 'Yêu cầu kết đôi đã được chấp nhận',
+                body: `đã đồng ý thiết lập mối quan hệ "${statusLabel}" với bạn.`,
+                relatedId: req.userId
+            });
+        } catch (notifErr) {
+            console.error('Error creating accept relationship notification:', notifErr);
+        }
+
         res.status(200).json({ success: true, code: 'ACCEPT_RELATIONSHIP_SUCCESS' });
     } catch (error) {
         console.error('Error in acceptRelationship:', error);
@@ -828,6 +890,20 @@ const rejectRelationship = async (req, res) => {
                 "relationship.isPending": false
             }
         });
+
+        try {
+            const { createNotification } = require('./notification.controller');
+            await createNotification({
+                recipient: requesterId,
+                sender: req.userId,
+                type: 'general',
+                title: 'Yêu cầu kết đôi bị từ chối',
+                body: `đã từ chối lời mời thiết lập mối quan hệ của bạn.`,
+                relatedId: req.userId
+            });
+        } catch (notifErr) {
+            console.error('Error creating reject relationship notification:', notifErr);
+        }
 
         res.status(200).json({ success: true, code: 'REJECT_RELATIONSHIP_SUCCESS' });
     } catch (error) {
