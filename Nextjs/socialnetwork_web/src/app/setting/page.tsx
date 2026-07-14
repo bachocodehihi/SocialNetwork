@@ -289,9 +289,11 @@ export default function SettingPage() {
           try {
             const friendsData = await contactService.getFriends();
             if (friendsData && friendsData.success) {
-              setFriends(friendsData.friends || []);
+              setFriends(friendsData.data || friendsData.friends || []);
             } else if (Array.isArray(friendsData)) {
               setFriends(friendsData);
+            } else if (friendsData && Array.isArray(friendsData.data)) {
+              setFriends(friendsData.data);
             }
           } catch (e) {
             console.error('Error fetching friends list:', e);
