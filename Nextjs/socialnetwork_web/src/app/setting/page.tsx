@@ -97,6 +97,11 @@ export default function SettingPage() {
   const [job, setJob] = useState('');
   const [nationality, setNationality] = useState('');
   const [isSaving, setIsSaving] = useState<Record<string, boolean>>({});
+  const [editUsername, setEditUsername] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editBirthday, setEditBirthday] = useState('');
+  const [editGender, setEditGender] = useState('');
+  const [editingField, setEditingField] = useState<string | null>(null);
 
   // Relationship states
   const [friends, setFriends] = useState<any[]>([]);
@@ -241,6 +246,10 @@ export default function SettingPage() {
           setPhone(data.phone || '');
           setJob(data.job || '');
           setNationality(data.nationality || '');
+          setEditUsername(data.username || '');
+          setEditEmail(data.email || '');
+          setEditBirthday(data.birthday ? new Date(data.birthday).toISOString().split('T')[0] : '');
+          setEditGender(data.gender || 'other');
           setRelStatus(data.relationship?.status || 'none');
           setRelPartner(data.relationship?.partner?._id || data.relationship?.partner || '');
           setRelationshipRequests(data.relationshipRequests || []);
@@ -289,6 +298,7 @@ export default function SettingPage() {
 
   const handleSelectSection = (section: string | null) => {
     setActiveSection(section);
+    setEditingField(null);
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       if (section) {
@@ -349,6 +359,62 @@ export default function SettingPage() {
     setNotificationSettings(nextState);
     localStorage.setItem('notification_settings', JSON.stringify(nextState));
     showSuccess('Cập nhật cài đặt thông báo thành công!');
+  };
+
+  const handleUpdateField = async () => {
+    if (!editingField) return;
+    
+    setIsSaving(prev => ({ ...prev, [editingField]: true }));
+    try {
+      if (editingField === 'address') {
+        await accountService.addAddress(address);
+      } else if (editingField === 'phone') {
+        await accountService.addPhone(phone);
+      } else if (editingField === 'job') {
+        await accountService.addJob(job);
+      } else if (editingField === 'nationality') {
+        await accountService.addNationality(nationality);
+      } else if (editingField === 'username') {
+        if (!editUsername.trim()) {
+          showError('Tên người dùng không được để trống');
+          setIsSaving(prev => ({ ...prev, [editingField]: false }));
+          return;
+        }
+        await accountService.updateProfile({ username: editUsername });
+      } else if (editingField === 'email') {
+        if (!editEmail.trim()) {
+          showError('Email không được để trống');
+          setIsSaving(prev => ({ ...prev, [editingField]: false }));
+          return;
+        }
+        await accountService.updateProfile({ email: editEmail });
+      } else if (editingField === 'birthday') {
+        await accountService.updateProfile({ birthday: editBirthday });
+      } else if (editingField === 'gender') {
+        await accountService.updateProfile({ gender: editGender });
+      }
+      
+      showSuccess('Cập nhật thành công!');
+      
+      const data = await accountService.getProfile();
+      setProfile(data);
+      setUser(data);
+      setAddress(data.address || '');
+      setPhone(data.phone || '');
+      setJob(data.job || '');
+      setNationality(data.nationality || '');
+      setEditUsername(data.username || '');
+      setEditEmail(data.email || '');
+      setEditBirthday(data.birthday ? new Date(data.birthday).toISOString().split('T')[0] : '');
+      setEditGender(data.gender || 'other');
+      
+      setEditingField(null);
+    } catch (err: any) {
+      console.error(err);
+      showError(err.response?.data?.message || 'Không thể cập nhật thông tin. Vui lòng thử lại.');
+    } finally {
+      setIsSaving(prev => ({ ...prev, [editingField]: false }));
+    }
   };
 
   // Save editable fields
@@ -1103,170 +1169,248 @@ export default function SettingPage() {
                     </div>
                   ) : (
                     <div className="space-y-6">
-                      {/* Editable Fields Section */}
-                      <div className="space-y-5 text-left bg-grey/5 dark:bg-zinc-800/20 p-5 rounded-2xl border border-grey/20 dark:border-zinc-800">
-                        <h3 className="text-sm font-bold text-black dark:text-white border-b border-grey/10 dark:border-zinc-800 pb-2.5">
-                          Thông tin có thể chỉnh sửa
-                        </h3>
-
-                        {/* Address */}
-                        <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
-                            <MapPin className="w-3.5 h-3.5" /> Địa chỉ
-                          </label>
-                          <div className="flex gap-2">
-                            <input
-                              type="text"
-                              value={address}
-                              onChange={(e) => setAddress(e.target.value)}
-                              placeholder="Nhập địa chỉ của bạn"
-                              className="flex-1 bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
-                            />
-                            <button
-                              onClick={() => handleSaveField('address', address)}
-                              disabled={isSaving['address']}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
-                            >
-                              {isSaving['address'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Thiết lập'}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Phone */}
-                        <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
-                            <Phone className="w-3.5 h-3.5" /> Số điện thoại
-                          </label>
-                          <div className="flex gap-2">
-                            <input
-                              type="tel"
-                              value={phone}
-                              onChange={(e) => setPhone(e.target.value)}
-                              placeholder="Nhập số điện thoại"
-                              className="flex-1 bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
-                            />
-                            <button
-                              onClick={() => handleSaveField('phone', phone)}
-                              disabled={isSaving['phone']}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
-                            >
-                              {isSaving['phone'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Thiết lập'}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Job */}
-                        <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
-                            <Briefcase className="w-3.5 h-3.5" /> Công việc
-                          </label>
-                          <div className="flex gap-2">
-                            <input
-                              type="text"
-                              value={job}
-                              onChange={(e) => setJob(e.target.value)}
-                              placeholder="Công việc hiện tại"
-                              className="flex-1 bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
-                            />
-                            <button
-                              onClick={() => handleSaveField('job', job)}
-                              disabled={isSaving['job']}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
-                            >
-                              {isSaving['job'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Thiết lập'}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Nationality */}
-                        <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
-                            <Globe className="w-3.5 h-3.5" /> Quốc tịch
-                          </label>
-                          <div className="flex gap-2">
-                            <input
-                              type="text"
-                              value={nationality}
-                              onChange={(e) => setNationality(e.target.value)}
-                              placeholder="Quốc gia / Quốc tịch"
-                              className="flex-1 bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
-                            />
-                            <button
-                              onClick={() => handleSaveField('nationality', nationality)}
-                              disabled={isSaving['nationality']}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
-                            >
-                              {isSaving['nationality'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Thiết lập'}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Relationship Section Link */}
-                        <div className="space-y-1.5 border-t border-grey/10 dark:border-zinc-800 pt-5 mt-5">
-                          <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
-                            <Heart className="w-3.5 h-3.5" /> Mối quan hệ
-                          </label>
-                          <div className="flex gap-2">
-                            <div
-                              onClick={() => router.push('/setting/relationship')}
-                              className="flex-1 bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-semibold text-grey cursor-pointer hover:border-blue transition select-none"
-                            >
-                              {profile?.relationship?.status && profile.relationship.status !== 'none' && profile.relationship.status !== 'single'
-                                ? (() => {
-                                    const labels: Record<string, string> = { dating: 'Đang hẹn hò', engaged: 'Đã đính hôn', married: 'Đã kết hôn' };
-                                    const partnerName = profile.relationship.partner?.username;
-                                    const statusLabel = labels[profile.relationship.status] || profile.relationship.status;
-                                    return partnerName ? `${statusLabel} với ${partnerName}` : statusLabel;
-                                  })()
-                                : profile?.relationship?.status === 'single'
-                                  ? 'Độc thân'
-                                  : 'Thiết lập mối quan hệ của bạn'}
-                            </div>
+                      {editingField ? (
+                        <div className="space-y-5 text-left bg-grey/5 dark:bg-zinc-800/20 p-5 rounded-2xl border border-grey/20 dark:border-zinc-800 animate-in fade-in slide-in-from-right-4 duration-200">
+                          <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-3 mb-4">
                             <button
                               type="button"
-                              onClick={() => router.push('/setting/relationship')}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
+                              onClick={() => setEditingField(null)}
+                              className="w-8 h-8 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800/60 active:scale-95 flex items-center justify-center text-grey-hover transition border-0 bg-transparent cursor-pointer"
                             >
-                              Thiết lập
+                              <ArrowLeft className="w-4 h-4" />
+                            </button>
+                            <h3 className="text-sm font-bold text-black dark:text-white">
+                              {editingField === 'username' && 'Cập nhật Tên người dùng'}
+                              {editingField === 'email' && 'Cập nhật Email'}
+                              {editingField === 'birthday' && 'Cập nhật Ngày sinh'}
+                              {editingField === 'gender' && 'Cập nhật Giới tính'}
+                              {editingField === 'address' && 'Cập nhật Địa chỉ'}
+                              {editingField === 'phone' && 'Cập nhật Số điện thoại'}
+                              {editingField === 'job' && 'Cập nhật Công việc'}
+                              {editingField === 'nationality' && 'Cập nhật Quốc tịch'}
+                            </h3>
+                          </div>
+
+                          {editingField === 'username' && (
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
+                                <User className="w-3.5 h-3.5" /> Tên người dùng mới
+                              </label>
+                              <input
+                                type="text"
+                                value={editUsername}
+                                onChange={(e) => setEditUsername(e.target.value)}
+                                placeholder="Nhập tên người dùng mới"
+                                className="w-full bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
+                              />
+                            </div>
+                          )}
+
+                          {editingField === 'email' && (
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
+                                <Mail className="w-3.5 h-3.5" /> Địa chỉ Email mới
+                              </label>
+                              <input
+                                type="email"
+                                value={editEmail}
+                                onChange={(e) => setEditEmail(e.target.value)}
+                                placeholder="Nhập email mới"
+                                className="w-full bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
+                              />
+                            </div>
+                          )}
+
+                          {editingField === 'birthday' && (
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
+                                <Cake className="w-3.5 h-3.5" /> Ngày sinh
+                              </label>
+                              <input
+                                type="date"
+                                value={editBirthday}
+                                onChange={(e) => setEditBirthday(e.target.value)}
+                                className="w-full bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
+                              />
+                            </div>
+                          )}
+
+                          {editingField === 'gender' && (
+                            <div className="space-y-2">
+                              <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
+                                <Users2 className="w-3.5 h-3.5" /> Giới tính
+                              </label>
+                              <div className="grid grid-cols-3 gap-3">
+                                {[
+                                  { value: 'male', label: 'Nam' },
+                                  { value: 'female', label: 'Nữ' },
+                                  { value: 'other', label: 'Khác' }
+                                ].map((option) => (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => setEditGender(option.value)}
+                                    className={`py-2.5 rounded-xl border text-sm font-bold transition duration-200 cursor-pointer ${
+                                      editGender === option.value
+                                        ? 'border-blue bg-blue/5 text-blue'
+                                        : 'border-grey/20 bg-white dark:bg-zinc-900 text-black dark:text-white hover:bg-grey/5'
+                                    }`}
+                                  >
+                                    {option.label}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {editingField === 'address' && (
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
+                                <MapPin className="w-3.5 h-3.5" /> Địa chỉ mới
+                              </label>
+                              <input
+                                type="text"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                placeholder="Nhập địa chỉ mới"
+                                className="w-full bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
+                              />
+                            </div>
+                          )}
+
+                          {editingField === 'phone' && (
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
+                                <Phone className="w-3.5 h-3.5" /> Số điện thoại mới
+                              </label>
+                              <input
+                                type="tel"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                placeholder="Nhập số điện thoại mới"
+                                className="w-full bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
+                              />
+                            </div>
+                          )}
+
+                          {editingField === 'job' && (
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
+                                <Briefcase className="w-3.5 h-3.5" /> Công việc mới
+                              </label>
+                              <input
+                                type="text"
+                                value={job}
+                                onChange={(e) => setJob(e.target.value)}
+                                placeholder="Nhập công việc mới"
+                                className="w-full bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
+                              />
+                            </div>
+                          )}
+
+                          {editingField === 'nationality' && (
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-grey uppercase tracking-wider flex items-center gap-1.5">
+                                <Globe className="w-3.5 h-3.5" /> Quốc tịch mới
+                              </label>
+                              <input
+                                type="text"
+                                value={nationality}
+                                onChange={(e) => setNationality(e.target.value)}
+                                placeholder="Nhập quốc tịch mới"
+                                className="w-full bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue transition font-semibold text-black dark:text-white"
+                              />
+                            </div>
+                          )}
+
+                          <div className="pt-2 flex justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setEditingField(null)}
+                              className="px-4 py-2 rounded-xl text-xs font-bold text-grey bg-grey/10 hover:bg-grey/20 transition cursor-pointer border-0"
+                            >
+                              Hủy bỏ
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleUpdateField}
+                              disabled={isSaving[editingField]}
+                              className="bg-blue hover:bg-blue-hover text-white px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
+                            >
+                              {isSaving[editingField] ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Lưu thay đổi'}
                             </button>
                           </div>
                         </div>
-                      </div>
-
-                      {/* Read-Only System Info */}
-                      <div className="space-y-4 text-left bg-grey/5 dark:bg-zinc-800/20 p-5 rounded-2xl border border-grey/20 dark:border-zinc-800">
-                        <h3 className="text-sm font-bold text-black dark:text-white border-b border-grey/10 dark:border-zinc-800 pb-2.5">
-                          Thông tin hệ thống cố định
-                        </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          {[
-                            { label: 'Tên người dùng', value: profile?.username || 'Chưa cập nhật', icon: User },
-                            { label: 'Email', value: profile?.email || 'Chưa cập nhật', icon: Mail },
-                            { label: 'Ngày sinh', value: profile?.birthday ? new Date(profile.birthday).toLocaleDateString('vi-VN') : 'Chưa cập nhật', icon: Cake },
-                            { label: 'Giới tính', value: profile?.gender === 'male' ? 'Nam' : profile?.gender === 'female' ? 'Nữ' : 'Khác', icon: Users2 }
-                          ].map((field, idx) => {
-                            const Icon = field.icon;
-                            return (
-                              <div key={idx} className="flex items-center gap-3 bg-white dark:bg-zinc-900 p-3 rounded-xl border border-grey/10 dark:border-zinc-800 text-left">
-                                <div className="w-9 h-9 rounded-full bg-grey/10 dark:bg-zinc-800 flex items-center justify-center text-grey flex-shrink-0">
-                                  <Icon className="w-4 h-5" />
+                      ) : (
+                        <div className="space-y-5 text-left bg-grey/5 dark:bg-zinc-800/20 p-5 rounded-2xl border border-grey/20 dark:border-zinc-800">
+                          <h3 className="text-sm font-bold text-black dark:text-white border-b border-grey/10 dark:border-zinc-800 pb-2.5">
+                            Thông tin cá nhân
+                          </h3>
+                          
+                          <div className="divide-y divide-grey/10 dark:divide-zinc-800/80">
+                            {[
+                              { key: 'username', label: 'Tên người dùng', value: profile?.username || 'Chưa thiết lập', icon: User, color: 'text-blue bg-blue/5 dark:bg-blue-950/20' },
+                              { key: 'email', label: 'Email', value: profile?.email || 'Chưa thiết lập', icon: Mail, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/20' },
+                              { key: 'birthday', label: 'Ngày sinh', value: profile?.birthday ? new Date(profile.birthday).toLocaleDateString('vi-VN') : 'Chưa thiết lập', icon: Cake, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/20' },
+                              { key: 'gender', label: 'Giới tính', value: profile?.gender === 'male' ? 'Nam' : profile?.gender === 'female' ? 'Nữ' : profile?.gender === 'other' ? 'Khác' : 'Khác', icon: Users2, color: 'text-green bg-green/5 dark:bg-green-950/20' },
+                              { key: 'address', label: 'Địa chỉ', value: profile?.address || 'Chưa thiết lập', icon: MapPin, color: 'text-red bg-red/5 dark:bg-red-950/20' },
+                              { key: 'phone', label: 'Số điện thoại', value: profile?.phone || 'Chưa thiết lập', icon: Phone, color: 'text-teal-500 bg-teal-50 dark:bg-teal-950/20' },
+                              { key: 'job', label: 'Công việc', value: profile?.job || 'Chưa thiết lập', icon: Briefcase, color: 'text-pink bg-pink/5 dark:bg-pink-950/20' },
+                              { key: 'nationality', label: 'Quốc tịch', value: profile?.nationality || 'Chưa thiết lập', icon: Globe, color: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-950/20' },
+                              { 
+                                key: 'relationship', 
+                                label: 'Mối quan hệ', 
+                                value: profile?.relationship?.status && profile.relationship.status !== 'none' && profile.relationship.status !== 'single'
+                                  ? (() => {
+                                      const labels: Record<string, string> = { dating: 'Đang hẹn hò', engaged: 'Đã đính hôn', married: 'Đã kết hôn' };
+                                      const partnerName = profile.relationship.partner?.username;
+                                      const statusLabel = labels[profile.relationship.status] || profile.relationship.status;
+                                      return partnerName ? `${statusLabel} với ${partnerName}` : statusLabel;
+                                    })()
+                                  : profile?.relationship?.status === 'single'
+                                    ? 'Độc thân'
+                                    : 'Chưa thiết lập',
+                                icon: Heart, 
+                                color: 'text-red bg-red/5 dark:bg-red-950/20',
+                                isRelationship: true 
+                              }
+                            ].map((field) => {
+                              const Icon = field.icon;
+                              return (
+                                <div key={field.key} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+                                  <div className="flex items-center gap-4 min-w-0 pr-4">
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${field.color}`}>
+                                      <Icon className="w-5 h-5" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <span className="text-[10px] font-bold text-grey uppercase tracking-wider block">
+                                        {field.label}
+                                      </span>
+                                      <span className="text-sm font-bold text-black dark:text-white truncate block mt-0.5">
+                                        {field.value}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (field.isRelationship) {
+                                        router.push('/setting/relationship');
+                                      } else {
+                                        setEditingField(field.key);
+                                      }
+                                    }}
+                                    className="bg-blue hover:bg-blue-hover text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm active:scale-95 transition cursor-pointer border-0 flex-shrink-0"
+                                  >
+                                    Thiết lập
+                                  </button>
                                 </div>
-                                <div className="min-w-0">
-                                  <span className="text-[10px] font-bold text-grey uppercase tracking-wider block">
-                                    {field.label}
-                                  </span>
-                                  <span className="text-sm font-bold text-black dark:text-white truncate block mt-0.5">
-                                    {field.value}
-                                  </span>
-                                </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
+                          </div>
                         </div>
-                        <p className="text-xs text-grey italic pt-1">
-                          * Các thông tin hệ thống cố định được thiết lập khi đăng ký tài khoản và không thể tự ý thay đổi.
-                        </p>
-                      </div>
+                      )}
                     </div>
                   )}
                 </div>
