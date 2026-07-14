@@ -2,6 +2,7 @@
 import Navbar from '@/components/Navbar';
 import { notificationService } from '@/services/notification.service';
 import { contactService } from '@/services/contact.service';
+import { accountService } from '@/services/accout.service';
 import { useAlert } from '@/components/Alert/alertcontext';
 import { useEffect, useState } from 'react';
 import { 
@@ -23,6 +24,8 @@ export default function NotificationPage() {
   const { showSuccess, showError } = useAlert();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
+  const [actionStatus, setActionStatus] = useState<Record<string, 'accepted' | 'rejected'>>({});
 
   const fetchNotifications = async () => {
     try {
@@ -36,9 +39,43 @@ export default function NotificationPage() {
     }
   };
 
+  const fetchProfile = async () => {
+    try {
+      const data = await accountService.getProfile();
+      setProfile(data);
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+    }
+  };
+
   useEffect(() => {
     fetchNotifications();
+    fetchProfile();
   }, []);
+
+  const handleAcceptRelationship = async (senderId: string, notifId: string) => {
+    try {
+      await accountService.acceptRelationship(senderId);
+      showSuccess('Đã đồng ý kết đôi!');
+      setActionStatus(prev => ({ ...prev, [notifId]: 'accepted' }));
+      fetchProfile();
+    } catch (err: any) {
+      console.error('Error accepting relationship:', err);
+      showError(err.response?.data?.message || 'Thất bại khi chấp nhận lời mời.');
+    }
+  };
+
+  const handleRejectRelationship = async (senderId: string, notifId: string) => {
+    try {
+      await accountService.rejectRelationship(senderId);
+      showSuccess('Đã từ chối kết đôi.');
+      setActionStatus(prev => ({ ...prev, [notifId]: 'rejected' }));
+      fetchProfile();
+    } catch (err: any) {
+      console.error('Error rejecting relationship:', err);
+      showError(err.response?.data?.message || 'Thất bại khi từ chối lời mời.');
+    }
+  };
 
   const handleMarkAllRead = async () => {
     try {
@@ -238,6 +275,56 @@ export default function NotificationPage() {
                             Lời mời đã hết hạn
                           </span>
                         )}
+                      </div>
+                    )}
+
+                    {/* Relationship Request action buttons */}
+                    {notif.title === 'Yêu cầu kết đôi mới' && sender && (
+                      <div className="mt-3 flex items-center gap-2">
+                        {(() => {
+                          const senderId = sender._id || sender.id;
+                          const hasPendingReq = profile?.relationshipRequests?.some((req: any) => req._id === senderId);
+                          const status = actionStatus[notif._id || notif.id];
+                          const isPartner = profile?.relationship?.partner?._id === senderId || profile?.relationship?.partner === senderId;
+
+                          if (status === 'accepted' || isPartner) {
+                            return (
+                              <span className="text-xs font-bold text-pink-500 bg-pink-500/10 dark:bg-pink-500/20 px-2.5 py-1 rounded-md">
+                                Đã đồng ý kết đôi
+                              </span>
+                            );
+                          }
+                          if (status === 'rejected') {
+                            return (
+                              <span className="text-xs font-semibold text-grey/60 dark:text-zinc-400 bg-grey/10 dark:bg-zinc-800/80 px-2.5 py-1 rounded-md">
+                                Đã từ chối kết đôi
+                              </span>
+                            );
+                          }
+                          if (hasPendingReq) {
+                            return (
+                              <>
+                                <button
+                                  onClick={() => handleAcceptRelationship(senderId, notif._id || notif.id)}
+                                  className="px-4 py-1.5 bg-blue hover:bg-blue-hover text-white text-xs font-bold rounded-lg border-none cursor-pointer transition shadow-sm"
+                                >
+                                  Đồng ý
+                                </button>
+                                <button
+                                  onClick={() => handleRejectRelationship(senderId, notif._id || notif.id)}
+                                  className="px-4 py-1.5 bg-grey/25 dark:bg-zinc-800 hover:bg-grey/30 dark:hover:bg-zinc-700 text-grey-hover dark:text-zinc-200 text-xs font-bold rounded-lg border-none cursor-pointer transition"
+                                >
+                                  Từ chối
+                                </button>
+                              </>
+                            );
+                          }
+                          return (
+                            <span className="text-xs text-grey/50 dark:text-zinc-500 italic">
+                              Yêu cầu đã kết thúc
+                            </span>
+                          );
+                        })()}
                       </div>
                     )}
                   </div>
