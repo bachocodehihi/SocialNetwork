@@ -1127,7 +1127,7 @@ export default function SettingPage() {
                               disabled={isSaving['address']}
                               className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
-                              {isSaving['address'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu'}
+                              {isSaving['address'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Thiết lập'}
                             </button>
                           </div>
                         </div>
@@ -1150,7 +1150,7 @@ export default function SettingPage() {
                               disabled={isSaving['phone']}
                               className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
-                              {isSaving['phone'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu'}
+                              {isSaving['phone'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Thiết lập'}
                             </button>
                           </div>
                         </div>
@@ -1173,7 +1173,7 @@ export default function SettingPage() {
                               disabled={isSaving['job']}
                               className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
-                              {isSaving['job'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu'}
+                              {isSaving['job'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Thiết lập'}
                             </button>
                           </div>
                         </div>
@@ -1196,7 +1196,7 @@ export default function SettingPage() {
                               disabled={isSaving['nationality']}
                               className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
                             >
-                              {isSaving['nationality'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu'}
+                              {isSaving['nationality'] ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Thiết lập'}
                             </button>
                           </div>
                         </div>
