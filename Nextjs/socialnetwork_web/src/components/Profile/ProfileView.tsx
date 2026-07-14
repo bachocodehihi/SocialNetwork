@@ -888,63 +888,77 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                   <div>
                     <span className="block text-xs text-grey dark:text-zinc-405">Mối quan hệ</span>
                     <span className="text-sm font-semibold text-grey-hover dark:text-zinc-200">
-                      {profileUser.relationship.status === 'single' && 'Độc thân'}
-                      {profileUser.relationship.status === 'dating' && (
-                        profileUser.relationship.partner ? (
+                      {profileUser.relationship.isPending ? (
+                        isSelf ? (
                           <>
-                            Đang hẹn hò với{' '}
-                            <span 
-                              onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
-                              className="text-blue hover:underline cursor-pointer font-bold"
-                            >
-                              {profileUser.relationship.partner.username || 'đối tác'}
-                            </span>
+                            Đang chờ{' '}
+                            {profileUser.relationship.pendingPartner ? (
+                              <span 
+                                onClick={() => router.push(`/user/${profileUser.relationship.pendingPartner._id || profileUser.relationship.pendingPartner}`)}
+                                className="text-blue hover:underline cursor-pointer font-bold"
+                              >
+                                {profileUser.relationship.pendingPartner.username || 'đối tác'}
+                              </span>
+                            ) : 'đối tác'}{' '}
+                            xác nhận
                           </>
-                        ) : 'Đang hẹn hò'
-                      )}
-                      {profileUser.relationship.status === 'engaged' && (
-                        profileUser.relationship.partner ? (
-                          <>
-                            Đã đính hôn với{' '}
-                            <span 
-                              onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
-                              className="text-blue hover:underline cursor-pointer font-bold"
-                            >
-                              {profileUser.relationship.partner.username || 'đối tác'}
-                            </span>
-                          </>
-                        ) : 'Đã đính hôn'
-                      )}
-                      {profileUser.relationship.status === 'married' && (
-                        profileUser.relationship.partner ? (
-                          <>
-                            Đã kết hôn với{' '}
-                            <span 
-                              onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
-                              className="text-blue hover:underline cursor-pointer font-bold"
-                            >
-                              {profileUser.relationship.partner.username || 'đối tác'}
-                            </span>
-                          </>
-                        ) : 'Đã kết hôn'
-                      )}
-                      {profileUser.relationship.status === 'complicated' && (
-                        profileUser.relationship.partner ? (
-                          <>
-                            Có mối quan hệ phức tạp với{' '}
-                            <span 
-                              onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
-                              className="text-blue hover:underline cursor-pointer font-bold"
-                            >
-                              {profileUser.relationship.partner.username || 'đối tác'}
-                            </span>
-                          </>
-                        ) : 'Mối quan hệ phức tạp'
-                      )}
-                      {isSelf && profileUser.relationship.isPending && (
-                        <span className="text-xs text-grey italic font-normal block mt-0.5">
-                          (Đang chờ phản hồi)
-                        </span>
+                        ) : 'Độc thân'
+                      ) : (
+                        <>
+                          {profileUser.relationship.status === 'single' && 'Độc thân'}
+                          {profileUser.relationship.status === 'dating' && (
+                            profileUser.relationship.partner ? (
+                              <>
+                                Đang hẹn hò với{' '}
+                                <span 
+                                  onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
+                                  className="text-blue hover:underline cursor-pointer font-bold"
+                                >
+                                  {profileUser.relationship.partner.username || 'đối tác'}
+                                </span>
+                              </>
+                            ) : 'Đang hẹn hò'
+                          )}
+                          {profileUser.relationship.status === 'engaged' && (
+                            profileUser.relationship.partner ? (
+                              <>
+                                Đã đính hôn với{' '}
+                                <span 
+                                  onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
+                                  className="text-blue hover:underline cursor-pointer font-bold"
+                                >
+                                  {profileUser.relationship.partner.username || 'đối tác'}
+                                </span>
+                              </>
+                            ) : 'Đã đính hôn'
+                          )}
+                          {profileUser.relationship.status === 'married' && (
+                            profileUser.relationship.partner ? (
+                              <>
+                                Đã kết hôn với{' '}
+                                <span 
+                                  onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
+                                  className="text-blue hover:underline cursor-pointer font-bold"
+                                >
+                                  {profileUser.relationship.partner.username || 'đối tác'}
+                                </span>
+                              </>
+                            ) : 'Đã kết hôn'
+                          )}
+                          {profileUser.relationship.status === 'complicated' && (
+                            profileUser.relationship.partner ? (
+                              <>
+                                Có mối quan hệ phức tạp với{' '}
+                                <span 
+                                  onClick={() => router.push(`/user/${profileUser.relationship.partner._id || profileUser.relationship.partner}`)}
+                                  className="text-blue hover:underline cursor-pointer font-bold"
+                                >
+                                  {profileUser.relationship.partner.username || 'đối tác'}
+                                </span>
+                              </>
+                            ) : 'Mối quan hệ phức tạp'
+                          )}
+                        </>
                       )}
                     </span>
                   </div>

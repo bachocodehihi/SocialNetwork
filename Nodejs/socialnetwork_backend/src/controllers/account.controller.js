@@ -9,6 +9,7 @@ const getProfile = async (req, res) => {
         const user = await Account.findById(req.userId)
             .select('-password')
             .populate('relationship.partner', 'username avatar')
+            .populate('relationship.pendingPartner', 'username avatar')
             .lean();
         if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
 
@@ -313,6 +314,7 @@ const getUserById = async (req, res) => {
         const user = await Account.findById(id)
             .select('-password')
             .populate('relationship.partner', 'username avatar')
+            .populate('relationship.pendingPartner', 'username avatar')
             .lean();
         if (!user) return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
 
