@@ -707,7 +707,7 @@ export default function SettingPage() {
             
             {/* Title Header (Visible on Desktop or when on Menu list) */}
             <div className="flex items-center gap-3 px-1 select-none">
-              <Settings className="w-6 h-6 text-blue" />
+              <Settings className="w-6 h-6 text-black dark:text-white" />
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-black dark:text-white">{t('settings_title')}</h1>
             </div>
 
