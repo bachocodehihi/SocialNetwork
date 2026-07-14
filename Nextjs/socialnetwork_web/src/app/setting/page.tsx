@@ -1249,7 +1249,7 @@ export default function SettingPage() {
                             <button
                               type="button"
                               onClick={() => router.push('/setting/relationship')}
-                              className="bg-blue hover:bg-blue-hover text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold shadow-sm active:scale-95 transition cursor-pointer border-0"
+                              className="border border-blue text-blue hover:bg-blue hover:text-white px-4 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold active:scale-95 transition cursor-pointer bg-transparent"
                             >
                               Thiết lập
                             </button>
