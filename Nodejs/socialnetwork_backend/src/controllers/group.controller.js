@@ -11,7 +11,7 @@ const checkFriendship = async (userId1, userId2) => {
 
 const createGroup = async (req, res) => {
     try {
-        const { name, members, description, avatar } = req.body;
+        const { name, members, description, avatar, settings } = req.body;
         const adminId = req.userId;
 
         if (!name?.trim()) {
@@ -53,7 +53,16 @@ const createGroup = async (req, res) => {
             members: [adminId, ...members],
             inviteCode,
             inviteLink,
-            isGroup: true
+            isGroup: true,
+            settings: {
+                groupType: settings?.groupType || 'public',
+                joinPolicy: settings?.joinPolicy || (settings?.groupType === 'private' ? 'approval' : 'open'),
+                postPolicy: settings?.postPolicy || 'open',
+                memberLimit: settings?.memberLimit || 0,
+                onlyAdminCanPost: settings?.onlyAdminCanPost || false,
+                onlyAdminCanAddMember: settings?.onlyAdminCanAddMember || false,
+                allowMemberInvite: settings?.allowMemberInvite ?? true
+            }
         });
 
         const savedGroup = await newGroup.save();

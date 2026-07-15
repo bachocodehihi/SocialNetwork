@@ -1,6 +1,11 @@
 import api from '../lib/axios';
 
 export const groupService = {
+  createGroup: async (data: { name: string; members: string[]; description?: string; avatar?: string; settings?: any }) => {
+    const res = await api.post('/groups', data);
+    return res.data;
+  },
+
   getGroups: async () => {
     const res = await api.get('/groups');
     return res.data;

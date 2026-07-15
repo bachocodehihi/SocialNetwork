@@ -28,29 +28,24 @@ export default function GroupPage() {
   const [loading, setLoading] = useState(true);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
-  // Join request & Post approval states for admin
   const [joinRequests, setJoinRequests] = useState<any[]>([]);
   const [pendingPosts, setPendingPosts] = useState<any[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [loadingPendingPosts, setLoadingPendingPosts] = useState(false);
 
-  // User status states for locked groups
   const [isNotMember, setIsNotMember] = useState(false);
   const [isPendingJoin, setIsPendingJoin] = useState(false);
   const [joining, setJoining] = useState(false);
 
-  // Tabs state: 'discussion' | 'about' | 'members' | 'join_requests' | 'pending_posts'
   const [activeTab, setActiveTab] = useState<'discussion' | 'about' | 'members' | 'join_requests' | 'pending_posts'>('discussion');
   const [memberSearchQuery, setMemberSearchQuery] = useState('');
 
-  // Edit settings state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editAvatar, setEditAvatar] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Create post modal state (FB style modal)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostImages, setNewPostImages] = useState<File[]>([]);
@@ -58,21 +53,17 @@ export default function GroupPage() {
   const [isPosting, setIsPosting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Comments state
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [commentSectionOpen, setCommentSectionOpen] = useState<Record<string, boolean>>({});
 
-  // Expanded posts & comments
   const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
   const [replyingTo, setReplyingTo] = useState<{ postId: string; commentId: string; username: string } | null>(null);
 
-  // Lightbox modal state
   const [activeLightboxPost, setActiveLightboxPost] = useState<any | null>(null);
   const [activeLightboxImageIdx, setActiveLightboxImageIdx] = useState<number>(0);
   const [lightboxContentExpanded, setLightboxContentExpanded] = useState<boolean>(false);
 
-  // Dropdown states
   const [isJoinedDropdownOpen, setIsJoinedDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
@@ -98,11 +89,9 @@ export default function GroupPage() {
     const initData = async () => {
       try {
         setLoading(true);
-        // Load User
         const profile = await authService.getProfile();
         setCurrentUser(profile);
 
-        // Load Group
         const res = await groupService.getGroupById(id);
         if (res.success && res.data) {
           setGroup(res.data);
@@ -195,7 +184,7 @@ export default function GroupPage() {
         if (res.status === 'approved') {
           showSuccess('Bạn đã tham gia nhóm thành công!');
           setIsNotMember(false);
-          // Reload group data
+
           const updatedGroup = await groupService.getGroupById(groupId);
           if (updatedGroup.success && updatedGroup.data) {
             setGroup(updatedGroup.data);
@@ -227,7 +216,7 @@ export default function GroupPage() {
         showSuccess(action === 'approve' ? 'Đã phê duyệt thành viên mới!' : 'Đã từ chối yêu cầu.');
         setJoinRequests(prev => prev.filter(r => r._id !== requestUserId));
         if (action === 'approve') {
-          // Re-fetch group to get updated member list
+
           const updatedGroup = await groupService.getGroupById(groupId);
           if (updatedGroup.success && updatedGroup.data) {
             setGroup(updatedGroup.data);
@@ -250,7 +239,7 @@ export default function GroupPage() {
         showSuccess(action === 'approve' ? 'Đã phê duyệt bài viết!' : 'Đã từ chối bài viết.');
         setPendingPosts(prev => prev.filter(p => p._id !== postId));
         if (action === 'approve') {
-          // Fetch updated posts
+
           const postsRes = await contentService.getGroupPosts(groupId);
           setPosts(Array.isArray(postsRes) ? postsRes : []);
         }
@@ -1627,7 +1616,6 @@ export default function GroupPage() {
                 </div>
               )}
 
-              {/* Pending Posts tab view */}
               {activeTab === 'pending_posts' && (
                 <div className="lg:col-span-12">
                   <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm p-6 text-left max-w-2xl mx-auto space-y-6">
@@ -1717,7 +1705,6 @@ export default function GroupPage() {
 
       </div>
 
-      {/* FB Style Create Post Modal */}
       <AnimatePresence>
         {isCreateModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -1735,7 +1722,7 @@ export default function GroupPage() {
               exit={{ opacity: 0, scale: 0.95 }}
               className="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-2xl relative z-10 border border-grey/20 dark:border-zinc-800 flex flex-col max-h-[90vh]"
             >
-              {/* Modal Header */}
+
               <div className="p-4 border-b border-grey/10 dark:border-zinc-800 flex items-center justify-between text-center">
                 <div className="w-8"></div>
                 <h3 className="text-base font-extrabold text-slate-850 dark:text-white">Tạo bài viết</h3>
@@ -1747,9 +1734,8 @@ export default function GroupPage() {
                 </button>
               </div>
 
-              {/* Modal Body */}
               <div className="p-4 overflow-y-auto space-y-4 flex-1 text-left">
-                {/* User details */}
+
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 flex-shrink-0">
                     {currentUser?.avatar ? (
@@ -1768,7 +1754,6 @@ export default function GroupPage() {
                   </div>
                 </div>
 
-                {/* Text area */}
                 <textarea
                   rows={4}
                   value={newPostContent}
@@ -1777,7 +1762,6 @@ export default function GroupPage() {
                   className="w-full border-0 focus:ring-0 resize-none font-semibold text-sm text-slate-850 dark:text-white bg-transparent placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none"
                 />
 
-                {/* Image Previews */}
                 {newPostPreviews.length > 0 && (
                   <div className="grid grid-cols-2 gap-2">
                     {newPostPreviews.map((preview, idx) => (
@@ -1795,9 +1779,8 @@ export default function GroupPage() {
                 )}
               </div>
 
-              {/* Modal Footer */}
               <div className="p-4 border-t border-grey/10 dark:border-zinc-800 space-y-3">
-                {/* Actions widget */}
+
                 <div className="border border-slate-200 dark:border-[#3e4042] rounded-lg p-3 flex items-center justify-between bg-slate-50 dark:bg-[#18191a]">
                   <span className="text-xs font-extrabold text-slate-850 dark:text-white">Thêm vào bài viết của bạn</span>
                   <div className="flex gap-2">
@@ -1819,7 +1802,6 @@ export default function GroupPage() {
                   </div>
                 </div>
 
-                {/* Submit button */}
                 <button
                   onClick={handleCreatePost}
                   disabled={isPosting || (!newPostContent.trim() && newPostImages.length === 0)}
@@ -1834,7 +1816,6 @@ export default function GroupPage() {
         )}
       </AnimatePresence>
 
-      {/* Edit Group Settings Modal */}
       <AnimatePresence>
         {isEditModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
