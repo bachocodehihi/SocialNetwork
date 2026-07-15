@@ -673,6 +673,107 @@ const toggleComments = async (req, res) => {
     }
 };
 
+const searchPosts = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) {
+            return res.status(400).json({ success: false, code: 'QUERY_REQUIRED' });
+        }
+
+        const Account = require('../models/account.model');
+        const Group = require('../models/group.model');
+
+        const currentUser = await Account.findById(req.userId);
+        if (!currentUser) {
+            return res.status(404).json({ success: false, code: 'USER_NOT_FOUND' });
+        }
+
+        const friendIds = currentUser.friends || [];
+        
+        const myGroups = await Group.find({
+            $or: [
+                { admin: req.userId },
+                { members: req.userId }
+            ]
+        });
+        const myGroupIds = myGroups.map(g => g._id);
+
+        const publicGroups = await Group.find({
+            'settings.groupType': 'public'
+        });
+        const publicGroupIds = publicGroups.map(g => g._id);
+
+        const allowedGroupIds = [...new Set([...myGroupIds.map(id => id.toString()), ...publicGroupIds.map(id => id.toString())])];
+
+        const posts = await Post.find({
+            content: { $regex: q, $options: 'i' },
+            $or: [
+                {
+                    postType: 'user',
+                    $or: [
+                        { privacy: 'public' },
+                        {
+                            privacy: 'friends',
+                            $or: [
+                                { author: req.userId },
+                                { author: { $in: friendIds } }
+                            ]
+                        },
+                        {
+                            privacy: 'friends_except',
+                            $or: [
+                                { author: req.userId },
+                                {
+                                    author: { $in: friendIds },
+                                    exceptedFriends: { $ne: req.userId }
+                                }
+                            ]
+                        },
+                        {
+                            privacy: 'specific_friends',
+                            $or: [
+                                { author: req.userId },
+                                { allowedFriends: req.userId }
+                            ]
+                        },
+                        {
+                            privacy: 'private',
+                            author: req.userId
+                        }
+                    ]
+                },
+                {
+                    postType: 'group',
+                    group: { $in: allowedGroupIds },
+                    status: 'approved'
+                }
+            ]
+        })
+        .populate('author', 'username avatar')
+        .populate({
+            path: 'comments',
+            populate: [
+                {
+                    path: 'author',
+                    select: 'username avatar'
+                },
+                {
+                    path: 'replies.author',
+                    select: 'username avatar'
+                }
+            ]
+        })
+        .populate('group', 'name avatar')
+        .sort({ createdAt: -1 })
+        .lean();
+
+        res.status(200).json({ success: true, code: 'SEARCH_POSTS_SUCCESS', data: posts });
+    } catch (error) {
+        console.error('Search posts error:', error);
+        res.status(500).json({ success: false, code: 'SERVER_ERROR' });
+    }
+};
+
 module.exports = { 
     createPost, 
     getFeed, 
@@ -683,5 +784,6 @@ module.exports = {
     likeComment,
     likeReply,
     replyComment,
-    toggleComments
+    toggleComments,
+    searchPosts
 };

@@ -10,13 +10,15 @@ const {
     likeComment,
     likeReply,
     replyComment,
-    toggleComments
+    toggleComments,
+    searchPosts
 } = require('../controllers/content.controller');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { upload } = require('../config/cloudinary');
 
 router.post('/', verifyToken, upload.array('images', 10), createPost);
 router.get('/', verifyToken, getFeed);
+router.get('/search', verifyToken, searchPosts);
 router.get('/user/:userId', verifyToken, getUserPosts);
 router.get('/group/:groupId', verifyToken, getGroupPosts);
 router.put('/:id/like', verifyToken, likePost);
