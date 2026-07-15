@@ -433,7 +433,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                 />
               </button>
 
-              {/* Messages */}
               <button
                 onClick={() => {
                   router.push('/home/message');
@@ -453,7 +452,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                 />
               </button>
 
-              {/* Contacts */}
               <button
                 onClick={() => {
                   router.push('/home/contact/friend');
@@ -473,7 +471,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                 />
               </button>
 
-              {/* Notifications */}
               <button
                 onClick={() => {
                   router.push('/home/notification');
@@ -494,7 +491,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
               </button>
             </div>
 
-            {/* User Avatar with Dropdown Toggle */}
             <div className='flex items-center gap-3 relative z-50'>
               <button 
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -515,7 +511,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                   />
                   <div className='absolute right-0 top-12 w-80 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-black/5 dark:border-zinc-800/80 p-4 z-50 animate-scale-up origin-top-right select-none'>
                     
-                    {/* User Card */}
                     <div 
                       onClick={() => {
                         setIsDropdownOpen(false);
@@ -537,7 +532,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                       </div>
                     </div>
 
-                    {/* View profile */}
                     <button 
                       onClick={() => {
                         setIsDropdownOpen(false);
@@ -551,9 +545,8 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
 
                     <div className='border-t border-black/5 dark:border-zinc-800/80 my-3' />
 
-                    {/* Options List */}
                     <div className='space-y-1'>
-                      {/* Setting */}
+
                       <button
                         onClick={() => {
                           setIsDropdownOpen(false);
@@ -572,7 +565,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                         <ChevronRight className='w-5 h-5 text-black/40 dark:text-zinc-550 group-hover:text-black dark:group-hover:text-white transition-colors' />
                       </button>
 
-                      {/* Game */}
                       <button
                         onClick={() => {
                           setIsDropdownOpen(false);
@@ -591,7 +583,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                         <ChevronRight className='w-5 h-5 text-black/40 dark:text-zinc-550 group-hover:text-black dark:group-hover:text-white transition-colors' />
                       </button>
 
-                      {/* Logout */}
                       <button
                         onClick={handleLogOut}
                         className='w-full flex items-center justify-between p-3 rounded-xl hover:bg-red/10 dark:hover:bg-red-500/10 active:scale-[0.98] transition group border-0 bg-transparent cursor-pointer text-left'

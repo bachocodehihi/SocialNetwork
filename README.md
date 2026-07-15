@@ -20,6 +20,15 @@ Dự án được xây dựng với cấu trúc monorepo bao gồm **Mobile App 
 ### Trò Chơi Tương Tác Trực Tiếp
 *   **Tic-Tac-Toe (Cờ Caro):** Chơi game trực tuyến thời gian thực ngay trong khung chat giữa hai người dùng để tăng tính tương tác.
 
+### Quản Lý Nhóm Nâng Cao & Kiểm Duyệt (Mới)
+*   **Phân loại nhóm linh hoạt:** Hỗ trợ 3 loại cấu hình nhóm: **Công khai (Public)**, **Riêng tư (Private)**, và **Nội bộ (Internal)**. 
+    *   *Nhóm nội bộ (Internal Group)* bảo mật tối đa: chỉ các thành viên trong nhóm mới có thể tìm thấy nhóm qua thanh tìm kiếm.
+*   **Quy chế tham gia & Kiểm duyệt:** Quản trị viên có thể tùy chỉnh quy chế tham gia: **Vào tự do (Open)** hoặc **Cần duyệt (Approval)**. Nhóm riêng tư mặc định bắt buộc phê duyệt.
+*   **Kiểm duyệt bài viết:** Hỗ trợ cơ chế kiểm duyệt bài viết trước khi xuất hiện trên Bảng tin nhóm (Feed).
+*   **Trang quản trị nhóm chuyên biệt:** Giao diện duyệt nhanh thành viên xin gia nhập nhóm và bài viết đang chờ duyệt, tích hợp biểu đồ số lượng chờ duyệt trực quan ở đầu trang Feed nhóm.
+*   **Quản lý nội dung cá nhân:** Người dùng dễ dàng theo dõi và phân loại các bài viết đã đăng trong nhóm của mình dưới các trạng thái: *Đã duyệt*, *Chờ duyệt*, hoặc *Bị từ chối*.
+*   **Tạo nhóm thông minh:** Giao diện tạo nhóm trực quan hỗ trợ tải ảnh đại diện nhóm (Base64), tìm kiếm bạn bè thời gian thực và quản lý danh sách bạn bè được chọn thông qua nút cộng/trừ màu xanh dương.
+
 ### Thông Báo Đẩy Thông Minh (FCM & Local Notifications)
 *   **Thông báo nền (Background):** Nhận thông báo cuộc gọi và tin nhắn mới ngay cả khi ứng dụng đã bị đóng hoàn toàn (Kill state) qua **Firebase Cloud Messaging (FCM)**.
 *   **Thông báo nổi (Foreground):** Tự động chuyển đổi hiển thị thông báo cục bộ sinh động khi người dùng đang mở ứng dụng.
