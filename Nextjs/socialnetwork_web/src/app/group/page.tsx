@@ -705,26 +705,44 @@ export default function GroupPage() {
             </div>
 
             {/* Navigation Tabs (Facebook Style) */}
-            <div className="px-4 flex items-center gap-1 overflow-x-auto text-slate-500 dark:text-[#b0b3b8]">
-              {[
-                { id: 'discussion', label: 'Thảo luận' },
-                { id: 'members', label: 'Mọi người' }
-              ].map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`px-4 py-4 text-sm font-bold border-b-4 transition cursor-pointer bg-transparent border-none ${
-                      isActive 
-                        ? 'border-[#1877f2] text-[#1877f2]' 
-                        : 'border-transparent text-slate-500 dark:text-[#b0b3b8] hover:bg-slate-100 dark:hover:bg-[#3a3b3c]/50 rounded-t-lg'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
+            <div className="px-4 flex items-center justify-between text-slate-500 dark:text-[#b0b3b8]">
+              <div className="flex items-center gap-1 overflow-x-auto">
+                {[
+                  { id: 'discussion', label: 'Thảo luận' },
+                  { id: 'members', label: 'Mọi người' }
+                ].map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id as any)}
+                      className={`px-4 py-4 text-sm font-bold border-b-4 transition cursor-pointer bg-transparent border-none ${
+                        isActive 
+                          ? 'border-[#1877f2] text-[#1877f2]' 
+                          : 'border-transparent text-slate-500 dark:text-[#b0b3b8] hover:bg-slate-100 dark:hover:bg-[#3a3b3c]/50 rounded-t-lg'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Search and More buttons */}
+              <div className="flex items-center gap-2 pb-1 pr-2">
+                <button 
+                  className="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] text-slate-800 dark:text-white flex items-center justify-center transition border-none cursor-pointer"
+                  title="Tìm kiếm"
+                >
+                  <Search className="w-4 h-4" />
+                </button>
+                <button 
+                  className="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] text-slate-800 dark:text-white flex items-center justify-center transition border-none cursor-pointer"
+                  title="Xem thêm"
+                >
+                  <MoreHorizontal className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
           </div>

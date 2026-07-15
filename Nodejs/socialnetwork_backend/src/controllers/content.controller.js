@@ -142,9 +142,7 @@ const getFeed = async (req, res) => {
                 {
                     postType: 'user',
                     $or: [
-                        // 1. Any public post
                         { privacy: 'public' },
-                        // 2. Friends-only posts by self or friends
                         {
                             privacy: 'friends',
                             $or: [
@@ -152,7 +150,6 @@ const getFeed = async (req, res) => {
                                 { author: { $in: friendIds } }
                             ]
                         },
-                        // 3. Friends except posts
                         {
                             privacy: 'friends_except',
                             $or: [
@@ -163,7 +160,6 @@ const getFeed = async (req, res) => {
                                 }
                             ]
                         },
-                        // 4. Specific friends posts
                         {
                             privacy: 'specific_friends',
                             $or: [
@@ -171,7 +167,6 @@ const getFeed = async (req, res) => {
                                 { allowedFriends: req.userId }
                             ]
                         },
-                        // 5. Private posts by self
                         {
                             privacy: 'private',
                             author: req.userId
