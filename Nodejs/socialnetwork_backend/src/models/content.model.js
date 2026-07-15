@@ -24,7 +24,8 @@ const postSchema = new mongoose.Schema({
     allowedFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: [] }],
     exceptedFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account', default: [] }],
     group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group', default: null },
-    commentsDisabled: { type: Boolean, default: false }
+    commentsDisabled: { type: Boolean, default: false },
+    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' }
 }, { timestamps: true });
 
 const Post = mongoose.model('Post', postSchema);

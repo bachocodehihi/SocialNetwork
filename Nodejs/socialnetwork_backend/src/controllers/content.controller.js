@@ -14,6 +14,7 @@ const createPost = async (req, res) => {
             });
         }
 
+        let initialStatus = 'approved';
         if (postType === 'group') {
             if (!group) {
                 return res.status(400).json({ success: false, code: 'GROUP_ID_REQUIRED' });
@@ -22,9 +23,20 @@ const createPost = async (req, res) => {
             if (!targetGroup) {
                 return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
             }
-            const isMember = targetGroup.members.some(m => m.toString() === req.userId) || targetGroup.admin.toString() === req.userId;
+            const isGroupAdmin = targetGroup.admin.toString() === req.userId;
+            const isMember = targetGroup.members.some(m => m.toString() === req.userId) || isGroupAdmin;
             if (!isMember) {
                 return res.status(403).json({ success: false, code: 'NOT_GROUP_MEMBER' });
+            }
+
+            // Check onlyAdminCanPost setting
+            if (targetGroup.settings?.onlyAdminCanPost && !isGroupAdmin) {
+                return res.status(403).json({ success: false, code: 'ONLY_ADMIN_CAN_POST', message: 'Chỉ quản trị viên mới được phép đăng bài.' });
+            }
+
+            // Check postPolicy setting
+            if (targetGroup.settings?.postPolicy === 'approval' && !isGroupAdmin) {
+                initialStatus = 'pending';
             }
         }
 
@@ -70,7 +82,8 @@ const createPost = async (req, res) => {
             privacy: postType === 'group' ? 'friends' : (privacy || 'public'),
             allowedFriends: allowed,
             exceptedFriends: excepted,
-            group: postType === 'group' ? group : null
+            group: postType === 'group' ? group : null,
+            status: initialStatus
         });
 
         await newPost.save();
@@ -79,40 +92,64 @@ const createPost = async (req, res) => {
             .populate('author', 'username avatar')
             .populate('group', 'name avatar');
 
-        // Create new post notifications for friends
-        try {
-            const currentUser = await Account.findById(req.userId);
-            const friends = currentUser.friends || [];
-            const uniqueFriendIds = [...new Set(friends.map(id => id.toString()))];
-            for (const friendId of uniqueFriendIds) {
-                // Privacy check before notification
-                if (newPost.privacy === 'private') {
-                    continue; // Private post, no friends can see
-                }
-                if (newPost.privacy === 'friends_except') {
-                    const isExcepted = excepted.some(id => id.toString() === friendId);
-                    if (isExcepted) continue;
-                }
-                if (newPost.privacy === 'specific_friends') {
-                    const isAllowed = allowed.some(id => id.toString() === friendId);
-                    if (!isAllowed) continue;
-                }
+        if (initialStatus === 'approved') {
+            // Create new post notifications for friends
+            try {
+                const currentUser = await Account.findById(req.userId);
+                const friends = currentUser.friends || [];
+                const uniqueFriendIds = [...new Set(friends.map(id => id.toString()))];
+                for (const friendId of uniqueFriendIds) {
+                    // Privacy check before notification
+                    if (newPost.privacy === 'private') {
+                        continue; // Private post, no friends can see
+                    }
+                    if (newPost.privacy === 'friends_except') {
+                        const isExcepted = excepted.some(id => id.toString() === friendId);
+                        if (isExcepted) continue;
+                    }
+                    if (newPost.privacy === 'specific_friends') {
+                        const isAllowed = allowed.some(id => id.toString() === friendId);
+                        if (!isAllowed) continue;
+                    }
 
-                await createNotification({
-                    recipient: friendId,
-                    sender: req.userId,
-                    type: 'new_post',
-                    title: 'Bài viết mới từ bạn bè',
-                    body: `${currentUser.username} vừa đăng một bài viết mới.`,
-                    relatedId: newPost._id
-                });
+                    await createNotification({
+                        recipient: friendId,
+                        sender: req.userId,
+                        type: 'new_post',
+                        title: 'Bài viết mới từ bạn bè',
+                        body: postType === 'group' && populatedPost.group 
+                            ? `${currentUser.username} vừa đăng một bài viết mới trong nhóm ${populatedPost.group.name}.`
+                            : `${currentUser.username} vừa đăng một bài viết mới.`,
+                        relatedId: newPost._id
+                    });
+                }
+            } catch (notifErr) {
+                console.error('Failed to send new post notifications:', notifErr);
             }
-        } catch (notifErr) {
-            console.error('Failed to send new post notifications:', notifErr);
+        } else if (initialStatus === 'pending') {
+            // Notify group admin of a new pending post
+            try {
+                const currentUser = await Account.findById(req.userId);
+                const targetGroup = await Group.findById(group);
+                if (targetGroup) {
+                    const { createNotification } = require('./notification.controller');
+                    await createNotification({
+                        recipient: targetGroup.admin,
+                        sender: req.userId,
+                        type: 'group_post_pending',
+                        title: 'Bài viết đang chờ phê duyệt',
+                        body: `${currentUser.username} đã gửi một bài viết mới đang chờ phê duyệt trong nhóm ${targetGroup.name}.`,
+                        relatedId: newPost._id
+                    });
+                }
+            } catch (notifErr) {
+                console.error("Failed to notify admin of pending post:", notifErr);
+            }
         }
 
         res.status(201).json({ success: true, code: 'POST_CREATED_SUCCESS', post: populatedPost });
     } catch (error) {
+        console.error('createPost error:', error);
         res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
@@ -175,7 +212,8 @@ const getFeed = async (req, res) => {
                 },
                 {
                     postType: 'group',
-                    group: { $in: groupIds }
+                    group: { $in: groupIds },
+                    status: 'approved'
                 }
             ]
         })
@@ -397,11 +435,45 @@ const getUserPosts = async (req, res) => {
 const getGroupPosts = async (req, res) => {
     try {
         const { groupId } = req.params;
+        const userId = req.userId;
 
-        const posts = await Post.find({
+        // Check if group is public or if user is a member
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
+        }
+
+        const isMember = group.members.some(m => m.toString() === userId) || group.admin.toString() === userId;
+        const groupType = group.settings?.groupType || 'public';
+
+        if (!isMember && groupType !== 'public') {
+            return res.status(403).json({ success: false, code: 'NOT_GROUP_MEMBER' });
+        }
+
+        // Get status filter from query (default 'approved')
+        const { status = 'approved' } = req.query;
+
+        // If trying to get pending or rejected posts, must be admin or requesting author's own posts
+        const isGroupAdmin = group.admin.toString() === userId;
+        const query = {
             group: groupId,
             postType: 'group'
-        })
+        };
+
+        if (status === 'approved') {
+            query.status = 'approved';
+        } else {
+            // Pending or rejected
+            if (isGroupAdmin) {
+                query.status = status;
+            } else {
+                // Non-admin can only see their own pending/rejected posts
+                query.status = status;
+                query.author = userId;
+            }
+        }
+
+        const posts = await Post.find(query)
         .populate('author', 'username avatar')
         .populate({
             path: 'comments',
@@ -422,6 +494,7 @@ const getGroupPosts = async (req, res) => {
 
         res.status(200).json(posts);
     } catch (error) {
+        console.error('getGroupPosts error:', error);
         res.status(500).json({ success: false, code: 'SERVER_ERROR' });
     }
 };
