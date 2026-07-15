@@ -521,12 +521,8 @@ export default function GroupSettingPage() {
                 onClick={handleSaveSettings}
                 className="px-5 py-3 bg-blue hover:bg-blue-hover text-white rounded-xl text-xs font-bold transition cursor-pointer border-none flex items-center gap-2 active:scale-[0.98] disabled:opacity-55 shadow-md shadow-blue/20"
               >
-                {isSaving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
-                Lưu cài đặt
+                {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+                Thiết lập
               </button>
             </div>
 
