@@ -643,10 +643,19 @@ const searchGroups = async (req, res) => {
             return res.status(400).json({ success: false, code: 'QUERY_REQUIRED' });
         }
         
-        // Find public and private groups matching the query, internal groups are excluded.
+        // Find matching groups: public/private are search-discoverable by everyone; internal groups only by members/admin.
         const groups = await Group.find({
             name: { $regex: q, $options: 'i' },
-            'settings.groupType': { $in: ['public', 'private'] }
+            $or: [
+                { 'settings.groupType': { $in: ['public', 'private'] } },
+                {
+                    'settings.groupType': 'internal',
+                    $or: [
+                        { admin: req.userId },
+                        { members: req.userId }
+                    ]
+                }
+            ]
         })
         .populate('admin', 'username avatar')
         .select('name avatar description admin members settings joinRequests')
