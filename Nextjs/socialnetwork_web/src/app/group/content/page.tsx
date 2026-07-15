@@ -313,7 +313,7 @@ export default function GroupContentPage() {
     if (activeFilter === 'published') {
       return myPosts;
     }
-    return []; // For pending, rejected, removed, return empty
+    return [];
   };
 
   const displayedPosts = getFilteredContent();

@@ -663,7 +663,7 @@ export default function GroupPage() {
                             <button
                               onClick={() => {
                                 setIsJoinedDropdownOpen(false);
-                                setIsEditModalOpen(true);
+                                router.push(`/group/setting?groupId=${group._id}`);
                               }}
                               className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
                             >
