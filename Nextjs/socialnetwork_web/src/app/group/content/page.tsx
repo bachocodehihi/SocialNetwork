@@ -339,7 +339,7 @@ export default function GroupContentPage() {
           </h2>
 
           {/* Subtitle */}
-          <p className="text-xs text-slate-500 dark:text-[#b0b3b8] leading-relaxed mb-6 font-medium">
+          <p className="text-xs text-slate-500 dark:text-[#b0b3b8] leading-relaxed mb-6 font-medium text-justify">
             Quản lý và xem bài viết của bạn trong nhóm này. Quản trị viên và người kiểm duyệt có thể đóng góp ý kiến.
           </p>
 
