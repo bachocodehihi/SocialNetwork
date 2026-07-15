@@ -8,7 +8,7 @@ import { useAlert } from '../../../components/Alert/alertcontext';
 import { 
   ArrowLeft, User, Loader2, Check, Users, FileText, Settings, 
   AlertTriangle, Trash2, Shield, Eye, Compass, ThumbsUp, MessageCircle, 
-  Send, ChevronRight, X, Clock, HelpCircle, Upload, Save
+  Send, ChevronRight, X, Clock, HelpCircle, Upload, Save, Globe
 } from 'lucide-react';
 import Navbar from '../../../components/Navbar';
 import Loading from '../../../components/Loading';
@@ -33,6 +33,10 @@ export default function GroupSettingPage() {
   const [onlyAdminCanPost, setOnlyAdminCanPost] = useState(false);
   const [onlyAdminCanAddMember, setOnlyAdminCanAddMember] = useState(false);
   const [allowMemberInvite, setAllowMemberInvite] = useState(true);
+  const [groupType, setGroupType] = useState<'public' | 'private' | 'internal'>('public');
+  const [joinPolicy, setJoinPolicy] = useState<'open' | 'approval'>('open');
+  const [postPolicy, setPostPolicy] = useState<'open' | 'approval'>('open');
+  const [memberLimit, setMemberLimit] = useState<number>(0);
 
   // Active Settings Tab: 'basic' | 'privacy'
   const [activeTab, setActiveTab] = useState<'basic' | 'privacy'>('basic');
@@ -82,6 +86,10 @@ export default function GroupSettingPage() {
           setOnlyAdminCanPost(settings.onlyAdminCanPost ?? false);
           setOnlyAdminCanAddMember(settings.onlyAdminCanAddMember ?? false);
           setAllowMemberInvite(settings.allowMemberInvite ?? true);
+          setGroupType(settings.groupType ?? 'public');
+          setJoinPolicy(settings.joinPolicy ?? 'open');
+          setPostPolicy(settings.postPolicy ?? 'open');
+          setMemberLimit(settings.memberLimit ?? 0);
         } else {
           showError('Không tìm thấy thông tin nhóm.');
           router.push('/home/contact/friend');
@@ -135,7 +143,11 @@ export default function GroupSettingPage() {
         settings: {
           onlyAdminCanPost,
           onlyAdminCanAddMember,
-          allowMemberInvite
+          allowMemberInvite,
+          groupType,
+          joinPolicy,
+          postPolicy,
+          memberLimit
         }
       };
 
@@ -294,61 +306,202 @@ export default function GroupSettingPage() {
             {/* TAB: Privacy & Admin Settings Form */}
             {activeTab === 'privacy' && (
               <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm p-6 space-y-6 text-left">
-                {/* setting item 1 */}
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-1">
-                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Quyền đăng bài viết</h4>
-                    <p className="text-xs text-slate-500 dark:text-zinc-400 pr-4 leading-normal">
-                      Khi bật, chỉ quản trị viên mới được tạo bài viết mới trong nhóm này. Thành viên bình thường chỉ có thể xem và tương tác.
+                {/* 1. Loại nhóm */}
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-blue" />
+                      <span>Chế độ riêng tư của nhóm</span>
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 leading-normal pr-4">
+                      Thiết lập chế độ hiển thị và tìm kiếm cho nhóm của bạn.
                     </p>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer select-none">
-                    <input 
-                      type="checkbox" 
-                      checked={onlyAdminCanPost}
-                      onChange={(e) => setOnlyAdminCanPost(e.target.checked)}
-                      className="sr-only peer" 
-                    />
-                    <div className="w-11 h-6 bg-slate-200 dark:bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue"></div>
-                  </label>
+                  <div className="grid grid-cols-1 gap-2.5">
+                    {/* Option Public */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGroupType('public');
+                      }}
+                      className={`flex items-start gap-3 p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
+                        groupType === 'public'
+                          ? 'border-blue bg-blue/5 dark:bg-blue-900/10'
+                          : 'border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/40 bg-transparent'
+                      }`}
+                    >
+                      <div className={`p-2 rounded-lg ${groupType === 'public' ? 'bg-blue text-white' : 'bg-slate-100 text-slate-500 dark:bg-zinc-850 dark:text-zinc-400'}`}>
+                        <Compass className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="block text-xs font-bold text-slate-800 dark:text-white">Nhóm Công khai (Public)</span>
+                        <span className="block text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 font-medium leading-relaxed">
+                          Bất cứ ai cũng có thể tìm thấy nhóm, xem danh sách thành viên và các bài đăng công khai của nhóm mà không cần tham gia.
+                        </span>
+                      </div>
+                      {groupType === 'public' && <Check className="w-4 h-4 text-blue mt-1 flex-shrink-0" />}
+                    </button>
+
+                    {/* Option Private */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGroupType('private');
+                      }}
+                      className={`flex items-start gap-3 p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
+                        groupType === 'private'
+                          ? 'border-blue bg-blue/5 dark:bg-blue-900/10'
+                          : 'border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/40 bg-transparent'
+                      }`}
+                    >
+                      <div className={`p-2 rounded-lg ${groupType === 'private' ? 'bg-blue text-white' : 'bg-slate-100 text-slate-500 dark:bg-zinc-850 dark:text-zinc-400'}`}>
+                        <Shield className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="block text-xs font-bold text-slate-800 dark:text-white">Nhóm Riêng tư (Private)</span>
+                        <span className="block text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 font-medium leading-relaxed">
+                          Nhóm có thể được tìm thấy thông qua thanh tìm kiếm, tuy nhiên nội dung bài đăng bên trong và danh sách thành viên sẽ hoàn toàn ẩn đối với người ngoài. Phải yêu cầu gia nhập để xem.
+                        </span>
+                      </div>
+                      {groupType === 'private' && <Check className="w-4 h-4 text-blue mt-1 flex-shrink-0" />}
+                    </button>
+
+                    {/* Option Internal */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGroupType('internal');
+                      }}
+                      className={`flex items-start gap-3 p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
+                        groupType === 'internal'
+                          ? 'border-blue bg-blue/5 dark:bg-blue-900/10'
+                          : 'border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/40 bg-transparent'
+                      }`}
+                    >
+                      <div className={`p-2 rounded-lg ${groupType === 'internal' ? 'bg-blue text-white' : 'bg-slate-100 text-slate-500 dark:bg-zinc-850 dark:text-zinc-400'}`}>
+                        <Eye className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="block text-xs font-bold text-slate-800 dark:text-white">Nhóm Nội bộ (Internal)</span>
+                        <span className="block text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 font-medium leading-relaxed">
+                          Nhóm ẩn hoàn toàn khỏi kết quả tìm kiếm chung. Chỉ có thể tìm thấy nhóm khi được chia sẻ trực tiếp mã mời/đường liên kết từ một thành viên bên trong nhóm.
+                        </span>
+                      </div>
+                      {groupType === 'internal' && <Check className="w-4 h-4 text-blue mt-1 flex-shrink-0" />}
+                    </button>
+                  </div>
                 </div>
 
-                {/* setting item 2 */}
-                <div className="flex items-start justify-between gap-4 pt-4 border-t border-grey/10 dark:border-zinc-800">
-                  <div className="space-y-1">
-                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Duyệt thành viên mới</h4>
-                    <p className="text-xs text-slate-500 dark:text-zinc-400 pr-4 leading-normal">
-                      Khi bật, chỉ có quản trị viên mới có thể trực tiếp thêm hoặc phê duyệt thành viên mới tham gia nhóm này.
+                {/* 2. Quy chế gia nhập nhóm */}
+                <div className="space-y-3 pt-4 border-t border-grey/10 dark:border-zinc-800">
+                  <div>
+                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                      <Users className="w-4 h-4 text-blue" />
+                      <span>Quy chế tham gia nhóm</span>
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 leading-normal pr-4">
+                      Quyết định cách mọi người tham gia nhóm của bạn. (Nhóm Riêng tư mặc định sẽ bắt buộc gửi yêu cầu phê duyệt).
                     </p>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer select-none">
-                    <input 
-                      type="checkbox" 
-                      checked={onlyAdminCanAddMember}
-                      onChange={(e) => setOnlyAdminCanAddMember(e.target.checked)}
-                      className="sr-only peer" 
-                    />
-                    <div className="w-11 h-6 bg-slate-200 dark:bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue"></div>
-                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      disabled={groupType === 'private'}
+                      onClick={() => setJoinPolicy('open')}
+                      className={`flex items-center gap-3 p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
+                        groupType === 'private'
+                          ? 'opacity-40 cursor-not-allowed bg-slate-50 dark:bg-zinc-800/20 border-slate-200 dark:border-zinc-800'
+                          : joinPolicy === 'open'
+                          ? 'border-blue bg-blue/5 dark:bg-blue-900/10'
+                          : 'border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/40 bg-transparent'
+                      }`}
+                    >
+                      <span className="flex-1 text-xs font-bold text-slate-800 dark:text-white">Vào tự do (Open)</span>
+                      {! (groupType === 'private') && joinPolicy === 'open' && <Check className="w-4 h-4 text-blue flex-shrink-0" />}
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={groupType === 'private'}
+                      onClick={() => setJoinPolicy('approval')}
+                      className={`flex items-center gap-3 p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
+                        groupType === 'private'
+                          ? 'border-blue bg-blue/5 dark:bg-blue-900/10'
+                          : joinPolicy === 'approval'
+                          ? 'border-blue bg-blue/5 dark:bg-blue-900/10'
+                          : 'border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/40 bg-transparent'
+                      }`}
+                    >
+                      <span className="flex-1 text-xs font-bold text-slate-800 dark:text-white">Cần duyệt (Approval)</span>
+                      {((groupType === 'private') || joinPolicy === 'approval') && <Check className="w-4 h-4 text-blue flex-shrink-0" />}
+                    </button>
+                  </div>
                 </div>
 
-                {/* setting item 3 */}
-                <div className="flex items-start justify-between gap-4 pt-4 border-t border-grey/10 dark:border-zinc-800">
-                  <div className="space-y-1">
-                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Cho phép mời bạn bè</h4>
-                    <p className="text-xs text-slate-500 dark:text-zinc-400 pr-4 leading-normal">
-                      Cho phép thành viên bình thường gửi lời mời bạn bè tham gia nhóm này.
+                {/* 3. Quy chế đăng bài viết */}
+                <div className="space-y-3 pt-4 border-t border-grey/10 dark:border-zinc-800">
+                  <div>
+                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-blue" />
+                      <span>Quy chế đăng bài viết</span>
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 leading-normal pr-4">
+                      Thiết lập điều kiện kiểm duyệt đối với bài viết mới được đăng trong nhóm.
                     </p>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer select-none">
-                    <input 
-                      type="checkbox" 
-                      checked={allowMemberInvite}
-                      onChange={(e) => setAllowMemberInvite(e.target.checked)}
-                      className="sr-only peer" 
-                    />
-                    <div className="w-11 h-6 bg-slate-200 dark:bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue"></div>
-                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setPostPolicy('open')}
+                      className={`flex items-center gap-3 p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
+                        postPolicy === 'open'
+                          ? 'border-blue bg-blue/5 dark:bg-blue-900/10'
+                          : 'border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/40 bg-transparent'
+                      }`}
+                    >
+                      <span className="flex-1 text-xs font-bold text-slate-800 dark:text-white">Đăng tự do (Open)</span>
+                      {postPolicy === 'open' && <Check className="w-4 h-4 text-blue flex-shrink-0" />}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPostPolicy('approval')}
+                      className={`flex items-center gap-3 p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
+                        postPolicy === 'approval'
+                          ? 'border-blue bg-blue/5 dark:bg-blue-900/10'
+                          : 'border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/40 bg-transparent'
+                      }`}
+                    >
+                      <span className="flex-1 text-xs font-bold text-slate-800 dark:text-white font-sans">Kiểm duyệt (Approval)</span>
+                      {postPolicy === 'approval' && <Check className="w-4 h-4 text-blue flex-shrink-0" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4. Giới hạn số lượng thành viên */}
+                <div className="space-y-3 pt-4 border-t border-grey/10 dark:border-zinc-800">
+                  <div>
+                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                      <Settings className="w-4 h-4 text-blue" />
+                      <span>Giới hạn số lượng thành viên</span>
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 leading-normal pr-4">
+                      Thiết lập số lượng thành viên tối đa có thể tham gia vào nhóm của bạn.
+                    </p>
+                  </div>
+                  <div>
+                    <select
+                      value={memberLimit}
+                      onChange={(e) => setMemberLimit(Number(e.target.value))}
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-800/50 rounded-xl border border-slate-200 dark:border-zinc-800 focus:border-blue focus:bg-white dark:focus:bg-zinc-900 focus:outline-none transition text-sm font-semibold text-slate-900 dark:text-white"
+                    >
+                      <option value={0}>Không giới hạn thành viên</option>
+                      <option value={50}>Tối đa 50 thành viên</option>
+                      <option value={100}>Tối đa 100 thành viên</option>
+                      <option value={500}>Tối đa 500 thành viên</option>
+                      <option value={1000}>Tối đa 1000 thành viên</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             )}

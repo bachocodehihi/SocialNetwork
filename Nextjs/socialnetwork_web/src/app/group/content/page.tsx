@@ -311,7 +311,13 @@ export default function GroupContentPage() {
 
   const getFilteredContent = () => {
     if (activeFilter === 'published') {
-      return myPosts;
+      return myPosts.filter(p => p.status === 'approved' || !p.status);
+    }
+    if (activeFilter === 'pending') {
+      return myPosts.filter(p => p.status === 'pending');
+    }
+    if (activeFilter === 'rejected') {
+      return myPosts.filter(p => p.status === 'rejected');
     }
     return [];
   };
