@@ -63,6 +63,7 @@ export default function GroupPage() {
 
   // Dropdown states
   const [isJoinedDropdownOpen, setIsJoinedDropdownOpen] = useState(false);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -736,12 +737,62 @@ export default function GroupPage() {
                 >
                   <Search className="w-4 h-4" />
                 </button>
-                <button 
-                  className="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] text-slate-800 dark:text-white flex items-center justify-center transition border-none cursor-pointer"
-                  title="Xem thêm"
-                >
-                  <MoreHorizontal className="w-4 h-4" />
-                </button>
+                <div className="relative">
+                  <button 
+                    onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                    className="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-[#3a3b3c] dark:hover:bg-[#4e4f50] text-slate-800 dark:text-white flex items-center justify-center transition border-none cursor-pointer"
+                    title="Xem thêm"
+                  >
+                    <MoreHorizontal className="w-4 h-4" />
+                  </button>
+
+                  <AnimatePresence>
+                    {isMoreMenuOpen && (
+                      <>
+                        <div className="fixed inset-0 z-10" onClick={() => setIsMoreMenuOpen(false)}></div>
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 dark:bg-[#242526] dark:border-[#3e4042] rounded-xl overflow-hidden shadow-2xl z-20"
+                        >
+                          <button
+                            onClick={() => {
+                              setIsMoreMenuOpen(false);
+                              showSuccess("Tính năng 'Nội dung của bạn' đang được phát triển!");
+                            }}
+                            className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                          >
+                            <FileText className="w-4 h-4 text-slate-500 dark:text-[#b0b3b8]" />
+                            <span>Nội dung của bạn</span>
+                          </button>
+                          
+                          <button
+                            onClick={() => {
+                              setIsMoreMenuOpen(false);
+                              showSuccess("Tính năng 'Quản lý thông báo' đang được phát triển!");
+                            }}
+                            className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                          >
+                            <Settings className="w-4 h-4 text-slate-500 dark:text-[#b0b3b8]" />
+                            <span>Quản lý thông báo</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setIsMoreMenuOpen(false);
+                              showSuccess("Tính năng 'Báo cáo nhóm' đang được phát triển!");
+                            }}
+                            className="w-full text-left px-4 py-3 hover:bg-red/10 text-red text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                          >
+                            <AlertTriangle className="w-4 h-4" />
+                            <span>Báo cáo nhóm</span>
+                          </button>
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
 
