@@ -429,7 +429,7 @@ export default function CreateGroupPage() {
             </div>
 
             {/* Bottom Actions */}
-            <div className="mt-6 pt-4 border-t border-grey/10 dark:border-zinc-800 flex flex-col gap-2">
+            <div className="mt-6 pt-4 border-t border-grey/10 dark:border-zinc-800 flex flex-col gap-4">
               <button
                 type="button"
                 disabled={isCreating || !name.trim() || selectedFriendIds.length < 2}
@@ -442,7 +442,7 @@ export default function CreateGroupPage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="w-full py-3 border border-slate-250 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-850 rounded-xl text-slate-700 dark:text-zinc-350 text-xs font-bold transition cursor-pointer bg-transparent"
+                className="w-full py-3 border border-slate-300 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800/40 rounded-xl text-slate-800 dark:text-zinc-100 hover:text-slate-900 dark:hover:text-white text-xs font-extrabold transition cursor-pointer bg-transparent"
               >
                 Hủy bỏ
               </button>
