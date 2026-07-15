@@ -1,6 +1,11 @@
 import api from '../lib/axios';
 
 export const groupService = {
+  createGroup: async (data: { name: string; members: string[]; description?: string; avatar?: string; settings?: any }) => {
+    const res = await api.post('/groups', data);
+    return res.data;
+  },
+
   getGroups: async () => {
     const res = await api.get('/groups');
     return res.data;
@@ -43,6 +48,36 @@ export const groupService = {
 
   inviteToGroup: async (groupId: string, inviteeId: string) => {
     const res = await api.post(`/groups/${groupId}/invite`, { inviteeId });
+    return res.data;
+  },
+
+  searchGroups: async (q: string) => {
+    const res = await api.get('/groups/search', { params: { q } });
+    return res.data;
+  },
+
+  joinGroup: async (groupId: string) => {
+    const res = await api.post(`/groups/${groupId}/join`);
+    return res.data;
+  },
+
+  getJoinRequests: async (groupId: string) => {
+    const res = await api.get(`/groups/${groupId}/join-requests`);
+    return res.data;
+  },
+
+  handleJoinRequest: async (groupId: string, requestUserId: string, action: 'approve' | 'reject') => {
+    const res = await api.post(`/groups/${groupId}/join-requests/${requestUserId}`, { action });
+    return res.data;
+  },
+
+  getPendingPosts: async (groupId: string) => {
+    const res = await api.get(`/groups/${groupId}/pending-posts`);
+    return res.data;
+  },
+
+  handlePendingPost: async (groupId: string, postId: string, action: 'approve' | 'reject') => {
+    const res = await api.post(`/groups/${groupId}/pending-posts/${postId}`, { action });
     return res.data;
   }
 };

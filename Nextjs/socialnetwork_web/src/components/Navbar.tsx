@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '../services/auth.service';
+import { groupService } from '../services/group.service';
 import { useAlert } from './Alert/alertcontext';
 import { 
   Loader2, 
@@ -34,6 +35,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
   // Search state variables
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchGroups, setSearchGroups] = useState<any[]>([]);
   const [searchHistory, setSearchHistory] = useState<any[]>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -74,18 +76,31 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
     }
   }, []);
 
-  // Debounced user search
+  // Debounced user and group search
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
+      setSearchGroups([]);
       return;
     }
 
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const results = await authService.searchUsers(searchQuery);
-        setSearchResults(Array.isArray(results.data) ? results.data : (Array.isArray(results) ? results : []));
+        // Query users
+        const uRes = await authService.searchUsers(searchQuery);
+        const usersList = Array.isArray(uRes.data) ? uRes.data : (Array.isArray(uRes) ? uRes : []);
+        setSearchResults(usersList);
+
+        // Query groups
+        try {
+          const gRes = await groupService.searchGroups(searchQuery);
+          const groupsList = Array.isArray(gRes.data) ? gRes.data : (Array.isArray(gRes) ? gRes : []);
+          setSearchGroups(groupsList);
+        } catch (gErr) {
+          console.error('Group search error:', gErr);
+          setSearchGroups([]);
+        }
       } catch (err) {
         console.error('Search error:', err);
       } finally {
@@ -97,9 +112,11 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
   }, [searchQuery]);
 
   const addToHistory = (item: any) => {
-    const filtered = searchHistory.filter(h => 
-      h.type === 'user' ? h.id !== item.id : h.text !== item.text
-    );
+    const filtered = searchHistory.filter(h => {
+      if (item.type === 'user') return h.id !== item.id || h.type !== 'user';
+      if (item.type === 'group') return h.id !== item.id || h.type !== 'group';
+      return h.text !== item.text || h.type !== 'query';
+    });
     const newHistory = [item, ...filtered].slice(0, 8);
     setSearchHistory(newHistory);
     localStorage.setItem('recent_searches', JSON.stringify(newHistory));
@@ -225,6 +242,9 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                                   if (item.type === 'user') {
                                     router.push(`/user/${item.id}`);
                                     setIsSearchFocused(false);
+                                  } else if (item.type === 'group') {
+                                    router.push(`/group?groupId=${item.id}`);
+                                    setIsSearchFocused(false);
                                   } else {
                                     setIsSearchFocused(false);
                                     router.push(`/search?q=${encodeURIComponent(item.text)}`);
@@ -241,13 +261,21 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                                         <User className='w-5 h-5 text-grey dark:text-zinc-500' />
                                       )}
                                     </div>
+                                  ) : item.type === 'group' ? (
+                                    <div className='w-9 h-9 rounded-lg bg-grey/10 dark:bg-zinc-800 border border-grey/20 dark:border-zinc-700 overflow-hidden flex items-center justify-center flex-shrink-0'>
+                                      {item.avatar ? (
+                                        <img src={item.avatar} alt={item.name} className='w-full h-full object-cover' />
+                                      ) : (
+                                        <Users className='w-5 h-5 text-grey dark:text-zinc-500' />
+                                      )}
+                                    </div>
                                   ) : (
                                     <div className='w-9 h-9 rounded-full bg-grey/10 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 text-grey dark:text-zinc-400 group-hover:bg-grey/20 dark:group-hover:bg-zinc-750 transition'>
                                       <Clock className='w-4.5 h-4.5' />
                                     </div>
                                   )}
                                   <span className='text-sm font-semibold text-grey-hover dark:text-zinc-200 truncate max-w-[180px] sm:max-w-[240px]'>
-                                    {item.type === 'user' ? item.username : item.text}
+                                    {item.type === 'user' ? item.username : item.type === 'group' ? item.name : item.text}
                                   </span>
                                 </div>
                                 <button 
@@ -263,8 +291,16 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                       </>
                     ) : (
                       <>
-                        <div className='mb-2 px-1.5'>
-                          <span className='font-bold text-grey-hover dark:text-zinc-100 text-sm sm:text-base'>Kết quả tìm kiếm</span>
+                        <div 
+                          onClick={() => {
+                            addToHistory({ type: 'query', text: searchQuery.trim() });
+                            setIsSearchFocused(false);
+                            router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                          }}
+                          className="flex items-center gap-2 p-2 mb-2 hover:bg-blue/5 dark:hover:bg-zinc-800/60 rounded-xl cursor-pointer text-blue hover:text-blue-hover text-xs font-bold transition border-b border-grey/5 dark:border-zinc-800 pb-2 text-left"
+                        >
+                          <Search className="w-4 h-4" />
+                          <span>Tìm kiếm &ldquo;{searchQuery}&rdquo; cho mọi người, nhóm và bài viết</span>
                         </div>
 
                         {isSearching ? (
@@ -272,40 +308,96 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                             <Loader2 className='w-4 h-4 animate-spin text-blue' />
                             <span>Đang tìm kiếm...</span>
                           </div>
-                        ) : searchResults.length === 0 ? (
+                        ) : (searchResults.length === 0 && searchGroups.length === 0) ? (
                           <div className='text-center py-8 text-grey/60 dark:text-zinc-500 text-xs sm:text-sm select-none'>
-                            Không tìm thấy người dùng
+                            Không tìm thấy kết quả phù hợp
                           </div>
                         ) : (
-                          <div className='space-y-1 max-h-[300px] overflow-y-auto scrollbar-none'>
-                            {searchResults.map((item) => (
-                              <div 
-                                key={item._id}
-                                onClick={() => handleSelectUser(item)}
-                                className='flex items-center justify-between p-2 hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:bg-grey/10 dark:active:bg-zinc-750 rounded-xl cursor-pointer transition'
-                              >
-                                <div className='flex items-center gap-3'>
-                                  <div className='w-9 h-9 rounded-full bg-grey/10 dark:bg-zinc-800 border border-grey/20 dark:border-zinc-700 overflow-hidden flex items-center justify-center flex-shrink-0'>
-                                    {item.avatar ? (
-                                      <img src={item.avatar} alt={item.username} className='w-full h-full object-cover' />
-                                    ) : (
-                                      <User className='w-5 h-5 text-grey dark:text-zinc-500' />
-                                    )}
-                                  </div>
-                                  <div className='flex flex-col text-left'>
-                                    <span className='text-sm font-bold text-grey-hover dark:text-zinc-200 truncate max-w-[200px] sm:max-w-[260px]'>
-                                      {item.username}
-                                    </span>
-                                    {item.email && (
-                                      <span className='text-xs text-grey/60 dark:text-zinc-400 truncate max-w-[200px]'>
-                                        {item.email}
-                                      </span>
-                                    )}
-                                  </div>
+                          <div className='space-y-3 max-h-[320px] overflow-y-auto scrollbar-none'>
+                            {/* Users Section */}
+                            {searchResults.length > 0 && (
+                              <div>
+                                <div className="px-1.5 mb-1 text-[11px] font-bold text-grey uppercase tracking-wider text-left">Mọi người</div>
+                                <div className="space-y-0.5">
+                                  {searchResults.map((item) => (
+                                    <div 
+                                      key={item._id || item.id}
+                                      onClick={() => handleSelectUser(item)}
+                                      className='flex items-center justify-between p-1.5 hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:bg-grey/10 rounded-xl cursor-pointer transition'
+                                    >
+                                      <div className='flex items-center gap-2.5 min-w-0'>
+                                        <div className='w-8 h-8 rounded-full bg-grey/10 dark:bg-zinc-800 border border-grey/25 dark:border-zinc-700 overflow-hidden flex items-center justify-center flex-shrink-0'>
+                                          {item.avatar ? (
+                                            <img src={item.avatar} alt={item.username} className='w-full h-full object-cover' />
+                                          ) : (
+                                            <User className='w-4.5 h-4.5 text-grey dark:text-zinc-500' />
+                                          )}
+                                        </div>
+                                        <div className='flex flex-col text-left min-w-0'>
+                                          <span className='text-xs sm:text-sm font-bold text-slate-850 dark:text-zinc-200 truncate max-w-[170px] sm:max-w-[220px]'>
+                                            {item.username}
+                                          </span>
+                                          {item.email && (
+                                            <span className='text-[10px] text-grey/65 truncate max-w-[150px]'>
+                                              {item.email}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <ChevronRight className='w-3.5 h-3.5 text-grey/60' />
+                                    </div>
+                                  ))}
                                 </div>
-                                <ChevronRight className='w-4 h-4 text-grey/60 dark:text-zinc-400' />
                               </div>
-                            ))}
+                            )}
+
+                            {/* Groups Section */}
+                            {searchGroups.length > 0 && (
+                              <div>
+                                <div className="px-1.5 mb-1 text-[11px] font-bold text-grey uppercase tracking-wider text-left">Nhóm</div>
+                                <div className="space-y-0.5">
+                                  {searchGroups.map((item) => {
+                                    const groupId = item._id || item.id;
+                                    const groupType = item.settings?.groupType || 'public';
+                                    return (
+                                      <div 
+                                        key={groupId}
+                                        onClick={() => {
+                                          addToHistory({
+                                            type: 'group',
+                                            id: groupId,
+                                            name: item.name,
+                                            avatar: item.avatar || ''
+                                          });
+                                          setIsSearchFocused(false);
+                                          router.push(`/group?groupId=${groupId}`);
+                                        }}
+                                        className='flex items-center justify-between p-1.5 hover:bg-grey/5 dark:hover:bg-zinc-800/50 active:bg-grey/10 rounded-xl cursor-pointer transition'
+                                      >
+                                        <div className='flex items-center gap-2.5 min-w-0'>
+                                          <div className='w-8 h-8 rounded-lg bg-grey/10 dark:bg-zinc-800 border border-grey/25 dark:border-zinc-700 overflow-hidden flex items-center justify-center flex-shrink-0'>
+                                            {item.avatar ? (
+                                              <img src={item.avatar} alt={item.name} className='w-full h-full object-cover' />
+                                            ) : (
+                                              <Users className='w-4.5 h-4.5 text-grey dark:text-zinc-500' />
+                                            )}
+                                          </div>
+                                          <div className='flex flex-col text-left min-w-0'>
+                                            <span className='text-xs sm:text-sm font-bold text-slate-850 dark:text-zinc-200 truncate max-w-[170px] sm:max-w-[220px]'>
+                                              {item.name}
+                                            </span>
+                                            <span className='text-[10px] text-grey/65 truncate max-w-[150px]'>
+                                              {item.membersCount || 0} thành viên · {groupType === 'private' ? 'Riêng tư' : groupType === 'internal' ? 'Nội bộ' : 'Công khai'}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <ChevronRight className='w-3.5 h-3.5 text-grey/60' />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                       </>
