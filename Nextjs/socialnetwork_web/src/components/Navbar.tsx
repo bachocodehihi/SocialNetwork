@@ -198,7 +198,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                   <Search className='w-4 h-4 text-grey dark:text-zinc-400 mr-2 flex-shrink-0' />
                   <input
                     type='text'
-                    placeholder='Tìm kiếm người dùng...'
+                    placeholder='Tìm kiếm...'
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearchFocused(true)}
