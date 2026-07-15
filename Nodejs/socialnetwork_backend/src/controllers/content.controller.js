@@ -696,14 +696,7 @@ const searchPosts = async (req, res) => {
                 { members: req.userId }
             ]
         });
-        const myGroupIds = myGroups.map(g => g._id);
-
-        const publicGroups = await Group.find({
-            'settings.groupType': 'public'
-        });
-        const publicGroupIds = publicGroups.map(g => g._id);
-
-        const allowedGroupIds = [...new Set([...myGroupIds.map(id => id.toString()), ...publicGroupIds.map(id => id.toString())])];
+        const allowedGroupIds = myGroups.map(g => g._id.toString());
 
         const posts = await Post.find({
             content: { $regex: q, $options: 'i' },
