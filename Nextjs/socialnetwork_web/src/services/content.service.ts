@@ -49,5 +49,10 @@ export const contentService = {
     const res = await api.get(`/content/group/${groupId}`);
     return res.data;
   },
+
+  searchPosts: async (q: string) => {
+    const res = await api.get('/content/search', { params: { q } });
+    return res.data;
+  },
 };
 
