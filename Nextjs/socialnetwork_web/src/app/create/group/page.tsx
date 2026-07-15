@@ -417,7 +417,7 @@ export default function CreateGroupPage() {
                       </div>
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
                         isSelected 
-                          ? 'bg-red-500 hover:bg-red-600 text-white shadow-sm shadow-red-500/10' 
+                          ? 'bg-[#1877f2] hover:bg-[#156bec] text-white shadow-sm shadow-blue/10' 
                           : 'bg-slate-150 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300'
                       }`}>
                         {isSelected ? <Minus className="w-3.5 h-3.5 stroke-[3]" /> : <Plus className="w-3.5 h-3.5 stroke-[3]" />}
