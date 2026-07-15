@@ -436,11 +436,7 @@ export default function CreateGroupPage() {
                 onClick={handleCreateGroup}
                 className="w-full py-3 bg-[#1877f2] hover:bg-[#156bec] disabled:opacity-50 text-white font-extrabold text-xs rounded-xl border-none transition flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-blue/20"
               >
-                {isCreating ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
+                {isCreating && <Loader2 className="w-4 h-4 animate-spin" />}
                 <span>Tạo nhóm</span>
               </button>
               <button
