@@ -76,7 +76,9 @@ export default function GroupPage() {
   const [isJoinedDropdownOpen, setIsJoinedDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
-  const isAdmin = group?.admin?._id === currentUser?._id;
+  const isAdmin = group?.admin?._id 
+    ? (group.admin._id === currentUser?._id || group.admin._id === currentUser?.id)
+    : (group?.admin === currentUser?._id || group?.admin === currentUser?.id);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -823,16 +825,38 @@ export default function GroupPage() {
                               className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 dark:bg-[#242526] dark:border-[#3e4042] rounded-xl overflow-hidden shadow-2xl z-20"
                             >
                               {isAdmin && (
-                                <button
-                                  onClick={() => {
-                                    setIsJoinedDropdownOpen(false);
-                                    router.push(`/group/setting?groupId=${group._id}`);
-                                  }}
-                                  className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
-                                >
-                                  <Settings className="w-4 h-4" />
-                                  <span>Cài đặt nhóm</span>
-                                </button>
+                                <>
+                                  <button
+                                    onClick={() => {
+                                      setIsJoinedDropdownOpen(false);
+                                      router.push(`/group/setting?groupId=${group._id}`);
+                                    }}
+                                    className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                                  >
+                                    <Settings className="w-4 h-4 text-slate-500 dark:text-[#b0b3b8]" />
+                                    <span>Cài đặt nhóm</span>
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setIsJoinedDropdownOpen(false);
+                                      setActiveTab('join_requests');
+                                    }}
+                                    className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                                  >
+                                    <Users className="w-4 h-4 text-slate-500 dark:text-[#b0b3b8]" />
+                                    <span>Duyệt thành viên ({joinRequests.length})</span>
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setIsJoinedDropdownOpen(false);
+                                      setActiveTab('pending_posts');
+                                    }}
+                                    className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                                  >
+                                    <FileText className="w-4 h-4 text-slate-500 dark:text-[#b0b3b8]" />
+                                    <span>Duyệt bài viết ({pendingPosts.length})</span>
+                                  </button>
+                                </>
                               )}
 
                               {!isAdmin ? (
@@ -1009,6 +1033,43 @@ export default function GroupPage() {
                   {/* Left Column - Main Feed */}
                   <div className={`${recentPhotos.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12 max-w-3xl mx-auto'} w-full space-y-5`}>
                     
+                    {/* Admin Pending Activities Alert */}
+                    {isAdmin && (joinRequests.length > 0 || pendingPosts.length > 0) && (
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-zinc-900 dark:to-zinc-800 rounded-2xl border border-blue-200 dark:border-zinc-700/60 p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-left">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-blue/10 dark:bg-blue-500/20 flex items-center justify-center text-[#1877f2] flex-shrink-0">
+                            <Shield className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-extrabold text-sm text-slate-800 dark:text-zinc-100">Cần phê duyệt hoạt động nhóm</h4>
+                            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5 leading-normal font-semibold">
+                              {joinRequests.length > 0 && `Có ${joinRequests.length} yêu cầu tham gia`}
+                              {joinRequests.length > 0 && pendingPosts.length > 0 && ' và '}
+                              {pendingPosts.length > 0 && `Có ${pendingPosts.length} bài viết chờ phê duyệt`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 w-full sm:w-auto">
+                          {joinRequests.length > 0 && (
+                            <button
+                              onClick={() => setActiveTab('join_requests')}
+                              className="flex-1 sm:flex-initial px-3.5 py-2 bg-[#1877f2] hover:bg-[#156bec] text-white text-xs font-bold rounded-lg border-none transition cursor-pointer shadow-sm shadow-blue/10"
+                            >
+                              Duyệt thành viên
+                            </button>
+                          )}
+                          {pendingPosts.length > 0 && (
+                            <button
+                              onClick={() => setActiveTab('pending_posts')}
+                              className="flex-1 sm:flex-initial px-3.5 py-2 bg-slate-100 dark:bg-zinc-850 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-700 dark:text-white text-xs font-bold rounded-lg border-none transition cursor-pointer"
+                            >
+                              Duyệt bài viết
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Create Post Card (FB style) */}
                     <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm p-4">
                       <div className="flex gap-3">
@@ -1438,8 +1499,10 @@ export default function GroupPage() {
                       {group.members
                         ?.filter((m: any) => m.username?.toLowerCase().includes(memberSearchQuery.toLowerCase()))
                         .map((m: any) => {
-                          const isMemberAdmin = m._id === group.admin?._id;
-                          const isSelf = m._id === currentUser?._id;
+                           const isMemberAdmin = group?.admin?._id 
+                            ? (m._id === group.admin._id || m._id === group.admin)
+                            : (m._id === group.admin);
+                          const isSelf = m._id === currentUser?._id || m._id === currentUser?.id;
 
                         return (
                           <div key={m._id} className="py-4 flex items-center justify-between gap-4">
