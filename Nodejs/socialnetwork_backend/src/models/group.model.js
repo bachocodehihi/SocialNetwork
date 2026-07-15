@@ -20,8 +20,17 @@ const groupSchema = new mongoose.Schema({
     settings: {
         onlyAdminCanPost: { type: Boolean, default: false },
         onlyAdminCanAddMember: { type: Boolean, default: false },
-        allowMemberInvite: { type: Boolean, default: true }
-    }
+        allowMemberInvite: { type: Boolean, default: true },
+        groupType: { type: String, enum: ['public', 'private', 'internal'], default: 'public' },
+        joinPolicy: { type: String, enum: ['open', 'approval'], default: 'open' },
+        postPolicy: { type: String, enum: ['open', 'approval'], default: 'open' },
+        memberLimit: { type: Number, default: 0 }
+    },
+    joinRequests: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Account',
+        default: []
+    }]
 }, { timestamps: true });
 
 groupSchema.index({ members: 1 });
