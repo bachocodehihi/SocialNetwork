@@ -7,7 +7,7 @@ import { contactService } from '../../../services/contact.service';
 import { useAlert } from '../../../components/Alert/alertcontext';
 import { 
   ArrowLeft, Users, Loader2, Check, Shield, Eye, Compass, 
-  Upload, Save, Search, User, Globe
+  Upload, Save, Search, User, Globe, Plus, Minus
 } from 'lucide-react';
 import Navbar from '../../../components/Navbar';
 import Loading from '../../../components/Loading';
@@ -415,12 +415,12 @@ export default function CreateGroupPage() {
                           </span>
                         </div>
                       </div>
-                      <div className={`w-4 h-4 rounded-md border flex items-center justify-center flex-shrink-0 transition-all ${
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
                         isSelected 
-                          ? 'border-blue bg-blue text-white' 
-                          : 'border-slate-350 dark:border-zinc-700 bg-transparent'
+                          ? 'bg-red-500 hover:bg-red-600 text-white shadow-sm shadow-red-500/10' 
+                          : 'bg-slate-150 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300'
                       }`}>
-                        {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                        {isSelected ? <Minus className="w-3.5 h-3.5 stroke-[3]" /> : <Plus className="w-3.5 h-3.5 stroke-[3]" />}
                       </div>
                     </div>
                   );
