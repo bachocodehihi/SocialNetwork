@@ -11,7 +11,7 @@ import {
   ThumbsUp, MessageCircle, Image as ImageIcon, Trash2, Camera, 
   Check, LogOut, Edit3, AlertTriangle, ArrowLeft, Globe, Eye, MapPin, 
   Search, MoreHorizontal, Share2, ChevronDown, Smile, FileText,
-  ChevronLeft, ChevronRight, Send, Shield, Clock
+  ChevronLeft, ChevronRight, Send, Shield, Clock, Lock
 } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import Loading from '../../components/Loading';
@@ -66,6 +66,7 @@ export default function GroupPage() {
 
   const [isJoinedDropdownOpen, setIsJoinedDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const [activePostMenuId, setActivePostMenuId] = useState<string | null>(null);
 
   const isAdmin = group?.admin?._id 
     ? (group.admin._id === currentUser?._id || group.admin._id === currentUser?.id)
@@ -1171,9 +1172,70 @@ export default function GroupPage() {
                                     <span className="text-xs text-grey dark:text-zinc-400 font-medium">{timeAgoStr}</span>
                                   </div>
                                 </div>
-                                <button className="w-8 h-8 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 flex items-center justify-center text-grey hover:text-grey-hover dark:text-zinc-400 dark:hover:text-zinc-200 transition border-0 bg-transparent cursor-pointer">
-                                  <MoreHorizontal className="w-5 h-5" />
-                                </button>
+                                <div className="relative">
+                                  <button 
+                                    onClick={() => setActivePostMenuId(activePostMenuId === post._id ? null : post._id)}
+                                    className="w-8 h-8 rounded-full hover:bg-grey/10 dark:hover:bg-zinc-800 flex items-center justify-center text-grey hover:text-grey-hover dark:text-zinc-400 dark:hover:text-zinc-200 transition border-0 bg-transparent cursor-pointer"
+                                  >
+                                    <MoreHorizontal className="w-5 h-5" />
+                                  </button>
+
+                                  <AnimatePresence>
+                                    {activePostMenuId === post._id && (
+                                      <>
+                                        <div className="fixed inset-0 z-10" onClick={() => setActivePostMenuId(null)}></div>
+                                        <motion.div
+                                          initial={{ opacity: 0, y: 10 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          exit={{ opacity: 0, y: 10 }}
+                                          className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 dark:bg-[#242526] dark:border-[#3e4042] rounded-xl overflow-hidden shadow-2xl z-20"
+                                        >
+                                          {(() => {
+                                            const isPostAuthor = post.author?._id === currentUser?._id || post.author === currentUser?._id || post.author?.id === currentUser?.id || post.author === currentUser?.id;
+                                            const canManagePost = isAdmin || isPostAuthor;
+
+                                            if (canManagePost) {
+                                              return (
+                                                <>
+                                                  <button
+                                                    onClick={() => {
+                                                      setActivePostMenuId(null);
+                                                    }}
+                                                    className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                                                  >
+                                                    <Lock className="w-4 h-4 text-slate-500 dark:text-[#b0b3b8]" />
+                                                    <span>{post.commentsDisabled ? 'Mở bình luận' : 'Khóa bình luận'}</span>
+                                                  </button>
+                                                  <button
+                                                    onClick={() => {
+                                                      setActivePostMenuId(null);
+                                                    }}
+                                                    className="w-full text-left px-4 py-3 hover:bg-red/10 text-red text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                                                  >
+                                                    <Trash2 className="w-4 h-4" />
+                                                    <span>Xóa bài viết</span>
+                                                  </button>
+                                                </>
+                                              );
+                                            } else {
+                                              return (
+                                                <button
+                                                  onClick={() => {
+                                                    setActivePostMenuId(null);
+                                                  }}
+                                                  className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-[#3a3b3c] text-slate-800 dark:text-white text-xs font-bold transition flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                                                >
+                                                  <AlertTriangle className="w-4 h-4 text-slate-500 dark:text-[#b0b3b8]" />
+                                                  <span>Báo cáo bài viết</span>
+                                                </button>
+                                              );
+                                            }
+                                          })()}
+                                        </motion.div>
+                                      </>
+                                    )}
+                                  </AnimatePresence>
+                                </div>
                               </div>
 
                               <div className="text-slate-800 dark:text-zinc-200 text-sm sm:text-[15px] leading-relaxed mb-3 whitespace-pre-wrap text-justify px-1">
