@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 
-// Utility to get number of days in month
 const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month, 0).getDate();
 };
@@ -11,11 +10,11 @@ const MONTHS = [
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 ];
 
-const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i); // 1900 to 2100
+const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i);
 
 interface BirthdayDialogProps {
   isOpen: boolean;
-  initialDate: string; // YYYY-MM-DD
+  initialDate: string;
   onClose: () => void;
   onConfirm: (year: number, month: number, day: number) => void;
 }
@@ -26,20 +25,17 @@ export default function BirthdayDialog({
   onClose,
   onConfirm
 }: BirthdayDialogProps) {
-  // Local active selected states
+
   const [localDay, setLocalDay] = useState(17);
   const [localMonth, setLocalMonth] = useState(5);
   const [localYear, setLocalYear] = useState(2026);
 
-  // Refs for scroll columns in Birthday Dialog
   const dayScrollRef = useRef<HTMLDivElement>(null);
   const monthScrollRef = useRef<HTMLDivElement>(null);
   const yearScrollRef = useRef<HTMLDivElement>(null);
 
-  // Track if scrolling is initiated programmatically to avoid listener feedback loops
   const isProgrammaticScroll = useRef(false);
 
-  // Sync state when dialog opens
   useEffect(() => {
     if (isOpen) {
       const today = new Date();
@@ -60,41 +56,35 @@ export default function BirthdayDialog({
     }
   }, [isOpen, initialDate]);
 
-  // Generate dynamic array values for days
   const maxDays = getDaysInMonth(localYear, localMonth);
   const days = Array.from({ length: maxDays }, (_, i) => i + 1);
 
-  // Ensure day selection is never out of range when month/year changes
   useEffect(() => {
     if (localDay > maxDays) {
       setLocalDay(maxDays);
     }
   }, [localMonth, localYear, maxDays, localDay]);
 
-  // Scroll active elements to center when Birthday dialog opens OR values change
   useEffect(() => {
     if (isOpen) {
       isProgrammaticScroll.current = true;
       const timer = setTimeout(() => {
-        // Scroll Day
+
         const dayIdx = days.indexOf(localDay);
         if (dayScrollRef.current && dayIdx !== -1) {
           dayScrollRef.current.scrollTop = dayIdx * 40;
         }
 
-        // Scroll Month
         const monthIdx = localMonth - 1;
         if (monthScrollRef.current && monthIdx !== -1) {
           monthScrollRef.current.scrollTop = monthIdx * 40;
         }
 
-        // Scroll Year
         const yearIdx = YEARS.indexOf(localYear);
         if (yearScrollRef.current && yearIdx !== -1) {
           yearScrollRef.current.scrollTop = yearIdx * 40;
         }
 
-        // Allow scroll listener to receive events again
         setTimeout(() => {
           isProgrammaticScroll.current = false;
         }, 100);
@@ -106,14 +96,12 @@ export default function BirthdayDialog({
 
   if (!isOpen) return null;
 
-  // Handle scroll events with smooth 120ms debounce to avoid render lag during momentum scroll
   const handleScroll = (e: React.UIEvent<HTMLDivElement>, type: 'day' | 'month' | 'year') => {
     if (isProgrammaticScroll.current) return;
 
     const container = e.currentTarget;
     const scrollTop = container.scrollTop;
     
-    // Calculate snapped index (each item is 40px high)
     const index = Math.round(scrollTop / 40);
 
     const timeoutId = (container as any).scrollTimeout;
@@ -136,7 +124,7 @@ export default function BirthdayDialog({
           setLocalYear(val);
         }
       }
-    }, 120); // Smooth debounce so mousewheel/touch scrolls buttery smooth
+    }, 120);
   };
 
   const selectDayClick = (d: number, idx: number) => {
@@ -172,20 +160,16 @@ export default function BirthdayDialog({
           Select birthday
         </h3>
 
-        {/* Wheel Headers */}
         <div className='w-full grid grid-cols-3 text-center mb-2 px-2'>
           <span className='text-sm font-semibold text-blue'>Day</span>
           <span className='text-sm font-semibold text-blue'>Month</span>
           <span className='text-sm font-semibold text-blue'>Year</span>
         </div>
 
-        {/* Custom 3D Column Selectors with Center Active Highlight */}
         <div className='w-full h-40 bg-grey/5 dark:bg-zinc-800/40 rounded-2xl relative flex overflow-hidden border border-grey/10 dark:border-zinc-800 mb-6 select-none'>
           
-          {/* Highlight bar overlay for center selection */}
           <div className='absolute inset-x-2 top-[60px] h-10 bg-blue/10 border-t border-b border-blue/20 rounded-xl pointer-events-none' />
 
-          {/* Day Scroll Column */}
           <div
             ref={dayScrollRef}
             onScroll={(e) => handleScroll(e, 'day')}
@@ -208,7 +192,6 @@ export default function BirthdayDialog({
             <div className='h-[60px] shrink-0 pointer-events-none' />
           </div>
 
-          {/* Month Scroll Column */}
           <div
             ref={monthScrollRef}
             onScroll={(e) => handleScroll(e, 'month')}
@@ -234,7 +217,6 @@ export default function BirthdayDialog({
             <div className='h-[60px] shrink-0 pointer-events-none' />
           </div>
 
-          {/* Year Scroll Column */}
           <div
             ref={yearScrollRef}
             onScroll={(e) => handleScroll(e, 'year')}
@@ -259,7 +241,6 @@ export default function BirthdayDialog({
 
         </div>
 
-        {/* Modal Actions */}
         <div className='w-full flex gap-3'>
           <button
             type='button'

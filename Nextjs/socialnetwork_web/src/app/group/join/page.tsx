@@ -26,7 +26,7 @@ export default function JoinGroupPage() {
 
   useEffect(() => {
     if (!inviteCode) {
-      // If we are loading and have no code yet, wait until the useEffect above sets it.
+
       return;
     }
 

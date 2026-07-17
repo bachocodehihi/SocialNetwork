@@ -33,11 +33,9 @@ router.post('/:groupId/members', verifyToken, addMember);
 router.delete('/:groupId/members/:memberId', verifyToken, removeMember);
 router.post('/:groupId/invite', verifyToken, inviteToGroup);
 
-// Join Requests routes
 router.get('/:groupId/join-requests', verifyToken, getJoinRequests);
 router.post('/:groupId/join-requests/:requestUserId', verifyToken, handleJoinRequest);
 
-// Pending posts routes
 router.get('/:groupId/pending-posts', verifyToken, getPendingPosts);
 router.post('/:groupId/pending-posts/:postId', verifyToken, handlePendingPost);
 

@@ -33,7 +33,7 @@ export default function ForgotPassword() {
     setIsLoading(true);
 
     try {
-      // 1. Check if email exists in database
+
       const checkRes = await authService.checkEmail(trimmedEmail);
       if (!checkRes.exists) {
         setFormError('Email này chưa được đăng ký trong hệ thống!');
@@ -41,7 +41,6 @@ export default function ForgotPassword() {
         return;
       }
 
-      // 2. If exists, send OTP for password reset
       const otpRes = await authService.sendOtp(trimmedEmail);
       if (otpRes.success) {
         showSuccess('Mã OTP khôi phục mật khẩu đã được gửi đến email của bạn.');

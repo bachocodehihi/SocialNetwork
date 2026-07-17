@@ -28,7 +28,6 @@ exports.getAgoraToken = async (req, res) => {
         const currentTimestamp = Math.floor(Date.now() / 1000);
         const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
 
-        // Build RTC Token using wildcard UID 0 so any user can join with this token
         const token = RtcTokenBuilder.buildTokenWithUid(
             appId,
             appCertificate,

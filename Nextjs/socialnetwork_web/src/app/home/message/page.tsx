@@ -10,7 +10,6 @@ import { MessageSquare, Search, Send, User, Phone, Video, Info, Loader2, Smile, 
 import { io, Socket } from 'socket.io-client';
 import { useCall } from '@/components/Call/CallProvider';
 
-// Custom Audio Player Bubble matching Flutter's layout
 function AudioPlayerBubble({ url, isOwnMessage }: { url: string; isOwnMessage: boolean }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -153,7 +152,7 @@ function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: st
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
-      // Fallback: Use Supabase/Cloudinary query param or direct link
+
       const downloadUrl = url.includes('?') 
         ? `${url}&download=${encodeURIComponent(filename)}` 
         : `${url}?download=${encodeURIComponent(filename)}`;
@@ -194,7 +193,6 @@ function FileBubble({ url, filename, isOwnMessage }: { url: string; filename: st
   );
 }
 
-// Custom Link Preview Card using Google's Favicon service
 interface LinkPreviewData {
   title: string;
   image: string;
@@ -410,7 +408,6 @@ function renderTextWithLinks(content: string, isOwnMessage: boolean) {
   );
 }
 
-// Custom Image Grid Bubble matching Flutter's image rendering
 function ImageBubble({ urls }: { urls: string[] }) {
   if (!urls || urls.length === 0) return null;
 
@@ -438,10 +435,8 @@ function MessageContent() {
 
   const { socket, startCall } = useCall();
 
-  // Socket state ref
   const socketRef = useRef<Socket | null>(null);
 
-  // States
   const [conversations, setConversations] = useState<any[]>([]);
   const [selectedConv, setSelectedConv] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -456,19 +451,16 @@ function MessageContent() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const receiveSoundRef = useRef<HTMLAudioElement | null>(null);
 
-  // Preload receive sound
   useEffect(() => {
     receiveSoundRef.current = new Audio('/assets/sounds/receive.mp3');
     receiveSoundRef.current.preload = 'auto';
   }, []);
 
-  // Ref to always have the latest selectedConv in the socket listener without reconnecting
   const selectedConvRef = useRef(selectedConv);
   useEffect(() => {
     selectedConvRef.current = selectedConv;
   }, [selectedConv]);
 
-  // Ref to always have the latest currentUser in the socket listener
   const currentUserRef = useRef(currentUser);
   useEffect(() => {
     currentUserRef.current = currentUser;
@@ -544,7 +536,6 @@ function MessageContent() {
     }
   };
 
-  // Auto-adjust height of composer textarea
   useEffect(() => {
     if (textareaRef.current) {
       if (messageInput) {
@@ -556,7 +547,6 @@ function MessageContent() {
     }
   }, [messageInput]);
 
-  // Scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -565,7 +555,6 @@ function MessageContent() {
     scrollToBottom();
   }, [messages, isUploading]);
 
-  // Load User profile from server (to get correct _id or id)
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -578,7 +567,6 @@ function MessageContent() {
     fetchUserProfile();
   }, []);
 
-  // Fetch conversations list
   const fetchConversations = async (selectUserId?: string, selectGroupId?: string) => {
     setLoadingConv(true);
     try {
@@ -586,7 +574,7 @@ function MessageContent() {
       setConversations(data);
 
       if (selectUserId) {
-        // Look for an existing direct conversation with this user
+
         const existing = data.find((c: any) => 
           !c.isGroup && c.members.some((m: any) => m._id === selectUserId)
         );
@@ -594,7 +582,7 @@ function MessageContent() {
         if (existing) {
           setSelectedConv(existing);
         } else {
-          // Create new conversation
+
           try {
             const newConvRes = await messageService.createConversation(selectUserId);
             const newConv = newConvRes.conversation || newConvRes;
@@ -606,14 +594,14 @@ function MessageContent() {
           }
         }
       } else if (selectGroupId) {
-        // Look for an existing group conversation with this groupId
+
         const existing = data.find((c: any) => 
           c.isGroup && (c.meta?.groupId === selectGroupId || c.groupId === selectGroupId || c._id === selectGroupId)
         );
         if (existing) {
           setSelectedConv(existing);
         } else {
-          // Try to look for any group conversation in which meta.groupId matches selectGroupId
+
           const fallback = data.find((c: any) => 
             c.isGroup && c.meta && String(c.meta.groupId) === String(selectGroupId)
           );
@@ -632,24 +620,21 @@ function MessageContent() {
     }
   };
 
-  // Initial load
   useEffect(() => {
     fetchConversations(directUserId || undefined, directGroupId || undefined);
   }, [directUserId, directGroupId]);
 
-  // Connect Socket.io ONCE on mount
   useEffect(() => {
     if (!socket) return;
     socketRef.current = socket;
 
-    // Join room if already selected
     if (selectedConvRef.current) {
       socket.emit('join_room', selectedConvRef.current._id);
     }
 
     const handleReceiveMessage = (message: any) => {
       setMessages(prev => {
-        // Prevent duplicate messages
+
         if (prev.some(m => m._id === message._id)) return prev;
         if (message.conversationId === selectedConvRef.current?._id) {
           return [...prev, message];
@@ -657,14 +642,12 @@ function MessageContent() {
         return prev;
       });
 
-      // Play notification sound only when message is from someone else
       const senderId = message.sender?._id || message.sender;
       const currentUserId = currentUserRef.current?._id || currentUserRef.current?.id;
       if (senderId && currentUserId && senderId !== currentUserId) {
         receiveSoundRef.current?.play().catch(() => {});
       }
 
-      // Update last message in conversations list
       setConversations(prev => {
         return prev.map(c => {
           if (c._id === message.conversationId) {
@@ -704,7 +687,6 @@ function MessageContent() {
     };
   }, [socket]);
 
-  // Join selected conversation room and fetch message history when selectedConv changes
   useEffect(() => {
     if (!selectedConv) return;
 
@@ -713,7 +695,7 @@ function MessageContent() {
       try {
         const data = await messageService.getMessages(selectedConv._id);
         setMessages(data);
-        // Mark as read
+
         await messageService.markAsRead(selectedConv._id);
       } catch (err) {
         console.error('Error fetching messages:', err);
@@ -725,13 +707,11 @@ function MessageContent() {
 
     loadMessages();
 
-    // Join room on current socket instance
     if (socketRef.current) {
       socketRef.current.emit('join_room', selectedConv._id);
     }
   }, [selectedConv]);
 
-  // Handle Send Message (Matches Flutter socket-only implementation)
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!messageInput.trim() || !selectedConv) return;
@@ -743,7 +723,7 @@ function MessageContent() {
     }
 
     if (socketRef.current) {
-      // Emit the socket event - the backend will write this to DB and broadcast via 'receive_message'
+
       socketRef.current.emit('send_message', {
         conversationId: selectedConv._id,
         content,
@@ -779,13 +759,10 @@ function MessageContent() {
     <div className="h-screen overflow-hidden bg-slate-100 dark:bg-zinc-950 flex flex-col font-sans transition-colors duration-200">
       <Navbar activeTab="message" />
 
-      {/* Main Messaging Container */}
       <div className="flex-1 pt-16 flex overflow-hidden h-[calc(100vh-64px)]">
         
-        {/* Left Panel: Conversations List */}
         <div className="w-80 md:w-96 bg-white dark:bg-zinc-900 border-r border-grey/20 dark:border-zinc-800 flex flex-col flex-shrink-0 transition-colors duration-200">
           
-          {/* Search bar inside messenger */}
           <div className="p-4 border-b border-grey/10 dark:border-zinc-800/80">
             <div className="flex items-center bg-grey/10 hover:bg-grey/15 dark:bg-zinc-800 dark:hover:bg-zinc-750 transition rounded-full px-3.5 py-2">
               <Search className="w-4.5 h-4.5 text-grey dark:text-zinc-400 mr-2 flex-shrink-0" />
@@ -799,7 +776,6 @@ function MessageContent() {
             </div>
           </div>
 
-          {/* Conversations list scrollable */}
           <div className="flex-1 overflow-y-auto divide-y divide-grey/5 dark:divide-zinc-800/60">
             {loadingConv ? (
               <div className="flex items-center justify-center py-10">
@@ -818,7 +794,6 @@ function MessageContent() {
                 const partnerName = chat.isGroup ? chat.name : partner.username;
                 const partnerAvatar = chat.isGroup ? chat.avatar : partner.avatar;
                 
-                // Active/online status
                 const isOnline = !chat.isGroup && partner.isOnline;
 
                 return (
@@ -831,7 +806,7 @@ function MessageContent() {
                         : 'hover:bg-grey/5 dark:hover:bg-zinc-800/40'
                     }`}
                   >
-                    {/* Avatar */}
+
                     <div className="relative flex-shrink-0">
                       <div className="w-12 h-12 rounded-full bg-grey/10 dark:bg-zinc-800 border border-grey/25 dark:border-zinc-850 overflow-hidden flex items-center justify-center">
                         {partnerAvatar ? (
@@ -845,7 +820,6 @@ function MessageContent() {
                       )}
                     </div>
 
-                    {/* Chat Text Details */}
                     <div className="flex-1 min-w-0 text-left">
                       <div className="flex justify-between items-baseline mb-1">
                         <h4 className="font-bold text-grey-hover dark:text-zinc-200 truncate text-[14.5px]">{partnerName}</h4>
@@ -866,13 +840,12 @@ function MessageContent() {
           </div>
         </div>
 
-        {/* Right Panel: Chat Room Details */}
         <div className="flex-1 bg-white dark:bg-zinc-900 flex min-w-0 relative transition-colors duration-200">
           {selectedConv ? (
             <div className="flex-1 flex h-full min-w-0 overflow-hidden">
-              {/* Main Chat Column */}
+
               <div className="flex-1 flex flex-col h-full min-w-0">
-                {/* Chat Header */}
+
                 {(() => {
                   const partner = getChatPartner(selectedConv);
                   const partnerName = selectedConv.isGroup ? selectedConv.name : partner.username;
@@ -897,7 +870,6 @@ function MessageContent() {
                         </div>
                       </div>
 
-                      {/* Call controls */}
                       <div className="flex items-center gap-1">
                         {!selectedConv.isGroup && (
                           <>
@@ -929,7 +901,6 @@ function MessageContent() {
                   );
                 })()}
 
-                {/* Chat Room Messages List */}
                 <div className="flex-1 p-4 bg-grey/5 dark:bg-zinc-950 overflow-y-auto space-y-4">
                   {loadingMsgs ? (
                     <div className="flex items-center justify-center h-full">
@@ -959,7 +930,7 @@ function MessageContent() {
                               isOwnMessage ? 'ml-auto flex-row-reverse text-right' : 'text-left'
                             }`}
                           >
-                            {/* Avatar */}
+
                             {!isOwnMessage && selectedConv.isGroup && (
                               <div className="w-8 h-8 rounded-full overflow-hidden border border-grey/25 dark:border-zinc-850 bg-grey/10 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
                                 {senderAvatar ? (
@@ -971,14 +942,13 @@ function MessageContent() {
                             )}
 
                             <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
-                              {/* Group sender name */}
+
                               {!isOwnMessage && selectedConv.isGroup && (
                                 <span className="text-[10px] text-grey/60 dark:text-zinc-500 font-semibold mb-1 ml-1">
                                   {senderName}
                                 </span>
                               )}
 
-                              {/* Bubble box */}
                               <div 
                                 className={`rounded-2xl text-[14px] leading-relaxed break-words max-w-xs md:max-w-md shadow-sm transition-colors duration-150 ${
                                   msg.type === 'image' && msg.attachments?.length > 0
@@ -1003,7 +973,6 @@ function MessageContent() {
                                 )}
                               </div>
 
-                              {/* Timestamp outside bubble */}
                               <span className="block text-[10px] mt-1 text-grey/50 dark:text-zinc-550 font-semibold px-1">
                                 {formatTime(msg.createdAt)}
                               </span>
@@ -1024,9 +993,8 @@ function MessageContent() {
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Message Input Composer */}
                 <form onSubmit={handleSendMessage} className="p-4 border-t border-grey/20 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-3 relative transition-colors duration-200">
-                  {/* Hidden File Inputs */}
+
                   <input 
                     type="file" 
                     ref={imageInputRef} 
@@ -1102,7 +1070,6 @@ function MessageContent() {
                 </form>
               </div>
 
-              {/* Side Info Panel */}
               {showInfoPanel && (() => {
                 const partner = getChatPartner(selectedConv);
                 const partnerName = selectedConv.isGroup ? selectedConv.name : partner.username;
@@ -1127,7 +1094,6 @@ function MessageContent() {
                       )}
                     </div>
 
-                    {/* Function row */}
                     <div className="p-4 border-b border-grey/10 dark:border-zinc-800/80 flex justify-around">
                       {selectedConv.isGroup ? (
                         <>
@@ -1196,7 +1162,6 @@ function MessageContent() {
                       )}
                     </div>
 
-                    {/* Settings list */}
                     <div className="flex-1 p-2 space-y-1">
                       <button type="button" className="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-grey/5 dark:hover:bg-zinc-800 transition border-0 bg-transparent text-left cursor-pointer text-grey-hover dark:text-zinc-200">
                         <div className="flex items-center gap-3">

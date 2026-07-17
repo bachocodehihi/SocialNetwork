@@ -32,7 +32,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
   const [user, setUser] = useState<any>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Search state variables
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchGroups, setSearchGroups] = useState<any[]>([]);
@@ -62,7 +61,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
     fetchProfile();
   }, [router]);
 
-  // Load search history from localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedHistory = localStorage.getItem('recent_searches');
@@ -76,7 +74,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
     }
   }, []);
 
-  // Debounced user and group search
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
@@ -87,12 +84,11 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
-        // Query users
+
         const uRes = await authService.searchUsers(searchQuery);
         const usersList = Array.isArray(uRes.data) ? uRes.data : (Array.isArray(uRes) ? uRes : []);
         setSearchResults(usersList);
 
-        // Query groups
         try {
           const gRes = await groupService.searchGroups(searchQuery);
           const groupsList = Array.isArray(gRes.data) ? gRes.data : (Array.isArray(gRes) ? gRes : []);
@@ -167,7 +163,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
 
   return (
     <>
-      {/* Search overlay backdrop */}
+
       {isSearchFocused && (
         <div 
           className='fixed inset-0 z-40 bg-black/5 dark:bg-black/40 backdrop-blur-[1px]' 
@@ -175,11 +171,10 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
         />
       )}
 
-      {/* Top Navigation Bar */}
       <nav className='fixed top-0 left-0 right-0 bg-white dark:bg-zinc-900 border-b border-grey/20 dark:border-zinc-800 z-50 shadow-sm transition-colors duration-200'>
         <div className='w-full px-4 sm:px-6 md:px-8'>
           <div className='flex items-center justify-between h-16 relative w-full'>
-            {/* Logo & Search Bar */}
+
             <div className='flex items-center gap-3 relative z-50'>
               <h1 
                 onClick={() => {
@@ -314,7 +309,7 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                           </div>
                         ) : (
                           <div className='space-y-3 max-h-[320px] overflow-y-auto scrollbar-none'>
-                            {/* Users Section */}
+
                             {searchResults.length > 0 && (
                               <div>
                                 <div className="px-1.5 mb-1 text-[11px] font-bold text-grey uppercase tracking-wider text-left">Mọi người</div>
@@ -351,7 +346,6 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
                               </div>
                             )}
 
-                            {/* Groups Section */}
                             {searchGroups.length > 0 && (
                               <div>
                                 <div className="px-1.5 mb-1 text-[11px] font-bold text-grey uppercase tracking-wider text-left">Nhóm</div>
@@ -407,9 +401,8 @@ export default function Navbar({ activeTab, onRefreshFeed }: NavbarProps) {
               </div>
             </div>
 
-            {/* Navigation Icons (4 core tabs: Home, Messages, Contacts, Notifications) */}
             <div className='absolute left-1/2 transform -translate-x-1/2 flex items-center h-full gap-1 sm:gap-2'>
-              {/* Home */}
+
               <button
                 onClick={() => {
                   if (activeTab === 'home') {

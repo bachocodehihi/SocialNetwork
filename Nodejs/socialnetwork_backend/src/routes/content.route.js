@@ -23,7 +23,6 @@ router.put('/:id/like', verifyToken, likePost);
 router.post('/:id/comment', verifyToken, commentPost);
 router.put('/:id/toggle-comments', verifyToken, toggleComments);
 
-// Comment routes
 router.put('/comment/:commentId/like', verifyToken, likeComment);
 router.put('/comment/:commentId/reply/:replyId/like', verifyToken, likeReply);
 router.post('/:id/comment/:commentId/reply', verifyToken, replyComment);

@@ -40,7 +40,6 @@ function SearchResultsContent() {
     { id: 'photos', name: 'Hình ảnh & Video', icon: Image },
   ];
 
-  // Fetch current user on mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -53,7 +52,6 @@ function SearchResultsContent() {
     fetchProfile();
   }, []);
 
-  // Fetch all results on query change
   useEffect(() => {
     if (!query.trim()) {
       setUsers([]);
@@ -65,14 +63,13 @@ function SearchResultsContent() {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        // 1. Fetch Users
+
         const results = await authService.searchUsers(query);
         const usersList = Array.isArray(results.data) 
           ? results.data 
           : (Array.isArray(results) ? results : []);
         setUsers(usersList);
 
-        // Fetch relationship status for each user
         const rels: Record<string, any> = {};
         for (const u of usersList) {
           try {
@@ -84,7 +81,6 @@ function SearchResultsContent() {
         }
         setRelationships(rels);
 
-        // 2. Fetch Groups
         try {
           const gRes = await groupService.searchGroups(query);
           const groupsList = Array.isArray(gRes.data)
@@ -96,7 +92,6 @@ function SearchResultsContent() {
           setGroups([]);
         }
 
-        // 3. Fetch Posts
         try {
           const pRes = await contentService.searchPosts(query);
           const postsList = Array.isArray(pRes.data)
@@ -325,7 +320,6 @@ function SearchResultsContent() {
     );
   };
 
-  // Extract all photos from search posts
   const allPhotos = posts.flatMap(post => 
     (post.images || []).map((imgUrl: string) => ({
       imgUrl,
@@ -333,7 +327,6 @@ function SearchResultsContent() {
     }))
   );
 
-  // Render User row
   const renderUserRow = (item: any) => {
     const userId = item._id || item.id;
     const rel = relationships[userId];
@@ -417,7 +410,6 @@ function SearchResultsContent() {
     );
   };
 
-  // Render Group row
   const renderGroupRow = (item: any) => {
     const groupId = item._id || item.id;
     const isMember = item.isMember || false;
@@ -501,7 +493,6 @@ function SearchResultsContent() {
     );
   };
 
-  // Render Post Card
   const renderPostCard = (post: any) => {
     const author = post.author || {};
     const authorName = author.username || 'Người dùng';
@@ -617,7 +608,6 @@ function SearchResultsContent() {
       <main className="pt-24 pb-12 px-4 max-w-6xl mx-auto w-full flex-grow">
         <div className="flex flex-col md:flex-row gap-6 items-start">
           
-          {/* LEFT SIDEBAR: Search Filters */}
           <div className="w-full md:w-64 lg:w-72 flex-shrink-0 bg-white dark:bg-zinc-900 rounded-3xl border border-grey/15 dark:border-zinc-800/80 p-5 shadow-sm space-y-4 animate-in fade-in slide-in-from-left-4 duration-300">
             <div className="px-1 text-left">
               <h2 className="text-lg font-extrabold text-black dark:text-white tracking-tight">Bộ lọc tìm kiếm</h2>
@@ -646,9 +636,8 @@ function SearchResultsContent() {
             </div>
           </div>
 
-          {/* RIGHT CONTENT: Search Results */}
           <div className="flex-1 w-full bg-white dark:bg-zinc-900 rounded-3xl border border-grey/15 dark:border-zinc-800/80 p-6 sm:p-8 shadow-sm">
-            {/* Header */}
+
             <div className="border-b border-grey/10 dark:border-zinc-800 pb-5 mb-6 text-left">
               <h1 className="text-xl sm:text-2xl font-black text-black dark:text-white flex items-center gap-3">
                 <Search className="w-6 h-6 text-blue" />
@@ -680,11 +669,9 @@ function SearchResultsContent() {
             ) : (
               <div>
                 
-                {/* 1. TAB: ALL (TẤT CẢ) */}
                 {activeFilter === 'all' && (
                   <div className="space-y-10">
                     
-                    {/* People Section */}
                     <div className="text-left">
                       <div className="flex items-center justify-between mb-4 border-b border-grey/5 pb-2">
                         <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -711,7 +698,6 @@ function SearchResultsContent() {
                       )}
                     </div>
 
-                    {/* Groups Section */}
                     <div className="text-left">
                       <div className="flex items-center justify-between mb-4 border-b border-grey/5 pb-2">
                         <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -738,7 +724,6 @@ function SearchResultsContent() {
                       )}
                     </div>
 
-                    {/* Posts Section */}
                     <div className="text-left">
                       <div className="flex items-center justify-between mb-4 border-b border-grey/5 pb-2">
                         <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -765,7 +750,6 @@ function SearchResultsContent() {
                       )}
                     </div>
 
-                    {/* Photos Section */}
                     <div className="text-left">
                       <div className="flex items-center justify-between mb-4 border-b border-grey/5 pb-2">
                         <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -806,7 +790,6 @@ function SearchResultsContent() {
                   </div>
                 )}
 
-                {/* 2. TAB: PEOPLE (MỌI NGƯỜI) */}
                 {activeFilter === 'people' && (
                   <div className="divide-y divide-grey/5 text-left">
                     {users.length === 0 ? (
@@ -819,7 +802,6 @@ function SearchResultsContent() {
                   </div>
                 )}
 
-                {/* 3. TAB: GROUPS (NHÓM) */}
                 {activeFilter === 'groups' && (
                   <div className="divide-y divide-grey/5 text-left">
                     {groups.length === 0 ? (
@@ -833,7 +815,6 @@ function SearchResultsContent() {
                   </div>
                 )}
 
-                {/* 4. TAB: POSTS (BÀI VIẾT) */}
                 {activeFilter === 'posts' && (
                   <div className="text-left space-y-4">
                     {posts.length === 0 ? (
@@ -846,7 +827,6 @@ function SearchResultsContent() {
                   </div>
                 )}
 
-                {/* 5. TAB: PHOTOS (HÌNH ẢNH) */}
                 {activeFilter === 'photos' && (
                   <div className="text-left">
                     {allPhotos.length === 0 ? (

@@ -14,10 +14,9 @@ function SignUpInformationContent() {
   
   const email = searchParams.get('email') || '';
 
-  // Form states
   const [username, setUsername] = useState('');
   const [gender, setGender] = useState<'Male' | 'Female' | 'Other'>('Male');
-  const [birthday, setBirthday] = useState(''); // Stores as YYYY-MM-DD
+  const [birthday, setBirthday] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
@@ -26,11 +25,9 @@ function SignUpInformationContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  // Dialog States
   const [isGenderOpen, setIsGenderOpen] = useState(false);
   const [isBirthdayOpen, setIsBirthdayOpen] = useState(false);
 
-  // Block direct access or forward navigation if OTP was not verified
   useEffect(() => {
     const isVerified = sessionStorage.getItem('otp_verified');
     if (isVerified !== 'true') {
@@ -45,7 +42,6 @@ function SignUpInformationContent() {
     }
   }, [email, router, showError]);
 
-  // Format date display as "1 - 1 - 2000" (d - m - yyyy) with spaces
   const formatDateDisplay = (dateStr: string) => {
     if (!dateStr) return '';
     const [y, m, d] = dateStr.split('-');
@@ -111,13 +107,12 @@ function SignUpInformationContent() {
     setIsLoading(true);
 
     try {
-      // Store in sessionStorage to pass to avatar page
+
       sessionStorage.setItem('signup_username', username.trim());
       sessionStorage.setItem('signup_gender', gender);
       sessionStorage.setItem('signup_birthday', birthday);
       sessionStorage.setItem('signup_password', password);
 
-      // Redirect to select avatar page
       router.push(`/signup/avatar?email=${encodeURIComponent(email)}`);
     } catch (err) {
       console.error('Session storage error:', err);
@@ -139,7 +134,6 @@ function SignUpInformationContent() {
 
         <form onSubmit={handleSubmit} className='space-y-5' noValidate>
 
-          {/* Username */}
           <div>
             <label htmlFor='username' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Username
@@ -158,7 +152,6 @@ function SignUpInformationContent() {
             />
           </div>
 
-          {/* Gender Trigger Input */}
           <div>
             <label htmlFor='gender' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Gender
@@ -182,7 +175,6 @@ function SignUpInformationContent() {
             </div>
           </div>
 
-          {/* Birthday Trigger Input */}
           <div>
             <label htmlFor='birthday' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Birthday
@@ -206,7 +198,6 @@ function SignUpInformationContent() {
             </div>
           </div>
 
-          {/* Password */}
           <div>
             <label htmlFor='password' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Password
@@ -234,7 +225,6 @@ function SignUpInformationContent() {
             </div>
           </div>
 
-          {/* Confirm Password */}
           <div>
             <label htmlFor='confirmPassword' className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1'>
               Confirm password
@@ -271,7 +261,6 @@ function SignUpInformationContent() {
             />
           )}
 
-          {/* Action Buttons */}
           <div className='flex gap-3 mt-6'>
             <button
               type='button'
@@ -297,7 +286,6 @@ function SignUpInformationContent() {
 
       </div>
 
-      {/* Extracted Gender Dialog */}
       <GenderDialog
         isOpen={isGenderOpen}
         initialGender={gender}
@@ -305,7 +293,6 @@ function SignUpInformationContent() {
         onConfirm={handleGenderConfirm}
       />
 
-      {/* Extracted Birthday Dialog */}
       <BirthdayDialog
         isOpen={isBirthdayOpen}
         initialDate={birthday}
@@ -313,7 +300,6 @@ function SignUpInformationContent() {
         onConfirm={handleBirthdayConfirm}
       />
 
-      {/* Global CSS to hide scrollbars */}
       <style jsx global>{`
         /* Hide scrollbar for Chrome, Safari and Opera */
         .scrollbar-none::-webkit-scrollbar {

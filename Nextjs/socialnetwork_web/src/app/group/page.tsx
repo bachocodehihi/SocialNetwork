@@ -372,12 +372,16 @@ export default function GroupPage() {
 
       const res = await contentService.createPost(formData);
       if (res.success && res.post) {
-        setPosts(prev => [res.post, ...prev]);
+        if (res.post.status === 'pending') {
+          showSuccess('Bài viết của bạn đã được gửi và đang chờ duyệt.');
+        } else {
+          setPosts(prev => [res.post, ...prev]);
+          showSuccess('Đã đăng bài viết thành công!');
+        }
         setNewPostContent('');
         setNewPostImages([]);
         setNewPostPreviews([]);
         setIsCreateModalOpen(false);
-        showSuccess('Đã đăng bài viết thành công!');
       } else {
         showError('Không thể tạo bài viết.');
       }

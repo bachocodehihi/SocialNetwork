@@ -67,7 +67,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { showError, showSuccess } = useAlert();
 
-  // Sync ref to always have latest callState in socket listeners
   useEffect(() => {
     latestCallStateRef.current = callState;
   }, [callState]);
@@ -77,7 +76,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     currentCallRef.current = currentCall;
   }, [currentCall]);
 
-  // Dynamically import Agora Web SDK on client side
   useEffect(() => {
     if (typeof window !== 'undefined') {
       import('agora-rtc-sdk-ng').then((module) => {
@@ -86,7 +84,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  // Web Audio API Ringtone Synthesizer
   const startRingtone = () => {
     if (typeof window === 'undefined') return () => {};
     try {
@@ -105,7 +102,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
         const osc2 = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
 
-        // Standard USA Ringback Tone: 440Hz + 480Hz
         osc1.frequency.value = 440;
         osc2.frequency.value = 480;
 
@@ -114,11 +110,11 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
         gain.connect(audioCtx.destination);
 
         gain.gain.setValueAtTime(0, audioCtx.currentTime);
-        // Fade in ring
+
         gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.15);
-        // Hold ring
+
         gain.gain.setValueAtTime(0.25, audioCtx.currentTime + 1.6);
-        // Fade out ring
+
         gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.95);
 
         osc1.start();
@@ -150,7 +146,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Connect socket with given token
   const connectSocket = (token: string) => {
     if (socket) return;
     const socketUrl = NETWORK.wsUrl.replace('ws://', 'http://').replace('wss://', 'https://');
@@ -164,7 +159,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     newSocket.on('call_incoming', (data: any) => {
-      // If already in a call, notify peer we are busy
+
       if (latestCallStateRef.current !== 'idle') {
         newSocket.emit('call_reject', { callId: data.callId });
         return;
@@ -184,7 +179,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       });
       setCallState('ringing');
 
-      // Start synthesized ringing sound
       if (ringtoneCleanRef.current) ringtoneCleanRef.current();
       ringtoneCleanRef.current = startRingtone();
     });
@@ -262,7 +256,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
 
   const pathname = usePathname();
 
-  // Auto connect/disconnect based on token existence and path transitions
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -276,7 +269,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [pathname, socket]);
 
-  // Agora implementation
   const joinAgoraChannel = async (channelId: string, type: 'voice' | 'video') => {
     let sdk = agoraSdk;
     if (!sdk) {
@@ -297,7 +289,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       const client = sdk.createClient({ mode: 'rtc', codec: 'vp8' });
       agoraClientRef.current = client;
 
-       // Event handlers
       client.on('user-published', async (user: any, mediaType: 'audio' | 'video') => {
         console.log(`🔊 Remote user [${user.uid}] published mediaType:`, mediaType);
         try {
@@ -323,11 +314,10 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
 
       client.on('user-left', (user: any) => {
         setRemoteUsers(prev => prev.filter(u => u.uid !== user.uid));
-        // If 1-on-1 call and remote user leaves, end the call
+
         endCall();
       });
 
-      // Fetch Agora Token from Backend
       let token = null;
       try {
         console.log('⚡ Fetching Agora Token for channel:', channelId);
@@ -340,10 +330,8 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
         console.error('Failed to fetch Agora token from server:', tokenErr);
       }
 
-      // Join Agora
       await client.join('63c3b289a0ad46fb90f74f68554f4a9f', channelId, token, null);
 
-      // Create local tracks with resilient fallback
       let audioTrack;
       try {
         audioTrack = await sdk.createMicrophoneAudioTrack();
@@ -376,7 +364,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
           }
           showError(warningMsg);
           
-          // Fallback to audio only
           await client.publish([audioTrack]);
           setCurrentCall(prev => prev ? { ...prev, callType: 'voice' } : null);
         }
@@ -402,19 +389,17 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleResetCall = () => {
-    // Stop ringing
+
     if (ringtoneCleanRef.current) {
       ringtoneCleanRef.current();
       ringtoneCleanRef.current = null;
     }
 
-    // Stop duration timer
     if (durationTimerRef.current) {
       clearInterval(durationTimerRef.current);
       durationTimerRef.current = null;
     }
 
-    // Stop Agora tracks
     if (localAudioTrackRef.current) {
       localAudioTrackRef.current.stop();
       localAudioTrackRef.current.close();
@@ -426,7 +411,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       localVideoTrackRef.current = null;
     }
 
-    // Leave Agora
     if (agoraClientRef.current) {
       agoraClientRef.current.leave().catch((err: any) => console.error(err));
       agoraClientRef.current = null;
@@ -440,7 +424,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     setRemoteUsers([]);
   };
 
-  // Action methods
   const startCall = (receiverId: string, conversationId: string, receiverInfo: any, type: 'voice' | 'video' = 'voice') => {
     if (!socket) {
       showError('Kết nối máy chủ cuộc gọi chưa sẵn sàng.');
@@ -521,7 +504,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Video render helper components/views
   useEffect(() => {
     if (callState === 'connected' && currentCall?.callType === 'video' && localVideoTrackRef.current) {
       const localContainer = document.getElementById('local-video-container');
@@ -569,15 +551,13 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     >
       {children}
 
-      {/* Global Call UI Overlay */}
       {callState !== 'idle' && currentCall && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md transition-all duration-300 font-sans text-white">
           
-          {/* Ringing / Calling view */}
           {(callState === 'ringing' || callState === 'calling') && (
             <div className="flex flex-col items-center max-w-sm w-full px-6 text-center animate-fade-in">
               <div className="relative mb-8">
-                {/* Pulsing visual circles */}
+
                 <div className="absolute inset-0 rounded-full bg-blue/20 animate-ping duration-1000 scale-150" />
                 <div className="absolute inset-0 rounded-full bg-blue/15 animate-pulse duration-700 scale-125" />
                 
@@ -604,7 +584,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
                   : 'Đang kết nối...'}
               </p>
 
-              {/* Action Buttons for Incoming / Outgoing Ringing */}
               <div className="mt-12 flex items-center gap-10">
                 {currentCall.isIncoming && callState === 'ringing' ? (
                   <>
@@ -626,7 +605,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
                     </button>
                   </>
                 ) : (
-                  // Outgoing cancellation button
+
                   <button
                     onClick={endCall}
                     className="flex h-16 w-16 items-center justify-center rounded-full bg-red hover:bg-red-hover shadow-lg shadow-red/35 transition-transform hover:scale-105 active:scale-95 cursor-pointer border-0"
@@ -638,11 +617,9 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
             </div>
           )}
 
-          {/* Connected View */}
           {callState === 'connected' && (
             <div className="relative h-full w-full flex flex-col justify-between p-6">
               
-              {/* Top Details bar */}
               <div className="flex items-center justify-between bg-black/35 backdrop-blur-md border border-white/5 px-5 py-3 rounded-2xl max-w-md mx-auto w-full mt-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full overflow-hidden border border-white/20 flex items-center justify-center bg-white/10">
@@ -663,10 +640,8 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
                 </span>
               </div>
 
-              {/* Center Content: Voice Avatar or Video render frames */}
               <div className="flex-1 flex items-center justify-center w-full max-w-4xl mx-auto my-6 relative overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
                 
-                {/* Voice Call Layout */}
                 {currentCall.callType === 'voice' && (
                   <div className="flex flex-col items-center">
                     <div className="relative mb-6">
@@ -683,11 +658,9 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
                   </div>
                 )}
 
-                {/* Video Call Layout */}
                 {currentCall.callType === 'video' && (
                   <div className="relative h-full w-full bg-slate-950 flex items-center justify-center">
-                    
-                    {/* Remote User Stream Frame (Takes Full Width/Height) */}
+  
                     {remoteUsers.length > 0 ? (
                       <div 
                         id={`remote-video-${remoteUsers[0].uid}`} 
@@ -700,7 +673,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
                       </div>
                     )}
 
-                    {/* Local Camera Mini PIP Frame */}
                     {isCameraOn && (
                       <div className="absolute top-4 right-4 w-32 h-44 md:w-40 md:h-56 rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-slate-900 z-10">
                         <div id="local-video-container" className="w-full h-full object-cover" />
@@ -710,10 +682,8 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
                 )}
               </div>
 
-              {/* Bottom Control Bar */}
               <div className="bg-black/35 backdrop-blur-md border border-white/5 p-4 rounded-3xl max-w-md mx-auto w-full flex items-center justify-around mb-4">
                 
-                {/* Mic Mute Toggle */}
                 <button
                   onClick={toggleMute}
                   className={`flex h-12 w-12 items-center justify-center rounded-full transition duration-150 border-0 cursor-pointer ${
@@ -726,7 +696,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
                   {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                 </button>
 
-                {/* Camera Toggle (Video Call Only) */}
                 {currentCall.callType === 'video' && (
                   <button
                     onClick={toggleCamera}
@@ -741,7 +710,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
                   </button>
                 )}
 
-                {/* Speaker Toggle Icon (Web plays on output natively, this toggles UI representation of voice levels) */}
                 {currentCall.callType === 'voice' && (
                   <button
                     className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition duration-150 border-0 cursor-pointer"
@@ -751,7 +719,6 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
                   </button>
                 )}
 
-                {/* End Call Button */}
                 <button
                   onClick={endCall}
                   className="flex h-12 w-12 items-center justify-center rounded-full bg-red hover:bg-red-hover shadow-lg shadow-red/35 transition-transform hover:scale-105 active:scale-95 border-0 cursor-pointer"

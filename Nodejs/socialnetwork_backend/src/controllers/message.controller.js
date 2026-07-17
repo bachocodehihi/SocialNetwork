@@ -635,7 +635,6 @@ const getLinkPreview = async (req, res) => {
             return res.status(400).json({ success: false, message: 'URL is required' });
         }
 
-        // 1. Special handling for YouTube links via official oEmbed API to bypass bot/consent detection
         try {
             const parsedUrl = new URL(url);
             const host = parsedUrl.hostname.toLowerCase();
@@ -656,7 +655,6 @@ const getLinkPreview = async (req, res) => {
             console.error('YouTube oEmbed error:', e);
         }
 
-        // 2. Generic fallback scraper for other websites
         const response = await fetch(url, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36'

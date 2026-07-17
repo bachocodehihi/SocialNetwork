@@ -55,7 +55,6 @@ const updateProfile = async (req, res) => {
                 const partnerId = (rel.partner && rel.partner !== 'none' && rel.partner !== '') ? rel.partner : null;
 
                 const oldUser = await Account.findById(req.userId);
-                // 1. If changing to single/none or removing partner link
                  if (status === 'none' || status === 'single' || !partnerId) {
                     if (oldUser && oldUser.relationship && oldUser.relationship.partner) {
                         const formerPartnerId = oldUser.relationship.partner;
@@ -89,7 +88,6 @@ const updateProfile = async (req, res) => {
                         isPending: false
                     };
                 } else {
-                    // 2. Setting relationship with a partner
                     const target = await Account.findById(partnerId);
                     if (!target) {
                         return res.status(404).json({ success: false, code: 'PARTNER_NOT_FOUND', message: 'Không tìm thấy tài khoản đối tác.' });
@@ -119,7 +117,6 @@ const updateProfile = async (req, res) => {
                         }
                     }
 
-                    // Check if target already sent relationship request to req.userId (auto-match)
                     if (target.relationship && target.relationship.pendingPartner && target.relationship.pendingPartner.toString() === req.userId.toString() && target.relationship.isPending) {
                         updateData.relationship = {
                             status: status,
@@ -153,7 +150,6 @@ const updateProfile = async (req, res) => {
                             console.error('Error creating auto-match notification:', notifErr);
                         }
 
-                        // Automatically reject other incoming requests
                         await Account.updateMany(
                             { 
                                 _id: { $ne: req.userId }, 
@@ -185,7 +181,7 @@ const updateProfile = async (req, res) => {
                             }
                         );
                     } else {
-                        // Pending request
+
                         updateData.relationship = {
                             status: status,
                             partner: null,

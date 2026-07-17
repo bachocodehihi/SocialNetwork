@@ -16,7 +16,6 @@ export default function GenderDialog({
 }: GenderDialogProps) {
   const [tempGender, setTempGender] = useState<'Male' | 'Female' | 'Other'>(initialGender);
 
-  // Sync state when dialog opens
   useEffect(() => {
     if (isOpen) {
       setTempGender(initialGender);
@@ -37,10 +36,8 @@ export default function GenderDialog({
           Select gender
         </h3>
 
-        {/* Custom Interactive Flutter-style Cards */}
         <div className='w-full space-y-3.5 mb-6'>
           
-          {/* Male Card */}
           <button
             type='button'
             onClick={() => setTempGender('Male')}
@@ -65,7 +62,6 @@ export default function GenderDialog({
             </div>
           </button>
 
-          {/* Female Card */}
           <button
             type='button'
             onClick={() => setTempGender('Female')}
@@ -90,7 +86,6 @@ export default function GenderDialog({
             </div>
           </button>
 
-          {/* Other Card */}
           <button
             type='button'
             onClick={() => setTempGender('Other')}
@@ -117,7 +112,6 @@ export default function GenderDialog({
 
         </div>
 
-        {/* Modal Actions */}
         <div className='w-full flex gap-3'>
           <button
             type='button'

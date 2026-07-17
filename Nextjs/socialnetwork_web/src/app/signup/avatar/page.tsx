@@ -15,13 +15,11 @@ function SignUpAvatarContent() {
   
   const email = searchParams.get('email') || '';
 
-  // Recovered signup states
   const [username, setUsername] = useState('');
   const [gender, setGender] = useState('');
   const [birthday, setBirthday] = useState('');
   const [password, setPassword] = useState('');
 
-  // Selected avatar state
   const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(DEFAULT_AVATAR_PATH);
   const [customAvatarBase64, setCustomAvatarBase64] = useState<string | null>(null);
 
@@ -29,7 +27,6 @@ function SignUpAvatarContent() {
   const [formError, setFormError] = useState<string | null>(null);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
 
-  // Retrieve values from sessionStorage on mount
   useEffect(() => {
     const isVerified = sessionStorage.getItem('otp_verified');
     const storedUsername = sessionStorage.getItem('signup_username');
@@ -74,7 +71,7 @@ function SignUpAvatarContent() {
     setIsLoading(true);
 
     try {
-      // Build the registration payload
+
       const registerPayload: any = {
         email,
         username,
@@ -83,8 +80,6 @@ function SignUpAvatarContent() {
         gender
       };
 
-      // Only pass the avatar parameter in Base64 if a custom image was uploaded.
-      // Otherwise, do not pass anything so backend falls back to its default Cloudinary avatar URL.
       if (customAvatarBase64) {
         registerPayload.avatar = customAvatarBase64;
       }
@@ -92,10 +87,9 @@ function SignUpAvatarContent() {
       const res = await authService.register(registerPayload);
 
       if (res.success || res.code === 'REGISTER_SUCCESS') {
-        // Open the beautiful Flutter-styled dialog
+
         setIsSuccessDialogOpen(true);
         
-        // Clear temp registration states
         sessionStorage.removeItem('signup_username');
         sessionStorage.removeItem('signup_gender');
         sessionStorage.removeItem('signup_birthday');
@@ -136,7 +130,6 @@ function SignUpAvatarContent() {
 
         <form onSubmit={handleSubmit} className='space-y-6'>
 
-          {/* Main Avatar Preview */}
           <div className='flex flex-col items-center justify-center'>
             <div className='relative w-36 h-36 rounded-full overflow-hidden border-4 border-white dark:border-zinc-800 shadow-xl shadow-blue/10 ring-4 ring-blue/20 bg-grey/5 dark:bg-zinc-800 flex items-center justify-center'>
               <img
@@ -150,7 +143,6 @@ function SignUpAvatarContent() {
             </span>
           </div>
 
-          {/* Custom Avatar Upload */}
           <div>
             <span className='block text-sm font-bold text-grey dark:text-zinc-300 tracking-wider mb-2 ml-1 select-none'>
               Custom photo
@@ -178,7 +170,6 @@ function SignUpAvatarContent() {
             />
           )}
 
-          {/* Action Buttons */}
           <div className='flex gap-3 mt-6'>
             <button
               type='button'
@@ -201,17 +192,14 @@ function SignUpAvatarContent() {
 
       </div>
 
-      {/* Success Dialog Modal - Replicating Flutter AppAlertDialog */}
       {isSuccessDialogOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in'>
           <div className='bg-white dark:bg-zinc-900 rounded-3xl p-8 max-w-xs w-full mx-4 shadow-2xl flex flex-col items-center text-center animate-scale-up border border-gray-50 dark:border-zinc-800 select-none'>
             
-            {/* Green Check Icon with Glowing Ring */}
             <div className='w-16 h-16 bg-green text-green rounded-full flex items-center justify-center mb-5 ring-8 ring-green/50 shadow-sm'>
               <Check className='w-8 h-8 stroke-[3]' />
             </div>
 
-            {/* Message */}
             <h3 className='text-lg font-bold text-grey-hover dark:text-zinc-100 mb-1.5'>
               Đăng ký thành công!
             </h3>
@@ -223,7 +211,6 @@ function SignUpAvatarContent() {
         </div>
       )}
 
-      {/* Inline styles for dialog animation */}
       <style jsx global>{`
         @keyframes fadeIn {
           from { opacity: 0; }

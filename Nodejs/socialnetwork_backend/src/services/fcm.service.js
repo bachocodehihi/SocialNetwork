@@ -8,7 +8,7 @@ if (!admin.apps.length) {
     const localFilePath = path.join(__dirname, '../firebase-service-account.json');
 
     if (firebaseEnv) {
-        // Server: đọc từ biến môi trường Railway
+
         try {
             const serviceAccount = JSON.parse(firebaseEnv);
             credential = admin.credential.cert(serviceAccount);
@@ -17,7 +17,7 @@ if (!admin.apps.length) {
             console.error('❌ Failed to parse FIREBASE_SERVICE_ACCOUNT JSON:', e.message);
         }
     } else if (fs.existsSync(localFilePath)) {
-        // Local: đọc từ file JSON
+
         credential = admin.credential.cert(localFilePath);
         console.log('✅ Firebase initialized from local file');
     } else {

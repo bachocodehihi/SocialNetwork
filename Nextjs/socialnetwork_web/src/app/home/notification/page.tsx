@@ -92,7 +92,7 @@ export default function NotificationPage() {
     try {
       await contactService.acceptRequest(requestId);
       showSuccess('Đã đồng ý kết bạn!');
-      // Update state locally
+
       setNotifications(prev => prev.map(n => 
         n.relatedId === requestId ? { ...n, requestStatus: 'accepted' } : n
       ));
@@ -106,7 +106,7 @@ export default function NotificationPage() {
     try {
       await contactService.rejectRequest(requestId);
       showSuccess('Đã từ chối kết bạn.');
-      // Update state locally
+
       setNotifications(prev => prev.map(n => 
         n.relatedId === requestId ? { ...n, requestStatus: 'rejected' } : n
       ));
@@ -176,10 +176,8 @@ export default function NotificationPage() {
     <div className="min-h-screen bg-slate-100 dark:bg-zinc-950 flex flex-col font-sans transition-colors duration-200">
       <Navbar activeTab="notification" />
 
-      {/* Main Container */}
       <main className="flex-1 pt-20 pb-12 px-4 max-w-2xl mx-auto w-full">
         
-        {/* Header card */}
         <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-5 shadow-sm mb-6 flex items-center justify-between transition-colors duration-200">
           <h1 className="text-2xl font-black text-grey-hover dark:text-zinc-100">Thông báo</h1>
           {notifications.some(n => !n.isRead) && (
@@ -193,7 +191,6 @@ export default function NotificationPage() {
           )}
         </div>
 
-        {/* Notifications list */}
         {loading ? (
           <div className="flex justify-center items-center py-20 bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 shadow-sm transition-colors duration-200">
             <Loader2 className="w-8 h-8 animate-spin text-blue mr-2" />
@@ -215,7 +212,7 @@ export default function NotificationPage() {
                     !notif.isRead ? 'bg-blue/5 dark:bg-blue-500/10' : 'hover:bg-grey/5 dark:hover:bg-zinc-800/40'
                   }`}
                 >
-                  {/* Left: Avatar with type icon badge */}
+
                   <div className="relative flex-shrink-0">
                     <div className="w-11 h-11 rounded-full overflow-hidden border border-grey/20 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex items-center justify-center">
                       {sender.avatar ? (
@@ -229,7 +226,6 @@ export default function NotificationPage() {
                     </div>
                   </div>
 
-                  {/* Middle: Content */}
                   <div className="flex-1 min-w-0 text-left">
                     <h4 className="text-sm text-black dark:text-zinc-300 leading-relaxed">
                       <span className="font-bold text-grey-hover dark:text-zinc-100 cursor-pointer hover:underline" onClick={() => router.push(`/user/${sender._id || sender.id}`)}>
@@ -238,13 +234,11 @@ export default function NotificationPage() {
                       {notif.body}
                     </h4>
 
-                    {/* Timestamp */}
                     <div className="flex items-center gap-1.5 mt-1 text-[11px] text-grey/60 dark:text-zinc-500 font-semibold">
                       <Calendar className="w-3.5 h-3.5" />
                       <span>{formatTime(notif.createdAt)}</span>
                     </div>
 
-                    {/* Friend Request action buttons */}
                     {notif.type === 'friend_request' && notif.relatedId && (
                       <div className="mt-3 flex items-center gap-2">
                         {notif.requestStatus === 'pending' ? (
@@ -278,7 +272,6 @@ export default function NotificationPage() {
                       </div>
                     )}
 
-                    {/* Relationship Request action buttons */}
                     {notif.title === 'Yêu cầu kết đôi mới' && sender && (
                       <div className="mt-3 flex items-center gap-2">
                         {(() => {
@@ -329,7 +322,6 @@ export default function NotificationPage() {
                     )}
                   </div>
 
-                  {/* Right: Unread Indicator Dot */}
                   {!notif.isRead && (
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center">
                       <Circle className="w-2.5 h-2.5 fill-blue text-blue" />

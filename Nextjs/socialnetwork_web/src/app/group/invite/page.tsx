@@ -22,7 +22,6 @@ export default function GroupInvitePage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Track invited userIds to disable the button
   const [invitedUserIds, setInvitedUserIds] = useState<Record<string, boolean>>({});
   const [invitingState, setInvitingState] = useState<Record<string, boolean>>({});
 
@@ -44,12 +43,11 @@ export default function GroupInvitePage() {
     const initData = async () => {
       try {
         setLoading(true);
-        // Load group info
+
         const groupRes = await groupService.getGroupById(id);
         if (groupRes.success && groupRes.data) {
           setGroup(groupRes.data);
           
-          // Load friends
           const friendsRes = await contactService.getFriends();
           const friendsList = Array.isArray(friendsRes) ? friendsRes : (friendsRes.data || []);
           setFriends(friendsList);
@@ -91,7 +89,6 @@ export default function GroupInvitePage() {
 
   const memberIds = (group?.members || []).map((m: any) => m._id || m.id);
 
-  // Filter friends list by search query
   const filteredFriends = friends.filter((f: any) => 
     f.username?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -111,7 +108,7 @@ export default function GroupInvitePage() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-xl bg-white dark:bg-zinc-900 rounded-2xl shadow-sm overflow-hidden border border-grey/20 dark:border-zinc-800 p-6 flex flex-col relative text-left"
         >
-          {/* Header */}
+
           <div className="flex items-center gap-4 border-b border-grey/10 dark:border-zinc-800 pb-5 mb-5">
             <button
               onClick={() => router.push(`/group?groupId=${groupId}`)}
@@ -130,7 +127,6 @@ export default function GroupInvitePage() {
             </div>
           </div>
 
-          {/* Search bar */}
           <div className="relative mb-5">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-grey" />
             <input
@@ -142,7 +138,6 @@ export default function GroupInvitePage() {
             />
           </div>
 
-          {/* Friends List */}
           <div className="flex-1 min-h-[300px] max-h-[400px] overflow-y-auto pr-1">
             {friends.length === 0 ? (
               <div className="py-16 text-center text-grey">
@@ -185,7 +180,6 @@ export default function GroupInvitePage() {
                         </div>
                       </div>
 
-                      {/* Action Button */}
                       {isJoined ? (
                         <span className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-[#3a3b3c] text-grey dark:text-[#b0b3b8] font-extrabold text-xs flex items-center gap-1.5 border border-slate-200/20">
                           <Check className="w-3.5 h-3.5 text-emerald-500" />

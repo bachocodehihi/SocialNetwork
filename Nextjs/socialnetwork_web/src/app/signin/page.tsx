@@ -21,7 +21,6 @@ export default function SignIn() {
   
   const { showError, showSuccess, showWarning } = useAlert();
 
-  // Redirect to home or saved redirect path if already logged in
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -103,7 +102,7 @@ export default function SignIn() {
     setIsLoading(true);
     
     try {
-      // 1. Check if email exists
+
       const checkRes = await authService.checkEmail(trimmedEmail);
       if (!checkRes.exists) {
         setFormError('Email chưa tồn tại!');

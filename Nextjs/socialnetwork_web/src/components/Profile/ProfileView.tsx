@@ -41,7 +41,7 @@ import {
 } from 'lucide-react';
 
 interface ProfileViewProps {
-  targetId?: string; // If empty, we load the logged-in user's profile
+  targetId?: string;
 }
 
 export default function ProfileView({ targetId }: ProfileViewProps) {
@@ -52,18 +52,15 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [profileUser, setProfileUser] = useState<any>(null);
 
-  // Friendship states
   const [friendshipStatus, setFriendshipStatus] = useState<'none' | 'requested' | 'received' | 'friend'>('none');
   const [requestId, setRequestId] = useState<string | null>(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Feed states
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoadingFeed, setIsLoadingFeed] = useState(true);
   const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
 
-  // Comments states
   const [commentSectionOpen, setCommentSectionOpen] = useState<Record<string, boolean>>({});
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
@@ -76,7 +73,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
   const isSelf = !targetId || targetId === currentUser?._id || targetId === currentUser?.id;
   const isPrivateAccount = !isSelf && profileUser?.privacy?.isPrivate && friendshipStatus !== 'friend';
 
-  // Lightbox states
   const [activeLightboxPost, setActiveLightboxPost] = useState<any | null>(null);
   const [activeLightboxImageIdx, setActiveLightboxImageIdx] = useState<number>(0);
   const [lightboxContentExpanded, setLightboxContentExpanded] = useState(false);
@@ -98,7 +94,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
     };
   }, [activeLightboxPost]);
 
-  // Initialize and load data
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -108,13 +103,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
 
     const loadProfileData = async () => {
       try {
-        // 1. Fetch current logged-in user profile
+
         const selfData = await authService.getProfile();
         setCurrentUser(selfData);
 
         const currentProfileId = targetId || selfData._id || selfData.id;
 
-        // 2. Fetch target profile details
         if (!targetId || targetId === selfData._id || targetId === selfData.id) {
           setProfileUser(selfData);
         } else {
@@ -122,7 +116,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
           setProfileUser(detailedData);
         }
 
-        // 3. Fetch user posts
         try {
           const postsData = await contentService.getUserPosts(currentProfileId);
           setPosts(Array.isArray(postsData) ? postsData : (postsData?.data || []));
@@ -131,7 +124,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
           setPosts([]);
         }
 
-        // 4. Fetch friendship status if viewing someone else
         if (targetId && targetId !== selfData._id && targetId !== selfData.id) {
           try {
             const rel = await contactService.getRelationship(targetId);
@@ -169,7 +161,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
     loadProfileData();
   }, [targetId, router]);
 
-  // Loading Feed
   const fetchUserPosts = async () => {
     const currentProfileId = targetId || currentUser?._id || currentUser?.id;
     if (!currentProfileId) return;
@@ -191,7 +182,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
     }
   }, [checking]);
 
-  // Friendship Actions
   const handleSendRequest = async () => {
     if (isActionLoading || !targetId) return;
     setIsActionLoading(true);
@@ -277,7 +267,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
     }
   };
 
-  // Like & Comment Handlers (Optimistic update pattern identical to home page)
   const handleLikePost = async (postId: string) => {
     if (!currentUser) return;
     const currentUserId = currentUser._id || currentUser.id;
@@ -432,7 +421,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
     }
   };
 
-  // Helper formatting methods
   const formatTimeAgo = (dateTimeStr?: string): string => {
     if (!dateTimeStr) return '';
     try {
@@ -579,10 +567,10 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
     <div className="min-h-screen bg-slate-100 dark:bg-zinc-950 pb-12 transition-colors duration-200">
       <Navbar />
       <div className="pt-16">
-        {/* Header Container without cover photo */}
+
         <div className="bg-white dark:bg-zinc-900 border-b border-grey/10 dark:border-zinc-800 shadow-sm pt-6 pb-6 transition-colors duration-200">
         <div className="max-w-5xl mx-auto px-4">
-          {/* Back button if viewing another user */}
+
           {!isSelf && (
             <button
               onClick={() => router.back()}
@@ -594,7 +582,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
           )}
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            {/* Avatar & Username details */}
+
             <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
               <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-grey/25 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center relative shadow-sm">
                 {profileUser?.avatar ? (
@@ -618,7 +606,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
               </div>
             </div>
 
-            {/* Profile Action Buttons */}
             <div className="flex items-center justify-center gap-2.5">
               {isSelf ? (
                 <button
@@ -630,7 +617,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </button>
               ) : (
                 <>
-                  {/* Messages Button */}
+
                   <button
                     onClick={() => router.push(`/home/message?userId=${targetId}`)}
                     className="flex items-center gap-2 bg-grey hover:bg-grey-hover dark:bg-zinc-850 dark:hover:bg-zinc-800 text-white dark:text-zinc-200 px-4 py-2.5 rounded-xl font-bold transition cursor-pointer border-0 text-sm active:scale-[0.98]"
@@ -639,7 +626,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                     <span>Nhắn tin</span>
                   </button>
 
-                  {/* Friendship actions switch */}
                   {friendshipStatus === 'none' && (
                     <button
                       onClick={handleSendRequest}
@@ -725,14 +711,12 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
             </div>
           </div>
 
-          {/* Bio info */}
           <div className="border-t border-grey/10 dark:border-zinc-800 pt-4 mt-6">
             <p className="text-sm text-gray-600 dark:text-zinc-400 max-w-2xl text-left leading-relaxed">
               {profileUser?.bio || 'Xin chào! Chào mừng đến với trang cá nhân của tôi. Hãy kết nối và chia sẻ những khoảnh khắc tuyệt vời cùng tôi nhé! ✨'}
             </p>
           </div>
 
-          {/* Stats Bar */}
           <div className="grid grid-cols-4 gap-2 bg-grey/5 dark:bg-zinc-850/50 rounded-2xl p-4 mt-6 text-center divide-x divide-grey/10 dark:divide-zinc-800 max-w-2xl">
             <div>
               <span className="block text-base sm:text-lg font-bold text-grey-hover dark:text-zinc-100">
@@ -762,10 +746,8 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
         </div>
       </div>
 
-      {/* Main Content Grid */}
       <div className="max-w-5xl mx-auto px-4 mt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
-        
-        {/* Left Column: Personal Information */}
+
         <div className="md:col-span-5 space-y-6">
           <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-5 shadow-sm transition-colors duration-200">
             <h3 className="font-bold text-grey-hover dark:text-zinc-200 text-base mb-4 flex items-center gap-2">
@@ -774,7 +756,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
             </h3>
 
             <div className="space-y-4">
-              {/* Birthday */}
+
               {profileUser?.birthday && (
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-blue/10 dark:bg-blue-500/20 flex items-center justify-center text-blue flex-shrink-0">
@@ -789,7 +771,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </div>
               )}
 
-              {/* Gender */}
               {profileUser?.gender && (
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-pink/10 dark:bg-pink-500/20 flex items-center justify-center text-pink flex-shrink-0">
@@ -804,7 +785,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </div>
               )}
 
-              {/* Email */}
               {profileUser?.email && (
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-green/10 dark:bg-green-500/20 flex items-center justify-center text-green flex-shrink-0">
@@ -819,7 +799,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </div>
               )}
 
-              {/* Address */}
               {profileUser?.address && (
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-red/10 dark:bg-red-500/20 flex items-center justify-center text-red flex-shrink-0">
@@ -834,7 +813,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </div>
               )}
 
-              {/* Phone */}
               {(profileUser?.phone || profileUser?.phone_number) && (
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center text-yellow-600 dark:text-yellow-550 flex-shrink-0">
@@ -849,7 +827,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </div>
               )}
 
-              {/* Job */}
               {(profileUser?.job || profileUser?.occupation) && (
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-indigo/10 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 flex-shrink-0">
@@ -864,7 +841,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </div>
               )}
 
-              {/* Nationality */}
               {profileUser?.nationality && (
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400 flex-shrink-0">
@@ -879,7 +855,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 </div>
               )}
 
-              {/* Relationship Status */}
               {profileUser?.relationship && profileUser.relationship.status !== 'none' && (
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-pink-500/10 dark:bg-pink-500/20 flex items-center justify-center text-pink-500 flex-shrink-0">
@@ -981,7 +956,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
           </div>
         </div>
 
-        {/* Right Column: User's Posts Feed */}
         <div className="md:col-span-7 space-y-4">
           
           <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-grey/20 dark:border-zinc-800 p-4 shadow-sm flex items-center justify-between transition-colors duration-200">
@@ -1053,7 +1027,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                 const comments = post.comments || [];
                 const isCommentsOpen = commentSectionOpen[post._id] || false;
 
-                // Handle post content expansion
                 const content = post.content || '';
                 const contentLines = content.split('\n');
                 const isLongContent = content.length > 250 || contentLines.length > 5;
@@ -1067,8 +1040,7 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
 
                 return (
                   <div key={post._id} className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-grey/20 dark:border-zinc-800 p-4 relative transition-colors duration-200">
-                    
-                    {/* Post Header */}
+
                     <div className="flex items-center justify-between mb-3.5">
                       <div className="flex items-center gap-3">
                         <div 
@@ -1100,7 +1072,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                       </button>
                     </div>
 
-                    {/* Post Content */}
                     <div className="text-slate-800 dark:text-zinc-200 text-sm sm:text-[15px] leading-relaxed mb-3 whitespace-pre-wrap text-justify px-1">
                       {displayContent}
                       {isLongContent && (
@@ -1113,10 +1084,8 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                       )}
                     </div>
 
-                    {/* Images attachment */}
                     {renderPostImages(post)}
 
-                    {/* Stats summary */}
                     <div className="flex items-center justify-between text-xs sm:text-sm text-grey dark:text-zinc-400 py-3 mt-3 border-t border-b border-grey/10 dark:border-zinc-800 select-none">
                       <div className="flex items-center gap-1.5 font-medium">
                         <div className="w-5 h-5 rounded-full bg-blue/10 dark:bg-blue-500/20 flex items-center justify-center text-blue">
@@ -1130,7 +1099,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                       </div>
                     </div>
 
-                    {/* Actions bar */}
                     <div className="grid grid-cols-3 gap-1 pt-1.5 select-none">
                       <button 
                         onClick={() => handleLikePost(post._id)}
@@ -1152,7 +1120,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                       </button>
                     </div>
 
-                    {/* Comments section */}
                     {isCommentsOpen && (
                       <div className="mt-4 border-t border-grey/10 dark:border-zinc-800 pt-4 space-y-4 animate-in fade-in duration-200">
                         {comments.length === 0 ? (
@@ -1226,7 +1193,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                                     </div>
                                   </div>
 
-                                  {/* Replies */}
                                   {replies.length > 0 && (
                                     <div className="pl-10">
                                       {!isRepliesExpanded ? (
@@ -1318,7 +1284,6 @@ export default function ProfileView({ targetId }: ProfileViewProps) {
                           </div>
                         )}
 
-                        {/* Comment input form */}
                         <div className="space-y-2 mt-2">
                           {replyingTo && (
                             <div className="flex items-center justify-between bg-blue/5 dark:bg-blue-500/10 px-3 py-1.5 rounded-lg text-xs text-blue font-semibold">

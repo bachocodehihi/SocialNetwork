@@ -166,7 +166,7 @@ const getGroupById = async (req, res) => {
         const isPendingJoin = group.joinRequests?.some(id => id.toString() === userId) || false;
 
         if (!isMember && groupType !== 'public') {
-            // For private/internal groups, non-members only get basic metadata for the join request view
+
             return res.status(403).json({
                 success: false,
                 code: 'NOT_GROUP_MEMBER',
@@ -221,12 +221,10 @@ const joinByQR = async (req, res) => {
             return res.status(404).json({ success: false, code: 'INVALID_QR_CODE' });
         }
 
-        // Check if already a member
         if (group.members.some(m => m.toString() === userId) || group.admin.toString() === userId) {
             return res.status(400).json({ success: false, code: 'ALREADY_IN_GROUP' });
         }
 
-        // Check memberLimit
         const memberLimit = group.settings?.memberLimit || 0;
         if (memberLimit > 0 && group.members.length >= memberLimit) {
             return res.status(400).json({ success: false, code: 'GROUP_FULL', message: 'Nhóm đã đạt giới hạn thành viên.' });
@@ -235,8 +233,6 @@ const joinByQR = async (req, res) => {
         const groupType = group.settings?.groupType || 'public';
         const joinPolicy = group.settings?.joinPolicy || 'open';
 
-        // Private groups ALWAYS require request approval.
-        // If public/internal group and joinPolicy is approval, it also requires approval.
         const requiresApproval = (groupType === 'private') || (joinPolicy === 'approval');
 
         if (requiresApproval) {
@@ -249,7 +245,6 @@ const joinByQR = async (req, res) => {
             group.joinRequests.push(userId);
             await group.save();
 
-            // Create notification for admin
             try {
                 const Account = require('../models/account.model');
                 const requester = await Account.findById(userId);
@@ -269,7 +264,6 @@ const joinByQR = async (req, res) => {
             group.members.push(userId);
             await group.save();
 
-            // Handle Conversation
             let conv = await Conversation.findOne({
                 isGroup: true,
                 'meta.groupId': group._id
@@ -642,8 +636,7 @@ const searchGroups = async (req, res) => {
         if (!q) {
             return res.status(400).json({ success: false, code: 'QUERY_REQUIRED' });
         }
-        
-        // Find matching groups: public/private are search-discoverable by everyone; internal groups only by members/admin.
+
         const groups = await Group.find({
             name: { $regex: q, $options: 'i' },
             $or: [
@@ -694,12 +687,10 @@ const joinGroup = async (req, res) => {
             return res.status(404).json({ success: false, code: 'GROUP_NOT_FOUND' });
         }
 
-        // Check if already a member
         if (group.members.some(m => m.toString() === userId) || group.admin.toString() === userId) {
             return res.status(400).json({ success: false, code: 'ALREADY_IN_GROUP' });
         }
 
-        // Check memberLimit
         const memberLimit = group.settings?.memberLimit || 0;
         if (memberLimit > 0 && group.members.length >= memberLimit) {
             return res.status(400).json({ success: false, code: 'GROUP_FULL', message: 'Nhóm đã đạt giới hạn thành viên.' });
@@ -708,8 +699,6 @@ const joinGroup = async (req, res) => {
         const groupType = group.settings?.groupType || 'public';
         const joinPolicy = group.settings?.joinPolicy || 'open';
 
-        // Private groups ALWAYS require request approval.
-        // If public/internal group and joinPolicy is approval, it also requires approval.
         const requiresApproval = (groupType === 'private') || (joinPolicy === 'approval');
 
         if (requiresApproval) {
@@ -722,7 +711,6 @@ const joinGroup = async (req, res) => {
             group.joinRequests.push(userId);
             await group.save();
 
-            // Create notification for admin
             try {
                 const Account = require('../models/account.model');
                 const requester = await Account.findById(userId);
@@ -742,7 +730,6 @@ const joinGroup = async (req, res) => {
             group.members.push(userId);
             await group.save();
 
-            // Handle Conversation
             let conv = await Conversation.findOne({
                 isGroup: true,
                 'meta.groupId': group._id
@@ -827,7 +814,7 @@ const getJoinRequests = async (req, res) => {
 const handleJoinRequest = async (req, res) => {
     try {
         const { groupId, requestUserId } = req.params;
-        const { action } = req.body; // 'approve' | 'reject'
+        const { action } = req.body;
         const adminId = req.userId;
 
         const group = await Group.findById(groupId);
@@ -839,26 +826,22 @@ const handleJoinRequest = async (req, res) => {
             return res.status(403).json({ success: false, code: 'NOT_ADMIN' });
         }
 
-        // Verify if user is in joinRequests
         if (!group.joinRequests || !group.joinRequests.some(id => id.toString() === requestUserId)) {
             return res.status(400).json({ success: false, code: 'REQUEST_NOT_FOUND' });
         }
 
-        // Remove from joinRequests
         group.joinRequests = group.joinRequests.filter(id => id.toString() !== requestUserId);
 
         if (action === 'approve') {
-            // Check memberLimit
+
             const memberLimit = group.settings?.memberLimit || 0;
             if (memberLimit > 0 && group.members.length >= memberLimit) {
                 return res.status(400).json({ success: false, code: 'GROUP_FULL', message: 'Nhóm đã đạt giới hạn thành viên.' });
             }
 
-            // Add to members
             group.members.push(requestUserId);
             await group.save();
 
-            // Handle Conversation
             let conv = await Conversation.findOne({
                 isGroup: true,
                 'meta.groupId': group._id
@@ -905,7 +888,6 @@ const handleJoinRequest = async (req, res) => {
                 io.to(conv._id.toString()).emit('receive_message', systemMessage.toObject());
             } catch (e) { /* ignore */ }
 
-            // Notify user that their request has been approved
             try {
                 const { createNotification } = require('./notification.controller');
                 await createNotification({
@@ -919,10 +901,9 @@ const handleJoinRequest = async (req, res) => {
             } catch (notifErr) { /* ignore */ }
 
         } else {
-            // Reject request
+
             await group.save();
 
-            // Notify user that their request has been rejected
             try {
                 const { createNotification } = require('./notification.controller');
                 await createNotification({
@@ -977,7 +958,7 @@ const getPendingPosts = async (req, res) => {
 const handlePendingPost = async (req, res) => {
     try {
         const { groupId, postId } = req.params;
-        const { action } = req.body; // 'approve' | 'reject'
+        const { action } = req.body;
         const adminId = req.userId;
 
         const group = await Group.findById(groupId);
@@ -999,7 +980,6 @@ const handlePendingPost = async (req, res) => {
             post.status = 'approved';
             await post.save();
 
-            // Trigger notification to group members or friends of author
             try {
                 const Account = require('../models/account.model');
                 const authorUser = await Account.findById(post.author);
@@ -1018,7 +998,6 @@ const handlePendingPost = async (req, res) => {
                     });
                 }
 
-                // Notify post author that their post was approved
                 if (post.author.toString() !== adminId) {
                     await createNotification({
                         recipient: post.author,
@@ -1035,7 +1014,6 @@ const handlePendingPost = async (req, res) => {
             post.status = 'rejected';
             await post.save();
 
-            // Notify post author that their post was rejected
             try {
                 const { createNotification } = require('./notification.controller');
                 if (post.author.toString() !== adminId) {

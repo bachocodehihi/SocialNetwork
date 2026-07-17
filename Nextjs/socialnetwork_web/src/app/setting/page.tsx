@@ -54,17 +54,13 @@ export default function SettingPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Layout states
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Darkmode states
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Language states
   const [currentLang, setCurrentLang] = useState('vi');
 
-  // Privacy states
   const [loadingPrivacy, setLoadingPrivacy] = useState(false);
   const [privacySettings, setPrivacySettings] = useState({
     email: true,
@@ -78,11 +74,9 @@ export default function SettingPage() {
     relationship: true
   });
 
-  // Activity states
   const [loadingActivity, setLoadingActivity] = useState(false);
   const [weekDayMinutes, setWeekDayMinutes] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
 
-  // Notification states
   const [notificationSettings, setNotificationSettings] = useState({
     pushNotifications: true,
     soundEnabled: true,
@@ -91,7 +85,6 @@ export default function SettingPage() {
     interactionAlerts: true
   });
 
-  // Change Info states
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [address, setAddress] = useState('');
@@ -105,7 +98,6 @@ export default function SettingPage() {
   const [editGender, setEditGender] = useState('');
   const [editingField, setEditingField] = useState<string | null>(null);
 
-  // Relationship dropdown & helper states
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showPartnerDropdown, setShowPartnerDropdown] = useState(false);
   const [partnerSearchQuery, setPartnerSearchQuery] = useState('');
@@ -128,32 +120,27 @@ export default function SettingPage() {
     { value: 'married', label: 'Đã kết hôn' }
   ];
 
-  // Relationship states
   const [friends, setFriends] = useState<any[]>([]);
   const [relStatus, setRelStatus] = useState('none');
   const [relPartner, setRelPartner] = useState('');
   const [isSavingRel, setIsSavingRel] = useState(false);
   const [relationshipRequests, setRelationshipRequests] = useState<any[]>([]);
 
-  // Change Password states
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSavingPassword, setIsSavingPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Delete Account states
   const [deletePassword, setDeletePassword] = useState('');
   const [showDeletePassword, setShowDeletePassword] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Switch Account states
   const [switchEmail, setSwitchEmail] = useState('');
   const [switchPassword, setSwitchPassword] = useState('');
   const [showSwitchPassword, setShowSwitchPassword] = useState(false);
   const [isSwitching, setIsSwitching] = useState(false);
 
-  // Fetch initial profile
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -178,7 +165,6 @@ export default function SettingPage() {
     fetchProfile();
   }, [router]);
 
-  // Load Dark Mode & Language settings on mount
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark';
     setIsDarkMode(isDark);
@@ -186,7 +172,6 @@ export default function SettingPage() {
     const savedLang = localStorage.getItem('language') || 'vi';
     setCurrentLang(savedLang);
     
-    // Check if query params have active tab
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab');
@@ -196,7 +181,6 @@ export default function SettingPage() {
     }
   }, []);
 
-  // Fetch Privacy Settings
   useEffect(() => {
     if (activeSection === 'privacy') {
       const fetchPrivacy = async () => {
@@ -227,7 +211,6 @@ export default function SettingPage() {
     }
   }, [activeSection]);
 
-  // Fetch Activity Log
   const fetchActivity = async () => {
     setLoadingActivity(true);
     try {
@@ -259,7 +242,6 @@ export default function SettingPage() {
     }
   }, [activeSection]);
 
-  // Fetch Profile Info for editing
   useEffect(() => {
     if (activeSection === 'change-info') {
       const fetchProfile = async () => {
@@ -309,7 +291,6 @@ export default function SettingPage() {
     }
   }, [activeSection]);
 
-  // Close dropdowns on click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target as Node)) {
@@ -323,7 +304,6 @@ export default function SettingPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Load Notification settings
   useEffect(() => {
     if (activeSection === 'notification') {
       const saved = localStorage.getItem('notification_settings');
@@ -366,7 +346,6 @@ export default function SettingPage() {
     return null;
   };
 
-  // Toggle Dark Mode
   const toggleDarkMode = (checked: boolean) => {
     setIsDarkMode(checked);
     if (checked) {
@@ -380,14 +359,12 @@ export default function SettingPage() {
     }
   };
 
-  // Select Language
   const handleSelectLanguage = (code: string) => {
     setCurrentLang(code);
     changeLanguage(code as 'vi' | 'en');
     showSuccess(code === 'vi' ? 'Đã đổi ngôn ngữ sang Tiếng Việt!' : 'Language changed to English!');
   };
 
-  // Toggle Privacy Field
   const handleTogglePrivacy = async (key: string, currentValue: boolean) => {
     const newValue = !currentValue;
     setPrivacySettings(prev => ({ ...prev, [key]: newValue }));
@@ -401,7 +378,6 @@ export default function SettingPage() {
     }
   };
 
-  // Toggle Notification Field
   const handleToggleNotification = (key: keyof typeof notificationSettings) => {
     const nextState = { ...notificationSettings, [key]: !notificationSettings[key] };
     setNotificationSettings(nextState);
@@ -616,7 +592,6 @@ export default function SettingPage() {
     }
   };
 
-  // Save editable fields
   const handleSaveField = async (field: 'address' | 'phone' | 'job' | 'nationality', value: string) => {
     setIsSaving(prev => ({ ...prev, [field]: true }));
     try {
@@ -638,7 +613,6 @@ export default function SettingPage() {
     }
   };
 
-  // Change Password Submit
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPassword) {
@@ -669,7 +643,6 @@ export default function SettingPage() {
     }
   };
 
-  // Delete Account Submit
   const handleDeleteAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!deletePassword) {
@@ -693,7 +666,6 @@ export default function SettingPage() {
     }
   };
 
-  // Switch Account Submit
   const handleSwitchAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!switchEmail || !switchPassword) {
@@ -720,7 +692,6 @@ export default function SettingPage() {
     }
   };
 
-  // Settings Menu Structure
   const settingSections = [
     {
       title: t('interface_experience'),
@@ -793,7 +764,6 @@ export default function SettingPage() {
     }
   ];
 
-  // List of searchable setting options
   const searchableItems = [
     {
       name: t('darkmode'),
@@ -877,7 +847,6 @@ export default function SettingPage() {
     }
   ];
 
-  // Filter items based on search query
   const filteredSearchItems = searchableItems.filter(item => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return false;
@@ -915,20 +884,16 @@ export default function SettingPage() {
     <div className="min-h-screen bg-slate-100 dark:bg-zinc-950 font-sans text-grey-hover transition-colors duration-300">
       <Navbar activeTab="setting" />
 
-      {/* Main Container */}
       <main className="pt-24 pb-12 px-4 max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row gap-6 items-start">
           
-          {/* LEFT SIDEBAR: Settings Menu list */}
           <div className={`${activeSection !== null ? 'hidden md:block' : 'w-full'} w-full md:w-80 lg:w-96 flex-shrink-0 space-y-6 animate-in fade-in slide-in-from-left-4 duration-300`}>
             
-            {/* Title Header (Visible on Desktop or when on Menu list) */}
             <div className="flex items-center gap-3 px-1 select-none">
               <Settings className="w-6 h-6 text-black dark:text-white" />
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-black dark:text-white">{t('settings_title')}</h1>
             </div>
 
-            {/* User Profile Card */}
             <div 
               onClick={() => router.push('/profile')}
               className="bg-white dark:bg-zinc-900 rounded-2xl p-5 border border-grey/20 dark:border-zinc-800 shadow-sm flex items-center justify-between cursor-pointer hover:bg-grey/5 dark:hover:bg-zinc-800/50 hover:border-grey/30 active:scale-[0.99] transition duration-200 group"
@@ -954,7 +919,6 @@ export default function SettingPage() {
               <ChevronRight className="w-5 h-5 text-grey/40 group-hover:text-grey-hover transition-transform duration-200 group-hover:translate-x-1" />
             </div>
 
-            {/* Sections Menu */}
             <div className="space-y-5">
               {settingSections.map((section, idx) => (
                 <div key={idx} className="space-y-2 text-left">
@@ -1002,7 +966,6 @@ export default function SettingPage() {
                 </div>
               ))}
 
-              {/* Log out section button */}
               <div className="pt-1">
                 <button
                   onClick={handleLogout}
@@ -1027,13 +990,10 @@ export default function SettingPage() {
 
           </div>
 
-          {/* RIGHT VIEW PANEL: Detail settings page content */}
           <div className={`${activeSection === null ? 'hidden md:block' : 'w-full'} flex-1 min-w-0 animate-in fade-in slide-in-from-right-4 duration-300`}>
             
-            {/* CARD CONTAINER */}
             <div className="bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-3xl p-5 md:p-7 shadow-sm min-h-[480px]">
               
-              {/* ---------------- 1. NO ACTIVE SECTION: DEFAULT OVERVIEW OR SEARCH RESULTS ---------------- */}
               {activeSection === null && (
                 <div className="space-y-6 text-left">
                   <div>
@@ -1041,7 +1001,6 @@ export default function SettingPage() {
                     <p className="text-sm text-grey font-medium mt-1">Tìm kiếm hoặc chọn một mục ở danh sách bên trái để cấu hình hệ thống.</p>
                   </div>
 
-                  {/* Search Bar for settings */}
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-grey" />
                     <input
@@ -1053,7 +1012,6 @@ export default function SettingPage() {
                     />
                   </div>
 
-                  {/* Search results or Default Quick links */}
                   {searchQuery.trim() !== '' ? (
                     <div className="space-y-3">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-grey px-1">
@@ -1097,7 +1055,7 @@ export default function SettingPage() {
                       )}
                     </div>
                   ) : (
-                    /* Default Quick Overview Cards */
+
                     <div className="space-y-4 pt-2">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-grey px-1">
                         Các mục cài đặt chính
@@ -1132,10 +1090,9 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 2. DARKMODE CONFIG ---------------- */}
               {activeSection === 'darkmode' && (
                 <div className="space-y-6">
-                  {/* Header */}
+
                   <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <button
                       onClick={() => handleSelectSection(getParentSection(activeSection))}
@@ -1146,7 +1103,6 @@ export default function SettingPage() {
                     <h2 className="text-lg font-bold text-black dark:text-white tracking-tight">{t('darkmode')}</h2>
                   </div>
 
-                  {/* Body Content */}
                   <div className="bg-grey/5 dark:bg-zinc-800/20 rounded-2xl p-5 border border-grey/20 dark:border-zinc-800 flex items-center justify-between text-left">
                     <div className="flex items-start gap-4 min-w-0 pr-4">
                       <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-purple-50 dark:bg-purple-950/30 text-purple-500">
@@ -1172,10 +1128,9 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 3. LANGUAGE CONFIG ---------------- */}
               {activeSection === 'language' && (
                 <div className="space-y-6">
-                  {/* Header */}
+
                   <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <button
                       onClick={() => handleSelectSection(getParentSection(activeSection))}
@@ -1234,10 +1189,9 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 4. ACCOUNT SETTINGS MENU ---------------- */}
               {activeSection === 'account' && (
                 <div className="space-y-6">
-                  {/* Header */}
+
                   <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <button
                       onClick={() => handleSelectSection(getParentSection(activeSection))}
@@ -1300,10 +1254,9 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 5. EDIT PROFILE INFO (change-info) ---------------- */}
               {activeSection === 'change-info' && (
                 <div className="space-y-6">
-                  {/* Header */}
+
                   <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <button
                       onClick={() => handleSelectSection(getParentSection(activeSection))}
@@ -1477,7 +1430,7 @@ export default function SettingPage() {
 
                           {editingField === 'relationship' && (
                             <div className="space-y-6">
-                              {/* 1. CURRENT ACTIVE RELATIONSHIP CARD */}
+
                               {hasActivePartner && (
                                 <div className="p-4 bg-blue/5 dark:bg-blue-950/10 border border-blue/20 dark:border-blue-900/20 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                   <div className="flex items-center gap-3.5 flex-1 min-w-0">
@@ -1503,7 +1456,6 @@ export default function SettingPage() {
                                 </div>
                               )}
 
-                              {/* 2. PENDING OUTGOING REQUEST CARD */}
                               {isPendingOutgoing && (
                                 <div className="p-4 bg-amber-50 dark:bg-amber-950/15 border border-amber-100 dark:border-amber-900/30 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 animate-pulse">
                                   <div className="flex items-center gap-3.5 flex-1 min-w-0">
@@ -1529,7 +1481,6 @@ export default function SettingPage() {
                                 </div>
                               )}
 
-                              {/* 3. INCOMING RELATIONSHIP REQUESTS */}
                               {relationshipRequests.length > 0 && (
                                 <div className="space-y-3">
                                   <h3 className="text-xs font-bold text-grey uppercase tracking-wider">
@@ -1589,12 +1540,10 @@ export default function SettingPage() {
                                 </div>
                               )}
 
-                              {/* 4. SETUP FORM */}
                               {!isPendingOutgoing && !hasActivePartner && (
                                 <div className="space-y-4 pt-3">
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     
-                                    {/* STATUS CUSTOM DROPDOWN */}
                                     <div className="space-y-2 relative" ref={statusDropdownRef}>
                                       <label className="block text-xs font-bold text-grey uppercase tracking-wider">Trạng thái</label>
                                       
@@ -1634,7 +1583,6 @@ export default function SettingPage() {
                                       )}
                                     </div>
 
-                                    {/* PARTNER CUSTOM DROPDOWN (ONLY SHOWS IF NOT SINGLE) */}
                                     {relStatus !== 'single' && (
                                       <div className="space-y-2 relative" ref={partnerDropdownRef}>
                                         <label className="block text-xs font-bold text-grey uppercase tracking-wider">Đối tác</label>
@@ -1661,7 +1609,7 @@ export default function SettingPage() {
 
                                         {showPartnerDropdown && (
                                           <div className="absolute z-35 top-full left-0 w-full mt-2 bg-white dark:bg-zinc-900 border border-grey/20 dark:border-zinc-800 rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-64 animate-in fade-in slide-in-from-top-2 duration-150">
-                                            {/* Dropdown Search Input */}
+
                                             <div className="p-2 border-b border-grey/10 dark:border-zinc-800 sticky top-0 bg-white dark:bg-zinc-900">
                                               <div className="relative">
                                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-grey" />
@@ -1675,7 +1623,6 @@ export default function SettingPage() {
                                               </div>
                                             </div>
 
-                                            {/* Dropdown Options List */}
                                             <div className="overflow-y-auto py-1 divide-y divide-grey/5 dark:divide-zinc-800">
                                               {filteredFriends.length === 0 ? (
                                                 <div className="text-center py-6 text-xs text-grey font-medium">
@@ -1715,7 +1662,6 @@ export default function SettingPage() {
                                     )}
                                   </div>
 
-                                  {/* Error messaging for missing partner */}
                                   {relStatus !== 'single' && !relPartner && (
                                     <p className="text-xs text-red font-medium leading-normal animate-pulse">
                                       * Vui lòng chọn một người bạn để gửi lời mời thiết lập mối quan hệ.
@@ -1825,10 +1771,9 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 6. CHANGE PASSWORD (change-password) ---------------- */}
               {activeSection === 'change-password' && (
                 <div className="space-y-6">
-                  {/* Header */}
+
                   <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <button
                       onClick={() => handleSelectSection(getParentSection(activeSection))}
@@ -1853,7 +1798,6 @@ export default function SettingPage() {
                     </div>
 
                     <form onSubmit={handleChangePassword} className="space-y-5 text-left">
-                      {/* New Password */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-grey uppercase tracking-wider">
                           Mật khẩu mới
@@ -1876,7 +1820,6 @@ export default function SettingPage() {
                         </div>
                       </div>
 
-                      {/* Confirm Password */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-grey uppercase tracking-wider">
                           Xác nhận mật khẩu mới
@@ -1899,7 +1842,6 @@ export default function SettingPage() {
                         </div>
                       </div>
 
-                      {/* Submit Button */}
                       <button
                         type="submit"
                         disabled={isSavingPassword}
@@ -1920,10 +1862,9 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 7. DELETE ACCOUNT (delete-account) ---------------- */}
               {activeSection === 'delete-account' && (
                 <div className="space-y-6">
-                  {/* Header */}
+
                   <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <button
                       onClick={() => handleSelectSection(getParentSection(activeSection))}
@@ -1935,7 +1876,7 @@ export default function SettingPage() {
                   </div>
 
                   <div className="space-y-6 bg-grey/5 dark:bg-zinc-800/20 p-5 rounded-2xl border border-grey/20 dark:border-zinc-800">
-                    {/* Warning Card */}
+
                     <div className="bg-red/5 border border-red/20 rounded-2xl p-5 flex gap-4 text-left">
                       <div className="w-12 h-12 rounded-full bg-red/10 flex items-center justify-center flex-shrink-0 text-red">
                         <AlertTriangle className="w-6 h-6 animate-pulse" />
@@ -1949,7 +1890,7 @@ export default function SettingPage() {
                     </div>
 
                     <form onSubmit={handleDeleteAccount} className="space-y-5 text-left">
-                      {/* Password Input */}
+
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-grey uppercase tracking-wider">
                           Nhập mật khẩu để xác nhận
@@ -1972,7 +1913,6 @@ export default function SettingPage() {
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
                       <div className="flex flex-col sm:flex-row gap-3 pt-2">
                         <button
                           type="button"
@@ -2002,10 +1942,9 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 8. PRIVACY SETTINGS ---------------- */}
               {activeSection === 'privacy' && (
                 <div className="space-y-6">
-                  {/* Header */}
+
                   <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <button
                       onClick={() => handleSelectSection(getParentSection(activeSection))}
@@ -2069,7 +2008,6 @@ export default function SettingPage() {
                         </div>
                       </div>
 
-                      {/* Account Privacy section */}
                       <div>
                         <h3 className="text-xs font-bold uppercase tracking-wider text-grey px-1.5 mb-3 select-none">
                           Loại tài khoản
@@ -2102,10 +2040,9 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 9. TIME USAGE / ACTIVITY ---------------- */}
               {activeSection === 'activity' && (
                 <div className="space-y-6">
-                  {/* Header */}
+
                   <div className="flex items-center justify-between border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <div className="flex items-center gap-3">
                       <button
@@ -2131,7 +2068,7 @@ export default function SettingPage() {
                     </div>
                   ) : (
                     <div className="space-y-6 text-left">
-                      {/* Today Card */}
+
                       <div className="bg-gradient-to-br from-blue to-blue-hover text-white rounded-3xl p-6 shadow-md border-0">
                         <div className="flex items-center gap-2">
                           <Clock className="w-5 h-5 opacity-90" />
@@ -2154,7 +2091,6 @@ export default function SettingPage() {
                         </p>
                       </div>
 
-                      {/* This Week Section */}
                       <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-grey/20 dark:border-zinc-800 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                           <div>
@@ -2176,7 +2112,6 @@ export default function SettingPage() {
                           <BarChart2 className="w-5 h-5 text-grey" />
                         </div>
 
-                        {/* Chart Grid */}
                         <div className="flex justify-between items-end h-56 pt-4 px-2 border-b border-grey/10 dark:border-zinc-800">
                           {weekDayMinutes.map((mins, idx) => {
                             const today = new Date().getDay();
@@ -2223,10 +2158,9 @@ export default function SettingPage() {
                 </div>
               )}
 
-              {/* ---------------- 10. NOTIFICATION SETTINGS ---------------- */}
               {activeSection === 'notification' && (
                 <div className="space-y-6">
-                  {/* Header */}
+
                   <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
                     <button
                       onClick={() => handleSelectSection(getParentSection(activeSection))}

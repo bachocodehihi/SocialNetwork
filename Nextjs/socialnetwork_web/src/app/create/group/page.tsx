@@ -22,17 +22,14 @@ export default function CreateGroupPage() {
   const [friends, setFriends] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Form states
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [avatar, setAvatar] = useState('');
   const [avatarBase64, setAvatarBase64] = useState<string | null>(null);
 
-  // Group settings states
   const [groupType, setGroupType] = useState<'public' | 'private' | 'internal'>('public');
   const [joinPolicy, setJoinPolicy] = useState<'open' | 'approval'>('open');
 
-  // Selected friends
   const [selectedFriendIds, setSelectedFriendIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -59,7 +56,6 @@ export default function CreateGroupPage() {
     loadFriends();
   }, [router]);
 
-  // Adjust join policy automatically if group type changes
   useEffect(() => {
     if (groupType === 'private') {
       setJoinPolicy('approval');
@@ -157,7 +153,6 @@ export default function CreateGroupPage() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-4xl bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-grey/25 dark:border-zinc-800 p-6 sm:p-8 flex flex-col md:flex-row gap-8 text-left"
         >
-          {/* Left Column: Form Details & Settings */}
           <div className="flex-1 space-y-6">
             <div className="flex items-center gap-3 border-b border-grey/10 dark:border-zinc-800 pb-4">
               <button 
@@ -176,7 +171,6 @@ export default function CreateGroupPage() {
               </div>
             </div>
 
-            {/* Avatar Upload */}
             <div className="flex items-center gap-4 pb-4 border-b border-grey/10 dark:border-zinc-800">
               <div className="relative w-20 h-20 rounded-full overflow-hidden bg-slate-100 dark:bg-zinc-800 border-2 border-slate-200 dark:border-zinc-700 shadow-inner flex items-center justify-center flex-shrink-0">
                 {avatar ? (
@@ -197,7 +191,6 @@ export default function CreateGroupPage() {
               </label>
             </div>
 
-            {/* Group Name & Description */}
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-xs font-black text-slate-700 dark:text-zinc-300 uppercase tracking-wider pl-1">
@@ -226,7 +219,6 @@ export default function CreateGroupPage() {
               </div>
             </div>
 
-            {/* Privacy Section */}
             <div className="space-y-4 pt-4 border-t border-grey/10 dark:border-zinc-800">
               <div className="space-y-3">
                 <div>
@@ -236,7 +228,7 @@ export default function CreateGroupPage() {
                   </h4>
                 </div>
                 <div className="grid grid-cols-1 gap-2">
-                  {/* Public */}
+
                   <button
                     type="button"
                     onClick={() => setGroupType('public')}
@@ -258,7 +250,6 @@ export default function CreateGroupPage() {
                     {groupType === 'public' && <Check className="w-3.5 h-3.5 text-blue mt-1 flex-shrink-0" />}
                   </button>
 
-                  {/* Private */}
                   <button
                     type="button"
                     onClick={() => setGroupType('private')}
@@ -280,7 +271,6 @@ export default function CreateGroupPage() {
                     {groupType === 'private' && <Check className="w-3.5 h-3.5 text-blue mt-1 flex-shrink-0" />}
                   </button>
 
-                  {/* Internal */}
                   <button
                     type="button"
                     onClick={() => setGroupType('internal')}
@@ -304,7 +294,6 @@ export default function CreateGroupPage() {
                 </div>
               </div>
 
-              {/* Join Policy */}
               <div className="space-y-3 pt-4 border-t border-grey/10 dark:border-zinc-800">
                 <div>
                   <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
@@ -349,7 +338,6 @@ export default function CreateGroupPage() {
             </div>
           </div>
 
-          {/* Right Column: Friend Selection */}
           <div className="w-full md:w-80 flex flex-col border-t md:border-t-0 md:border-l border-grey/15 dark:border-zinc-800 pt-6 md:pt-0 md:pl-6">
             <div className="mb-4">
               <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">
@@ -360,7 +348,6 @@ export default function CreateGroupPage() {
               </p>
             </div>
 
-            {/* Search Friend */}
             <div className="relative mb-4">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -372,7 +359,6 @@ export default function CreateGroupPage() {
               />
             </div>
 
-            {/* Friends list */}
             <div className="flex-1 max-h-[300px] md:max-h-[380px] overflow-y-auto space-y-1.5 pr-1">
               {friends.length === 0 ? (
                 <div className="py-12 text-center text-slate-500">
@@ -428,7 +414,6 @@ export default function CreateGroupPage() {
               )}
             </div>
 
-            {/* Bottom Actions */}
             <div className="mt-6 pt-4 border-t border-grey/10 dark:border-zinc-800 flex flex-col gap-4">
               <button
                 type="button"

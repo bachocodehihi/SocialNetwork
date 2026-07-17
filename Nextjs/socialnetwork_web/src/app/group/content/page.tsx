@@ -26,10 +26,8 @@ export default function GroupContentPage() {
   const [loading, setLoading] = useState(true);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
-  // Filters: 'pending' | 'published' | 'rejected' | 'removed'
   const [activeFilter, setActiveFilter] = useState<'pending' | 'published' | 'rejected' | 'removed'>('pending');
 
-  // Comments state (just in case they view comments of their published posts)
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [commentSectionOpen, setCommentSectionOpen] = useState<Record<string, boolean>>({});
   const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
@@ -54,11 +52,10 @@ export default function GroupContentPage() {
     const initData = async () => {
       try {
         setLoading(true);
-        // Load User
+
         const profile = await authService.getProfile();
         setCurrentUser(profile);
 
-        // Load Group
         const res = await groupService.getGroupById(id);
         if (res.success && res.data) {
           setGroup(res.data);
@@ -102,13 +99,11 @@ export default function GroupContentPage() {
 
   const currentUserId = currentUser?._id || currentUser?.id;
 
-  // Filter posts created by the current user in this group
   const myPosts = posts.filter(p => {
     const authorId = p.author?._id || p.author?.id;
     return authorId === currentUserId;
   });
 
-  // Time formatter
   const formatTimeAgo = (dateStr: string) => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -125,7 +120,6 @@ export default function GroupContentPage() {
     return date.toLocaleDateString('vi-VN');
   };
 
-  // Comments Count helper
   const getCommentsCount = (post: any) => {
     let count = post.comments?.length || 0;
     (post.comments || []).forEach((c: any) => {
@@ -134,7 +128,6 @@ export default function GroupContentPage() {
     return count;
   };
 
-  // Likes and comments handlers
   const handleLikePost = async (postId: string) => {
     if (!currentUser) return;
     setPosts(prev =>
@@ -301,7 +294,6 @@ export default function GroupContentPage() {
     );
   };
 
-  // Tab list
   const sidebarTabs = [
     { id: 'pending', label: 'Đang chờ', icon: Clock },
     { id: 'published', label: 'Đã đăng', icon: FileText },
@@ -330,26 +322,22 @@ export default function GroupContentPage() {
 
       <div className="flex-1 pt-14 flex flex-col md:flex-row items-stretch">
         
-        {/* Left Sidebar */}
         <aside className="w-full md:w-80 bg-white dark:bg-zinc-900 border-r border-grey/10 dark:border-zinc-800 flex flex-col p-6 text-left shrink-0">
-          {/* Breadcrumb */}
+
           <div className="text-[11px] font-semibold text-slate-500 dark:text-[#b0b3b8] flex items-center gap-1.5 mb-2 truncate">
             <span className="hover:underline cursor-pointer" onClick={() => router.push(`/group?groupId=${groupId}`)}>{group?.name}</span>
             <ChevronRight className="w-3 h-3" />
             <span className="text-slate-800 dark:text-white">Nội dung của bạn</span>
           </div>
 
-          {/* Title */}
           <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-2">
             Nội dung của bạn
           </h2>
 
-          {/* Subtitle */}
           <p className="text-xs text-slate-500 dark:text-[#b0b3b8] leading-relaxed mb-6 font-medium text-justify">
             Quản lý và xem bài viết của bạn trong nhóm này. Quản trị viên và người kiểm duyệt có thể đóng góp ý kiến.
           </p>
 
-          {/* Sidebar Menu Options */}
           <nav className="flex flex-col gap-1.5">
             {sidebarTabs.map((tab) => {
               const isActive = activeFilter === tab.id;
@@ -374,7 +362,6 @@ export default function GroupContentPage() {
           </nav>
         </aside>
 
-        {/* Right Content Area */}
         <main className="flex-1 bg-slate-50 dark:bg-zinc-950 p-6 overflow-y-auto flex flex-col items-center">
           <div className="w-full max-w-2xl space-y-5">
             
@@ -384,7 +371,7 @@ export default function GroupContentPage() {
                 <p className="text-xs text-slate-500 dark:text-[#b0b3b8] font-bold">Đang tải bài viết...</p>
               </div>
             ) : displayedPosts.length === 0 ? (
-              /* Telescope/Search Empty State exactly like the mockup */
+
               <div className="py-24 flex flex-col items-center text-center">
                 <div className="relative w-36 h-36 mb-6 flex items-center justify-center bg-white dark:bg-zinc-900 rounded-full shadow-sm border border-grey/10 dark:border-zinc-800">
                   <Telescope className="w-16 h-16 text-blue/80 stroke-[1.5]" />
@@ -394,7 +381,7 @@ export default function GroupContentPage() {
                 </h3>
               </div>
             ) : (
-              /* Posts Feed list */
+
               <div className="space-y-5">
                 {displayedPosts.map((post) => {
                   const author = post.author || {};
@@ -419,7 +406,6 @@ export default function GroupContentPage() {
                   return (
                     <div key={post._id} className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-grey/20 dark:border-zinc-800 p-5 relative transition-colors duration-200 text-left">
                       
-                      {/* Post Header */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full overflow-hidden border border-grey/10 dark:border-zinc-800 bg-grey/5 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center">
@@ -438,7 +424,6 @@ export default function GroupContentPage() {
                         </div>
                       </div>
 
-                      {/* Post Content */}
                       <div className="text-slate-800 dark:text-zinc-200 text-sm sm:text-[15px] leading-relaxed mb-4 whitespace-pre-wrap text-justify px-1">
                         {displayContent}
                         {isLongContent && (
@@ -451,10 +436,8 @@ export default function GroupContentPage() {
                         )}
                       </div>
 
-                      {/* Post Media */}
                       {renderPostImages(post)}
 
-                      {/* Post Stats */}
                       <div className="flex items-center justify-between text-xs sm:text-sm text-grey dark:text-zinc-400 py-3 mt-4 border-t border-b border-grey/10 dark:border-zinc-800/60 select-none font-semibold">
                         <div className="flex items-center gap-1.5 font-medium">
                           <div className="w-5 h-5 rounded-full bg-blue/10 flex items-center justify-center text-blue">
@@ -467,7 +450,6 @@ export default function GroupContentPage() {
                         </div>
                       </div>
 
-                      {/* Post Actions */}
                       <div className="grid grid-cols-2 gap-1 pt-1.5 select-none">
                         <button 
                           onClick={() => handleLikePost(post._id)}
@@ -485,7 +467,6 @@ export default function GroupContentPage() {
                         </button>
                       </div>
 
-                      {/* Comments section */}
                       {isCommentsOpen && (
                         <div className="mt-4 border-t border-grey/10 dark:border-zinc-800 pt-4 space-y-4 animate-in fade-in duration-200">
                           {comments.length === 0 ? (
@@ -547,7 +528,6 @@ export default function GroupContentPage() {
                                       </div>
                                     </div>
 
-                                    {/* Replies */}
                                     {replies.length > 0 && (
                                       <div className="pl-10">
                                         {!isRepliesExpanded ? (
@@ -615,7 +595,6 @@ export default function GroupContentPage() {
                             </div>
                           )}
 
-                          {/* Comment input form */}
                           <div className="space-y-2 mt-2">
                             {replyingTo && (
                               <div className="flex items-center justify-between bg-blue/5 dark:bg-blue-500/10 px-3 py-1.5 rounded-lg text-xs text-blue font-semibold">

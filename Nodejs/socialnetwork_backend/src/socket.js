@@ -8,7 +8,7 @@ const fcm = require('./services/fcm.service');
 
 let io;
 const onlineUsers = new Map();
-const userSockets = new Map(); // userId -> Set of socket.ids
+const userSockets = new Map();
 const activeCalls = new Map();
 const sessionStarts = new Map();
 
@@ -39,7 +39,7 @@ const initSocket = (server) => {
             _notifyFriends(userId, 'online');
         }
         userSockets.get(userId).add(socket.id);
-        onlineUsers.set(userId, socket.id); // For backward compatibility with tictactoe
+        onlineUsers.set(userId, socket.id);
         sessionStarts.set(userId, Date.now());
 
         socket.join(userId);
@@ -117,16 +117,13 @@ const initSocket = (server) => {
                 call.startedAt = new Date();
                 await call.save();
 
-                // Update activeCalls with the accepted socket ID
                 const active = activeCalls.get(userId);
                 if (active) {
                     active.socketId = socket.id;
                 }
 
-                // Notify caller
                 io.to(call.caller.toString()).emit('call_accepted', { callId, answer });
                 
-                // Notify other sockets of receiver to cancel ringing
                 socket.to(userId).emit('call_cancelled', { callId, reason: 'answered_elsewhere' });
             } catch (err) {
                 console.error('Call accept error:', err);
@@ -166,10 +163,8 @@ const initSocket = (server) => {
                     relatedId: call._id
                 });
 
-                // Notify caller
                 io.to(call.caller.toString()).emit('call_rejected', { callId });
                 
-                // Notify other sockets of receiver to stop ringing
                 socket.to(userId).emit('call_cancelled', { callId, reason: 'rejected_elsewhere' });
             } catch (err) {
                 console.error('Call reject error:', err);
@@ -212,10 +207,8 @@ const initSocket = (server) => {
                     });
                 }
 
-                // Notify receiver
                 io.to(call.receiver.toString()).emit('call_cancelled', { callId });
                 
-                // Notify other sockets of caller
                 socket.to(userId).emit('call_cancelled', { callId });
             } catch (err) {
                 console.error('Call cancel error:', err);
@@ -252,10 +245,8 @@ const initSocket = (server) => {
                     ? call.receiver.toString()
                     : call.caller.toString();
                 
-                // Notify other user
                 io.to(otherUserId).emit('call_ended', { callId, endedBy, duration: call.duration });
                 
-                // Notify other sockets of current user
                 socket.to(userId).emit('call_ended', { callId, endedBy, duration: call.duration });
             } catch (err) {
                 console.error('Call end error:', err);
@@ -426,7 +417,6 @@ const initSocket = (server) => {
         socket.on('disconnect', async () => {
             console.log(`🔴 User disconnected: ${userId} - Socket: ${socket.id}`);
 
-            // Only end call if the socket that disconnected was the active call socket
             if (activeCalls.has(userId)) {
                 const callInfo = activeCalls.get(userId);
                 if (callInfo.socketId === socket.id) {
@@ -455,7 +445,6 @@ const initSocket = (server) => {
                 }
             }
 
-            // Cleanup user sockets list
             const sockets = userSockets.get(userId);
             if (sockets) {
                 sockets.delete(socket.id);
@@ -483,7 +472,7 @@ const initSocket = (server) => {
                     await Account.findByIdAndUpdate(userId, { lastSeen: new Date() }).exec();
                     _notifyFriends(userId, 'offline');
                 } else {
-                    // Update onlineUsers map with the last remaining socket id for tictactoe compatibility
+
                     const remainingSockets = Array.from(sockets);
                     onlineUsers.set(userId, remainingSockets[remainingSockets.length - 1]);
                 }

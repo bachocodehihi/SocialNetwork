@@ -19,13 +19,11 @@ function VerifyForgotContent() {
   const [resendCooldown, setResendCooldown] = useState(60);
   const [isResending, setIsResending] = useState(false);
 
-  // Hidden text input ref to manage focus
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
     
-    // Start countdown
     const timer = setInterval(() => {
       setResendCooldown((prev) => {
         if (prev <= 1) {
@@ -149,7 +147,7 @@ function VerifyForgotContent() {
         <form onSubmit={handleSubmit} className='space-y-6' noValidate>
           
           <div className='relative'>
-            {/* Hidden Input */}
+
             <input
               ref={inputRef}
               type='text'
@@ -164,7 +162,6 @@ function VerifyForgotContent() {
               autoFocus
             />
             
-            {/* Beautiful OTP Boxes */}
             <div className='flex justify-between gap-2 max-w-xs mx-auto py-2'>
               {renderOtpBoxes()}
             </div>
